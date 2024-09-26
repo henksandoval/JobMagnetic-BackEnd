@@ -22,4 +22,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\JobMagnet\JobMagnet.csproj" />
+  </ItemGroup>
+
 </Project>
