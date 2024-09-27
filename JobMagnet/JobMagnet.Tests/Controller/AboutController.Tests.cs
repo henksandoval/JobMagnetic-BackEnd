@@ -21,5 +21,17 @@ namespace JobMagnet.Tests.Controller
             Assert.Equal(200, okResult.StatusCode);
             Assert.NotNull(okResult.Value);
         }
+
+
+        //[Fact]
+        //public void WhenYouReceiveAnAbout_YouShouldReturnAnAbout()
+        //{
+        //    //Arranger Preparar
+            
+
+        //    //Act Ejecutar
+
+        //    //Assert Asegurar
+        //}
     }
 }
