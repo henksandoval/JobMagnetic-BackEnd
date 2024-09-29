@@ -1,7 +1,9 @@
 using FluentAssertions;
 using JobMagnet.Controllers;
 using JobMagnet.Entities;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace JobMagnet.Tests.Controller
 {
@@ -33,7 +35,19 @@ namespace JobMagnet.Tests.Controller
             var about = new AboutEntity()
             {
                 Id = 1,
-                ImageUrl = "https://bootstrapmade.com/content/demo/MyResume/assets/img/profile-img.jpg" 
+                ImageUrl = "https://bootstrapmade.com/content/demo/MyResume/assets/img/profile-img.jpg",
+                Description = "description",
+                Text = "UI/UX ",
+                Hobbies = "In my free",
+                Birthday = "16/051995",
+                WebSite = "www.example.com",
+                PhoneNumber = 641051233,
+                City = "Zaragoza, España",
+                Age = 29,
+                Degree = "Master",
+                Email = "alexandrai.marvala@gmail.com",
+                Freelance = "Available",
+                WorkExperience = "Developed and maintained web applications for various clients"
             };
 
             var resultEsperado = new OkResult();
@@ -45,7 +59,13 @@ namespace JobMagnet.Tests.Controller
             //Assert Asegurar
             var okResult = respuesta as OkObjectResult;
             okResult.Should().BeEquivalentTo(resultEsperado);
-
         }
+
+        //[Fact]
+        //public void WhenADataIsCreated_ItShouldReturnTrue() 
+        //{
+
+        //}
     }
+  
 }
