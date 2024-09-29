@@ -9,6 +9,11 @@ namespace JobMagnet.Controllers
     {
         public AboutController() { }
 
+        public IActionResult GetByID(AboutEntity about)
+        {
+            return Ok(about);
+        }
+
         [HttpGet]
         public ActionResult GetOk()
         {

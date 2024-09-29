@@ -1,4 +1,6 @@
+using FluentAssertions;
 using JobMagnet.Controllers;
+using JobMagnet.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Tests.Controller
@@ -23,15 +25,27 @@ namespace JobMagnet.Tests.Controller
         }
 
 
-        //[Fact]
-        //public void WhenYouReceiveAnAbout_YouShouldReturnAnAbout()
-        //{
-        //    //Arranger Preparar
-            
+        [Fact]
+        public void ItShouldShowAllTheData()
+        {
+            //Arranger Preparar
+            var controller = new AboutController();
+            var about = new AboutEntity()
+            {
+                Id = 1,
+                ImageUrl = "https://bootstrapmade.com/content/demo/MyResume/assets/img/profile-img.jpg" 
+            };
 
-        //    //Act Ejecutar
+            var resultEsperado = new OkResult();
 
-        //    //Assert Asegurar
-        //}
+
+            //Act Ejecutar
+            var respuesta = controller.GetByID(about);
+
+            //Assert Asegurar
+            var okResult = respuesta as OkObjectResult;
+            okResult.Should().BeEquivalentTo(resultEsperado);
+
+        }
     }
 }
