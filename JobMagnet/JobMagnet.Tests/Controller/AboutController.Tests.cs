@@ -1,9 +1,8 @@
 using FluentAssertions;
 using JobMagnet.Controllers;
 using JobMagnet.Entities;
-using Microsoft.AspNetCore.Http.HttpResults;
+using JobMagnet.Models;
 using Microsoft.AspNetCore.Mvc;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace JobMagnet.Tests.Controller
 {
@@ -52,20 +51,48 @@ namespace JobMagnet.Tests.Controller
 
             var resultEsperado = new OkResult();
 
-
             //Act Ejecutar
-            var respuesta = controller.GetByID(about);
+            var answer = controller.GetByID(about);
 
             //Assert Asegurar
-            var okResult = respuesta as OkObjectResult;
+            var okResult = answer as OkObjectResult;
             okResult.Should().BeEquivalentTo(resultEsperado);
         }
 
-        //[Fact]
-        //public void WhenADataIsCreated_ItShouldReturnTrue() 
-        //{
+        [Fact]
+        public void WhenADataIsCreated_ItShouldReturnTrue()
+        {
+            //Arranger Preparar
+            var controller = new AboutController();
+            var aboutCreateRequest = new AboutCreateRequest()
+            {
+                ImageUrl = "https://bootstrapmade.com",
+                Description = "description",
+                Text = "UI ",
+                Hobbies = "In",
+                Birthday = "16/05/1995",
+                WebSite = "www.example.com",
+                PhoneNumber = 641051233,
+                City = "Zaragoza",
+                Age = 30,
+                Degree = "Master",
+                Email = "alexandra.marval@gmail.com",
+                Freelance = "Available",
+                WorkExperience = "Developed applications for various clients"
+            };
+            var resultEsperado = new OkResult();
 
-        //}
+            //Act Ejecutar
+            var answer = controller.CreateAbout(aboutCreateRequest);
+
+            //Assert Asegurar
+            var okResult = answer as OkObjectResult; 
+            var aboutAnswer = okResult.Value as AboutCreateRequest;
+            okResult.Should().BeEquivalentTo(resultEsperado);
+            aboutAnswer.Should().BeEquivalentTo(aboutCreateRequest);
+        }
+
+
     }
   
 }
