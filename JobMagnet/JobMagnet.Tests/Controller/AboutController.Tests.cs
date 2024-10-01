@@ -1,98 +1,57 @@
+using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Controllers;
-using JobMagnet.Entities;
 using JobMagnet.Models;
+using JobMagnet.Service;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
+using System.Net;
 
 namespace JobMagnet.Tests.Controller
 {
     public class AboutControllerTests
     {
-        [Fact]
-        public void ItShouldShowOk()
+        private readonly Mock<IAboutService> serviceMock;
+        private readonly AboutController controller;
+        private readonly Fixture fixture;
+
+        public AboutControllerTests()
         {
-            //Arranger Preparar
-            var controller = new AboutController();
-
-            //Act Ejecutar
-            var respuesta = controller.GetOk();
-
-            var okResult = respuesta as OkObjectResult;
-            //Assert Asegurar
-
-            Assert.NotNull(okResult); 
-            Assert.Equal(200, okResult.StatusCode);
-            Assert.NotNull(okResult.Value);
-        }
-
-
-        [Fact]
-        public void ItShouldShowAllTheData()
-        {
-            //Arranger Preparar
-            var controller = new AboutController();
-            var about = new AboutEntity()
-            {
-                Id = 1,
-                ImageUrl = "https://bootstrapmade.com/content/demo/MyResume/assets/img/profile-img.jpg",
-                Description = "description",
-                Text = "UI/UX ",
-                Hobbies = "In my free",
-                Birthday = "16/051995",
-                WebSite = "www.example.com",
-                PhoneNumber = 641051233,
-                City = "Zaragoza, España",
-                Age = 29,
-                Degree = "Master",
-                Email = "alexandrai.marvala@gmail.com",
-                Freelance = "Available",
-                WorkExperience = "Developed and maintained web applications for various clients"
-            };
-
-            var resultEsperado = new OkResult();
-
-            //Act Ejecutar
-            var answer = controller.GetByID(about);
-
-            //Assert Asegurar
-            var okResult = answer as OkObjectResult;
-            okResult.Should().BeEquivalentTo(resultEsperado);
+            fixture = new Fixture();
+            serviceMock = new Mock<IAboutService>();
+            controller = new AboutController(serviceMock.Object);
         }
 
         [Fact]
-        public void WhenADataIsCreated_ItShouldReturnTrue()
+        public async Task ShouldIGetById()
         {
             //Arranger Preparar
-            var controller = new AboutController();
-            var aboutCreateRequest = new AboutCreateRequest()
-            {
-                ImageUrl = "https://bootstrapmade.com",
-                Description = "description",
-                Text = "UI ",
-                Hobbies = "In",
-                Birthday = "16/05/1995",
-                WebSite = "www.example.com",
-                PhoneNumber = 641051233,
-                City = "Zaragoza",
-                Age = 30,
-                Degree = "Master",
-                Email = "alexandra.marval@gmail.com",
-                Freelance = "Available",
-                WorkExperience = "Developed applications for various clients"
-            };
-            var resultEsperado = new OkResult();
+            var modelExpected = fixture.Create<AboutModel>();
+            serviceMock.Setup(aboutService => aboutService.GetById(modelExpected.Id)).ReturnsAsync(modelExpected);  
 
             //Act Ejecutar
-            var answer = controller.CreateAbout(aboutCreateRequest);
+            var actionResult = await controller.GetById(modelExpected.Id);
 
             //Assert Asegurar
-            var okResult = answer as OkObjectResult; 
-            var aboutAnswer = okResult.Value as AboutCreateRequest;
-            okResult.Should().BeEquivalentTo(resultEsperado);
-            aboutAnswer.Should().BeEquivalentTo(aboutCreateRequest);
+            var result = actionResult as OkObjectResult;
+            var resultModel = result!.Value as AboutModel;
+
+            result.StatusCode.Should().Be((int)HttpStatusCode.OK);
+            resultModel.Should().BeEquivalentTo(modelExpected);
         }
 
+        [Fact]
+        public async Task ShouldResponseNotFoundWhenTheRecordNotExists()
+        {
+            serviceMock.Setup(aboutService => aboutService.GetById(It.IsAny<int>())).ReturnsAsync(null as AboutModel);
 
+            //Act
+            var actionResult = await controller.GetById(1);
+
+            //Assert
+            var result = actionResult as NotFoundObjectResult;
+            result!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+            result.Value.Should().Be("Record [1] not found");
+        }
     }
-  
 }

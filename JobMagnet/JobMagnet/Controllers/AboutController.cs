@@ -1,5 +1,8 @@
-﻿using JobMagnet.Entities;
+﻿using AutoMapper;
+using JobMagnet.Entities;
 using JobMagnet.Models;
+using JobMagnet.Repository;
+using JobMagnet.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers
@@ -8,25 +11,38 @@ namespace JobMagnet.Controllers
     [Route("api/controller")]
     public class AboutController : ControllerBase
     {
-        public AboutController() { }
+        private readonly IAboutService service;
 
-        [HttpGet("GetById", Name = "GetByid")]
-        public IActionResult GetByID(AboutEntity about)
+        public AboutController(IAboutService service)
         {
-            return Ok(about);
+            this.service = service;
         }
 
-        [HttpGet("GetTrue", Name = "GetTrue")]
-        public ActionResult GetOk()
+        [HttpGet("{id}", Name = "GetById")]
+        public async Task<IActionResult> GetById(int id)
         {
-            var aboutEntity = new AboutEntity();
-            return Ok(aboutEntity);
+            var aboutModel = await service.GetById(id);
+
+            if (aboutModel is null) 
+            {
+                return NotFound($"Record [{id}] not found");
+            }
+
+            return Ok(aboutModel);
         }
+
+        //[HttpGet("GetTrue", Name = "GetTrue")]
+        //public async Task<IActionResult> GetOk()
+        //{
+        //    var aboutEntity = new AboutEntity();
+        //    return Ok(aboutEntity);
+        //}
 
         [HttpPost]
-        public ActionResult CreateAbout(AboutCreateRequest aboutCreateRequest)
+        public async Task<ActionResult<AboutModel>> CreateAbout([FromBody] AboutCreateRequest aboutCreateRequest)
         {
-            return Ok(aboutCreateRequest);
+            var aboutModel = await service.Create(aboutCreateRequest);
+            return CreatedAtRoute("GetById", new { aboutModel.Id });
         }
     }
 }
