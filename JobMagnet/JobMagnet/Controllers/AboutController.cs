@@ -31,18 +31,11 @@ namespace JobMagnet.Controllers
             return Ok(aboutModel);
         }
 
-        //[HttpGet("GetTrue", Name = "GetTrue")]
-        //public async Task<IActionResult> GetOk()
-        //{
-        //    var aboutEntity = new AboutEntity();
-        //    return Ok(aboutEntity);
-        //}
-
         [HttpPost]
-        public async Task<ActionResult<AboutModel>> CreateAbout([FromBody] AboutCreateRequest aboutCreateRequest)
+        public async Task<IActionResult> Create([FromBody] AboutCreateRequest aboutCreateRequest)
         {
             var aboutModel = await service.Create(aboutCreateRequest);
-            return CreatedAtRoute("GetById", new { aboutModel.Id });
+            return CreatedAtRoute("GetById", aboutModel.Id);
         }
     }
 }

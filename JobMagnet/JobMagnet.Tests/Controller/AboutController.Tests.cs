@@ -53,5 +53,22 @@ namespace JobMagnet.Tests.Controller
             result!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
             result.Value.Should().Be("Record [1] not found");
         }
+
+        [Fact]
+        public async Task SaveData_ShouldSaveARecord()
+        {
+            //Arranger Preparar
+            var createModel = fixture.Create<AboutCreateRequest>();
+            var aboutModel = fixture.Create<AboutModel>();
+            serviceMock.Setup(aboutService => aboutService.Create(createModel)).ReturnsAsync(aboutModel);
+
+            //Act Ejecutar
+            var actionResult = await controller.Create(createModel);
+
+            //Assert Asegurar
+            var result = actionResult as CreatedAtRouteResult;
+            result!.StatusCode.Should().Be((int) HttpStatusCode.Created);
+            result.Value.Should().Be(aboutModel.Id);
+        }
     }
 }
