@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using JobMagnet.Entities;
-using JobMagnet.Models;
-using JobMagnet.Repository;
+﻿using JobMagnet.Models;
 using JobMagnet.Service;
 using Microsoft.AspNetCore.Mvc;
 
