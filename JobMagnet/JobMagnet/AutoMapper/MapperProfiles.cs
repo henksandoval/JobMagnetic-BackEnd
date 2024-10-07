@@ -8,7 +8,8 @@ namespace JobMagnet.AutoMapper
     {
         public MapperProfiles()
         {
-            CreateMap<AboutEntity, AboutModel>();
+            CreateMap<AboutEntity, AboutModel>().ReverseMap();
+            CreateMap<AboutCreateRequest, AboutEntity>().ReverseMap();
         }
     }
 }
