@@ -1,14 +1,15 @@
 ﻿using JobMagnet.Context;
+using JobMagnet.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobMagnet.Repository
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class AboutRepository<TEntity> : IAboutRepository<TEntity> where TEntity : class
     {
         private readonly JobMagnetDbContext dbContext;
         private readonly DbSet<TEntity> dbSet;
 
-        public Repository(JobMagnetDbContext dbContext)
+        public AboutRepository(JobMagnetDbContext dbContext)
         {
             this.dbContext = dbContext;
             this.dbSet = dbContext.Set<TEntity>();
