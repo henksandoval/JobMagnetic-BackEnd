@@ -2,7 +2,7 @@ using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Controllers;
 using JobMagnet.Models;
-using JobMagnet.Service;
+using JobMagnet.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Net;

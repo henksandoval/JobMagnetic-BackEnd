@@ -4,8 +4,9 @@ using FluentAssertions;
 using JobMagnet.AutoMapper;
 using JobMagnet.Entities;
 using JobMagnet.Models;
-using JobMagnet.Repository;
+using JobMagnet.Repository.Interface;
 using JobMagnet.Service;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 
 namespace JobMagnet.Tests.Service
@@ -13,8 +14,8 @@ namespace JobMagnet.Tests.Service
     public class AboutServiceTests
     {
         private Fixture fixture;
-        private Mapper mapper;
-        private readonly Mock<IRepository<AboutEntity>> repositoryMock;
+        private readonly Mapper mapper;
+        private readonly Mock<IAboutRepository<AboutEntity>> repositoryMock;
         private readonly AboutService service;
 
         public AboutServiceTests()
@@ -22,7 +23,7 @@ namespace JobMagnet.Tests.Service
             fixture = new Fixture();
             var configuration = new MapperConfiguration(configure => { configure.AddProfile<MapperProfiles>(); });
             mapper = new Mapper(configuration);
-            repositoryMock = new Mock<IRepository<AboutEntity>>();
+            repositoryMock = new Mock<IAboutRepository<AboutEntity>>();
             service = new AboutService(mapper,repositoryMock.Object);
         }
 
@@ -41,6 +42,24 @@ namespace JobMagnet.Tests.Service
             //Assert Asegurar
             aboutModel.Should().BeEquivalentTo(expectedModel);
             aboutModel.Id.Should().Be(entity.Id);
+        }
+
+        [Fact]
+        public async Task ShouldSaveARecordWhenARecordIsCreated()
+        {
+            //Arranger Preparar
+            var createAbout = fixture.Create<AboutCreateRequest>();
+
+
+            //Act Ejecutar
+            var aboutModel = service.Create(createAbout);
+            var expectedEntity = mapper.Map<AboutEntity>(createAbout);
+
+
+            //Assert Asegurar
+            repositoryMock.Verify(repository => repository.CreateAsync(It.IsAny<AboutEntity>()), Times.Once());
+            aboutModel.Should().NotBeEquivalentTo(expectedEntity);
+            
         }
     }
 }

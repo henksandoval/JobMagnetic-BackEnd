@@ -1,5 +1,5 @@
 ﻿using JobMagnet.Models;
-using JobMagnet.Service;
+using JobMagnet.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers

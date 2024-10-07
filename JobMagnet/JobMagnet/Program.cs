@@ -1,6 +1,7 @@
 
 using JobMagnet.Context;
 using JobMagnet.Service;
+using JobMagnet.Service.Interface;
 
 namespace JobMagnet
 {
