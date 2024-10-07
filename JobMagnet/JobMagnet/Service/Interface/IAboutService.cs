@@ -1,6 +1,6 @@
 ﻿using JobMagnet.Models;
 
-namespace JobMagnet.Service
+namespace JobMagnet.Service.Interface
 {
     public interface IAboutService
     {

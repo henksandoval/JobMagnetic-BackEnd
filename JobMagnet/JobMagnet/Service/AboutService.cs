@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
 using JobMagnet.Entities;
 using JobMagnet.Models;
-using JobMagnet.Repository;
+using JobMagnet.Repository.Interface;
+using JobMagnet.Service.Interface;
 
 namespace JobMagnet.Service
 {
     public class AboutService : IAboutService
     {
-        private readonly Mapper mapper;
-        private readonly IRepository<AboutEntity> repository;
+        private readonly IMapper mapper;
+        private readonly IAboutRepository<AboutEntity> repository;
 
-        public AboutService(Mapper mapper, IRepository<AboutEntity> repository)
+        public AboutService(IMapper mapper, IAboutRepository<AboutEntity> repository)
         {
             this.mapper = mapper;
             this.repository = repository;
