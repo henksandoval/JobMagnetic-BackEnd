@@ -58,7 +58,7 @@ namespace JobMagnet.Tests.Service
 
             //Assert Asegurar
             repositoryMock.Verify(repository => repository.CreateAsync(It.IsAny<AboutEntity>()), Times.Once());
-            aboutModel.Should().NotBeEquivalentTo(expectedEntity);
+            aboutModel.Should().BeEquivalentTo(expectedEntity);
             
         }
     }
