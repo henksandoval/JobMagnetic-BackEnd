@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JobMagnet.Models;
+using JobMagnet.Service.Interface;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers
 {
@@ -6,14 +8,25 @@ namespace JobMagnet.Controllers
     [Route("api/controller")]
     public class SkillsController : ControllerBase
     {
-        public SkillsController()
-        {          
+        private readonly ISkillService service;
+
+        public SkillsController(ISkillService service)
+        {
+            this.service = service;
         }
 
         [HttpGet]
         public IActionResult GetOk() 
         {
             return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] SkillCreateRequest skillCreateRequest) 
+        {
+            var skillModel = await service.Create(skillCreateRequest);
+            return Ok(skillModel);
+
         }
     }
 }
