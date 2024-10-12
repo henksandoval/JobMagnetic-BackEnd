@@ -1,6 +1,6 @@
 ﻿namespace JobMagnet.Entities
 {
-    public class SkillsEntity
+    public class SkillEntity
     {
         public string Overview {  get; set; }
         public string Rank { get; set; }
