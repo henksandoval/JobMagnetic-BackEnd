@@ -1,5 +1,7 @@
 
 using JobMagnet.Context;
+using JobMagnet.Service;
+using JobMagnet.Service.Interface;
 
 namespace JobMagnet
 {
@@ -15,6 +17,7 @@ namespace JobMagnet
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddTransient<IAboutService, AboutService>();
 
             var app = builder.Build();
 

@@ -1,9 +1,9 @@
-﻿namespace JobMagnet.Entities
+﻿namespace JobMagnet.Models
 {
-    public class AboutEntity
+    public class AboutModel
     {
-        public int Id { get; set; } 
-        public string Description { get; set; } 
+        public int Id { get; set; }
+        public string Description { get; set; }
         public string ImageUrl { get; set; }
         public string Text { get; set; }
         public string Hobbies { get; set; }

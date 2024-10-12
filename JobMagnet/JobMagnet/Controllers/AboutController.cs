@@ -1,4 +1,5 @@
-﻿using JobMagnet.Entities;
+﻿using JobMagnet.Models;
+using JobMagnet.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers
@@ -7,13 +8,31 @@ namespace JobMagnet.Controllers
     [Route("api/controller")]
     public class AboutController : ControllerBase
     {
-        public AboutController() { }
+        private readonly IAboutService service;
 
-        [HttpGet]
-        public ActionResult GetOk()
+        public AboutController(IAboutService service)
         {
-            var aboutEntity = new AboutEntity();
-            return Ok(aboutEntity);
+            this.service = service;
+        }
+
+        [HttpGet("{id}", Name = "GetById")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var aboutModel = await service.GetById(id);
+
+            if (aboutModel is null) 
+            {
+                return NotFound($"Record [{id}] not found");
+            }
+
+            return Ok(aboutModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] AboutCreateRequest aboutCreateRequest)
+        {
+            var aboutModel = await service.Create(aboutCreateRequest);
+            return CreatedAtRoute("GetById", aboutModel.Id);
         }
     }
 }
