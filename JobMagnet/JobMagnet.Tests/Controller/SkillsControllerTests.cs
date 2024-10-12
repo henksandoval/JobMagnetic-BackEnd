@@ -1,7 +1,11 @@
-﻿using FluentAssertions;
+﻿using AutoFixture;
+using FluentAssertions;
 using JobMagnet.Controllers;
+using JobMagnet.Models;
+using JobMagnet.Service.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -9,14 +13,21 @@ namespace JobMagnet.Tests.Controller
 {
     public class SkillsControllerTests
     {
+        private Mock<ISkillService> serviceMock;
+        private readonly Fixture fixture;
+        private SkillsController controller;
+
         public SkillsControllerTests()
         {
+            fixture = new Fixture();
+            serviceMock = new Mock<ISkillService>();
+            controller = new SkillsController(serviceMock.Object);
         }
 
         [Fact]
         public void MustReturnOk()
         {
-            var controller = new SkillsController();
+            //Arranger Preparar
 
             //Act Ejecutar
             var respuesta = controller.GetOk();
@@ -26,6 +37,24 @@ namespace JobMagnet.Tests.Controller
             resultEsperado.Should().NotBeNull();
             resultEsperado!.StatusCode.Should().Be((int)HttpStatusCode.OK);
             resultEsperado.Should().BeEquivalentTo(respuesta);
+        }
+
+        [Fact]
+        public async Task WhenYouCreateASkillYouShouldSaveItAndReturnOk()
+        {
+            //Arranger Preparar
+            var createSkill = fixture.Create<SkillCreateRequest>();
+            var skillModel = fixture.Create<SkillModel>();
+            serviceMock.Setup(skillService => skillService.Create(createSkill));
+
+            //Act Ejecutar
+
+            var actionResult = await controller.Create(createSkill);
+
+            //Assert Asegurar
+            var result = actionResult as OkResult;
+            result!.StatusCode.Should().Be((int)HttpStatusCode.OK);
+
         }
     }
 }
