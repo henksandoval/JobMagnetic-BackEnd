@@ -15,7 +15,7 @@ namespace JobMagnet.Controllers
             this.service = service;
         }
 
-        [HttpGet]
+        [HttpGet("{id}", Name = "GetById")]
         public IActionResult GetOk() 
         {
             return Ok();
@@ -25,7 +25,7 @@ namespace JobMagnet.Controllers
         public async Task<IActionResult> Create([FromBody] SkillCreateRequest skillCreateRequest) 
         {
             var skillModel = await service.Create(skillCreateRequest);
-            return Ok(skillModel);
+            return CreatedAtRoute("GetById", skillModel.Id);
 
         }
     }

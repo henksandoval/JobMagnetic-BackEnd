@@ -43,17 +43,18 @@ namespace JobMagnet.Tests.Controller
         public async Task WhenYouCreateASkillYouShouldSaveItAndReturnOk()
         {
             //Arranger Preparar
-            var createSkill = fixture.Create<SkillCreateRequest>();
+            var skillCreateRequest = fixture.Create<SkillCreateRequest>();
             var skillModel = fixture.Create<SkillModel>();
-            serviceMock.Setup(skillService => skillService.Create(createSkill));
+            serviceMock.Setup(skillService => skillService.Create(skillCreateRequest)).ReturnsAsync(skillModel);
 
             //Act Ejecutar
 
-            var actionResult = await controller.Create(createSkill);
+            var actionResult = await controller.Create(skillCreateRequest);
 
             //Assert Asegurar
-            var result = actionResult as OkResult;
-            result!.StatusCode.Should().Be((int)HttpStatusCode.OK);
+            var result = actionResult as CreatedAtRouteResult;
+            result!.StatusCode.Should().Be((int)HttpStatusCode.Created);
+            result.Value.Should().Be(skillModel.Id);
 
         }
     }
