@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JobMagnet.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers
 {
@@ -9,9 +10,12 @@ namespace JobMagnet.Controllers
     {
         public SummaryController() { }
 
-        public IActionResult GetOk()
+
+        [HttpGet]
+        public IActionResult Get()
         {
-            return Ok();
+            var summaryEntity = new SummaryEntity { About = "Me llamo Alexandra" };
+            return Ok(summaryEntity);
         }
     }
 }
