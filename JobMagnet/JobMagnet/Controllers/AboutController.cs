@@ -8,17 +8,17 @@ namespace JobMagnet.Controllers
     [Route("api/controller")]
     public class AboutController : ControllerBase
     {
-        private readonly IAboutService service;
+        private readonly IAboutService _service;
 
         public AboutController(IAboutService service)
         {
-            this.service = service;
+            _service = service;
         }
 
         [HttpGet("{id}", Name = "GetById")]
         public async Task<IActionResult> GetById(int id)
         {
-            var aboutModel = await service.GetById(id);
+            var aboutModel = await _service.GetById(id);
 
             if (aboutModel is null) 
             {
@@ -31,7 +31,7 @@ namespace JobMagnet.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AboutCreateRequest aboutCreateRequest)
         {
-            var aboutModel = await service.Create(aboutCreateRequest);
+            var aboutModel = await _service.Create(aboutCreateRequest);
             return CreatedAtRoute("GetById", aboutModel.Id);
         }
     }
