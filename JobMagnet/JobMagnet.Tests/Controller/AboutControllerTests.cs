@@ -58,12 +58,12 @@ namespace JobMagnet.Tests.Controller
         public async Task SaveData_ShouldSaveARecord()
         {
             //Arranger Preparar
-            var createModel = fixture.Create<AboutCreateRequest>();
+            var aboutCreateRequest = fixture.Create<AboutCreateRequest>();
             var aboutModel = fixture.Create<AboutModel>();
-            serviceMock.Setup(aboutService => aboutService.Create(createModel)).ReturnsAsync(aboutModel);
+            serviceMock.Setup(aboutService => aboutService.Create(aboutCreateRequest)).ReturnsAsync(aboutModel);
 
             //Act Ejecutar
-            var actionResult = await controller.Create(createModel);
+            var actionResult = await controller.Create(aboutCreateRequest);
 
             //Assert Asegurar
             var result = actionResult as CreatedAtRouteResult;
