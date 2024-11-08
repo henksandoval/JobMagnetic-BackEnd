@@ -6,19 +6,19 @@ namespace JobMagnet.Repository
 {
     public class AboutRepository<TEntity> : IAboutRepository<TEntity> where TEntity : class
     {
-        private readonly JobMagnetDbContext dbContext;
+        private readonly JobMagnetDbContext _dbContext;
         private readonly DbSet<TEntity> dbSet;
 
         public AboutRepository(JobMagnetDbContext dbContext)
         {
-            this.dbContext = dbContext;
-            this.dbSet = dbContext.Set<TEntity>();
+            _dbContext = dbContext;
+            dbSet = dbContext.Set<TEntity>();
         }
 
         public async Task CreateAsync(TEntity entity)
         {
             await dbSet.AddAsync(entity);
-            await dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<TEntity> GetByIdAsync(int id)

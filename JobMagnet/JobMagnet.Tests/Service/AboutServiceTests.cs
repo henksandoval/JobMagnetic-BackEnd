@@ -14,17 +14,14 @@ namespace JobMagnet.Tests.Service
     public class AboutServiceTests
     {
         private Fixture fixture;
-        private readonly Mapper mapper;
         private readonly Mock<IAboutRepository<AboutEntity>> repositoryMock;
         private readonly AboutService service;
 
         public AboutServiceTests()
         {
             fixture = new Fixture();
-            var configuration = new MapperConfiguration(configure => { configure.AddProfile<MapperProfiles>(); });
-            mapper = new Mapper(configuration);
             repositoryMock = new Mock<IAboutRepository<AboutEntity>>();
-            service = new AboutService(mapper,repositoryMock.Object);
+            service = new AboutService(repositoryMock.Object);
         }
 
         [Fact]
@@ -33,11 +30,11 @@ namespace JobMagnet.Tests.Service
             //Arranger Preparar
             var entity = fixture.Create<AboutEntity>();
             repositoryMock.Setup(repository => repository.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(entity);
-            
+
 
             //Act Ejecutar
             var aboutModel = await service.GetById(76);
-            var expectedModel = mapper.Map<AboutModel>(entity);
+            var expectedModel = Mappers.MapAboutModel(entity);
 
             //Assert Asegurar
             aboutModel.Should().BeEquivalentTo(expectedModel);
@@ -49,17 +46,16 @@ namespace JobMagnet.Tests.Service
         {
             //Arranger Preparar
             var createAbout = fixture.Create<AboutCreateRequest>();
-
+            var expectedEntity = Mappers.MapAboutCreate(createAbout);
+            repositoryMock.Setup(r => r.CreateAsync(It.IsAny<AboutEntity>())).Returns(Task.CompletedTask);
 
             //Act Ejecutar
-            var aboutModel = service.Create(createAbout);
-            var expectedEntity = mapper.Map<AboutEntity>(createAbout);
-
+            var aboutModel = await service.Create(createAbout);
 
             //Assert Asegurar
+            var expectedModel = Mappers.MapAboutModel(expectedEntity);
             repositoryMock.Verify(repository => repository.CreateAsync(It.IsAny<AboutEntity>()), Times.Once());
-            aboutModel.Should().BeEquivalentTo(expectedEntity);
-            
+            aboutModel.Should().BeEquivalentTo(expectedModel, options => options.Excluding(x => x.Id));
+            }
         }
     }
-}

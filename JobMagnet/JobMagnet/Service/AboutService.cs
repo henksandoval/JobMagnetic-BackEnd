@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using JobMagnet.AutoMapper;
 using JobMagnet.Entities;
 using JobMagnet.Models;
 using JobMagnet.Repository.Interface;
@@ -8,27 +9,24 @@ namespace JobMagnet.Service
 {
     public class AboutService : IAboutService
     {
-        private readonly IMapper mapper;
-        private readonly IAboutRepository<AboutEntity> repository;
+        private readonly IAboutRepository<AboutEntity> _repository;
 
-        public AboutService(IMapper mapper, IAboutRepository<AboutEntity> repository)
+        public AboutService(IAboutRepository<AboutEntity> repository)
         {
-            this.mapper = mapper;
-            this.repository = repository;
+            _repository = repository;
         }
 
         public async Task<AboutModel> Create(AboutCreateRequest aboutCreateRequest)
         {
-            var aboutEntity = mapper.Map<AboutEntity>(aboutCreateRequest);
-            await repository.CreateAsync(aboutEntity);
-            var aboutModel = mapper.Map<AboutModel>(aboutEntity);
+            var aboutEntity = Mappers.MapAboutCreate(aboutCreateRequest);
+            await _repository.CreateAsync(aboutEntity);
+            var aboutModel = Mappers.MapAboutModel(aboutEntity);
             return aboutModel;
         }
-
         public async Task<AboutModel> GetById(int id)
         {
-            var aboutEntity = await repository.GetByIdAsync(id);
-            var aboutModel = mapper.Map<AboutModel>(aboutEntity);
+            var aboutEntity = await _repository.GetByIdAsync(id);
+            var aboutModel = Mappers.MapAboutModel(aboutEntity);
             return aboutModel;
         }
     }
