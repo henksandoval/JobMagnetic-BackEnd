@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using JobMagnet.AutoMapper;
 using JobMagnet.Entities;
 using JobMagnet.Models;
 using JobMagnet.Repository.Interface;
@@ -8,21 +9,18 @@ namespace JobMagnet.Service
 {
     public class SkillService : ISkillService
     {
-        private readonly IMapper mapper;
-        private readonly ISkillRepository<SkillEntity> repository;
+        private readonly ISkillRepository<SkillEntity> _repository;
 
-        public SkillService(IMapper mapper, ISkillRepository<SkillEntity> repository)
+        public SkillService(ISkillRepository<SkillEntity> repository)
         {
-            this.mapper = mapper;
-            this.repository = repository;
+            _repository = repository;
         }
-
         public async Task<SkillModel> Create(SkillCreateRequest skillCreateRequest)
         {
-            var skillEntity = mapper.Map<SkillEntity>(skillCreateRequest);
-            await repository.CreateAsync(skillEntity);
+            var skillEntity = Mappers.MapSkillCreate(skillCreateRequest);
+            await _repository.CreateAsync(skillEntity);
 
-            var skillModel = mapper.Map<SkillModel>(skillEntity);
+            var skillModel = Mappers.MapSkillModel(skillEntity);
             return skillModel;
         }
     }

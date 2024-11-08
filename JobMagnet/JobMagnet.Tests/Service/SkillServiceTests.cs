@@ -14,18 +14,13 @@ namespace JobMagnet.Tests.Service
     public class SkillServiceTests
     {
         private readonly Fixture fixture;
-        private readonly Mapper mapper;
         private readonly Mock<ISkillRepository<SkillEntity>> repositoryMock;
         private readonly SkillService service;
-
         public SkillServiceTests()
         {
             fixture = new Fixture();
-            var configuration = new MapperConfiguration(configure => { configure.AddProfile<MapperProfiles>(); });
-            mapper = new Mapper(configuration);
             repositoryMock = new Mock<ISkillRepository<SkillEntity>>();
-            service = new SkillService(mapper, repositoryMock.Object);
-
+            service = new SkillService(repositoryMock.Object);
         }
 
         [Fact]
@@ -33,13 +28,16 @@ namespace JobMagnet.Tests.Service
         {
             //Arranger Preparar
             var createSkill = fixture.Create<SkillCreateRequest>();
+            var expectedEntity = Mappers.MapSkillCreate(createSkill);
+            repositoryMock.Setup(r => r.CreateAsync(It.IsAny<SkillEntity>())).Returns(Task.CompletedTask);
+
             //Act Ejecutar
             var skillModel = await service.Create(createSkill);
 
             //Assert Asegurar
-            var expectedEntity = mapper.Map<SkillEntity>(createSkill);
+            var expectedModel = Mappers.MapSkillModel(expectedEntity);
             repositoryMock.Verify(reposity => reposity.CreateAsync(It.IsAny<SkillEntity>()), Times.Once());
-            skillModel.Should().BeEquivalentTo(expectedEntity);
+            skillModel.Should().BeEquivalentTo(expectedModel, options => options.Excluding(x => x.Id));
         }
     }
 }
