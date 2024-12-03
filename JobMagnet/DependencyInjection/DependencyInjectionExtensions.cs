@@ -14,14 +14,9 @@ public static class DependencyInjectionExtensions
         services.AddTransient<IAboutService, AboutService>();
         services.AddTransient<ISkillService, SkillService>();
         services.AddTransient<ISummaryService, SummaryService>();
-        
-        // Register all IREPOSITORY with the specific type
-        
         services.AddScoped<IAboutRepository<AboutEntity>, AboutRepository<AboutEntity>>();
         services.AddScoped<ISkillRepository<SkillEntity>, SkillRepository<SkillEntity>>();
-        services.AddScoped<ISummaryRepository<SummaryEntity>, SummaryRepository<SummaryEntity>>();
 
-        
         services.AddLogging();
         return services;
     }
