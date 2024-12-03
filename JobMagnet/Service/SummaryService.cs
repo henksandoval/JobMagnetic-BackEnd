@@ -13,4 +13,6 @@ public class SummaryService : ISummaryService
     {
         throw new NotImplementedException();
     }
+
+    public async Task<SummaryModel> Create(SummaryCreateRequest summaryCreateRequest) => throw new NotImplementedException();
 }

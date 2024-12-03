@@ -5,9 +5,11 @@ VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobMagnet", "JobMagnet\JobMagnet.csproj", "{74559ED7-5CEF-4392-8E6D-E0CA15954154}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{5B955F3D-D576-4F47-A812-30666355D1F3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5B955F3D-D576-4F47-A812-30666355D1F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Tests", "JobMagnet.Tests\JobMagnet.Tests.csproj", "{78BFF3C1-96D2-482A-95BE-5846EDBC1CF9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4CF9134D-2530-4614-8DAC-757DD4CDB2D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{78BFF3C1-96D2-482A-95BE-5846EDBC1CF9} = {5B955F3D-D576-4F47-A812-30666355D1F3}
+		{74559ED7-5CEF-4392-8E6D-E0CA15954154} = {4CF9134D-2530-4614-8DAC-757DD4CDB2D8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {32A35D63-83C2-443E-8430-B5CBE63090F8}
