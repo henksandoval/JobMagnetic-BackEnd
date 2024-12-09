@@ -53,6 +53,9 @@ jobs:
           OpenTelemetry__Enabled: 'false'
           Serilog__MinimumLevel__Default: 'Critical'
 
+      - name: Print sonar-project.properties
+        run: cat sonar-project.properties
+
       - name: SonarQube Analysis
         working-directory: ${{ github.workspace }}
         env:
@@ -60,5 +63,5 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: bash
         run: |
-          ~/.sonar/scanner/dotnet-sonarscanner begin /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          ~/.sonar/scanner/dotnet-sonarscanner begin /d:sonar.login="${{ secrets.SONAR_TOKEN }}" -Dproject.settings=sonar-project.properties
           ~/.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
