@@ -33,10 +33,9 @@ jobs:
 
       - name: Install SonarQube scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-        shell: bash
         run: |
-          mkdir -p ~/.sonar/scanner
-          dotnet tool update dotnet-sonarscanner --tool-path ~/.sonar/scanner
+          dotnet tool install --global dotnet-sonarscanner
+          export PATH="$PATH:/home/runner/.dotnet/tools"
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v3
@@ -48,10 +47,17 @@ jobs:
 
       - name: Run Unit Tests and Collect Coverage
         working-directory: ${{ github.workspace }}
-        run: dotnet test JobMagnet.Tests/JobMagnet.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=JobMagnet.Tests/coverage.opencover.xml
+        run: dotnet test JobMagnet.Tests/JobMagnet.Tests.csproj --no-build \
+          /p:CollectCoverage=true \
+          /p:CoverletOutputFormat=opencover \
+          /p:CoverletOutput=JobMagnet.Tests/coverage.opencover.xml
         env:
           OpenTelemetry__Enabled: 'false'
           Serilog__MinimumLevel__Default: 'Critical'
+
+      - name: Verify Coverage Report
+        run: |
+          ls -l JobMagnet.Tests/coverage.opencover.xml
 
       - name: SonarQube Analysis
         env:
@@ -59,6 +65,11 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: bash
         run: |
-          ~/.sonar/scanner/dotnet-sonarscanner begin /k:"henksandoval_JobMagnetic-BackEnd" /o:"henksandoval" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          export PATH="$PATH:/home/runner/.dotnet/tools"
+          dotnet-sonarscanner begin /k:"henksandoval_JobMagnetic-BackEnd" /o:"henksandoval" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.projectBaseDir="${{ github.workspace }}" \
+            /d:sonar.coverageReportPaths="JobMagnet.Tests/coverage.opencover.xml"
           dotnet build
-          ~/.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
