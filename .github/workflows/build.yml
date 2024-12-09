@@ -46,9 +46,13 @@ jobs:
       - name: Restore and build project
         run: dotnet build
 
+      - name: List files in tests directory
+        working-directory: ${{ github.workspace }}
+        run: ls -l tests/JobMagnet.Tests/
+
       - name: Run Unit Tests and Collect Coverage
         working-directory: ${{ github.workspace }}
-        run: dotnet test tests/JobMagnet.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=$(Build.SourcesDirectory)/tests/CarRentalApi.Tests/
+        run: dotnet test JobMagnet.Tests/JobMagnet.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=JobMagnet.Tests/coverage.opencover.xml
         env:
           OpenTelemetry__Enabled: 'false'
           Serilog__MinimumLevel__Default: 'Critical'
