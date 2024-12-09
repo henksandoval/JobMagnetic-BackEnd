@@ -46,9 +46,9 @@ jobs:
       - name: Restore and build project
         run: dotnet build
 
-      - name: List files in tests directory
+      - name: List all files and directories recursively
         working-directory: ${{ github.workspace }}
-        run: ls -l tests/JobMagnet.Tests/
+        run: ls -lR
 
       - name: Run Unit Tests and Collect Coverage
         working-directory: ${{ github.workspace }}
