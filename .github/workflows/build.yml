@@ -47,7 +47,8 @@ jobs:
         run: dotnet build
 
       - name: Run Unit Tests and Collect Coverage
-        run: dotnet test $(Build.SourcesDirectory)/tests/JobMagnet.Tests/JobMagnet.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=$(Build.SourcesDirectory)/tests/CarRentalApi.Tests/
+        working-directory: ${{ github.workspace }}
+        run: dotnet test tests/JobMagnet.Tests/JobMagnet.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=$(Build.SourcesDirectory)/tests/CarRentalApi.Tests/
         env:
           OpenTelemetry__Enabled: 'false'
           Serilog__MinimumLevel__Default: 'Critical'
