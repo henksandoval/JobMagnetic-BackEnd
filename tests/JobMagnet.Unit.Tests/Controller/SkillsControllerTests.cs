@@ -9,7 +9,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Net;
-namespace JobMagnet.Tests.Controller
+namespace JobMagnet.Unit.Tests.Controller
 {
     public class SkillsControllerTests
     {

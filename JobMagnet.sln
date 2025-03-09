@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet", "sources\JobMagnet\JobMagnet.csproj", "{B0D2AA46-BC50-4EA3-972A-5A01A6C0C686}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Tests", "tests\JobMagnet.Tests\JobMagnet.Tests.csproj", "{9796D0F5-CFCD-4C3D-A002-8FD416C4FACF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Unit.Tests", "tests\JobMagnet.Unit.Tests\JobMagnet.Unit.Tests.csproj", "{9796D0F5-CFCD-4C3D-A002-8FD416C4FACF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

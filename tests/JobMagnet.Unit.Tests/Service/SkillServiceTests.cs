@@ -9,7 +9,7 @@ using JobMagnet.Service;
 using Moq;
 
 
-namespace JobMagnet.Tests.Service
+namespace JobMagnet.Unit.Tests.Service
 {
     public class SkillServiceTests
     {

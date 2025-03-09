@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Net;
 
-namespace JobMagnet.Tests.Controller
+namespace JobMagnet.Unit.Tests.Controller
 {
     public class AboutControllerTests
     {
