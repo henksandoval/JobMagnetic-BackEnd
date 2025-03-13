@@ -57,7 +57,7 @@ jobs:
           /p:CollectCoverage=true \
           /p:CollectCoverage=cobertura \
 
-          mv TestResults/*/coverage.cobertura.xml TestResults/Coverage/coverage.cobertura.xml
+          mv TestResults/*/coverage.cobertura.xml ./coverage.cobertura.xml
 
       - name: SonarQube Analysis
         env:
@@ -67,7 +67,7 @@ jobs:
           /k:"henksandoval_JobMagnetic-BackEnd" \
           /o:"henksandoval" \
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-          /d:sonar.cs.cobertura.reportPaths=tests/JobMagnet.Unit.Tests/TestResults/Coverage/coverage.cobertura.xml \
+          /d:sonar.cs.cobertura.reportPaths=tests/JobMagnet.Unit.Tests/coverage.cobertura.xml \
           /d:sonar.coverage.exclusions="**Tests*.cs"
           
           dotnet build --no-incremental
