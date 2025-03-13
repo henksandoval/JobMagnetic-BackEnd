@@ -57,14 +57,18 @@ jobs:
             /p:CoverletOutputFormat=opencover
 
       - name: SonarQube Analysis
+        working-directory: tests/JobMagnet.Unit.Tests
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
+          echo "Current directory"
+          PWD
+
           dotnet sonarscanner begin \
             /k:"henksandoval_JobMagnetic-BackEnd" \
             /o:"henksandoval" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.cs.opencover.reportsPaths="tests/JobMagnet.Unit.Tests/coverage.opencover.xml" \
+            /d:sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml" \
             /d:sonar.language=cs \
             /d:sonar.sourceEncoding=UTF-8
 
