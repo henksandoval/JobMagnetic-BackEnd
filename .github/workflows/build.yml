@@ -50,19 +50,16 @@ jobs:
       - name: Run Unit Tests and Generate Coverage
         working-directory: tests/JobMagnet.Unit.Tests
         run: |
-          rm -rf TestResults coverage.cobertura.xml
-      
+          rm -rf coverage.cobertura.xml
           dotnet test JobMagnet.Unit.Tests.csproj \
-          --no-build \
-          --settings coverlet.runsettings \
-          /p:CollectCoverage=true \
-          /p:CoverletOutputFormat=cobertura \
-          /p:CoverletOutput=./coverage.cobertura.xml \
-          /p:DeterministicSourcePaths=true \
-          /p:UseSourceLink=true
-      
-          echo "Contenido del coverage file:"
-          cat coverage.cobertura.xml
+            --configuration Debug \
+            --no-build \
+            --settings coverlet.runsettings \
+            /p:CollectCoverage=true \
+            /p:CoverletOutput=./coverage.cobertura.xml \
+            /p:CoverletOutputFormat=cobertura \
+            /p:DeterministicSourcePaths=true \
+            /p:UseSourceLink=true
 
       - name: Validate Coverage File
         run: |
@@ -76,11 +73,16 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet sonarscanner begin \
-          /k:"henksandoval_JobMagnetic-BackEnd" \
-          /o:"henksandoval" \
-          /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-          /d:sonar.cs.cobertura.reportPaths=tests/JobMagnet.Unit.Tests/coverage.cobertura.xml \
-          /d:sonar.coverage.exclusions="**Tests*.cs"
+            /k:"henksandoval_JobMagnetic-BackEnd" \
+            /o:"henksandoval" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.cs.cobertura.reportPaths=tests/JobMagnet.Unit.Tests/coverage.cobertura.xml \
+            /d:sonar.language=cs \
+            /d:sonar.dotnet.excludeTestProjects=true \
+            /d:sonar.sources=sources/JobMagnet \
+            /d:sonar.tests=tests/JobMagnet.Unit.Tests \
+            /d:sonar.sourceEncoding=UTF-8 \
+            /d:sonar.verbose=true
           
           dotnet build --no-incremental
           dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
