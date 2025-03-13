@@ -48,8 +48,8 @@ jobs:
       - name: Run Unit Tests and Collect Coverage
         working-directory: ${{ github.workspace }}
         run: |
-          dotnet test ./tests/JobMagnet.Unit.Tests/JobMagnet.Unit.Tests.csproj /p:CollectCoverage=true
-          echo "Listing files in JobMagnet.Unit.Tests directory:"
+          dotnet test ./tests/JobMagnet.Unit.Tests/JobMagnet.Unit.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./tests/JobMagnet.Unit.Tests/coverage.opencover.xml 
+          echo "Listing files in JobMagnet.Unit.Tests directory:" 
           ls -l ./tests/JobMagnet.Unit.Tests
         env:
           OpenTelemetry__Enabled: 'false'
@@ -66,6 +66,6 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.projectBaseDir="${{ github.workspace }}" \
-            /d:sonar.coverageReportPaths="./tests/JobMagnet.Unit.Tests/coverage.json"
+            /d:sonar.coverageReportPaths="./tests/JobMagnet.Unit.Tests/coverage.opencover.xml"
           dotnet build
           dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
