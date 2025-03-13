@@ -5,6 +5,9 @@
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
           <Format>cobertura</Format>
+          <IncludeTestAssembly>false</IncludeTestAssembly>
+          <Include>[JobMagnet.*]*</Include>
+          <Exclude>[*.Tests]*</Exclude>
         </Configuration>
       </DataCollector>
     </DataCollectors>

@@ -48,13 +48,14 @@ jobs:
         run: dotnet build
 
       - name: Run Unit Tests and Generate Coverage
+        working-directory: tests/JobMagnet.Unit.Tests
         run: |
-          dotnet test ./tests/JobMagnet.Unit.Tests/JobMagnet.Unit.Tests.csproj \
+          dotnet test JobMagnet.Unit.Tests.csproj \
             --no-build \
-            --collect:"XPlat Code Coverage" \
             --settings coverlet.runsettings \
+            --collect:"XPlat Code Coverage" \
             /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=cobertura \
+            /p:CollectCoverage=cobertura \
             /p:CoverletOutput=./TestResults/Coverage/
 
       - name: SonarQube Analysis
