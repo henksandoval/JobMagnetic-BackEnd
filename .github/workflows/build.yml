@@ -48,7 +48,7 @@ jobs:
       - name: Run Unit Tests and Collect Coverage
         working-directory: ${{ github.workspace }}
         run: |
-          dotnet test ./tests/JobMagnet.Unit.Tests/JobMagnet.Unit.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=${{ github.workspace }}/tests/JobMagnet.Unit.Tests/coverage.opencover.xml 
+          dotnet test ./tests/JobMagnet.Unit.Tests/JobMagnet.Unit.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=${{ github.workspace }}/tests/JobMagnet.Unit.Tests/coverage.cobertura.xml
           echo "Listing files in JobMagnet.Unit.Tests directory:" 
           ls -l ${{ github.workspace }}/tests/JobMagnet.Unit.Tests
         env:
@@ -66,6 +66,6 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.projectBaseDir="${{ github.workspace }}" \
-            /d:sonar.coverageReportPaths="./tests/JobMagnet.Unit.Tests/coverage.opencover.xml"
+            /d:sonar.coverageReportPaths="./tests/JobMagnet.Unit.Tests/coverage.cobertura.xml"
           dotnet build
           dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
