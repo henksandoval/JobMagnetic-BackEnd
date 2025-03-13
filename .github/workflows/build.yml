@@ -71,6 +71,7 @@ jobs:
       - name: SonarQube Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          COVERAGE_PATH: ${{ github.workspace }}/tests/JobMagnet.Unit.Tests/coverage.cobertura.xml
         run: |
           echo "=== Validando directorios y existencia del archivo de cobertura ==="
           
