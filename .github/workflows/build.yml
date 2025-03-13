@@ -48,7 +48,7 @@ jobs:
       - name: Run Unit Tests and Collect Coverage
         working-directory: ${{ github.workspace }}
         run: |
-          dotnet test .\tests\JobMagnet.Unit.Tests\JobMagnet.Unit.Tests.csproj /p:CollectCoverage=true
+          dotnet test ./tests/JobMagnet.Unit.Tests/JobMagnet.Unit.Tests.csproj /p:CollectCoverage=true
           echo "Listing files in JobMagnet.Unit.Tests directory:"
           ls -l ./tests/JobMagnet.Unit.Tests
         env:
