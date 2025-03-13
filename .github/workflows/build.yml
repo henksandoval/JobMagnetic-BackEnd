@@ -50,14 +50,28 @@ jobs:
       - name: Run Unit Tests and Generate Coverage
         working-directory: tests/JobMagnet.Unit.Tests
         run: |
+          rm -rf TestResults coverage.cobertura.xml
+
           dotnet test JobMagnet.Unit.Tests.csproj \
           --no-build \
           --settings coverlet.runsettings \
-          --collect:"XPlat Code Coverage" \
           /p:CollectCoverage=true \
-          /p:CollectCoverage=cobertura \
+          /p:CoverletOutputFormat=cobertura \
+          /p:CoverletOutput=./coverage.cobertura.xml \
+          /p:MergeWith=./coverage.cobertura.xml \
+          /p:DeterministicSourcePaths=true
 
           mv TestResults/*/coverage.cobertura.xml ./coverage.cobertura.xml
+
+          ls -la
+          cat coverage.cobertura.xml | head -n 50
+
+      - name: Validate Coverage File
+        run: |
+          echo "Path coverage file:"
+          realpath tests/JobMagnet.Unit.Tests/coverage.cobertura.xml
+          
+          head -n 10 tests/JobMagnet.Unit.Tests/coverage.cobertura.xml
 
       - name: SonarQube Analysis
         env:
