@@ -47,26 +47,25 @@ jobs:
       - name: Restore and build project
         run: dotnet build
 
-      - name: Run Unit Tests and Collect Coverage
-        working-directory: ${{ github.workspace }}
+      - name: Run Unit Tests and Generate Coverage
         run: |
-          dotnet test --collect:"XPlat Code Coverage" --results-directory TestResults/ --logger trx
-          # Convertir el reporte a formato SonarQube
-          dotnet tool install --global dotnet-reportgenerator-globaltool
-          reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:coveragereport -reporttypes:Cobertura
+          dotnet test ./tests/JobMagnet.Unit.Tests/JobMagnet.Unit.Tests.csproj \
+            --no-build \
+            --collect:"XPlat Code Coverage" \
+            --settings coverlet.runsettings \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=cobertura \
+            /p:CoverletOutput=./TestResults/Coverage/
 
       - name: SonarQube Analysis
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet sonarscanner begin \
             /k:"henksandoval_JobMagnetic-BackEnd" \
             /o:"henksandoval" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.cs.cobertura.reportPaths=coveragereport/Cobertura.xml \
-            /d:sonar.coverage.exclusions="**Tests*.cs"
-
-          dotnet build --no-incremental
+            /d:sonar.cs.cobertura.reportPaths=TestResults/Coverage/coverage.cobertura.xml
           
+          dotnet build --no-incremental
           dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
