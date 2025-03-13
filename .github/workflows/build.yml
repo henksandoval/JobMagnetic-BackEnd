@@ -51,20 +51,18 @@ jobs:
         working-directory: tests/JobMagnet.Unit.Tests
         run: |
           rm -rf TestResults coverage.cobertura.xml
-
+      
           dotnet test JobMagnet.Unit.Tests.csproj \
           --no-build \
           --settings coverlet.runsettings \
           /p:CollectCoverage=true \
           /p:CoverletOutputFormat=cobertura \
           /p:CoverletOutput=./coverage.cobertura.xml \
-          /p:MergeWith=./coverage.cobertura.xml \
-          /p:DeterministicSourcePaths=true
-
-          mv TestResults/*/coverage.cobertura.xml ./coverage.cobertura.xml
-
-          ls -la
-          cat coverage.cobertura.xml | head -n 50
+          /p:DeterministicSourcePaths=true \
+          /p:UseSourceLink=true
+      
+          echo "Contenido del coverage file:"
+          cat coverage.cobertura.xml
 
       - name: Validate Coverage File
         run: |
