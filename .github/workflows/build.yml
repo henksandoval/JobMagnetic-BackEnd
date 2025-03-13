@@ -50,64 +50,24 @@ jobs:
       - name: Run Unit Tests and Generate Coverage
         working-directory: tests/JobMagnet.Unit.Tests
         run: |
-          rm -rf coverage.cobertura.xml
           dotnet test JobMagnet.Unit.Tests.csproj \
-            --configuration Debug \
             --no-build \
-            --settings coverlet.runsettings \
             /p:CollectCoverage=true \
-            /p:CoverletOutput=./coverage.cobertura.xml \
-            /p:CoverletOutputFormat=cobertura \
-            /p:DeterministicSourcePaths=true \
-            /p:UseSourceLink=true
-
-      - name: Validate Coverage File
-        run: |
-          echo "Path coverage file:"
-          realpath tests/JobMagnet.Unit.Tests/coverage.cobertura.xml
-          
-          head -n 10 tests/JobMagnet.Unit.Tests/coverage.cobertura.xml
+            /p:CoverletOutput=./tests/JobMagnet.Unit.Tests/coverage.opencover.xml \
+            /p:CoverletOutputFormat=opencover
 
       - name: SonarQube Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          COVERAGE_PATH: ${{ github.workspace }}/tests/JobMagnet.Unit.Tests/coverage.cobertura.xml
         run: |
-          echo "=== Validando directorios y existencia del archivo de cobertura ==="
-          
-          echo "Directorio actual:"
-          pwd
-          
-          echo "Archivos en el directorio actual:"
-          ls -la
-          
-          echo "Archivos en el directorio de pruebas:"
-          ls -la tests/JobMagnet.Unit.Tests
-          
-          echo "Verificando la existencia de coverage.cobertura.xml..."
-          if [ -f "tests/JobMagnet.Unit.Tests/coverage.cobertura.xml" ]; then
-            echo "Archivo de cobertura encontrado:"
-            realpath tests/JobMagnet.Unit.Tests/coverage.cobertura.xml
-          else
-            echo "Error: El archivo de cobertura no existe en la ruta especificada."
-            exit 1
-          fi
-          
-          echo "=== Iniciando análisis de SonarQube ==="
           dotnet sonarscanner begin \
             /k:"henksandoval_JobMagnetic-BackEnd" \
             /o:"henksandoval" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.cs.cobertura.reportPaths=tests/JobMagnet.Unit.Tests/coverage.cobertura.xml \
+            /d:sonar.cs.opencover.reportsPaths="tests/JobMagnet.Unit.Tests/coverage.opencover.xml" \
             /d:sonar.language=cs \
-            /d:sonar.dotnet.excludeTestProjects=true \
-            /d:sonar.sources=sources/JobMagnet \
-            /d:sonar.tests=tests/JobMagnet.Unit.Tests \
-            /d:sonar.sourceEncoding=UTF-8 \
-            /d:sonar.verbose=true
+            /d:sonar.sourceEncoding=UTF-8
 
-          echo "=== Compilando proyecto ==="
           dotnet build --no-incremental
-          
-          echo "=== Finalizando análisis de SonarQube ==="
+
           dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
