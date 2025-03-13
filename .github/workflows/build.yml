@@ -51,22 +51,24 @@ jobs:
         working-directory: tests/JobMagnet.Unit.Tests
         run: |
           dotnet test JobMagnet.Unit.Tests.csproj \
-            --no-build \
-            --settings coverlet.runsettings \
-            --collect:"XPlat Code Coverage" \
-            /p:CollectCoverage=true \
-            /p:CollectCoverage=cobertura \
-            /p:CoverletOutput=./TestResults/Coverage/
+          --no-build \
+          --settings coverlet.runsettings \
+          --collect:"XPlat Code Coverage" \
+          /p:CollectCoverage=true \
+          /p:CollectCoverage=cobertura \
+
+          mv TestResults/*/coverage.cobertura.xml TestResults/Coverage/coverage.cobertura.xml
 
       - name: SonarQube Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet sonarscanner begin \
-            /k:"henksandoval_JobMagnetic-BackEnd" \
-            /o:"henksandoval" \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.cs.cobertura.reportPaths=TestResults/Coverage/coverage.cobertura.xml
+          /k:"henksandoval_JobMagnetic-BackEnd" \
+          /o:"henksandoval" \
+          /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+          /d:sonar.cs.cobertura.reportPaths=tests/JobMagnet.Unit.Tests/TestResults/Coverage/coverage.cobertura.xml \
+          /d:sonar.coverage.exclusions="**Tests*.cs"
           
           dotnet build --no-incremental
           dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
