@@ -48,13 +48,20 @@ jobs:
       - name: Run Unit Tests and Collect Coverage
         working-directory: ${{ github.workspace }}
         run: |
-          dotnet test ./tests/JobMagnet.Unit.Tests/JobMagnet.Unit.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./tests/JobMagnet.Unit.Tests/coverage.opencover.xml --logger:trx
-          dotnet test ./tests/JobMagnet.Unit.Tests/JobMagnet.Unit.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./tests/JobMagnet.Unit.Tests/coverage.opencover.xml 
+          dotnet test ./tests/JobMagnet.Unit.Tests/JobMagnet.Unit.Tests.csproj --no-build --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./tests/JobMagnet.Unit.Tests/coverage.opencover.xml 
           echo "Listing files in JobMagnet.Unit.Tests directory:" 
           ls -l ./tests/JobMagnet.Unit.Tests
         env:
           OpenTelemetry__Enabled: 'false'
           Serilog__MinimumLevel__Default: 'Critical'
+
+      - name: Move Coverage Report to Known Location
+        run: |
+          COVERAGE_FILE=$(find ./tests/JobMagnet.Unit.Tests/TestResults -name "coverage.opencover.xml" | head -n 1)
+          echo "Found coverage.opencover.xml at: $COVERAGE_FILE"
+          mv "$COVERAGE_FILE" ./tests/JobMagnet.Unit.Tests/coverage.opencover.xml
+          echo "Moved coverage.opencover.xml to ./tests/JobMagnet.Unit.Tests/"
+        shell: bash
 
       - name: Verify Coverage Report
         run: |
@@ -71,6 +78,6 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.projectBaseDir="${{ github.workspace }}" \
-            /d:sonar.coverageReportPaths=".tests/JobMagnet.Unit.Tests/coverage.opencover.xml"
+            /d:sonar.coverageReportPaths="./tests/JobMagnet.Unit.Tests/coverage.opencover.xml"
           dotnet build
           dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
