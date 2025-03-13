@@ -32,7 +32,6 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar-scanner-
 
       - name: Install SonarQube scanner
-        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         run: |
           dotnet tool install --global dotnet-sonarscanner
           export PATH="$PATH:/home/runner/.dotnet/tools"
@@ -48,12 +47,26 @@ jobs:
       - name: Run Unit Tests and Collect Coverage
         working-directory: ${{ github.workspace }}
         run: |
-          dotnet test ./tests/JobMagnet.Unit.Tests/JobMagnet.Unit.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=${{ github.workspace }}/tests/JobMagnet.Unit.Tests/coverage.cobertura.xml
+          dotnet test ./tests/JobMagnet.Unit.Tests/JobMagnet.Unit.Tests.csproj --no-build \
+          /p:CollectCoverage=true \
+          /p:CoverletOutputFormat=cobertura \
+          /p:CoverletOutput=${{ github.workspace }}/tests/JobMagnet.Unit.Tests/coverage.cobertura.xml
           echo "Listing files in JobMagnet.Unit.Tests directory:" 
           ls -l ${{ github.workspace }}/tests/JobMagnet.Unit.Tests
+          echo "Content of coverage.cobertura.xml:"
+          cat ${{ github.workspace }}/tests/JobMagnet.Unit.Tests/coverage.cobertura.xml
         env:
           OpenTelemetry__Enabled: 'false'
           Serilog__MinimumLevel__Default: 'Critical'
+
+      - name: Validate Coverage Report
+        run: |
+          if grep -q "<coverage" ${{ github.workspace }}/tests/JobMagnet.Unit.Tests/coverage.cobertura.xml; then
+            echo "Coverage file is valid."
+          else
+            echo "Error: Coverage file is invalid or not in cobertura format." >&2
+            exit 1
+          fi
 
       - name: SonarQube Analysis
         env:
