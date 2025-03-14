@@ -3,13 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobMagnet", "JobMagnet\JobMagnet.csproj", "{74559ED7-5CEF-4392-8E6D-E0CA15954154}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5B955F3D-D576-4F47-A812-30666355D1F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Tests", "JobMagnet.Tests\JobMagnet.Tests.csproj", "{78BFF3C1-96D2-482A-95BE-5846EDBC1CF9}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4CF9134D-2530-4614-8DAC-757DD4CDB2D8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sources", "sources", "{4CF9134D-2530-4614-8DAC-757DD4CDB2D8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{A3634DF4-6412-45EA-ACFC-E4DECA1D6D63}"
 EndProject
@@ -18,28 +14,32 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\build.yml = .github\workflows\build.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet", "sources\JobMagnet\JobMagnet.csproj", "{B0D2AA46-BC50-4EA3-972A-5A01A6C0C686}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Unit.Tests", "tests\JobMagnet.Unit.Tests\JobMagnet.Unit.Tests.csproj", "{9796D0F5-CFCD-4C3D-A002-8FD416C4FACF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{74559ED7-5CEF-4392-8E6D-E0CA15954154}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{74559ED7-5CEF-4392-8E6D-E0CA15954154}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{74559ED7-5CEF-4392-8E6D-E0CA15954154}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{74559ED7-5CEF-4392-8E6D-E0CA15954154}.Release|Any CPU.Build.0 = Release|Any CPU
-		{78BFF3C1-96D2-482A-95BE-5846EDBC1CF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{78BFF3C1-96D2-482A-95BE-5846EDBC1CF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{78BFF3C1-96D2-482A-95BE-5846EDBC1CF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{78BFF3C1-96D2-482A-95BE-5846EDBC1CF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0D2AA46-BC50-4EA3-972A-5A01A6C0C686}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0D2AA46-BC50-4EA3-972A-5A01A6C0C686}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0D2AA46-BC50-4EA3-972A-5A01A6C0C686}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0D2AA46-BC50-4EA3-972A-5A01A6C0C686}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9796D0F5-CFCD-4C3D-A002-8FD416C4FACF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9796D0F5-CFCD-4C3D-A002-8FD416C4FACF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9796D0F5-CFCD-4C3D-A002-8FD416C4FACF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9796D0F5-CFCD-4C3D-A002-8FD416C4FACF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{78BFF3C1-96D2-482A-95BE-5846EDBC1CF9} = {5B955F3D-D576-4F47-A812-30666355D1F3}
-		{74559ED7-5CEF-4392-8E6D-E0CA15954154} = {4CF9134D-2530-4614-8DAC-757DD4CDB2D8}
 		{4C5D3C61-DB64-4664-B973-9457DB840D21} = {A3634DF4-6412-45EA-ACFC-E4DECA1D6D63}
+		{B0D2AA46-BC50-4EA3-972A-5A01A6C0C686} = {4CF9134D-2530-4614-8DAC-757DD4CDB2D8}
+		{9796D0F5-CFCD-4C3D-A002-8FD416C4FACF} = {5B955F3D-D576-4F47-A812-30666355D1F3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {32A35D63-83C2-443E-8430-B5CBE63090F8}

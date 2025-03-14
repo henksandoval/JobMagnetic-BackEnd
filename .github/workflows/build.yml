@@ -28,14 +28,16 @@ jobs:
           path: |
             ~/.sonar/cache
             ~/.sonar/scanner
-          key: ${{ runner.os }}-sonar-scanner-${{ hashFiles('**/pom.xml', '**/build.gradle', '**/package-lock.json', '**/composer.lock') }}
+          key: ${{ runner.os }}-sonar-scanner-${{ hashFiles('**/*.csproj') }}
           restore-keys: ${{ runner.os }}-sonar-scanner-
 
       - name: Install SonarQube scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         run: |
           dotnet tool install --global dotnet-sonarscanner
-          export PATH="$PATH:/home/runner/.dotnet/tools"
+
+      - name: Add SonarScanner to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v3
@@ -45,31 +47,27 @@ jobs:
       - name: Restore and build project
         run: dotnet build
 
-      - name: Run Unit Tests and Collect Coverage
-        working-directory: ${{ github.workspace }}
+      - name: Run Unit Tests and Generate Coverage
+        working-directory: tests/JobMagnet.Unit.Tests
         run: |
-          dotnet test JobMagnet.Tests/JobMagnet.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=JobMagnet.Tests/coverage.opencover.xml 
-          echo "Listing files in JobMagnet.Tests directory:" 
-          ls -l JobMagnet.Tests
-        env:
-          OpenTelemetry__Enabled: 'false'
-          Serilog__MinimumLevel__Default: 'Critical'
-
-      - name: Verify Coverage Report
-        run: |
-          ls -l JobMagnet.Tests/coverage.opencover.xml
+          dotnet test JobMagnet.Unit.Tests.csproj \
+            --no-build \
+            /p:CollectCoverage=true \
+            /p:CoverletOutput=./coverage.opencover.xml \
+            /p:CoverletOutputFormat=opencover
 
       - name: SonarQube Analysis
+        working-directory: tests/JobMagnet.Unit.Tests
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: bash
         run: |
-          export PATH="$PATH:/home/runner/.dotnet/tools"
-          dotnet-sonarscanner begin /k:"henksandoval_JobMagnetic-BackEnd" /o:"henksandoval" \
+          dotnet sonarscanner begin \
+            /k:"henksandoval_JobMagnetic-BackEnd" \
+            /o:"henksandoval" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.projectBaseDir="${{ github.workspace }}" \
-            /d:sonar.coverageReportPaths="JobMagnet.Tests/coverage.opencover.xml"
-          dotnet build
-          dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+            /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml" \
+            /d:sonar.exclusions="**/Migrations/**" \
+            /d:sonar.language=cs \
+            /d:sonar.sourceEncoding=UTF-8
+          dotnet build --no-incremental
+          dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
