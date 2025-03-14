@@ -63,6 +63,9 @@ jobs:
           echo "=== Current Directory ==="
           pwd
 
+          echo "=== Listando todos los archivos recursivamente ==="
+          ls -R
+
           ls tests/JobMagnet.Unit.Tests/coverage.opencover.xml
 
           head -n 10 tests/JobMagnet.Unit.Tests/coverage.opencover.xml
