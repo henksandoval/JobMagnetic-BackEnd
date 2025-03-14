@@ -63,9 +63,13 @@ jobs:
           echo "=== Current Directory ==="
           pwd
 
-          ls tests/JobMagnet.Unit.Tests/coverage.opencover.xml
+          cd tests/JobMagnet.Unit.Tests
 
-          head -n 10 tests/JobMagnet.Unit.Tests/coverage.opencover.xml
+          pwd
+
+          ls coverage.opencover.xml
+
+          head -n 10 coverage.opencover.xml
 
           dotnet sonarscanner begin \
             /k:"henksandoval_JobMagnetic-BackEnd" \
