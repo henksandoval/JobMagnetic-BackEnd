@@ -53,7 +53,7 @@ jobs:
           dotnet test JobMagnet.Unit.Tests.csproj \
             --no-build \
             /p:CollectCoverage=true \
-            /p:CoverletOutput=./tests/JobMagnet.Unit.Tests/coverage.opencover.xml \
+            /p:CoverletOutput=./coverage.opencover.xml \
             /p:CoverletOutputFormat=opencover
 
       - name: SonarQube Analysis
@@ -63,18 +63,15 @@ jobs:
           echo "=== Current Directory ==="
           pwd
 
-          echo "=== Listando todos los archivos recursivamente ==="
-          ls -R
+          ls tests/JobMagnet.Unit.Tests/coverage.opencover.xml
 
-          ls tests/JobMagnet.Unit.Tests/tests/JobMagnet.Unit.Tests/coverage.opencover.xml
-
-          head -n 10 tests/JobMagnet.Unit.Tests/tests/JobMagnet.Unit.Tests/coverage.opencover.xml
+          head -n 10 tests/JobMagnet.Unit.Tests/coverage.opencover.xml
 
           dotnet sonarscanner begin \
             /k:"henksandoval_JobMagnetic-BackEnd" \
             /o:"henksandoval" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.cs.opencover.reportsPaths="tests/JobMagnet.Unit.Tests/tests/JobMagnet.Unit.Tests/coverage.opencover.xml" \
+            /d:sonar.cs.opencover.reportsPaths="tests/JobMagnet.Unit.Tests/coverage.opencover.xml" \
             /d:sonar.language=cs \
             /d:sonar.sourceEncoding=UTF-8
 
