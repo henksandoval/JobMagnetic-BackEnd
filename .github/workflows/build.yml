@@ -66,7 +66,7 @@ jobs:
             /o:"henksandoval" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml" \
-            /d:sonar.exclusions="**/migrations/**" \
+            /d:sonar.exclusions="**/Migrations/**" \
             /d:sonar.language=cs \
             /d:sonar.sourceEncoding=UTF-8
           dotnet build --no-incremental
