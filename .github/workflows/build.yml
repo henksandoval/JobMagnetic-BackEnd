@@ -71,13 +71,7 @@ jobs:
 
           head -n 10 coverage.opencover.xml
 
-          dotnet sonarscanner begin \
-            /k:"henksandoval_JobMagnetic-BackEnd" \
-            /o:"henksandoval" \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.cs.opencover.reportsPaths="tests/JobMagnet.Unit.Tests/coverage.opencover.xml" \
-            /d:sonar.language=cs \
-            /d:sonar.sourceEncoding=UTF-8
+          dotnet sonarscanner begin /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
           dotnet build --no-incremental
 
