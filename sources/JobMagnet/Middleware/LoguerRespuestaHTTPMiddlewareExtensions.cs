@@ -7,10 +7,11 @@ public static class LoguerRespuestaHTTPMiddlewareExtensions
         return app.UseMiddleware<LoguearRespuestaHTTPMiddleware>();
     }
 }
+
 public class LoguearRespuestaHTTPMiddleware
 {
-    private readonly RequestDelegate siguiente;
     private readonly ILogger<LoguearRespuestaHTTPMiddleware> logger;
+    private readonly RequestDelegate siguiente;
 
     public LoguearRespuestaHTTPMiddleware(RequestDelegate siguiente, ILogger<LoguearRespuestaHTTPMiddleware> logger)
     {
@@ -28,7 +29,7 @@ public class LoguearRespuestaHTTPMiddleware
             await siguiente(contexto);
 
             memoryStream.Seek(0, SeekOrigin.Begin);
-            string respuesta = new StreamReader(memoryStream).ReadToEnd();
+            var respuesta = new StreamReader(memoryStream).ReadToEnd();
             memoryStream.Seek(0, SeekOrigin.Begin);
 
             await memoryStream.CopyToAsync(cuerpoOriginalRespuesta);
