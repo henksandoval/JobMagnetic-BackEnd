@@ -5,91 +5,66 @@ on:
       - develop
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
-  sonarcloud:
-    name: SonarQube Cloud
+  build-and-analyze:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Install .NET Core
-        uses: actions/setup-dotnet@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          dotnet-version: 8.0.x
+          java-version: 17
+          distribution: 'zulu'
 
-      - name: Setup MSBuild.exe
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Run tests
-        run: dotnet test --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results
-        continue-on-error: true
-
-      - name: Convert TRX to JUnit
-        uses: dorny/test-reporter@v1
-        if: always()
-        with:
-          name: .NET Tests
-          path: ./test-results/*.trx
-          reporter: dotnet-trx
-
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-results
-          path: ./test-results
-
-      - name: Cache SonarQube Cloud packages
+      - name: Cache SonarQube packages and scanner
         uses: actions/cache@v4
         with:
-          path: ~\sonar\cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+          path: |
+            ~/.sonar/cache
+            ~/.sonar/scanner
+          key: ${{ runner.os }}-sonar-scanner-${{ hashFiles('**/*.csproj') }}
+          restore-keys: ${{ runner.os }}-sonar-scanner-
 
-      - name: Cache SonarQube Cloud scanner
-        id: cache-sonar-scanner
-        uses: actions/cache@v4
-        with:
-          path: .\.sonar\scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
-
-      - name: Install SonarQube Cloud scanner
+      - name: Install SonarQube scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-        shell: powershell
         run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+          dotnet tool install --global dotnet-sonarscanner
 
-      - name: Build and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"henksandoval_JobMagnetic-BackEnd" /o:"henksandoval" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet build
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+      - name: Add SonarScanner to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
-      - name: Set SonarQube properties
-        run: |
-          echo "sonar.projectKey=${{ vars.PROJECT_KEY }}" > sonar-project.properties
-          echo "sonar.organization=${{ vars.ORGANIZATION }}" >> sonar-project.properties
-          echo "sonar.javascript.lcov.reportPaths=coverage/lcov.info" >> sonar-project.properties
-          echo "sonar.typescript.tsconfigPaths=path/to/tsconfig.json" >> sonar-project.properties
-
-      - name: Print sonar-project.properties
-        run: cat sonar-project.properties
-
-      - name: SonarQube Cloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v3
         with:
-          args: >
-            -D sonar.javascript.lcov.reportPaths=coverage/lcov.info
+          dotnet-version: '8.x'
+
+      - name: Restore and build project
+        run: dotnet build
+
+      - name: Run Unit Tests and Generate Coverage
+        working-directory: tests/JobMagnet.Unit.Tests
+        run: |
+          dotnet test JobMagnet.Unit.Tests.csproj \
+            --no-build \
+            /p:CollectCoverage=true \
+            /p:CoverletOutput=./coverage.opencover.xml \
+            /p:CoverletOutputFormat=opencover
+
+      - name: SonarQube Analysis
+        working-directory: tests/JobMagnet.Unit.Tests
+        run: |
+          dotnet sonarscanner begin \
+            /k:"henksandoval_JobMagnetic-BackEnd" \
+            /o:"henksandoval" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml" \
+            /d:sonar.exclusions="**/Migrations/**" \
+            /d:sonar.language=cs \
+            /d:sonar.sourceEncoding=UTF-8
+          dotnet build --no-incremental
+          dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
