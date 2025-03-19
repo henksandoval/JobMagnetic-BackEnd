@@ -57,8 +57,9 @@ jobs:
           dotnet test JobMagnet.Integration.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutput=../coverage_integration_tests.opencover.xml /p:CoverletOutputFormat=opencover
 
       - name: Combine Coverage Reports
-        working-directory: tests/JobMagnet.Integration.Tests
+        working-directory: tests
         run: |
+          ls -la
           dotnet tool install --global dotnet-reportgenerator-globaltool
           reportgenerator -reports:coverage_*.opencover.xml -targetdir:coverage/combined-report -reporttypes:opencover
 
