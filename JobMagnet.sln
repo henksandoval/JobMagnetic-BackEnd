@@ -18,6 +18,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet", "sources\JobMag
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Unit.Tests", "tests\JobMagnet.Unit.Tests\JobMagnet.Unit.Tests.csproj", "{9796D0F5-CFCD-4C3D-A002-8FD416C4FACF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".miscellaneous", ".miscellaneous", "{D2C19C3C-4C63-472D-9C4A-01764E641D52}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
