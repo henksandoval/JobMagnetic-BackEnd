@@ -51,27 +51,12 @@ jobs:
           dotnet test JobMagnet.sln --no-build /p:CollectCoverage=true /p:CoverletOutput=../coverage.opencover.xml /p:CoverletOutputFormat=opencover
 
       - name: SonarQube Analysis
-        working-directory: tests
         run: |
           dotnet sonarscanner begin \
             /k:"henksandoval_JobMagnetic-BackEnd" \
             /o:"henksandoval" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml" \
-            /d:sonar.exclusions="**/Migrations/**" \
-            /d:sonar.language=cs \
-            /d:sonar.sourceEncoding=UTF-8
-          dotnet build --no-incremental
-          dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-
-      - name: SonarQube Analysis
-        working-directory: tests/JobMagnet.Unit.Tests
-        run: |
-          dotnet sonarscanner begin \
-            /k:"henksandoval_JobMagnetic-BackEnd" \
-            /o:"henksandoval" \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.cs.opencover.reportsPaths="coverage/combined-report/coverage.opencover.xml"
             /d:sonar.exclusions="**/Migrations/**" \
             /d:sonar.language=cs \
             /d:sonar.sourceEncoding=UTF-8
