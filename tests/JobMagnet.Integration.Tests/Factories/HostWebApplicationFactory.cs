@@ -1,6 +1,6 @@
 ﻿using JobMagnet.DependencyInjection;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace JobMagnet.Integration.Tests.Factories;
 

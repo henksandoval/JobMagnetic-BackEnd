@@ -1,6 +1,6 @@
-﻿namespace JobMagnet.Integration.Tests.TestContainers;
+﻿using Testcontainers.MsSql;
 
-using Testcontainers.MsSql;
+namespace JobMagnet.Integration.Tests.TestContainers;
 
 public class MsSqlServerTestContainer : IAsyncLifetime
 {
