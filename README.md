@@ -27,3 +27,9 @@ can also seek inspiration from the below readme files:
 - [ASP.NET Core](https://github.com/aspnet/Home)
 - [Visual Studio Code](https://github.com/Microsoft/vscode)
 - [Chakra Core](https://github.com/Microsoft/ChakraCore)
+
+`dotnet test JobMagnet.sln --no-build /p:CollectCoverage=true /p:CoverletOutput=../coverage.opencover.xml /p:CoverletOutputFormat=opencover`
+
+`dotnet tool install --global dotnet-reportgenerator-globaltool`
+
+`reportgenerator -reports:coverage.opencover.xml -targetdir:./coverage_report -reporttypes:Html`

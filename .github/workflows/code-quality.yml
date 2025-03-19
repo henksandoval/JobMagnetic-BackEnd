@@ -49,7 +49,6 @@ jobs:
       - name: Run Tests and Generate Coverage
         run: |
           dotnet test JobMagnet.sln --no-build /p:CollectCoverage=true /p:CoverletOutput=../coverage.opencover.xml /p:CoverletOutputFormat=opencover
-          reportgenerator -reports:coverage.opencover.xml -targetdir:./coverage_report -reporttypes:Html
 
       - name: SonarQube Analysis
         working-directory: tests
