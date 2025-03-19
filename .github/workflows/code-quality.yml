@@ -46,22 +46,24 @@ jobs:
       - name: Restore and build project
         run: dotnet build
 
-      - name: Run Unit Tests and Generate Coverage
-        working-directory: tests/JobMagnet.Unit.Tests
+      - name: Run Tests and Generate Coverage
         run: |
-          dotnet test JobMagnet.Unit.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutput=../coverage_unit_tests.opencover.xml /p:CoverletOutputFormat=opencover
+          dotnet test JobMagnet.sln --no-build /p:CollectCoverage=true /p:CoverletOutput=../coverage.opencover.xml /p:CoverletOutputFormat=opencover
+          reportgenerator -reports:coverage.opencover.xml -targetdir:./coverage_report -reporttypes:Html
 
-      - name: Run Integration Tests and Generate Coverage
-        working-directory: tests/JobMagnet.Integration.Tests
-        run: |
-          dotnet test JobMagnet.Integration.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutput=../coverage_integration_tests.opencover.xml /p:CoverletOutputFormat=opencover
-
-      - name: Combine Coverage Reports
+      - name: SonarQube Analysis
         working-directory: tests
         run: |
-          ls -la
-          dotnet tool install --global dotnet-reportgenerator-globaltool
-          reportgenerator -reports:coverage_*.opencover.xml -targetdir:coverage/combined-report -reporttypes:opencover
+          dotnet sonarscanner begin \
+            /k:"henksandoval_JobMagnetic-BackEnd" \
+            /o:"henksandoval" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml" \
+            /d:sonar.exclusions="**/Migrations/**" \
+            /d:sonar.language=cs \
+            /d:sonar.sourceEncoding=UTF-8
+          dotnet build --no-incremental
+          dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
       - name: SonarQube Analysis
         working-directory: tests/JobMagnet.Unit.Tests
