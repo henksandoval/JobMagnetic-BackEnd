@@ -55,6 +55,23 @@ jobs:
             /p:CoverletOutput=./coverage.opencover.xml \
             /p:CoverletOutputFormat=opencover
 
+      - name: Run Integration Tests and Generate Coverage
+        working-directory: tests/JobMagnet.Integration.Tests
+        run: |
+          dotnet test JobMagnet.Integration.Tests.csproj \
+            --no-build \
+            /p:CollectCoverage=true \
+            /p:CoverletOutput=../../coverage/integration-tests-coverage.opencover.xml \
+            /p:CoverletOutputFormat=opencover
+
+      - name: Combine Coverage Reports
+        run: |
+          dotnet tool install --global dotnet-reportgenerator-globaltool
+          reportgenerator \
+            -reports:coverage/*.opencover.xml \
+            -targetdir:coverage/combined-report \
+            -reporttypes:opencover
+
       - name: SonarQube Analysis
         working-directory: tests/JobMagnet.Unit.Tests
         run: |
@@ -62,7 +79,7 @@ jobs:
             /k:"henksandoval_JobMagnetic-BackEnd" \
             /o:"henksandoval" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml" \
+            /d:sonar.cs.opencover.reportsPaths="coverage/combined-report/coverage.opencover.xml"
             /d:sonar.exclusions="**/Migrations/**" \
             /d:sonar.language=cs \
             /d:sonar.sourceEncoding=UTF-8
