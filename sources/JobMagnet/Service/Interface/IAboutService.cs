@@ -1,10 +1,9 @@
 ﻿using JobMagnet.Models;
 
-namespace JobMagnet.Service.Interface
+namespace JobMagnet.Service.Interface;
+
+public interface IAboutService
 {
-    public interface IAboutService
-    {
-        public Task<AboutModel> GetById(int id);
-        public Task<AboutModel> Create(AboutCreateRequest aboutCreateRequest);
-    }
+    public Task<AboutModel> GetById(int id);
+    public Task<AboutModel> Create(AboutCreateRequest aboutCreateRequest);
 }

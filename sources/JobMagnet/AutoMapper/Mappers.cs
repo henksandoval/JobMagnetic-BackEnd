@@ -22,7 +22,7 @@ public static class Mappers
             Degree = entity.Degree,
             Email = entity.Email,
             Freelance = entity.Freelance,
-            WorkExperience = entity.WorkExperience,
+            WorkExperience = entity.WorkExperience
         };
     }
 
@@ -43,7 +43,7 @@ public static class Mappers
             Degree = model.Degree,
             Email = model.Email,
             Freelance = model.Freelance,
-            WorkExperience = model.WorkExperience,
+            WorkExperience = model.WorkExperience
         };
     }
 
@@ -63,10 +63,10 @@ public static class Mappers
             Degree = createRequest.Degree,
             Email = createRequest.Email,
             Freelance = createRequest.Freelance,
-            WorkExperience = createRequest.WorkExperience,
+            WorkExperience = createRequest.WorkExperience
         };
     }
-    
+
     // SkillEntity
     public static SkillModel MapSkillModel(SkillEntity entity)
     {
@@ -76,10 +76,10 @@ public static class Mappers
             Overview = entity.Overview,
             Rank = entity.Rank,
             Name = entity.Name,
-            IconUrl = entity.IconUrl,
+            IconUrl = entity.IconUrl
         };
     }
-    
+
     public static SkillEntity MapSkillEntity(SkillModel model)
     {
         return new SkillEntity
@@ -88,9 +88,10 @@ public static class Mappers
             Overview = model.Overview,
             Rank = model.Rank,
             Name = model.Name,
-            IconUrl = model.IconUrl,
+            IconUrl = model.IconUrl
         };
     }
+
     public static SkillEntity MapSkillCreate(SkillCreateRequest createRequest)
     {
         return new SkillEntity
@@ -98,19 +99,19 @@ public static class Mappers
             Overview = createRequest.Overview,
             Rank = createRequest.Rank,
             Name = createRequest.Name,
-            IconUrl = createRequest.IconUrl,
+            IconUrl = createRequest.IconUrl
         };
     }
-    
+
     //SummaryEntity
 
     public static SummaryEntity MapSummaryCreate(SummaryCreateRequest createRequest)
     {
         return new SummaryEntity
         {
-          About = createRequest.About,
-          Name = createRequest.Name,
-          Introduction = createRequest.Introduction,
+            About = createRequest.About,
+            Name = createRequest.Name,
+            Introduction = createRequest.Introduction
         };
     }
 
@@ -121,7 +122,7 @@ public static class Mappers
             Id = entity.Id,
             About = entity.About,
             Name = entity.Name,
-            Introduction = entity.Introduction,
+            Introduction = entity.Introduction
         };
     }
 }

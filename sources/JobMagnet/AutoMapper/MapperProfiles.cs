@@ -2,14 +2,13 @@
 using JobMagnet.Entities;
 using JobMagnet.Models;
 
-namespace JobMagnet.AutoMapper
+namespace JobMagnet.AutoMapper;
+
+public class MapperProfiles : Profile
 {
-    public class MapperProfiles : Profile
+    public MapperProfiles()
     {
-        public MapperProfiles()
-        {
-            CreateMap<AboutEntity, AboutModel>().ReverseMap();
-            CreateMap<AboutCreateRequest, AboutEntity>().ReverseMap();
-        }
+        CreateMap<AboutEntity, AboutModel>().ReverseMap();
+        CreateMap<AboutCreateRequest, AboutEntity>().ReverseMap();
     }
 }

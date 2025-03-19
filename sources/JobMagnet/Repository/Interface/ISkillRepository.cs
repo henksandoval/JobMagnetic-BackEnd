@@ -1,7 +1,6 @@
-﻿namespace JobMagnet.Repository.Interface
+﻿namespace JobMagnet.Repository.Interface;
+
+public interface ISkillRepository<TEntity> where TEntity : class
 {
-    public interface ISkillRepository<TEntity> where TEntity : class
-    {
-        Task CreateAsync(TEntity entity);
-    }
+    Task CreateAsync(TEntity entity);
 }
