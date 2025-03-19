@@ -49,28 +49,18 @@ jobs:
       - name: Run Unit Tests and Generate Coverage
         working-directory: tests/JobMagnet.Unit.Tests
         run: |
-          dotnet test JobMagnet.Unit.Tests.csproj \
-            --no-build \
-            /p:CollectCoverage=true \
-            /p:CoverletOutput=./coverage.opencover.xml \
-            /p:CoverletOutputFormat=opencover
+          dotnet test JobMagnet.Unit.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutput=../coverage_unit_tests.opencover.xml /p:CoverletOutputFormat=opencover
 
       - name: Run Integration Tests and Generate Coverage
         working-directory: tests/JobMagnet.Integration.Tests
         run: |
-          dotnet test JobMagnet.Integration.Tests.csproj \
-            --no-build \
-            /p:CollectCoverage=true \
-            /p:CoverletOutput=../../coverage/integration-tests-coverage.opencover.xml \
-            /p:CoverletOutputFormat=opencover
+          dotnet test JobMagnet.Integration.Tests.csproj --no-build /p:CollectCoverage=true /p:CoverletOutput=../coverage_integration_tests.opencover.xml /p:CoverletOutputFormat=opencover
 
       - name: Combine Coverage Reports
+        working-directory: tests/JobMagnet.Integration.Tests
         run: |
           dotnet tool install --global dotnet-reportgenerator-globaltool
-          reportgenerator \
-            -reports:coverage/*.opencover.xml \
-            -targetdir:coverage/combined-report \
-            -reporttypes:opencover
+          reportgenerator -reports:coverage_*.opencover.xml -targetdir:coverage/combined-report -reporttypes:opencover
 
       - name: SonarQube Analysis
         working-directory: tests/JobMagnet.Unit.Tests

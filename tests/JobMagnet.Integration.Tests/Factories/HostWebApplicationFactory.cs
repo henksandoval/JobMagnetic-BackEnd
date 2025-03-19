@@ -10,7 +10,6 @@ public class HostWebApplicationFactory<TProgram>(string msSqlServerConnectionStr
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseSetting("ConnectionStrings:DefaultConnection", msSqlServerConnectionString);
-        builder.UseSetting("Logging:LogLevel:Default", "Trace");
         builder.ConfigureServices(services => { services.AddApplicationServices(); });
         builder.UseEnvironment("Development");
     }
