@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobMagnet.Controllers
 {
     [ApiController]
-    [Route("api/controller")]
+    [Route("api/[controller]")]
     public class AboutController : ControllerBase
     {
         private readonly IAboutService _service;
@@ -15,7 +15,8 @@ namespace JobMagnet.Controllers
             _service = service;
         }
 
-        [HttpGet("{id}", Name = "GetById")]
+        [HttpGet]
+        [Route("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var aboutModel = await _service.GetById(id);

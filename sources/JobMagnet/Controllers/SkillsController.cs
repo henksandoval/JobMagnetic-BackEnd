@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobMagnet.Controllers
 {
     [ApiController]
-    [Route("api/controller")]
+    [Route("api/[controller]")]
     public class SkillsController : ControllerBase
     {
         private readonly ISkillService service;
@@ -15,7 +15,8 @@ namespace JobMagnet.Controllers
             this.service = service;
         }
 
-        [HttpGet("{id}", Name = "GetById")]
+        [HttpGet]
+        [Route("{id}")]
         public IActionResult GetOk() 
         {
             return Ok();
