@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".miscellaneous", ".miscella
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Integration.Tests", "tests\JobMagnet.Integration.Tests\JobMagnet.Integration.Tests.csproj", "{4E357F41-1734-49B7-90E8-E1087FC6201F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{9796D0F5-CFCD-4C3D-A002-8FD416C4FACF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9796D0F5-CFCD-4C3D-A002-8FD416C4FACF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9796D0F5-CFCD-4C3D-A002-8FD416C4FACF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E357F41-1734-49B7-90E8-E1087FC6201F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E357F41-1734-49B7-90E8-E1087FC6201F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E357F41-1734-49B7-90E8-E1087FC6201F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E357F41-1734-49B7-90E8-E1087FC6201F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +52,7 @@ Global
 		{4C5D3C61-DB64-4664-B973-9457DB840D21} = {A3634DF4-6412-45EA-ACFC-E4DECA1D6D63}
 		{B0D2AA46-BC50-4EA3-972A-5A01A6C0C686} = {4CF9134D-2530-4614-8DAC-757DD4CDB2D8}
 		{9796D0F5-CFCD-4C3D-A002-8FD416C4FACF} = {5B955F3D-D576-4F47-A812-30666355D1F3}
+		{4E357F41-1734-49B7-90E8-E1087FC6201F} = {5B955F3D-D576-4F47-A812-30666355D1F3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {32A35D63-83C2-443E-8430-B5CBE63090F8}
