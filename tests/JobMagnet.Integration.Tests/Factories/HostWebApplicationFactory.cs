@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace JobMagnet.Integration.Tests.Factories;
 
-public class HostWebApplicationFactory<TProgram>(string msSqlServerConnectionString)
+public class HostWebApplicationFactory<TProgram>(string? msSqlServerConnectionString)
     : WebApplicationFactory<TProgram> where TProgram : class
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
