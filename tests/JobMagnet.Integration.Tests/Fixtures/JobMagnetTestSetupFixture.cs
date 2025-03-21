@@ -3,26 +3,60 @@ using JobMagnet.Context;
 using JobMagnet.Integration.Tests.Factories;
 using JobMagnet.Integration.Tests.TestContainers;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Respawn;
+using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Fixtures;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class JobMagnetTestSetupFixture : IAsyncLifetime
 {
-    private readonly MsSqlServerTestContainer _msSqlServerTestContainer;
-    private HostWebApplicationFactory<Program> _webApplicationFactory;
-
-    public JobMagnetTestSetupFixture()
+    private ITestOutputHelper? _testOutputHelper;
+    private string? _connectionString;
+    private readonly MsSqlServerTestContainer _msSqlServerTestContainer = new();
+    private HostWebApplicationFactory<Program> _webApplicationFactory = null!;
+    private readonly RespawnerOptions _respawnerOptions = new()
     {
-        _msSqlServerTestContainer = new MsSqlServerTestContainer();
-        _webApplicationFactory = null!;
+        WithReseed = true
+    };
+
+    public void SetTestOutputHelper(ITestOutputHelper? testOutputHelper)
+    {
+        _testOutputHelper = testOutputHelper;
     }
 
     public async Task InitializeAsync()
     {
+        _testOutputHelper?.WriteLine("Inicializando JobMagnetTestSetupFixture...");
         await _msSqlServerTestContainer.InitializeAsync();
-        _webApplicationFactory = new HostWebApplicationFactory<Program>(GetConnectionString());
+        SetConnectionString();
+        _webApplicationFactory = new HostWebApplicationFactory<Program>(_connectionString);
         await EnsureDatabaseCreatedAsync();
+    }
+
+    public async Task ResetDatabaseAsync()
+    {
+        try
+        {
+            await using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+            _testOutputHelper?.WriteLine("Conexión a la base de datos exitosa: {0}", _connectionString);
+
+            var respawn = await Respawner.CreateAsync(connection, _respawnerOptions);
+            await respawn.ResetAsync(connection);
+        }
+        catch (SqlException sqlEx)
+        {
+            _testOutputHelper?.WriteLine("Error al intentar conectar a la base de datos: {0}", sqlEx.Message);
+            throw;
+        }
+        catch (Exception e)
+        {
+            _testOutputHelper?.WriteLine("Error inesperado: {0}", e.Message);
+            throw;
+        }
     }
 
     public async Task DisposeAsync()
@@ -41,12 +75,14 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         return _webApplicationFactory?.CreateClient()!;
     }
 
-    private string GetConnectionString()
+    private void SetConnectionString()
     {
-        return new SqlConnectionStringBuilder(_msSqlServerTestContainer.GetConnectionString())
+        _connectionString = new SqlConnectionStringBuilder(_msSqlServerTestContainer.GetConnectionString())
         {
-            InitialCatalog = $"JobMagnet-{Guid.NewGuid()}"
+            InitialCatalog = $"JobMagnetTestDb_{Guid.NewGuid()}"
         }.ConnectionString;
+
+        _testOutputHelper?.WriteLine(_connectionString);
     }
 
     private async Task EnsureDatabaseCreatedAsync()
