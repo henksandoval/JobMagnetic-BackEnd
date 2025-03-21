@@ -7,24 +7,18 @@ namespace JobMagnet.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AboutController : ControllerBase
+public class AboutController(IAboutService service) : ControllerBase
 {
-    private readonly IAboutService _service;
-
-    public AboutController(IAboutService service)
-    {
-        _service = service;
-    }
-
     [HttpGet]
-    [Route("{id}", Name = nameof(GetById))]
-    public async Task<IActionResult> GetById(int id)
+    [Route("{id:int}", Name = nameof(GetById))]
+    public async Task<IResult> GetById(int id)
     {
-        var aboutModel = await _service.GetById(id);
+        var aboutModel = await service.GetById(id);
 
-        if (aboutModel is null) return NotFound($"Record [{id}] not found");
+        if (aboutModel is null)
+            return Results.NotFound($"Record [{id}] not found");
 
-        return Ok(aboutModel);
+        return Results.Ok(aboutModel);
     }
 
     [HttpPost]
@@ -32,7 +26,7 @@ public class AboutController : ControllerBase
     [ProducesResponseType(typeof(AboutModel), StatusCodes.Status201Created, MediaTypeNames.Application.Json)]
     public async Task<IResult> Create([FromBody] AboutCreateRequest aboutCreateRequest)
     {
-        var newAbout = await _service.Create(aboutCreateRequest);
+        var newAbout = await service.Create(aboutCreateRequest);
         return Results.CreatedAtRoute(nameof(GetById), new { id = newAbout.Id }, newAbout);
     }
 }

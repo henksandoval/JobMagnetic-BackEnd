@@ -45,6 +45,19 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         responseData.Should().BeEquivalentTo(aboutEntity, options => options.ExcludingMissingMembers());
     }
 
+    [Fact(DisplayName = "Should return 404 when a invalid ID is provided")]
+    public async Task ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        _testOutputHelper.WriteLine("Executing test: ShouldReturnAboutRecord_WhenValidIdIsProvidedAsync in time: {0}", DateTime.Now);
+        _ = await CreateAndPersistAboutEntityAsync();
+
+        var response = await _httpClient.GetAsync($"{RequestUriController}/100");
+
+        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
     [Fact(DisplayName = "Should create a new About and return 201 when the request is valid")]
     public async Task ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync()
     {
