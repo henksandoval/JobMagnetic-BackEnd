@@ -7,32 +7,28 @@ namespace JobMagnet.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AboutController : ControllerBase
+[Produces(MediaTypeNames.Application.Json)]
+[Consumes(MediaTypeNames.Application.Json)]
+public class AboutController(IAboutService service) : ControllerBase
 {
-    private readonly IAboutService _service;
-
-    public AboutController(IAboutService service)
+    [HttpGet("{id:int}", Name = nameof(GetAboutByIdAsync))]
+    [ProducesResponseType(typeof(AboutModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> GetAboutByIdAsync(int id)
     {
-        _service = service;
-    }
+        var aboutModel = await service.GetByIdAsync(id);
 
-    [HttpGet]
-    [Route("{id}", Name = nameof(GetById))]
-    public async Task<IActionResult> GetById(int id)
-    {
-        var aboutModel = await _service.GetById(id);
+        if (aboutModel is null)
+            return Results.NotFound($"Record [{id}] not found");
 
-        if (aboutModel is null) return NotFound($"Record [{id}] not found");
-
-        return Ok(aboutModel);
+        return Results.Ok(aboutModel);
     }
 
     [HttpPost]
-    [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(AboutModel), StatusCodes.Status201Created, MediaTypeNames.Application.Json)]
-    public async Task<IResult> Create([FromBody] AboutCreateRequest aboutCreateRequest)
+    [ProducesResponseType(typeof(AboutModel),StatusCodes.Status201Created)]
+    public async Task<IResult> Create([FromBody] AboutCreateRequest createRequest)
     {
-        var newAbout = await _service.Create(aboutCreateRequest);
-        return Results.CreatedAtRoute(nameof(GetById), new { id = newAbout.Id }, newAbout);
+        var newRecord = await service.Create(createRequest);
+        return Results.CreatedAtRoute(nameof(GetAboutByIdAsync), new { id = newRecord.Id }, newRecord);
     }
 }

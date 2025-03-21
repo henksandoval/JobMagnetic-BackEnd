@@ -6,26 +6,23 @@ using JobMagnet.Service.Interface;
 
 namespace JobMagnet.Service;
 
-public class AboutService : IAboutService
+public class AboutService(IAboutRepository<AboutEntity> repository) : IAboutService
 {
-    private readonly IAboutRepository<AboutEntity> _repository;
-
-    public AboutService(IAboutRepository<AboutEntity> repository)
-    {
-        _repository = repository;
-    }
-
     public async Task<AboutModel> Create(AboutCreateRequest aboutCreateRequest)
     {
         var aboutEntity = Mappers.MapAboutCreate(aboutCreateRequest);
-        await _repository.CreateAsync(aboutEntity);
+        await repository.CreateAsync(aboutEntity);
         var aboutModel = Mappers.MapAboutModel(aboutEntity);
         return aboutModel;
     }
 
-    public async Task<AboutModel> GetById(int id)
+    public async Task<AboutModel> GetByIdAsync(int id)
     {
-        var aboutEntity = await _repository.GetByIdAsync(id);
+        var aboutEntity = await repository.GetByIdAsync(id);
+
+        if (aboutEntity is null)
+            return null;
+
         var aboutModel = Mappers.MapAboutModel(aboutEntity);
         return aboutModel;
     }

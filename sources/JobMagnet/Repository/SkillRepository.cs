@@ -20,4 +20,9 @@ public class SkillRepository<TEntity> : ISkillRepository<TEntity> where TEntity 
         await dbSet.AddAsync(entity);
         await dbContext.SaveChangesAsync();
     }
+
+    public async Task<TEntity?> GetByIdAsync(int id)
+    {
+        return await dbSet.FindAsync(id);
+    }
 }

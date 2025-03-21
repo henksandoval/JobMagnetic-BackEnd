@@ -21,9 +21,8 @@ public class AboutRepository<TEntity> : IAboutRepository<TEntity> where TEntity 
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<TEntity> GetByIdAsync(int id)
+    public async Task<TEntity?> GetByIdAsync(int id)
     {
-        var entity = await dbSet.FirstAsync();
-        return entity;
+        return await dbSet.FindAsync(id);
     }
 }
