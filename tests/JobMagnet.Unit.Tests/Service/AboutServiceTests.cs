@@ -31,7 +31,7 @@ public class AboutServiceTests
 
 
         //Act Ejecutar
-        var aboutModel = await service.GetById(76);
+        var aboutModel = await service.GetByIdAsync(76);
         var expectedModel = Mappers.MapAboutModel(entity);
 
         //Assert Asegurar

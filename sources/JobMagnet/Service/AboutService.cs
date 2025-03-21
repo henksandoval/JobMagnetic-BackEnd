@@ -16,7 +16,7 @@ public class AboutService(IAboutRepository<AboutEntity> repository) : IAboutServ
         return aboutModel;
     }
 
-    public async Task<AboutModel> GetById(int id)
+    public async Task<AboutModel> GetByIdAsync(int id)
     {
         var aboutEntity = await repository.GetByIdAsync(id);
 

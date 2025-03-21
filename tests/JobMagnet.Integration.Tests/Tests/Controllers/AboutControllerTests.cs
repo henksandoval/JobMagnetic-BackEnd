@@ -33,16 +33,16 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         await _testFixture.ResetDatabaseAsync();
         _testOutputHelper.WriteLine("Executing test: {0} in time: {1}", nameof(ShouldReturnRecord_WhenValidIdIsProvidedAsync), DateTime.Now);
-        var aboutEntity = await CreateAndPersistEntityAsync();
+        var entity = await CreateAndPersistEntityAsync();
 
-        var response = await _httpClient.GetAsync($"{RequestUriController}/{aboutEntity.Id}");
+        var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
 
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
         var responseData = await TestUtilities.DeserializeResponseAsync<AboutModel>(response);
         responseData.ShouldNotBeNull();
-        responseData.Should().BeEquivalentTo(aboutEntity, options => options.ExcludingMissingMembers());
+        responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
 
     [Fact(DisplayName = "Should return 404 when a invalid ID is provided")]
@@ -58,7 +58,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Should create a new About and return 201 when the request is valid")]
+    [Fact(DisplayName = "Should create a new record and return 201 when the request is valid")]
     public async Task ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync()
     {
         await _testFixture.ResetDatabaseAsync();
@@ -79,11 +79,11 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var aboutRepository = scope.ServiceProvider.GetRequiredService<IAboutRepository<AboutEntity>>();
-        var aboutCreated = await aboutRepository.GetByIdAsync(responseData.Id);
+        var repository = scope.ServiceProvider.GetRequiredService<IAboutRepository<AboutEntity>>();
+        var entityCreated = await repository.GetByIdAsync(responseData.Id);
 
-        aboutCreated.ShouldNotBeNull();
-        aboutCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
+        entityCreated.ShouldNotBeNull();
+        entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
     }
 
     private async Task<AboutEntity> CreateAndPersistEntityAsync()
