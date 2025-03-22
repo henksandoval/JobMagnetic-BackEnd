@@ -11,8 +11,8 @@ namespace JobMagnet.Unit.Tests.Service;
 
 public class SkillServiceTests
 {
-    private readonly Fixture _fixture;
     private readonly Mock<ICommandRepository<SkillEntity>> _commandRepositoryMock;
+    private readonly Fixture _fixture;
     private readonly SkillService _service;
 
     public SkillServiceTests()

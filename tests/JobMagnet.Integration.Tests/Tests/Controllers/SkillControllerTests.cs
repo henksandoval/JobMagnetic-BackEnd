@@ -15,10 +15,10 @@ namespace JobMagnet.Integration.Tests.Tests.Controllers;
 public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 {
     private const string RequestUriController = "api/skill";
+    private readonly Fixture _fixture = new();
+    private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
     private readonly ITestOutputHelper _testOutputHelper;
-    private readonly HttpClient _httpClient;
-    private readonly Fixture _fixture = new();
 
     public SkillControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
@@ -32,7 +32,8 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync()
     {
         await _testFixture.ResetDatabaseAsync();
-        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}", nameof(ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync), DateTime.Now);
+        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}",
+            nameof(ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync), DateTime.Now);
         var createRequest = _fixture.Build<SkillCreateRequest>().Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 

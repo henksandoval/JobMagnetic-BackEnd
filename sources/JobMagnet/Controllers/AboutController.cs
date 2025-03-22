@@ -25,7 +25,7 @@ public class AboutController(IAboutService service) : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(AboutModel),StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(AboutModel), StatusCodes.Status201Created)]
     public async Task<IResult> Create([FromBody] AboutCreateRequest createRequest)
     {
         var newRecord = await service.Create(createRequest);

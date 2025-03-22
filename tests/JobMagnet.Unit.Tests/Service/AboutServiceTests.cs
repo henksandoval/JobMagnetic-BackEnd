@@ -11,10 +11,10 @@ namespace JobMagnet.Unit.Tests.Service;
 
 public class AboutServiceTests
 {
+    private readonly Mock<ICommandRepository<AboutEntity>> _commandRepositoryMock;
     private readonly Fixture _fixture;
     private readonly Mock<IQueryRepository<AboutEntity>> _queryRepositoryMock;
     private readonly AboutService _service;
-    private readonly Mock<ICommandRepository<AboutEntity>> _commandRepositoryMock;
 
     public AboutServiceTests()
     {
@@ -29,8 +29,6 @@ public class AboutServiceTests
     {
         //Arranger Preparar
         var entity = _fixture.Create<AboutEntity>();
-        _queryRepositoryMock.Setup(repository => repository.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(entity);
-
 
         //Act Ejecutar
         var aboutModel = await _service.GetByIdAsync(76);

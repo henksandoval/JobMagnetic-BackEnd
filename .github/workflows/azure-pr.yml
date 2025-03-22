@@ -2,7 +2,7 @@ name: Create PR in Azure DevOps
 
 on:
   push:
-    branches: [develop]
+    branches: [ develop ]
   workflow_dispatch:
 
 jobs:
@@ -10,43 +10,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
           fetch-depth: 0
 
-    - name: Set Branch Name
-      id: vars
-      run: echo "BRANCH_NAME=features/github-pr-$(date +%Y-%m-%d-%H-%M)" >> $GITHUB_ENV
+      - name: Set Branch Name
+        id: vars
+        run: echo "BRANCH_NAME=features/github-pr-$(date +%Y-%m-%d-%H-%M)" >> $GITHUB_ENV
 
-    - name: Set Git User
-      run: |
-        git config --global user.email "henk.sandoval@hotmail.com"
-        git config --global user.name "Henk Sandoval"
+      - name: Set Git User
+        run: |
+          git config --global user.email "henk.sandoval@hotmail.com"
+          git config --global user.name "Henk Sandoval"
 
-    - name: Add Azure DevOps Remote
-      env:
-        AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
-      run: |
-        git remote add azure "https://${{ secrets.AZURE_DEVOPS_PAT }}@hsandoval.visualstudio.com/JobMagnetic/_git/BackEnd"
+      - name: Add Azure DevOps Remote
+        env:
+          AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
+        run: |
+          git remote add azure "https://${{ secrets.AZURE_DEVOPS_PAT }}@hsandoval.visualstudio.com/JobMagnetic/_git/BackEnd"
 
-    - name: Create New Branch and Push to Azure DevOps
-      run: |
-        git push azure HEAD:refs/heads/${{ env.BRANCH_NAME }}
-        git push azure --force HEAD:${{ env.BRANCH_NAME }}
+      - name: Create New Branch and Push to Azure DevOps
+        run: |
+          git push azure HEAD:refs/heads/${{ env.BRANCH_NAME }}
+          git push azure --force HEAD:${{ env.BRANCH_NAME }}
 
 
-    - name: Create Pull Request
-      env:
-        AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
-      run: |
-        curl -u :${{ secrets.AZURE_DEVOPS_PAT }} \
-          -X POST \
-          -H "Content-Type: application/json" \
-          -d '{
-            "sourceRefName": "refs/heads/${{ env.BRANCH_NAME }}",
-            "targetRefName": "refs/heads/develop",
-            "title": "Auto PR from GitHub",
-            "description": "This pull request was automatically created from GitHub."
-          }' \
-          https://hsandoval.visualstudio.com/JobMagnetic/_apis/git/repositories/BackEnd/pullrequests?api-version=6.0
+      - name: Create Pull Request
+        env:
+          AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
+        run: |
+          curl -u :${{ secrets.AZURE_DEVOPS_PAT }} \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -d '{
+              "sourceRefName": "refs/heads/${{ env.BRANCH_NAME }}",
+              "targetRefName": "refs/heads/develop",
+              "title": "Auto PR from GitHub",
+              "description": "This pull request was automatically created from GitHub."
+            }' \
+            https://hsandoval.visualstudio.com/JobMagnetic/_apis/git/repositories/BackEnd/pullrequests?api-version=6.0

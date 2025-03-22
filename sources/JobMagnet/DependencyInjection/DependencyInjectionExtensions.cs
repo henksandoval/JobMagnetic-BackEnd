@@ -1,4 +1,3 @@
-using JobMagnet.Entities;
 using JobMagnet.Repositories;
 using JobMagnet.Repositories.Interface;
 using JobMagnet.Service;

@@ -11,12 +11,6 @@ public class Repository<TEntity>(JobMagnetDbContext dbContext) : IQueryRepositor
     private readonly DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
     private bool _isTransactional;
 
-    public async Task<TEntity?> GetByIdAsync(int id)
-    {
-        var entity = await _dbSet.FindAsync(id);
-        return entity;
-    }
-
     public async Task CreateAsync(TEntity entity)
     {
         await _dbSet.AddAsync(entity);
@@ -54,5 +48,11 @@ public class Repository<TEntity>(JobMagnetDbContext dbContext) : IQueryRepositor
         {
             await transaction.DisposeAsync();
         }
+    }
+
+    public async Task<TEntity?> GetByIdAsync(int id)
+    {
+        var entity = await _dbSet.FindAsync(id);
+        return entity;
     }
 }

@@ -6,7 +6,9 @@ using JobMagnet.Service.Interface;
 
 namespace JobMagnet.Service;
 
-public class AboutService(IQueryRepository<AboutEntity> queryRepository, ICommandRepository<AboutEntity> commandRepository) : IAboutService
+public class AboutService(
+    IQueryRepository<AboutEntity> queryRepository,
+    ICommandRepository<AboutEntity> commandRepository) : IAboutService
 {
     public async Task<AboutModel> Create(AboutCreateRequest aboutCreateRequest)
     {
