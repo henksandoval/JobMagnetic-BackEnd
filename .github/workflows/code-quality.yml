@@ -53,8 +53,8 @@ jobs:
       - name: SonarQube Analysis
         run: |
           dotnet sonarscanner begin \
-            /k:"henksandoval_JobMagnetic-BackEnd" \
-            /o:"henksandoval" \
+            /k:"${{ vars.PROJECT_KEY }}" \
+            /o:"${{ vars.ORGANIZATION }}" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.cs.opencover.reportsPaths="tests/coverage.opencover.xml" \
             /d:sonar.exclusions="**/Migrations/**" \
