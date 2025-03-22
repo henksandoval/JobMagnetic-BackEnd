@@ -1,6 +1,8 @@
 ﻿using System.Net.Mime;
+using JobMagnet.AutoMapper;
+using JobMagnet.Entities;
 using JobMagnet.Models;
-using JobMagnet.Service.Interface;
+using JobMagnet.Repositories.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers;
@@ -9,7 +11,7 @@ namespace JobMagnet.Controllers;
 [Route("api/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]
-public class SkillController(ISkillService service) : ControllerBase
+public class SkillController(ICommandRepository<SkillEntity> commandRepository) : ControllerBase
 {
     [HttpGet("{id:int}", Name = nameof(GetSkillByIdAsync))]
     public async Task<IResult> GetSkillByIdAsync(int id)
@@ -22,7 +24,10 @@ public class SkillController(ISkillService service) : ControllerBase
     [ProducesResponseType(typeof(SkillModel), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] SkillCreateRequest createRequest)
     {
-        var newRecord = await service.Create(createRequest);
+        var entity = Mappers.MapSkillCreate(createRequest);
+        await commandRepository.CreateAsync(entity);
+        var newRecord = Mappers.MapSkillModel(entity);
+
         return Results.CreatedAtRoute(nameof(GetSkillByIdAsync), new { id = newRecord.Id }, newRecord);
     }
 }
