@@ -1,5 +1,4 @@
 ﻿using System.Net.Mime;
-using JobMagnet.AutoMapper;
 using JobMagnet.Entities;
 using JobMagnet.Mappers;
 using JobMagnet.Models;
