@@ -9,14 +9,12 @@ public static class DependencyInjectionExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        // Register all IServices
         services
-            .AddTransient<IAboutService, AboutService>()
+            .AddLogging()
             .AddTransient<ISkillService, SkillService>()
             .AddTransient(typeof(IQueryRepository<>), typeof(Repository<>))
             .AddTransient(typeof(ICommandRepository<>), typeof(Repository<>));
 
-        services.AddLogging();
         return services;
     }
 }
