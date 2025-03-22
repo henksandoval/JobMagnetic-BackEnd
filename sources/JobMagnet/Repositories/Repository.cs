@@ -1,5 +1,5 @@
 ﻿using JobMagnet.Context;
-using JobMagnet.Repositories.Interface;
+using JobMagnet.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 

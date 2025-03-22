@@ -1,5 +1,5 @@
 using JobMagnet.Repositories;
-using JobMagnet.Repositories.Interface;
+using JobMagnet.Repositories.Interfaces;
 
 namespace JobMagnet.DependencyInjection;
 

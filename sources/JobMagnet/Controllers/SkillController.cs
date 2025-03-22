@@ -2,7 +2,7 @@
 using JobMagnet.AutoMapper;
 using JobMagnet.Entities;
 using JobMagnet.Models;
-using JobMagnet.Repositories.Interface;
+using JobMagnet.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers;
