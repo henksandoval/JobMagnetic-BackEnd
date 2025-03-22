@@ -3,7 +3,6 @@ using JobMagnet.Context;
 using JobMagnet.Integration.Tests.Factories;
 using JobMagnet.Integration.Tests.TestContainers;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Respawn;
 using Xunit.Abstractions;
@@ -13,19 +12,16 @@ namespace JobMagnet.Integration.Tests.Fixtures;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class JobMagnetTestSetupFixture : IAsyncLifetime
 {
-    private ITestOutputHelper? _testOutputHelper;
-    private string? _connectionString;
     private readonly MsSqlServerTestContainer _msSqlServerTestContainer = new();
-    private HostWebApplicationFactory<Program> _webApplicationFactory = null!;
+
     private readonly RespawnerOptions _respawnerOptions = new()
     {
         WithReseed = true
     };
 
-    public void SetTestOutputHelper(ITestOutputHelper? testOutputHelper)
-    {
-        _testOutputHelper = testOutputHelper;
-    }
+    private string? _connectionString;
+    private ITestOutputHelper? _testOutputHelper;
+    private HostWebApplicationFactory<Program> _webApplicationFactory = null!;
 
     public async Task InitializeAsync()
     {
@@ -34,6 +30,17 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         SetConnectionString();
         _webApplicationFactory = new HostWebApplicationFactory<Program>(_connectionString);
         await EnsureDatabaseCreatedAsync();
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _msSqlServerTestContainer?.DisposeAsync()!;
+        await _webApplicationFactory.DisposeAsync();
+    }
+
+    public void SetTestOutputHelper(ITestOutputHelper? testOutputHelper)
+    {
+        _testOutputHelper = testOutputHelper;
     }
 
     public async Task ResetDatabaseAsync()
@@ -57,12 +64,6 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
             _testOutputHelper?.WriteLine("Error inesperado: {0}", e.Message);
             throw;
         }
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _msSqlServerTestContainer?.DisposeAsync()!;
-        await _webApplicationFactory.DisposeAsync();
     }
 
     public IServiceProvider GetProvider()

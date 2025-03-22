@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 
-namespace JobMagnet.Repositories.Interface;
+namespace JobMagnet.Repositories.Interfaces;
 
 public interface ICommandRepository<TEntity> where TEntity : class
 {

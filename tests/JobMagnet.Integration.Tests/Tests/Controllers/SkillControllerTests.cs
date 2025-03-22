@@ -5,7 +5,7 @@ using JobMagnet.Entities;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
 using JobMagnet.Models;
-using JobMagnet.Repositories.Interface;
+using JobMagnet.Repositories.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit.Abstractions;
@@ -15,10 +15,10 @@ namespace JobMagnet.Integration.Tests.Tests.Controllers;
 public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 {
     private const string RequestUriController = "api/skill";
+    private readonly Fixture _fixture = new();
+    private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
     private readonly ITestOutputHelper _testOutputHelper;
-    private readonly HttpClient _httpClient;
-    private readonly Fixture _fixture = new();
 
     public SkillControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
@@ -32,7 +32,8 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync()
     {
         await _testFixture.ResetDatabaseAsync();
-        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}", nameof(ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync), DateTime.Now);
+        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}",
+            nameof(ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync), DateTime.Now);
         var createRequest = _fixture.Build<SkillCreateRequest>().Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
@@ -54,6 +55,39 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 
         entityCreated.ShouldNotBeNull();
         entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
+    }
+
+
+    [Fact(DisplayName = "Should return the record and return 200 when a valid ID is provided")]
+    public async Task ShouldReturnRecord_WhenValidIdIsProvidedAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}",
+            nameof(ShouldReturnRecord_WhenValidIdIsProvidedAsync), DateTime.Now);
+        var entity = await CreateAndPersistEntityAsync();
+
+        var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
+
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        var responseData = await TestUtilities.DeserializeResponseAsync<SkillModel>(response);
+        responseData.ShouldNotBeNull();
+        responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
+    }
+
+    [Fact(DisplayName = "Should return 404 when a invalid ID is provided")]
+    public async Task ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}",
+            nameof(ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync), DateTime.Now);
+        _ = await CreateAndPersistEntityAsync();
+
+        var response = await _httpClient.GetAsync($"{RequestUriController}/100");
+
+        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     private async Task<SkillEntity> CreateAndPersistEntityAsync()

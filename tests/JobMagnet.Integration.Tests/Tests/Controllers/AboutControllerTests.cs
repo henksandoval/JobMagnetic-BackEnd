@@ -5,7 +5,7 @@ using JobMagnet.Entities;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
 using JobMagnet.Models;
-using JobMagnet.Repositories.Interface;
+using JobMagnet.Repositories.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit.Abstractions;
@@ -15,10 +15,10 @@ namespace JobMagnet.Integration.Tests.Tests.Controllers;
 public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 {
     private const string RequestUriController = "api/about";
+    private readonly Fixture _fixture = new();
+    private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
     private readonly ITestOutputHelper _testOutputHelper;
-    private readonly HttpClient _httpClient;
-    private readonly Fixture _fixture = new();
 
     public AboutControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
@@ -32,7 +32,8 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldReturnRecord_WhenValidIdIsProvidedAsync()
     {
         await _testFixture.ResetDatabaseAsync();
-        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}", nameof(ShouldReturnRecord_WhenValidIdIsProvidedAsync), DateTime.Now);
+        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}",
+            nameof(ShouldReturnRecord_WhenValidIdIsProvidedAsync), DateTime.Now);
         var entity = await CreateAndPersistEntityAsync();
 
         var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
@@ -49,7 +50,8 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync()
     {
         await _testFixture.ResetDatabaseAsync();
-        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}", nameof(ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync), DateTime.Now);
+        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}",
+            nameof(ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync), DateTime.Now);
         _ = await CreateAndPersistEntityAsync();
 
         var response = await _httpClient.GetAsync($"{RequestUriController}/100");
@@ -62,7 +64,8 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync()
     {
         await _testFixture.ResetDatabaseAsync();
-        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}", nameof(ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync), DateTime.Now);
+        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}",
+            nameof(ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync), DateTime.Now);
         var createRequest = _fixture.Build<AboutCreateRequest>().Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
