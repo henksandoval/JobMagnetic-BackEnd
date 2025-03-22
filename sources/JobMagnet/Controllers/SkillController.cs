@@ -11,13 +11,21 @@ namespace JobMagnet.Controllers;
 [Route("api/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]
-public class SkillController(ICommandRepository<SkillEntity> commandRepository) : ControllerBase
+public class SkillController(
+    IQueryRepository<SkillEntity> queryRepository,
+    ICommandRepository<SkillEntity> commandRepository) : ControllerBase
 {
     [HttpGet("{id:int}", Name = nameof(GetSkillByIdAsync))]
     public async Task<IResult> GetSkillByIdAsync(int id)
     {
-        await Task.Delay(1);
-        throw new NotImplementedException();
+        var entity = await queryRepository.GetByIdAsync(id);
+
+        if (entity is null)
+            return Results.NotFound($"Record [{id}] not found");
+
+        var responseModel = Mappers.MapSkillModel(entity);
+
+        return Results.Ok(responseModel);
     }
 
     [HttpPost]
