@@ -5,7 +5,7 @@ using JobMagnet.Entities;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
 using JobMagnet.Models;
-using JobMagnet.Repository.Interface;
+using JobMagnet.Repositories.Interface;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit.Abstractions;

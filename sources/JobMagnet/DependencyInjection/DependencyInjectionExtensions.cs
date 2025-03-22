@@ -1,6 +1,6 @@
 using JobMagnet.Entities;
-using JobMagnet.Repository;
-using JobMagnet.Repository.Interface;
+using JobMagnet.Repositories;
+using JobMagnet.Repositories.Interface;
 using JobMagnet.Service;
 using JobMagnet.Service.Interface;
 
@@ -11,9 +11,11 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         // Register all IServices
-        services.AddTransient<IAboutService, AboutService>();
-        services.AddTransient<ISkillService, SkillService>();
-        services.AddTransient<ISummaryService, SummaryService>();
+        services
+            .AddTransient<IAboutService, AboutService>()
+            .AddTransient<ISkillService, SkillService>()
+            .AddTransient(typeof(IQueryRepository<>), typeof(Repository<>))
+            .AddTransient(typeof(ICommandRepository<>), typeof(Repository<>));
         services.AddScoped<IAboutRepository<AboutEntity>, AboutRepository<AboutEntity>>();
         services.AddScoped<ISkillRepository<SkillEntity>, SkillRepository<SkillEntity>>();
 

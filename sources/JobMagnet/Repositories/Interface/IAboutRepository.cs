@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Repository.Interface;
+﻿namespace JobMagnet.Repositories.Interface;
 
 public interface IAboutRepository<TEntity> where TEntity : class
 {

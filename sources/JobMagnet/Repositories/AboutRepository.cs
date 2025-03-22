@@ -1,8 +1,8 @@
 ﻿using JobMagnet.Context;
-using JobMagnet.Repository.Interface;
+using JobMagnet.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobMagnet.Repository;
+namespace JobMagnet.Repositories;
 
 public class AboutRepository<TEntity> : IAboutRepository<TEntity> where TEntity : class
 {

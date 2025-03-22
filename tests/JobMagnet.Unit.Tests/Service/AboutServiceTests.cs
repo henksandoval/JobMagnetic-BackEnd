@@ -3,7 +3,7 @@ using FluentAssertions;
 using JobMagnet.AutoMapper;
 using JobMagnet.Entities;
 using JobMagnet.Models;
-using JobMagnet.Repository.Interface;
+using JobMagnet.Repositories.Interface;
 using JobMagnet.Service;
 using Moq;
 
