@@ -49,8 +49,8 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var repository = scope.ServiceProvider.GetRequiredService<ISkillRepository<SkillEntity>>();
-        var entityCreated = await repository.GetByIdAsync(responseData.Id);
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<SkillEntity>>();
+        var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
         entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());

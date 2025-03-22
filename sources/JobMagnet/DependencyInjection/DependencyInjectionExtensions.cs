@@ -16,7 +16,6 @@ public static class DependencyInjectionExtensions
             .AddTransient<ISkillService, SkillService>()
             .AddTransient(typeof(IQueryRepository<>), typeof(Repository<>))
             .AddTransient(typeof(ICommandRepository<>), typeof(Repository<>));
-        services.AddScoped<ISkillRepository<SkillEntity>, SkillRepository<SkillEntity>>();
 
         services.AddLogging();
         return services;
