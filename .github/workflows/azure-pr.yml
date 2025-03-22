@@ -28,7 +28,7 @@ jobs:
       env:
         AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
       run: |
-        git remote add azure "https://${{ secrets.AZURE_DEVOPS_PAT }}@hsandoval.visualstudio.com/JobMagnetic/_git/FrontEnd"
+        git remote add azure "https://${{ secrets.AZURE_DEVOPS_PAT }}@hsandoval.visualstudio.com/JobMagnetic/_git/BackEnd"
 
     - name: Create New Branch and Push to Azure DevOps
       run: |
@@ -49,4 +49,4 @@ jobs:
             "title": "Auto PR from GitHub",
             "description": "This pull request was automatically created from GitHub."
           }' \
-          https://hsandoval.visualstudio.com/JobMagnetic/_apis/git/repositories/FrontEnd/pullrequests?api-version=6.0
+          https://hsandoval.visualstudio.com/JobMagnetic/_apis/git/repositories/BackEnd/pullrequests?api-version=6.0
