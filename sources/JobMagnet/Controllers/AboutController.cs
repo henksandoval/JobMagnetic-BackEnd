@@ -1,6 +1,6 @@
 ﻿using System.Net.Mime;
-using JobMagnet.AutoMapper;
 using JobMagnet.Entities;
+using JobMagnet.Mappers;
 using JobMagnet.Models;
 using JobMagnet.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +25,7 @@ public class AboutController(
         if (entity is null)
             return Results.NotFound($"Record [{id}] not found");
 
-        var responseModel = Mappers.MapAboutModel(entity);
+        var responseModel = AboutMapper.ToModel(entity);
 
         return Results.Ok(responseModel);
     }
@@ -34,9 +34,9 @@ public class AboutController(
     [ProducesResponseType(typeof(AboutModel), StatusCodes.Status201Created)]
     public async Task<IResult> Create([FromBody] AboutCreateRequest createRequest)
     {
-        var entity = Mappers.MapAboutCreate(createRequest);
+        var entity = AboutMapper.ToEntity(createRequest);
         await commandRepository.CreateAsync(entity);
-        var newRecord = Mappers.MapAboutModel(entity);
+        var newRecord = AboutMapper.ToModel(entity);
 
         return Results.CreatedAtRoute(nameof(GetAboutByIdAsync), new { id = newRecord.Id }, newRecord);
     }

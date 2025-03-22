@@ -1,6 +1,6 @@
 ﻿using System.Net.Mime;
-using JobMagnet.AutoMapper;
 using JobMagnet.Entities;
+using JobMagnet.Mappers;
 using JobMagnet.Models;
 using JobMagnet.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +23,7 @@ public class SkillController(
         if (entity is null)
             return Results.NotFound($"Record [{id}] not found");
 
-        var responseModel = Mappers.MapSkillModel(entity);
+        var responseModel = SkillMapper.ToModel(entity);
 
         return Results.Ok(responseModel);
     }
@@ -32,9 +32,9 @@ public class SkillController(
     [ProducesResponseType(typeof(SkillModel), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] SkillCreateRequest createRequest)
     {
-        var entity = Mappers.MapSkillCreate(createRequest);
+        var entity = SkillMapper.ToEntity(createRequest);
         await commandRepository.CreateAsync(entity);
-        var newRecord = Mappers.MapSkillModel(entity);
+        var newRecord = SkillMapper.ToModel(entity);
 
         return Results.CreatedAtRoute(nameof(GetSkillByIdAsync), new { id = newRecord.Id }, newRecord);
     }
