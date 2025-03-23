@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Json;
 using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Entities;
@@ -119,6 +120,27 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 
         response.IsSuccessStatusCode.ShouldBeFalse();
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact(DisplayName = "Should return 204 when a valid PUT request is provided")]
+    public async Task ShouldReturnNotContent_WhenReceivedValidPutRequestAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}",
+            nameof(ShouldReturnNotContent_WhenReceivedValidPutRequestAsync), DateTime.Now);
+        var entity = await CreateAndPersistEntityAsync();
+        var updatedEntity = _fixture.Build<AboutUpdateRequest>().With(x => x.Id, entity.Id).Create();
+
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updatedEntity);
+
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<AboutEntity>>();
+        var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
+        aboutEntity.ShouldNotBeNull();
+        aboutEntity.Should().BeEquivalentTo(updatedEntity);
     }
 
     private async Task<AboutEntity> CreateAndPersistEntityAsync()
