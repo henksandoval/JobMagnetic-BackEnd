@@ -89,7 +89,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
     }
 
-    [Fact(DisplayName = "Should delete and return 200 when delete request is received")]
+    [Fact(DisplayName = "Should delete and return 204 when delete request is received")]
     public async Task ShouldDeleteRecord_WhenDeleteRequestIsReceivedAsync()
     {
         await _testFixture.ResetDatabaseAsync();
@@ -99,13 +99,26 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{entity.Id}");
 
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<AboutEntity>>();
         var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
         aboutEntity.ShouldBeNull();
+    }
+
+    [Fact(DisplayName = "Should return 404 when a Delete request with invalid ID is provided")]
+    public async Task ShouldReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}",
+            nameof(ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync), DateTime.Now);
+        _ = await CreateAndPersistEntityAsync();
+
+        var response = await _httpClient.DeleteAsync($"{RequestUriController}/100");
+
+        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     private async Task<AboutEntity> CreateAndPersistEntityAsync()

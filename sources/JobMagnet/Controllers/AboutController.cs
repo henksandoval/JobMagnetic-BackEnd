@@ -23,7 +23,7 @@ public class AboutController(
         var entity = await queryRepository.GetByIdAsync(id);
 
         if (entity is null)
-            return Results.NotFound($"Record [{id}] not found");
+            return Results.NotFound();
 
         var responseModel = AboutMapper.ToModel(entity);
 
@@ -39,5 +39,20 @@ public class AboutController(
         var newRecord = AboutMapper.ToModel(entity);
 
         return Results.CreatedAtRoute(nameof(GetAboutByIdAsync), new { id = newRecord.Id }, newRecord);
+    }
+
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> DeleteAsync(int id)
+    {
+        var entity = await queryRepository.GetByIdAsync(id);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        _ = await commandRepository.HardDeleteAsync(entity);
+
+        return Results.NoContent();
     }
 }
