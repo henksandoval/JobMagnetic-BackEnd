@@ -143,6 +143,19 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         aboutEntity.Should().BeEquivalentTo(updatedEntity);
     }
 
+    [Fact(DisplayName = "Should return 400 when a PUT request with invalid ID is provided")]
+    public async Task ShouldReturnBadRequest_WhenPutRequestWithInvalidIdIsProvidedAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        var updatedEntity = _fixture.Build<AboutUpdateRequest>().Create();
+        var differentId = updatedEntity.Id + 100;
+
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{differentId}", updatedEntity);
+
+        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+    }
+
     private async Task<AboutEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
