@@ -18,6 +18,7 @@ namespace JobMagnet.Integration.Tests.Tests.Controllers;
 public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 {
     private const string RequestUriController = "api/about";
+    private const string InvalidId = "100";
     private readonly Fixture _fixture = new();
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
@@ -49,7 +50,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         _ = await SetupEntityAsync();
 
-        var response = await _httpClient.GetAsync($"{RequestUriController}/100");
+        var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
 
         response.IsSuccessStatusCode.ShouldBeFalse();
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -102,7 +103,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         _ = await SetupEntityAsync();
 
-        var response = await _httpClient.DeleteAsync($"{RequestUriController}/100");
+        var response = await _httpClient.DeleteAsync($"{RequestUriController}/{InvalidId}");
 
         response.IsSuccessStatusCode.ShouldBeFalse();
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -131,7 +132,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         await _testFixture.ResetDatabaseAsync();
         var updatedEntity = _fixture.Build<AboutUpdateRequest>().Create();
-        var differentId = updatedEntity.Id + 100;
+        var differentId = updatedEntity.Id + InvalidId;
 
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{differentId}", updatedEntity);
 
@@ -154,10 +155,12 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Should return 204 when a valid PATCH request is provided")]
     public async Task ShouldReturnNotContent_WhenReceivedValidPatchRequestAsync()
     {
+        const string description = "New Description";
+        const int age = 25;
         var entity = await SetupEntityAsync();
         var patchDocument = new JsonPatchDocument<AboutUpdateRequest>();
-        patchDocument.Replace(a => a.Description, "New Description");
-        patchDocument.Replace(a => a.Age, 25);
+        patchDocument.Replace(a => a.Description, description);
+        patchDocument.Replace(a => a.Age, age);
 
         var response = await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{entity.Id}", patchDocument);
 
@@ -168,14 +171,8 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<AboutEntity>>();
         var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
         aboutEntity.ShouldNotBeNull();
-        aboutEntity.Description.ShouldBe("New Description");
-        aboutEntity.Age.ShouldBe(25);
-    }
-
-    private async Task<AboutEntity> SetupEntityAsync()
-    {
-        await _testFixture.ResetDatabaseAsync();
-        return await CreateAndPersistEntityAsync();
+        aboutEntity.Description.ShouldBe(description);
+        aboutEntity.Age.ShouldBe(age);
     }
 
     [Fact(DisplayName = "Should return 404 when a PATCH request with invalid ID is provided")]
@@ -200,5 +197,11 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await commandRepository.CreateAsync(entity);
 
         return entity;
+    }
+
+    private async Task<AboutEntity> SetupEntityAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        return await CreateAndPersistEntityAsync();
     }
 }
