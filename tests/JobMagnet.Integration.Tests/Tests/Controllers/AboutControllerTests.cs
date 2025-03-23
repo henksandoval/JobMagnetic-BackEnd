@@ -178,6 +178,19 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         aboutEntity.Age.ShouldBe(25);
     }
 
+    [Fact(DisplayName = "Should return 404 when a PATCH request with invalid ID is provided")]
+    public async Task ShouldReturnNotFound_WhenPatchRequestWithInvalidIdIsProvidedAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        var updatedEntity = _fixture.Build<AboutUpdateRequest>().Create();
+        var patchDocument = new JsonPatchDocument<AboutUpdateRequest>();
+
+        var response = await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{updatedEntity.Id}", patchDocument);
+
+        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
     private async Task<AboutEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
