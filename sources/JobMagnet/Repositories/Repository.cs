@@ -50,12 +50,6 @@ public class Repository<TEntity>(JobMagnetDbContext dbContext) : IQueryRepositor
         }
     }
 
-    public async Task<TEntity?> GetByIdAsync(int id)
-    {
-        var entity = await _dbSet.FindAsync(id);
-        return entity;
-    }
-
     public async Task<bool?> HardDeleteAsync(TEntity entity)
     {
         _dbSet.Remove(entity);
@@ -63,5 +57,11 @@ public class Repository<TEntity>(JobMagnetDbContext dbContext) : IQueryRepositor
             return await dbContext.SaveChangesAsync() > 0;
 
         return false;
+    }
+
+    public async Task<TEntity?> GetByIdAsync(int id)
+    {
+        var entity = await _dbSet.FindAsync(id);
+        return entity;
     }
 }

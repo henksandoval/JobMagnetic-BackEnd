@@ -188,7 +188,8 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         patchDocument.Replace(a => a.Age, age);
 
         // When
-        var response = await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{entity.Id}", patchDocument);
+        var response =
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{entity.Id}", patchDocument);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
@@ -211,7 +212,8 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var patchDocument = new JsonPatchDocument<AboutUpdateRequest>();
 
         // When
-        var response = await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{updatedEntity.Id}", patchDocument);
+        var response =
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{updatedEntity.Id}", patchDocument);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeFalse();

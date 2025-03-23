@@ -9,7 +9,8 @@ public static class HttpClientExtensions
 {
     public static Task<HttpResponseMessage> PatchAsNewtonsoftJsonAsync<TValue>(
         this HttpClient client,
-        [StringSyntax(StringSyntaxAttribute.Uri)] string? requestUri,
+        [StringSyntax(StringSyntaxAttribute.Uri)]
+        string? requestUri,
         TValue value,
         CancellationToken cancellationToken = default)
     {
