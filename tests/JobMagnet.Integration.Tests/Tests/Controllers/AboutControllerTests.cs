@@ -156,6 +156,18 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
+    [Fact(DisplayName = "Should return 404 when a PUT request with invalid ID is provided")]
+    public async Task ShouldReturnNotFound_WhenPutRequestWithInvalidIdIsProvidedAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        var updatedEntity = _fixture.Build<AboutUpdateRequest>().Create();
+
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
+
+        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
     private async Task<AboutEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
