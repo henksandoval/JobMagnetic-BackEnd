@@ -1,7 +1,7 @@
 ﻿using System.Net.Mime;
 using JobMagnet.Entities;
 using JobMagnet.Mappers;
-using JobMagnet.Models;
+using JobMagnet.Models.About;
 using JobMagnet.Repositories.Interfaces;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;

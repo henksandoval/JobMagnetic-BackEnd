@@ -1,6 +1,6 @@
-﻿namespace JobMagnet.Models;
+﻿namespace JobMagnet.Models.About;
 
-public class AboutCreateRequest
+public abstract class AboutBase
 {
     public string Description { get; set; }
     public string ImageUrl { get; set; }
