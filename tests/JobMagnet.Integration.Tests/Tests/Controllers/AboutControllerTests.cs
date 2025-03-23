@@ -89,6 +89,25 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
     }
 
+    [Fact(DisplayName = "Should delete and return 200 when delete request is received")]
+    public async Task ShouldDeleteRecord_WhenDeleteRequestIsReceivedAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}",
+            nameof(ShouldDeleteRecord_WhenDeleteRequestIsReceivedAsync), DateTime.Now);
+        var entity = await CreateAndPersistEntityAsync();
+
+        var response = await _httpClient.DeleteAsync($"{RequestUriController}/{entity.Id}");
+
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<AboutEntity>>();
+        var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
+        aboutEntity.ShouldBeNull();
+    }
+
     private async Task<AboutEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
