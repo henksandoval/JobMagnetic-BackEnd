@@ -33,10 +33,13 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Should return the record and return 200 when GET request with valid ID is provided")]
     public async Task ShouldReturnRecord_WhenValidIdIsProvidedAsync()
     {
+        // Given
         var entity = await SetupEntityAsync();
 
+        // When
         var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
 
+        // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
@@ -48,10 +51,13 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Should return 404 when GET request with invalid ID is provided")]
     public async Task ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync()
     {
+        // Given
         _ = await SetupEntityAsync();
 
+        // When
         var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
 
+        // Then
         response.IsSuccessStatusCode.ShouldBeFalse();
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
@@ -59,12 +65,15 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Should create a new record and return 201 when the POST request is valid")]
     public async Task ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync()
     {
+        // Given
         await _testFixture.ResetDatabaseAsync();
         var createRequest = _fixture.Build<AboutCreateRequest>().Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
+        // When
         var response = await _httpClient.PostAsync(RequestUriController, httpContent);
 
+        // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
@@ -86,10 +95,13 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Should delete and return 204 when DELETE request is received")]
     public async Task ShouldDeleteRecord_WhenDeleteRequestIsReceivedAsync()
     {
+        // Given
         var entity = await SetupEntityAsync();
 
+        // When
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{entity.Id}");
 
+        // Then
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
@@ -101,10 +113,13 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Should return 404 when a DELETE request with invalid ID is provided")]
     public async Task ShouldReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
     {
+        // Given
         _ = await SetupEntityAsync();
 
+        // When
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{InvalidId}");
 
+        // Then
         response.IsSuccessStatusCode.ShouldBeFalse();
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
@@ -112,11 +127,14 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Should return 204 when a valid PUT request is provided")]
     public async Task ShouldReturnNotContent_WhenReceivedValidPutRequestAsync()
     {
+        // Given
         var entity = await SetupEntityAsync();
         var updatedEntity = _fixture.Build<AboutUpdateRequest>().With(x => x.Id, entity.Id).Create();
 
+        // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updatedEntity);
 
+        // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
@@ -130,12 +148,15 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Should return 400 when a PUT request with invalid ID is provided")]
     public async Task ShouldReturnBadRequest_WhenPutRequestWithInvalidIdIsProvidedAsync()
     {
+        // Given
         await _testFixture.ResetDatabaseAsync();
         var updatedEntity = _fixture.Build<AboutUpdateRequest>().Create();
         var differentId = updatedEntity.Id + InvalidId;
 
+        // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{differentId}", updatedEntity);
 
+        // Then
         response.IsSuccessStatusCode.ShouldBeFalse();
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
@@ -143,11 +164,14 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Should return 404 when a PUT request with invalid ID is provided")]
     public async Task ShouldReturnNotFound_WhenPutRequestWithInvalidIdIsProvidedAsync()
     {
+        // Given
         await _testFixture.ResetDatabaseAsync();
         var updatedEntity = _fixture.Build<AboutUpdateRequest>().Create();
 
+        // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
 
+        // Then
         response.IsSuccessStatusCode.ShouldBeFalse();
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
@@ -155,6 +179,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Should return 204 when a valid PATCH request is provided")]
     public async Task ShouldReturnNotContent_WhenReceivedValidPatchRequestAsync()
     {
+        // Given
         const string description = "New Description";
         const int age = 25;
         var entity = await SetupEntityAsync();
@@ -162,8 +187,10 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         patchDocument.Replace(a => a.Description, description);
         patchDocument.Replace(a => a.Age, age);
 
+        // When
         var response = await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{entity.Id}", patchDocument);
 
+        // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
@@ -178,12 +205,15 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Should return 404 when a PATCH request with invalid ID is provided")]
     public async Task ShouldReturnNotFound_WhenPatchRequestWithInvalidIdIsProvidedAsync()
     {
+        // Given
         await _testFixture.ResetDatabaseAsync();
         var updatedEntity = _fixture.Build<AboutUpdateRequest>().Create();
         var patchDocument = new JsonPatchDocument<AboutUpdateRequest>();
 
+        // When
         var response = await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{updatedEntity.Id}", patchDocument);
 
+        // Then
         response.IsSuccessStatusCode.ShouldBeFalse();
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
