@@ -67,9 +67,12 @@ public class AboutController(
 
         var entity = await queryRepository.GetByIdAsync(id);
 
-        entity!.UpdateEntity(updateRequest);
+        if (entity is null)
+            return Results.NotFound();
 
-        await commandRepository.UpdateAsync(entity!);
+        entity.UpdateEntity(updateRequest);
+
+        await commandRepository.UpdateAsync(entity);
 
         return Results.NoContent();
     }
