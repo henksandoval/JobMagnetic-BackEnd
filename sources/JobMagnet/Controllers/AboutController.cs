@@ -62,6 +62,9 @@ public class AboutController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PutAsync(int id, AboutUpdateRequest updateRequest)
     {
+        if (id != updateRequest.Id)
+            return Results.BadRequest();
+
         var entity = await queryRepository.GetByIdAsync(id);
 
         entity!.UpdateEntity(updateRequest);
