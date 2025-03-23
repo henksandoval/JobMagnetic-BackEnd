@@ -3,6 +3,7 @@ using JobMagnet.Entities;
 using JobMagnet.Mappers;
 using JobMagnet.Models;
 using JobMagnet.Repositories.Interfaces;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers;
@@ -69,6 +70,28 @@ public class AboutController(
 
         if (entity is null)
             return Results.NotFound();
+
+        entity.UpdateEntity(updateRequest);
+
+        await commandRepository.UpdateAsync(entity);
+
+        return Results.NoContent();
+    }
+
+    [HttpPatch("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<AboutUpdateRequest> patchDocument)
+    {
+        var entity = await queryRepository.GetByIdAsync(id);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        var updateRequest = AboutMapper.ToUpdateRequest(entity);
+
+        patchDocument.ApplyTo(updateRequest);
 
         entity.UpdateEntity(updateRequest);
 

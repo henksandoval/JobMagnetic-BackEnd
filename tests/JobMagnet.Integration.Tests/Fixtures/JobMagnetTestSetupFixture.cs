@@ -71,10 +71,7 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         return _webApplicationFactory?.Services!;
     }
 
-    public HttpClient GetClient()
-    {
-        return _webApplicationFactory?.CreateClient()!;
-    }
+    public HttpClient GetClient() => _webApplicationFactory?.CreateClient()!;
 
     private void SetConnectionString()
     {

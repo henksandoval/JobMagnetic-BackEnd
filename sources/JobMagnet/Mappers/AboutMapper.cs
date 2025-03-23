@@ -26,4 +26,9 @@ public static class AboutMapper
     {
         request.Adapt(entity);
     }
+
+    public static AboutUpdateRequest ToUpdateRequest(AboutEntity entity)
+    {
+        return entity.Adapt<AboutUpdateRequest>();
+    }
 }

@@ -1,5 +1,6 @@
 using JobMagnet.Context;
 using JobMagnet.DependencyInjection;
+using JobMagnet.Extensions;
 
 namespace JobMagnet;
 
@@ -11,8 +12,12 @@ public class Program
         // Add services to the container.
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         builder.Services.AddSqlServer<JobMagnetDbContext>(connectionString);
-        builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddControllers(options =>
+        {
+            options.InputFormatters.Insert(0, JsonPatchInputFormatter.GetJsonPatchInputFormatter());
+        });
+
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddApplicationServices();

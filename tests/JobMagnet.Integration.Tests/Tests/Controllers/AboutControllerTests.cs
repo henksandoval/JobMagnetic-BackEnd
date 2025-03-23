@@ -3,10 +3,12 @@ using System.Net.Http.Json;
 using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Entities;
+using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
 using JobMagnet.Models;
 using JobMagnet.Repositories.Interfaces;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit.Abstractions;
@@ -159,9 +161,11 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         await _testFixture.ResetDatabaseAsync();
         var entity = await CreateAndPersistEntityAsync();
-        var updatedEntity = _fixture.Build<AboutUpdateRequest>().With(x => x.Id, entity.Id).Create();
+        var patchDocument = new JsonPatchDocument<AboutUpdateRequest>();
+        patchDocument.Replace(a => a.Description, "New Description");
+        patchDocument.Replace(a => a.Age, 25);
 
-        var response = await _httpClient.PatchAsJsonAsync($"{RequestUriController}/{entity.Id}", updatedEntity);
+        var response = await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{entity.Id}", patchDocument);
 
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
@@ -170,7 +174,8 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<AboutEntity>>();
         var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
         aboutEntity.ShouldNotBeNull();
-        aboutEntity.Should().BeEquivalentTo(updatedEntity);
+        aboutEntity.Description.ShouldBe("New Description");
+        aboutEntity.Age.ShouldBe(25);
     }
 
     private async Task<AboutEntity> CreateAndPersistEntityAsync()
