@@ -32,7 +32,7 @@ public class AboutController(
 
     [HttpPost]
     [ProducesResponseType(typeof(AboutModel), StatusCodes.Status201Created)]
-    public async Task<IResult> Create([FromBody] AboutCreateRequest createRequest)
+    public async Task<IResult> CreateAsync([FromBody] AboutCreateRequest createRequest)
     {
         var entity = AboutMapper.ToEntity(createRequest);
         await commandRepository.CreateAsync(entity);
@@ -52,6 +52,21 @@ public class AboutController(
             return Results.NotFound();
 
         _ = await commandRepository.HardDeleteAsync(entity);
+
+        return Results.NoContent();
+    }
+
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> PutAsync(int id, AboutUpdateRequest updateRequest)
+    {
+        var entity = await queryRepository.GetByIdAsync(id);
+
+        entity!.UpdateEntity(updateRequest);
+
+        await commandRepository.UpdateAsync(entity!);
 
         return Results.NoContent();
     }
