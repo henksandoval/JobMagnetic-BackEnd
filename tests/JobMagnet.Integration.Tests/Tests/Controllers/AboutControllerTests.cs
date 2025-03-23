@@ -19,12 +19,10 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     private readonly Fixture _fixture = new();
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
-    private readonly ITestOutputHelper _testOutputHelper;
 
     public AboutControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
         _testFixture = testFixture;
-        _testOutputHelper = testOutputHelper;
         _httpClient = _testFixture.GetClient();
         _testFixture.SetTestOutputHelper(testOutputHelper);
     }
@@ -116,8 +114,6 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldReturnNotContent_WhenReceivedValidPutRequestAsync()
     {
         await _testFixture.ResetDatabaseAsync();
-        _testOutputHelper.WriteLine("Executing test: {0} in time: {1}",
-            nameof(ShouldReturnNotContent_WhenReceivedValidPutRequestAsync), DateTime.Now);
         var entity = await CreateAndPersistEntityAsync();
         var updatedEntity = _fixture.Build<AboutUpdateRequest>().With(x => x.Id, entity.Id).Create();
 
@@ -156,6 +152,25 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 
         response.IsSuccessStatusCode.ShouldBeFalse();
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact(DisplayName = "Should return 204 when a valid PATCH request is provided")]
+    public async Task ShouldReturnNotContent_WhenReceivedValidPatchRequestAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        var entity = await CreateAndPersistEntityAsync();
+        var updatedEntity = _fixture.Build<AboutUpdateRequest>().With(x => x.Id, entity.Id).Create();
+
+        var response = await _httpClient.PatchAsJsonAsync($"{RequestUriController}/{entity.Id}", updatedEntity);
+
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<AboutEntity>>();
+        var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
+        aboutEntity.ShouldNotBeNull();
+        aboutEntity.Should().BeEquivalentTo(updatedEntity);
     }
 
     private async Task<AboutEntity> CreateAndPersistEntityAsync()
