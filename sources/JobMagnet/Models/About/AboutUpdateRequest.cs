@@ -4,5 +4,5 @@ namespace JobMagnet.Models.About;
 
 public class AboutUpdateRequest : AboutBase, IIdentifierBase<int>
 {
-    public int Id { get; init; }
+    public required int Id { get; init; }
 }
