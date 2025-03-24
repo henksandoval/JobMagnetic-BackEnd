@@ -1,6 +1,8 @@
-﻿namespace JobMagnet.Models.About;
+﻿using JobMagnet.Models.Shared;
 
-public class AboutModel : AboutBase
+namespace JobMagnet.Models.About;
+
+public sealed class AboutModel : AboutBase, IIdentifierBase<int>
 {
-    public int Id { get; set; }
+    public int Id { get; init; }
 }

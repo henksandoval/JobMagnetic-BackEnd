@@ -2,17 +2,17 @@
 
 public abstract class AboutBase
 {
-    public string Description { get; set; }
-    public string ImageUrl { get; set; }
-    public string Text { get; set; }
-    public string Hobbies { get; set; }
-    public string Birthday { get; set; }
-    public string WebSite { get; set; }
-    public int PhoneNumber { get; set; }
-    public string City { get; set; }
-    public int Age { get; set; }
-    public string Degree { get; set; }
-    public string Email { get; set; }
-    public string Freelance { get; set; }
-    public string WorkExperience { get; set; }
+    public required string Description { get; init; }
+    public required string ImageUrl { get; init; }
+    public required string Text { get; init; }
+    public required string Hobbies { get; init; }
+    public required string Birthday { get; init; }
+    public required string WebSite { get; init; }
+    public required int PhoneNumber { get; init; }
+    public required string City { get; init; }
+    public required int Age { get; init; }
+    public required string Degree { get; init; }
+    public required string Email { get; init; }
+    public required string Freelance { get; init; }
+    public required string WorkExperience { get; init; }
 }
