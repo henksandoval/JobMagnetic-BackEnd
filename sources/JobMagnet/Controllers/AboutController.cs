@@ -1,8 +1,9 @@
 ﻿using System.Net.Mime;
 using JobMagnet.Entities;
 using JobMagnet.Mappers;
-using JobMagnet.Models;
+using JobMagnet.Models.About;
 using JobMagnet.Repositories.Interfaces;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers;
@@ -23,7 +24,7 @@ public class AboutController(
         var entity = await queryRepository.GetByIdAsync(id);
 
         if (entity is null)
-            return Results.NotFound($"Record [{id}] not found");
+            return Results.NotFound();
 
         var responseModel = AboutMapper.ToModel(entity);
 
@@ -32,12 +33,70 @@ public class AboutController(
 
     [HttpPost]
     [ProducesResponseType(typeof(AboutModel), StatusCodes.Status201Created)]
-    public async Task<IResult> Create([FromBody] AboutCreateRequest createRequest)
+    public async Task<IResult> CreateAsync([FromBody] AboutCreateRequest createRequest)
     {
         var entity = AboutMapper.ToEntity(createRequest);
         await commandRepository.CreateAsync(entity);
         var newRecord = AboutMapper.ToModel(entity);
 
         return Results.CreatedAtRoute(nameof(GetAboutByIdAsync), new { id = newRecord.Id }, newRecord);
+    }
+
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> DeleteAsync(int id)
+    {
+        var entity = await queryRepository.GetByIdAsync(id);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        _ = await commandRepository.HardDeleteAsync(entity);
+
+        return Results.NoContent();
+    }
+
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> PutAsync(int id, AboutUpdateRequest updateRequest)
+    {
+        if (id != updateRequest.Id)
+            return Results.BadRequest();
+
+        var entity = await queryRepository.GetByIdAsync(id);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        entity.UpdateEntity(updateRequest);
+
+        await commandRepository.UpdateAsync(entity);
+
+        return Results.NoContent();
+    }
+
+    [HttpPatch("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<AboutUpdateRequest> patchDocument)
+    {
+        var entity = await queryRepository.GetByIdAsync(id);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        var updateRequest = AboutMapper.ToUpdateRequest(entity);
+
+        patchDocument.ApplyTo(updateRequest);
+
+        entity.UpdateEntity(updateRequest);
+
+        await commandRepository.UpdateAsync(entity);
+
+        return Results.NoContent();
     }
 }

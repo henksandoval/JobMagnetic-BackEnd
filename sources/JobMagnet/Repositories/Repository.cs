@@ -50,6 +50,15 @@ public class Repository<TEntity>(JobMagnetDbContext dbContext) : IQueryRepositor
         }
     }
 
+    public async Task<bool?> HardDeleteAsync(TEntity entity)
+    {
+        _dbSet.Remove(entity);
+        if (!_isTransactional)
+            return await dbContext.SaveChangesAsync() > 0;
+
+        return false;
+    }
+
     public async Task<TEntity?> GetByIdAsync(int id)
     {
         var entity = await _dbSet.FindAsync(id);
