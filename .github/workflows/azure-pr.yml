@@ -16,7 +16,6 @@ jobs:
           fetch-depth: 0
 
       - name: Set Branch Name
-        id: vars
         run: echo "BRANCH_NAME=features/github-pr-$(date +%Y-%m-%d-%H-%M)" >> $GITHUB_ENV
 
       - name: Set Git User
@@ -36,7 +35,6 @@ jobs:
           git push azure --force HEAD:${{ env.BRANCH_NAME }}
 
       - name: Set Pull Request Title
-        id: vars
         run: echo "COMMIT_TITLE=🔀 Auto PR from GitHub $(date +%Y-%m-%d-%H-%M)" >> $GITHUB_ENV
 
       - name: Create Pull Request
