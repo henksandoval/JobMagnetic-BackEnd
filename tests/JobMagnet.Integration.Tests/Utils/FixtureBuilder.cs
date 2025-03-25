@@ -18,6 +18,9 @@ public static class FixtureBuilder
     {
         var entity = fixture.Build<ResumeEntity>()
             .With(x => x.Id, 0)
+            .With(x => x.IsDeleted, false)
+            .Without(x => x.DeletedAt)
+            .Without(x => x.DeletedAt)
             .Create();
         return entity;
     }
