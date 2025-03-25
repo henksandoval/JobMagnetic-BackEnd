@@ -1,4 +1,5 @@
-﻿using JobMagnet.Infrastructure.Context;
+﻿using System.Linq.Expressions;
+using JobMagnet.Infrastructure.Context;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -16,6 +17,31 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
     {
         var entity = await _dbSet.FindAsync(id);
         return entity;
+    }
+
+    public async Task<ICollection<TEntity>> GetAllAsync()
+    {
+        return await _dbSet.ToListAsync();
+    }
+
+    public async Task<ICollection<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return await _dbSet.Where(predicate).ToListAsync();
+    }
+
+    public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return await _dbSet.FirstOrDefaultAsync(predicate);
+    }
+
+    public async Task<int> CountAsync()
+    {
+        return await _dbSet.CountAsync();
+    }
+
+    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return await _dbSet.AnyAsync(predicate);
     }
 
     public async Task CreateAsync(TEntity entity)
