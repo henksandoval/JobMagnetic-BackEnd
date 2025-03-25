@@ -1,15 +1,48 @@
-﻿using JobMagnet.Context;
-using JobMagnet.Repositories.Interfaces;
+﻿using System.Linq.Expressions;
+using JobMagnet.Infrastructure.Context;
+using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace JobMagnet.Repositories;
+namespace JobMagnet.Infrastructure.Repositories.Base;
 
-public class Repository<TEntity>(JobMagnetDbContext dbContext) : IQueryRepository<TEntity>, ICommandRepository<TEntity>
+public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
+    : IQueryRepository<TEntity, TKey>, ICommandRepository<TEntity>
     where TEntity : class
 {
     private readonly DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
     private bool _isTransactional;
+
+    public async Task<TEntity?> GetByIdAsync(TKey id)
+    {
+        var entity = await _dbSet.FindAsync(id);
+        return entity;
+    }
+
+    public async Task<ICollection<TEntity>> GetAllAsync()
+    {
+        return await _dbSet.ToListAsync();
+    }
+
+    public async Task<ICollection<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return await _dbSet.Where(predicate).ToListAsync();
+    }
+
+    public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return await _dbSet.FirstOrDefaultAsync(predicate);
+    }
+
+    public async Task<int> CountAsync()
+    {
+        return await _dbSet.CountAsync();
+    }
+
+    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return await _dbSet.AnyAsync(predicate);
+    }
 
     public async Task CreateAsync(TEntity entity)
     {
@@ -57,11 +90,5 @@ public class Repository<TEntity>(JobMagnetDbContext dbContext) : IQueryRepositor
             return await dbContext.SaveChangesAsync() > 0;
 
         return false;
-    }
-
-    public async Task<TEntity?> GetByIdAsync(int id)
-    {
-        var entity = await _dbSet.FindAsync(id);
-        return entity;
     }
 }

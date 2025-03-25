@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Entities;
+﻿namespace JobMagnet.Infrastructure.Entities;
 
 public class AboutEntity
 {

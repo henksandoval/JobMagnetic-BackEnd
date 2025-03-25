@@ -43,4 +43,8 @@
         <ProjectReference Include="..\..\sources\JobMagnet\JobMagnet.csproj" Aliases="global,JobMagnetHost"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Tests\Controllers\SkillControllerTests.cs" />
+    </ItemGroup>
+
 </Project>

@@ -1,4 +1,4 @@
-﻿using JobMagnet.Entities;
+﻿using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Models;
 using Mapster;
 

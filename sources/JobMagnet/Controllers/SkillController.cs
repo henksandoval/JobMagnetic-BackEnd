@@ -1,8 +1,8 @@
 ﻿using System.Net.Mime;
-using JobMagnet.Entities;
+using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Infrastructure.Repositories.Generic.Interfaces;
 using JobMagnet.Mappers;
 using JobMagnet.Models;
-using JobMagnet.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers;

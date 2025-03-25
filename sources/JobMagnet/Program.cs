@@ -1,6 +1,6 @@
-using JobMagnet.Context;
 using JobMagnet.DependencyInjection;
 using JobMagnet.Extensions;
+using JobMagnet.Infrastructure.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +11,7 @@ builder.Services.AddControllers(options =>
     options.InputFormatters.Insert(0, JsonPatchInputFormatter.GetJsonPatchInputFormatter());
 });
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices();
