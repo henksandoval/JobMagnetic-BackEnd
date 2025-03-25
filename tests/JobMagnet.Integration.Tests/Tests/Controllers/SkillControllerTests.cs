@@ -1,11 +1,11 @@
 using System.Net;
 using AutoFixture;
 using FluentAssertions;
-using JobMagnet.Entities;
+using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Infrastructure.Repositories.Generic.Interfaces;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
 using JobMagnet.Models;
-using JobMagnet.Repositories.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit.Abstractions;

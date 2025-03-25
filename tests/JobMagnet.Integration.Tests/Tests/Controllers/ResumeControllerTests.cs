@@ -2,12 +2,12 @@ using System.Net;
 using System.Net.Http.Json;
 using AutoFixture;
 using FluentAssertions;
-using JobMagnet.Entities;
+using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
-using JobMagnet.Models.About;
-using JobMagnet.Repositories.Interfaces;
+using JobMagnet.Models.Resume;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -15,15 +15,15 @@ using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers;
 
-public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
+public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 {
-    private const string RequestUriController = "api/about";
+    private const string RequestUriController = "api/resume";
     private const string InvalidId = "100";
-    private readonly Fixture _fixture = new();
+    private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
 
-    public AboutControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
+    public ResumeControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
         _testFixture = testFixture;
         _httpClient = _testFixture.GetClient();
@@ -43,7 +43,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<AboutModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<ResumeModel>(response);
         responseData.ShouldNotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
@@ -67,7 +67,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var createRequest = _fixture.Build<AboutCreateRequest>().Create();
+        var createRequest = _fixture.Build<ResumeCreateRequest>().Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -77,7 +77,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<AboutModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<ResumeModel>(response);
         responseData.ShouldNotBeNull();
 
         var locationHeader = response.Headers.Location!.ToString();
@@ -85,7 +85,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<AboutEntity>>();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
         var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
@@ -105,7 +105,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<AboutEntity>>();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
         var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
         aboutEntity.ShouldBeNull();
     }
@@ -129,7 +129,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updatedEntity = _fixture.Build<AboutUpdateRequest>().With(x => x.Id, entity.Id).Create();
+        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().With(x => x.Id, entity.Id).Create();
 
         // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updatedEntity);
@@ -139,7 +139,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<AboutEntity>>();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
         var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
         aboutEntity.ShouldNotBeNull();
         aboutEntity.Should().BeEquivalentTo(updatedEntity);
@@ -150,7 +150,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<AboutUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().Create();
         var differentId = updatedEntity.Id + InvalidId;
 
         // When
@@ -166,7 +166,7 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<AboutUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().Create();
 
         // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
@@ -180,12 +180,10 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldReturnNotContent_WhenReceivedValidPatchRequestAsync()
     {
         // Given
-        const string description = "New Description";
-        const int age = 25;
+        const string newJobTitle = "Software developer";
         var entity = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<AboutUpdateRequest>();
-        patchDocument.Replace(a => a.Description, description);
-        patchDocument.Replace(a => a.Age, age);
+        var patchDocument = new JsonPatchDocument<ResumeUpdateRequest>();
+        patchDocument.Replace(a => a.JobTitle, newJobTitle);
 
         // When
         var response =
@@ -196,11 +194,10 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<AboutEntity>>();
-        var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
-        aboutEntity.ShouldNotBeNull();
-        aboutEntity.Description.ShouldBe(description);
-        aboutEntity.Age.ShouldBe(age);
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
+        var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
+        dbEntity.ShouldNotBeNull();
+        dbEntity.JobTitle.ShouldBe(newJobTitle);
     }
 
     [Fact(DisplayName = "Should return 404 when a PATCH request with invalid ID is provided")]
@@ -208,8 +205,8 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<AboutUpdateRequest>().Create();
-        var patchDocument = new JsonPatchDocument<AboutUpdateRequest>();
+        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().Create();
+        var patchDocument = new JsonPatchDocument<ResumeUpdateRequest>();
 
         // When
         var response =
@@ -220,18 +217,18 @@ public class AboutControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    private async Task<AboutEntity> CreateAndPersistEntityAsync()
+    private async Task<ResumeEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<AboutEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ResumeEntity>>();
 
-        var entity = _fixture.Build<AboutEntity>().With(x => x.Id, 0).Create();
+        var entity = _fixture.BuildResumeEntity();
         await commandRepository.CreateAsync(entity);
 
         return entity;
     }
 
-    private async Task<AboutEntity> SetupEntityAsync()
+    private async Task<ResumeEntity> SetupEntityAsync()
     {
         await _testFixture.ResetDatabaseAsync();
         return await CreateAndPersistEntityAsync();

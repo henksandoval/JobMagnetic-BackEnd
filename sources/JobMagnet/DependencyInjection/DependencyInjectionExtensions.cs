@@ -1,5 +1,6 @@
-using JobMagnet.Repositories;
-using JobMagnet.Repositories.Interfaces;
+using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Infrastructure.Repositories.Base;
+using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 
 namespace JobMagnet.DependencyInjection;
 
@@ -9,7 +10,7 @@ public static class DependencyInjectionExtensions
     {
         return services
             .AddLogging()
-            .AddTransient(typeof(IQueryRepository<>), typeof(Repository<>))
-            .AddTransient(typeof(ICommandRepository<>), typeof(Repository<>));
+            .AddTransient(typeof(IQueryRepository<ResumeEntity, long>), typeof(Repository<ResumeEntity, long>))
+            .AddTransient(typeof(ICommandRepository<ResumeEntity>), typeof(Repository<ResumeEntity, long>));
     }
 }
