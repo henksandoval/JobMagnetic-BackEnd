@@ -2,7 +2,7 @@
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Mappers;
-using JobMagnet.Models.Resume;
+using JobMagnet.Models.Testimonial;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,34 +12,34 @@ namespace JobMagnet.Controllers;
 [Route("api/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]
-public class ResumeController(
-    IQueryRepository<ResumeEntity, long> queryRepository,
-    ICommandRepository<ResumeEntity> commandRepository) : ControllerBase
+public class TestimonialController(
+    IQueryRepository<TestimonialEntity, long> queryRepository,
+    ICommandRepository<TestimonialEntity> commandRepository) : ControllerBase
 {
-    [HttpGet("{id:int}", Name = nameof(GetResumeByIdAsync))]
-    [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status200OK)]
+    [HttpGet("{id:int}", Name = nameof(GetTestimonialByIdAsync))]
+    [ProducesResponseType(typeof(TestimonialModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> GetResumeByIdAsync(long id)
+    public async Task<IResult> GetTestimonialByIdAsync(long id)
     {
         var entity = await queryRepository.GetByIdAsync(id);
 
         if (entity is null)
             return Results.NotFound();
 
-        var responseModel = ResumeMapper.ToModel(entity);
+        var responseModel = TestimonialMapper.ToModel(entity);
 
         return Results.Ok(responseModel);
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] ResumeCreateRequest createRequest)
+    [ProducesResponseType(typeof(TestimonialModel), StatusCodes.Status201Created)]
+    public async Task<IResult> CreateAsync([FromBody] TestimonialCreateRequest createRequest)
     {
-        var entity = ResumeMapper.ToEntity(createRequest);
+        var entity = TestimonialMapper.ToEntity(createRequest);
         await commandRepository.CreateAsync(entity);
-        var newRecord = ResumeMapper.ToModel(entity);
+        var newRecord = TestimonialMapper.ToModel(entity);
 
-        return Results.CreatedAtRoute(nameof(GetResumeByIdAsync), new { id = newRecord.Id }, newRecord);
+        return Results.CreatedAtRoute(nameof(GetTestimonialByIdAsync), new { id = newRecord.Id }, newRecord);
     }
 
     [HttpDelete("{id:int}")]
@@ -61,7 +61,7 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PutAsync(int id, ResumeUpdateRequest updateRequest)
+    public async Task<IResult> PutAsync(int id, TestimonialUpdateRequest updateRequest)
     {
         if (id != updateRequest.Id)
             return Results.BadRequest();
@@ -82,14 +82,14 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ResumeUpdateRequest> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<TestimonialUpdateRequest> patchDocument)
     {
         var entity = await queryRepository.GetByIdAsync(id);
 
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = ResumeMapper.ToUpdateRequest(entity);
+        var updateRequest = TestimonialMapper.ToUpdateRequest(entity);
 
         patchDocument.ApplyTo(updateRequest);
 

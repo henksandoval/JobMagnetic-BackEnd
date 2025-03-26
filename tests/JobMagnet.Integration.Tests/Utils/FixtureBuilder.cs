@@ -26,14 +26,30 @@ public static class FixtureBuilder
             .With(x => x.LastName, Faker.Name.LastName())
             .With(x => x.JobTitle, Faker.Name.JobTitle())
             .With(x => x.BirthDate, DateOnly.FromDateTime(Faker.Date.Past(30)))
-            .With(x => x.About, OptionalValue(Faker, f => f.Lorem.Paragraph()))
-            .With(x => x.Summary, OptionalValue(Faker, f => f.Lorem.Paragraph()))
-            .With(x => x.Overview, OptionalValue(Faker, f => f.Lorem.Paragraph()))
-            .With(x => x.ProfileImageUrl, OptionalValue(Faker, f => f.Image.PicsumUrl()))
+            .With(x => x.About, Faker.Lorem.Paragraph())
+            .With(x => x.Summary, Faker.Lorem.Paragraph())
+            .With(x => x.Overview, Faker.Lorem.Paragraph())
+            .With(x => x.ProfileImageUrl, Faker.Image.PicsumUrl())
             .With(x => x.Title, OptionalValue(Faker, f => f.Name.Prefix()))
             .With(x => x.Suffix, OptionalValue(Faker, f => f.Name.Suffix()))
             .With(x => x.MiddleName, OptionalValue(Faker, f => f.Name.FirstName()))
             .With(x => x.SecondLastName, OptionalValue(Faker, f => f.Name.LastName()))
+            .Without(x => x.DeletedAt)
+            .Without(x => x.DeletedBy)
+            .Create();
+
+        return entity;
+    }
+
+    public static TestimonialEntity BuildTestimonialEntity(this IFixture fixture)
+    {
+        var entity = fixture.Build<TestimonialEntity>()
+            .With(x => x.Id, 0)
+            .With(x => x.IsDeleted, false)
+            .With(x => x.Name, Faker.Name.FullName())
+            .With(x => x.JobTitle, Faker.Name.JobTitle())
+            .With(x => x.Feedback, Faker.Lorem.Paragraph())
+            .With(x => x.PhotoUrl, OptionalValue(Faker, f => f.Image.PicsumUrl()))
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy)
             .Create();

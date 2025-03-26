@@ -4,9 +4,9 @@ using Mapster;
 
 namespace JobMagnet.Mappers;
 
-public static class PersonalInfoMapper
+public static class ResumeMapper
 {
-    static PersonalInfoMapper()
+    static ResumeMapper()
     {
         TypeAdapterConfig<ResumeUpdateRequest, ResumeEntity>.NewConfig()
             .Ignore(destination => destination.Id);

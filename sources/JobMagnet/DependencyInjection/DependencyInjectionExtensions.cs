@@ -11,6 +11,8 @@ public static class DependencyInjectionExtensions
         return services
             .AddLogging()
             .AddTransient(typeof(IQueryRepository<ResumeEntity, long>), typeof(Repository<ResumeEntity, long>))
-            .AddTransient(typeof(ICommandRepository<ResumeEntity>), typeof(Repository<ResumeEntity, long>));
+            .AddTransient(typeof(ICommandRepository<ResumeEntity>), typeof(Repository<ResumeEntity, long>))
+            .AddTransient(typeof(IQueryRepository<TestimonialEntity, long>), typeof(Repository<TestimonialEntity, long>))
+            .AddTransient(typeof(ICommandRepository<TestimonialEntity>), typeof(Repository<TestimonialEntity, long>));
     }
 }
