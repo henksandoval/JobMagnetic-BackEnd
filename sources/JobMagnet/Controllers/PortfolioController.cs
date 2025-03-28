@@ -22,7 +22,7 @@ public class PortfolioController(
     public async Task<IResult> CreateAsync([FromBody] PortfolioCreateRequest createRequest)
     {
         var entity = PortfolioMapper.ToEntity(createRequest);
-        await commandRepository.CreateAsync(entity);
+        await commandRepository.CreateAsync(entity).ConfigureAwait(false);
         var newRecord = PortfolioMapper.ToModel(entity);
 
         return Results.CreatedAtRoute(nameof(GetPortfolioByIdAsync), new { id = newRecord.Id }, newRecord);
@@ -33,6 +33,15 @@ public class PortfolioController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetPortfolioByIdAsync(long id)
     {
-        throw new NotImplementedException();
+        var entity = await queryRepository
+            .IncludeGalleryItems()
+            .GetByIdWithIncludesAsync(id).ConfigureAwait(false);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        var responseModel = PortfolioMapper.ToModel(entity);
+
+        return Results.Ok(responseModel);
     }
 }
