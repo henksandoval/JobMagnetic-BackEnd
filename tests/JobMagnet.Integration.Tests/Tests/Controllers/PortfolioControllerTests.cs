@@ -110,6 +110,20 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         aboutEntity.ShouldBeNull();
     }
 
+    [Fact(DisplayName = "Should return 404 when a DELETE request with invalid ID is provided")]
+    public async Task ShouldReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
+    {
+        // Given
+        _ = await SetupEntityAsync();
+
+        // When
+        var response = await _httpClient.DeleteAsync($"{RequestUriController}/{InvalidId}");
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
     private async Task<PortfolioEntity> SetupEntityAsync()
     {
         await _testFixture.ResetDatabaseAsync();

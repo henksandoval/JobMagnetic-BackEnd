@@ -44,4 +44,19 @@ public class PortfolioController(
 
         return Results.Ok(responseModel);
     }
+
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> DeleteAsync(int id)
+    {
+        var entity = await queryRepository.GetByIdAsync(id);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        _ = await commandRepository.HardDeleteAsync(entity);
+
+        return Results.NoContent();
+    }
 }
