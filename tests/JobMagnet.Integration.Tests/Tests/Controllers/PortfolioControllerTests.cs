@@ -78,6 +78,20 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
 
+    [Fact(DisplayName = "Should return 404 when GET request with invalid ID is provided")]
+    public async Task ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync()
+    {
+        // Given
+        _ = await SetupEntityAsync();
+
+        // When
+        var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
     private async Task<PortfolioEntity> SetupEntityAsync()
     {
         await _testFixture.ResetDatabaseAsync();
