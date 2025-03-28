@@ -2,5 +2,5 @@
 
 public sealed class PortfolioCreateRequest : PortfolioBase
 {
-    public IList<PortfolioGalleryItemCreateRequest> PortfolioGalleryItems { get; set; }
+    public IList<PortfolioGalleryItemCreateRequest> GalleryItems { get; set; }
 }

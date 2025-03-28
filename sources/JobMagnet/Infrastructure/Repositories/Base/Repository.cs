@@ -19,12 +19,12 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
         return entity;
     }
 
-    public async Task<ICollection<TEntity>> GetAllAsync()
+    public async Task<IReadOnlyCollection<TEntity>> GetAllAsync()
     {
         return await _dbSet.ToListAsync();
     }
 
-    public async Task<ICollection<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+    public async Task<IReadOnlyCollection<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return await _dbSet.Where(predicate).ToListAsync();
     }

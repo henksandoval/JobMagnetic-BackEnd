@@ -1,8 +1,7 @@
 ﻿using System.Net;
 using AutoFixture;
 using FluentAssertions;
-using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
+using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
 using JobMagnet.Models.Portfolio;
@@ -50,8 +49,9 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioEntity, long>>();
-        var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
+        _ = queryRepository.IncludeGalleryItems();
+        var entityCreated = await queryRepository.GetByIdWithIncludesAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
         entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
