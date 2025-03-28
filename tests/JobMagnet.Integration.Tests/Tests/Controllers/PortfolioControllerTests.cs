@@ -1,10 +1,13 @@
 ﻿using System.Net;
 using AutoFixture;
 using FluentAssertions;
+using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
 using JobMagnet.Models.Portfolio;
+using JobMagnet.Models.Resume;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit.Abstractions;
@@ -55,5 +58,40 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 
         entityCreated.ShouldNotBeNull();
         entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
+    }
+
+    [Fact(DisplayName = "Should return the record and return 200 when GET request with valid ID is provided")]
+    public async Task ShouldReturnRecord_WhenValidIdIsProvidedAsync()
+    {
+        // Given
+        var entity = await SetupEntityAsync();
+
+        // When
+        var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        var responseData = await TestUtilities.DeserializeResponseAsync<ResumeModel>(response);
+        responseData.ShouldNotBeNull();
+        responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
+    }
+
+    private async Task<PortfolioEntity> SetupEntityAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        return await CreateAndPersistEntityAsync();
+    }
+
+    private async Task<PortfolioEntity> CreateAndPersistEntityAsync()
+    {
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<PortfolioEntity>>();
+
+        var entity = _fixture.BuildPortfolioEntity();
+        await commandRepository.CreateAsync(entity);
+
+        return entity;
     }
 }

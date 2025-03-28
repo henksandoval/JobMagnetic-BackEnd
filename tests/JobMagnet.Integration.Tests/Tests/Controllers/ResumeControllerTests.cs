@@ -217,6 +217,12 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
+    private async Task<ResumeEntity> SetupEntityAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        return await CreateAndPersistEntityAsync();
+    }
+
     private async Task<ResumeEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
@@ -226,11 +232,5 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await commandRepository.CreateAsync(entity);
 
         return entity;
-    }
-
-    private async Task<ResumeEntity> SetupEntityAsync()
-    {
-        await _testFixture.ResetDatabaseAsync();
-        return await CreateAndPersistEntityAsync();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using Bogus;
 using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Integration.Tests.Fixtures.Customizations;
 
 namespace JobMagnet.Integration.Tests.Utils;
 
@@ -11,6 +12,7 @@ public static class FixtureBuilder
     public static IFixture Build()
     {
         var fixture = new Fixture();
+        fixture.Customize(new PortfolioGalleryItemCustomization());
         fixture.Register(() => DateOnly.FromDateTime(Faker.Date.Past(30)));
         fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => fixture.Behaviors.Remove(b));
         fixture.Behaviors.Add(new OmitOnRecursionBehavior());
@@ -30,10 +32,10 @@ public static class FixtureBuilder
             .With(x => x.Summary, Faker.Lorem.Paragraph())
             .With(x => x.Overview, Faker.Lorem.Paragraph())
             .With(x => x.ProfileImageUrl, Faker.Image.PicsumUrl())
-            .With(x => x.Title, OptionalValue(Faker, f => f.Name.Prefix()))
-            .With(x => x.Suffix, OptionalValue(Faker, f => f.Name.Suffix()))
-            .With(x => x.MiddleName, OptionalValue(Faker, f => f.Name.FirstName()))
-            .With(x => x.SecondLastName, OptionalValue(Faker, f => f.Name.LastName()))
+            .With(x => x.Title, TestUtilities.OptionalValue(Faker, f => f.Name.Prefix()))
+            .With(x => x.Suffix, TestUtilities.OptionalValue(Faker, f => f.Name.Suffix()))
+            .With(x => x.MiddleName, TestUtilities.OptionalValue(Faker, f => f.Name.FirstName()))
+            .With(x => x.SecondLastName, TestUtilities.OptionalValue(Faker, f => f.Name.LastName()))
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy)
             .Create();
@@ -49,7 +51,7 @@ public static class FixtureBuilder
             .With(x => x.Name, Faker.Name.FullName())
             .With(x => x.JobTitle, Faker.Name.JobTitle())
             .With(x => x.Feedback, Faker.Lorem.Paragraph())
-            .With(x => x.PhotoUrl, OptionalValue(Faker, f => f.Image.PicsumUrl()))
+            .With(x => x.PhotoUrl, TestUtilities.OptionalValue(Faker, f => f.Image.PicsumUrl()))
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy)
             .Create();
@@ -57,9 +59,17 @@ public static class FixtureBuilder
         return entity;
     }
 
-    private static T? OptionalValue<T>(Faker faker, Func<Faker, T> valueGenerator, int probabilityPercentage = 50)
+    public static PortfolioEntity BuildPortfolioEntity(this IFixture fixture, int galleryItems = 5)
     {
-        var random = new Random();
-        return random.Next(100) < probabilityPercentage ? valueGenerator(faker) : default(T);
+        var portfolioGalleryItems = fixture.CreateMany<PortfolioGalleryItemEntity>(galleryItems).ToList();
+        var portfolioEntity = fixture.Build<PortfolioEntity>()
+            .With(x => x.Id, 0)
+            .With(x => x.IsDeleted, false)
+            .Without(x => x.DeletedAt)
+            .Without(x => x.DeletedBy)
+            .With(x => x.GalleryItems, portfolioGalleryItems)
+            .Create();
+
+        return portfolioEntity;
     }
 }
