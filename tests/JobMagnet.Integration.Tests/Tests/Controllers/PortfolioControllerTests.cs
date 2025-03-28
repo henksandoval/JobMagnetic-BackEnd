@@ -105,9 +105,12 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
-        var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
-        aboutEntity.ShouldBeNull();
+        var queryPortfolioRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
+        var queryItemsRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryItemEntity, long>>();
+        var portfolioEntity = await queryPortfolioRepository.GetByIdAsync(entity.Id);
+        var entityItems = await queryItemsRepository.FindAsync(x => x.PorfolioId == entity.Id);
+        portfolioEntity.ShouldBeNull();
+        entityItems.ShouldBeEmpty();
     }
 
     [Fact(DisplayName = "Should return 404 when a DELETE request with invalid ID is provided")]

@@ -15,6 +15,7 @@ public static class DependencyInjectionExtensions
             .AddTransient(typeof(IQueryRepository<ResumeEntity, long>), typeof(Repository<ResumeEntity, long>))
             .AddTransient(typeof(ICommandRepository<ResumeEntity>), typeof(Repository<ResumeEntity, long>))
             .AddTransient(typeof(IQueryRepository<TestimonialEntity, long>), typeof(Repository<TestimonialEntity, long>))
+            .AddTransient(typeof(IQueryRepository<PortfolioGalleryItemEntity, long>), typeof(Repository<PortfolioGalleryItemEntity, long>))
             .AddTransient(typeof(ICommandRepository<TestimonialEntity>), typeof(Repository<TestimonialEntity, long>))
             .AddTransient<IPortfolioQueryRepository, PortfolioQueryRepository>()
             .AddTransient(typeof(ICommandRepository<PortfolioEntity>), typeof(Repository<PortfolioEntity, long>));
