@@ -68,12 +68,12 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteAsync(int id)
     {
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
 
-        _ = await commandRepository.HardDeleteAsync(entity);
+        _ = await commandRepository.HardDeleteAsync(entity).ConfigureAwait(false);
 
         return Results.NoContent();
     }
@@ -84,7 +84,7 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ResumeUpdateRequest> patchDocument)
     {
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
@@ -95,7 +95,7 @@ public class ResumeController(
 
         entity.UpdateEntity(updateRequest);
 
-        await commandRepository.UpdateAsync(entity);
+        await commandRepository.UpdateAsync(entity).ConfigureAwait(false);
 
         return Results.NoContent();
     }

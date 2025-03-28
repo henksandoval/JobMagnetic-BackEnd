@@ -50,12 +50,12 @@ public class PortfolioController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteAsync(int id)
     {
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
 
-        _ = await commandRepository.HardDeleteAsync(entity);
+        _ = await commandRepository.HardDeleteAsync(entity).ConfigureAwait(false);
 
         return Results.NoContent();
     }

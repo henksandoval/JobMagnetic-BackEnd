@@ -19,11 +19,11 @@ public class PortfolioQueryRepository(JobMagnetDbContext dbContext)
 
     public async Task<IReadOnlyCollection<PortfolioEntity>> GetAllWithIncludesAsync()
     {
-        return await _query.ToListAsync();
+        return await _query.ToListAsync().ConfigureAwait(false);
     }
 
     public async Task<PortfolioEntity?> GetByIdWithIncludesAsync(long id)
     {
-        return await _query.FirstOrDefaultAsync(p => p.Id == id);
+        return await _query.FirstOrDefaultAsync(p => p.Id == id).ConfigureAwait(false);
     }
 }

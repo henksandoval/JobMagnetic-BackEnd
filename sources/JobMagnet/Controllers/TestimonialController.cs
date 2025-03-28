@@ -21,7 +21,7 @@ public class TestimonialController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetTestimonialByIdAsync(long id)
     {
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
@@ -36,7 +36,7 @@ public class TestimonialController(
     public async Task<IResult> CreateAsync([FromBody] TestimonialCreateRequest createRequest)
     {
         var entity = TestimonialMapper.ToEntity(createRequest);
-        await commandRepository.CreateAsync(entity);
+        await commandRepository.CreateAsync(entity).ConfigureAwait(false);
         var newRecord = TestimonialMapper.ToModel(entity);
 
         return Results.CreatedAtRoute(nameof(GetTestimonialByIdAsync), new { id = newRecord.Id }, newRecord);
@@ -47,12 +47,12 @@ public class TestimonialController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteAsync(int id)
     {
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
 
-        _ = await commandRepository.HardDeleteAsync(entity);
+        _ = await commandRepository.HardDeleteAsync(entity).ConfigureAwait(false);
 
         return Results.NoContent();
     }
@@ -66,7 +66,7 @@ public class TestimonialController(
         if (id != updateRequest.Id)
             return Results.BadRequest();
 
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
@@ -84,7 +84,7 @@ public class TestimonialController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<TestimonialUpdateRequest> patchDocument)
     {
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
@@ -95,7 +95,7 @@ public class TestimonialController(
 
         entity.UpdateEntity(updateRequest);
 
-        await commandRepository.UpdateAsync(entity);
+        await commandRepository.UpdateAsync(entity).ConfigureAwait(false);
 
         return Results.NoContent();
     }
