@@ -92,6 +92,24 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
+    [Fact(DisplayName = "Should delete and return 204 when DELETE request is received")]
+    public async Task ShouldDeleteRecord_WhenDeleteRequestIsReceivedAsync()
+    {
+        // Given
+        var entity = await SetupEntityAsync();
+
+        // When
+        var response = await _httpClient.DeleteAsync($"{RequestUriController}/{entity.Id}");
+
+        // Then
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
+        var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
+        aboutEntity.ShouldBeNull();
+    }
+
     private async Task<PortfolioEntity> SetupEntityAsync()
     {
         await _testFixture.ResetDatabaseAsync();
