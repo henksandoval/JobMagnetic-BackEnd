@@ -6,12 +6,6 @@ namespace JobMagnet.Mappers;
 
 public static class PortfolioMapper
 {
-    static PortfolioMapper()
-    {
-        TypeAdapterConfig<PortfolioUpdateRequest, PortfolioEntity>.NewConfig()
-            .Ignore(destination => destination.Id);
-    }
-
     public static PortfolioEntity ToEntity(PortfolioCreateRequest request)
     {
         return request.Adapt<PortfolioEntity>();
@@ -22,12 +16,12 @@ public static class PortfolioMapper
         return entity.Adapt<PortfolioModel>();
     }
 
-    public static PortfolioUpdateRequest ToUpdateRequest(PortfolioEntity entity)
+    public static PortfolioRequest ToUpdateRequest(PortfolioEntity entity)
     {
-        return entity.Adapt<PortfolioUpdateRequest>();
+        return entity.Adapt<PortfolioRequest>();
     }
 
-    public static void UpdateEntity(this PortfolioEntity entity, PortfolioUpdateRequest request)
+    public static void UpdateEntity(this PortfolioEntity entity, PortfolioRequest request)
     {
         request.Adapt(entity);
     }

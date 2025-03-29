@@ -2,5 +2,5 @@
 
 public abstract class PortfolioBase
 {
-    public required IList<PortfolioGalleryItemCreateRequest> GalleryItems { get; set; }
+    public required IList<PortfolioGalleryItemRequest> GalleryItems { get; set; }
 }

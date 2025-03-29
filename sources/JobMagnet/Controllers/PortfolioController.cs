@@ -65,7 +65,7 @@ public class PortfolioController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<PortfolioUpdateRequest> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<PortfolioRequest> patchDocument)
     {
         _ = queryRepository.IncludeGalleryItems();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);

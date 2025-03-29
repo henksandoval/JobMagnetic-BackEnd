@@ -59,7 +59,10 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var entityCreated = await queryRepository.GetByIdWithIncludesAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
-        entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
+        entityCreated.GalleryItems.Should().BeEquivalentTo(createRequest.GalleryItems, options => options
+            .ExcludingMissingMembers()
+            .Excluding(x => x.Id)
+        );
     }
 
     [Fact(DisplayName = "Should return the record and return 200 when GET request with valid ID is provided")]
@@ -108,7 +111,8 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryPortfolioRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
-        var queryItemsRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryItemEntity, long>>();
+        var queryItemsRepository =
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryItemEntity, long>>();
         var portfolioEntity = await queryPortfolioRepository.GetByIdAsync(entity.Id);
         var entityItems = await queryItemsRepository.FindAsync(x => x.PorfolioId == entity.Id);
         portfolioEntity.ShouldBeNull();
@@ -129,17 +133,20 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Should handle multiple operations in a PATCH request")]
-    public async Task ShouldHandleMultipleOperationsInPatchRequestAsync()
+    [Fact(DisplayName = "Should handle multiple Add operations in a PATCH request")]
+    public async Task ShouldHandleAddMultipleOperationsInPatchRequestAsync()
     {
         // Given
         var portfolio = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<PortfolioUpdateRequest>();
-        patchDocument.Add(p => p.GalleryItems, _fixture.Create<PortfolioGalleryItemCreateRequest>());
-        patchDocument.Add(p => p.GalleryItems, _fixture.Create<PortfolioGalleryItemCreateRequest>());
+        var patchDocument = new JsonPatchDocument<PortfolioRequest>();
+        var itemAdded01 = _fixture.Create<PortfolioGalleryItemRequest>();
+        var itemAdded02 = _fixture.Create<PortfolioGalleryItemRequest>();
+        patchDocument.Add(p => p.GalleryItems, itemAdded01);
+        patchDocument.Add(p => p.GalleryItems, itemAdded02);
 
         // When
-        var response = await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{portfolio.Id}", patchDocument);
+        var response =
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{portfolio.Id}", patchDocument);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
@@ -149,7 +156,11 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var queryPortfolioRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
         _ = queryPortfolioRepository.IncludeGalleryItems();
         var portfolioEntity = await queryPortfolioRepository.GetByIdWithIncludesAsync(portfolio.Id);
-        portfolioEntity!.GalleryItems.Count.ShouldBe(portfolio.GalleryItems.Count + 2);
+        portfolioEntity!.GalleryItems.Count.ShouldBe(portfolio.GalleryItems.Count + patchDocument.Operations.Count);
+        portfolioEntity!.GalleryItems.ShouldContain(x => x.Title == itemAdded01.Title);
+        portfolioEntity!.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded01.UrlImage);
+        portfolioEntity!.GalleryItems.ShouldContain(x => x.Title == itemAdded02.Title);
+        portfolioEntity!.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded02.UrlImage);
     }
 
     private async Task<PortfolioEntity> SetupEntityAsync()

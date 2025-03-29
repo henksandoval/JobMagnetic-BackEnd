@@ -18,7 +18,7 @@ public class PortfolioGalleryItemCustomization : ICustomization
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());
 
-        fixture.Customize<PortfolioGalleryItemCreateRequest>(composer =>
+        fixture.Customize<PortfolioGalleryItemRequest>(composer =>
             composer
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());
