@@ -16,7 +16,7 @@ public class TestimonialController(
     IQueryRepository<TestimonialEntity, long> queryRepository,
     ICommandRepository<TestimonialEntity> commandRepository) : ControllerBase
 {
-    [HttpGet("{id:int}", Name = nameof(GetTestimonialByIdAsync))]
+    [HttpGet("{id:long}", Name = nameof(GetTestimonialByIdAsync))]
     [ProducesResponseType(typeof(TestimonialModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetTestimonialByIdAsync(long id)
@@ -42,7 +42,7 @@ public class TestimonialController(
         return Results.CreatedAtRoute(nameof(GetTestimonialByIdAsync), new { id = newRecord.Id }, newRecord);
     }
 
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteAsync(int id)
@@ -57,7 +57,7 @@ public class TestimonialController(
         return Results.NoContent();
     }
 
-    [HttpPut("{id:int}")]
+    [HttpPut("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -78,7 +78,7 @@ public class TestimonialController(
         return Results.NoContent();
     }
 
-    [HttpPatch("{id:int}")]
+    [HttpPatch("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
