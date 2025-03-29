@@ -12,11 +12,11 @@ public static class DependencyInjectionExtensions
     {
         return services
             .AddLogging()
-            .SetupConfigureQueryRepositories()
-            .SetupConfigureCommandRepositories();
+            .AddQueryRepositories()
+            .AddCommandRepositories();
     }
 
-    private static IServiceCollection SetupConfigureQueryRepositories(this IServiceCollection services)
+    private static IServiceCollection AddQueryRepositories(this IServiceCollection services)
     {
         return services
             .AddTransient(typeof(IQueryRepository<ResumeEntity, long>), typeof(Repository<ResumeEntity, long>))
@@ -29,7 +29,7 @@ public static class DependencyInjectionExtensions
             .AddTransient<ISkillQueryRepository, SkillQueryRepository>();
     }
 
-    private static IServiceCollection SetupConfigureCommandRepositories(this IServiceCollection services)
+    private static IServiceCollection AddCommandRepositories(this IServiceCollection services)
     {
         return services
             .AddTransient<ICommandRepository<ResumeEntity>, Repository<ResumeEntity, long>>()
