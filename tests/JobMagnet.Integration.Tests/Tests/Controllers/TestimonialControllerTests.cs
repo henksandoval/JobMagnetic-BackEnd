@@ -7,7 +7,7 @@ using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
-using JobMagnet.Models.Resume;
+using JobMagnet.Models.Testimonial;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -15,15 +15,15 @@ using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers;
 
-public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
+public class TestimonialControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 {
-    private const string RequestUriController = "api/resume";
+    private const string RequestUriController = "api/testimonial";
     private const string InvalidId = "100";
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
 
-    public ResumeControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
+    public TestimonialControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
         _testFixture = testFixture;
         _httpClient = _testFixture.GetClient();
@@ -43,7 +43,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<ResumeModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<TestimonialModel>(response);
         responseData.ShouldNotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
@@ -67,7 +67,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var createRequest = _fixture.Build<ResumeCreateRequest>().Create();
+        var createRequest = _fixture.Build<TestimonialCreateRequest>().Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -77,7 +77,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<ResumeModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<TestimonialModel>(response);
         responseData.ShouldNotBeNull();
 
         var locationHeader = response.Headers.Location!.ToString();
@@ -85,7 +85,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<TestimonialEntity, long>>();
         var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
@@ -105,7 +105,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<TestimonialEntity, long>>();
         var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
         aboutEntity.ShouldBeNull();
     }
@@ -129,7 +129,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().With(x => x.Id, entity.Id).Create();
+        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>().With(x => x.Id, entity.Id).Create();
 
         // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updatedEntity);
@@ -139,7 +139,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<TestimonialEntity, long>>();
         var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
         aboutEntity.ShouldNotBeNull();
         aboutEntity.Should().BeEquivalentTo(updatedEntity);
@@ -150,7 +150,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>().Create();
         var differentId = updatedEntity.Id + InvalidId;
 
         // When
@@ -166,7 +166,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>().Create();
 
         // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
@@ -182,7 +182,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         const string newJobTitle = "Software developer";
         var entity = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<ResumeUpdateRequest>();
+        var patchDocument = new JsonPatchDocument<TestimonialUpdateRequest>();
         patchDocument.Replace(a => a.JobTitle, newJobTitle);
 
         // When
@@ -194,7 +194,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<TestimonialEntity, long>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
         dbEntity.ShouldNotBeNull();
         dbEntity.JobTitle.ShouldBe(newJobTitle);
@@ -205,8 +205,8 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().Create();
-        var patchDocument = new JsonPatchDocument<ResumeUpdateRequest>();
+        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>().Create();
+        var patchDocument = new JsonPatchDocument<TestimonialUpdateRequest>();
 
         // When
         var response =
@@ -217,20 +217,20 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    private async Task<ResumeEntity> SetupEntityAsync()
-    {
-        await _testFixture.ResetDatabaseAsync();
-        return await CreateAndPersistEntityAsync();
-    }
-
-    private async Task<ResumeEntity> CreateAndPersistEntityAsync()
+    private async Task<TestimonialEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ResumeEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<TestimonialEntity>>();
 
-        var entity = _fixture.BuildResumeEntity();
+        var entity = _fixture.BuildTestimonialEntity();
         await commandRepository.CreateAsync(entity);
 
         return entity;
+    }
+
+    private async Task<TestimonialEntity> SetupEntityAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        return await CreateAndPersistEntityAsync();
     }
 }

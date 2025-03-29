@@ -4,9 +4,9 @@ using Mapster;
 
 namespace JobMagnet.Mappers;
 
-public static class PersonalInfoMapper
+public static class ResumeMapper
 {
-    static PersonalInfoMapper()
+    static ResumeMapper()
     {
         TypeAdapterConfig<ResumeUpdateRequest, ResumeEntity>.NewConfig()
             .Ignore(destination => destination.Id);
@@ -22,13 +22,13 @@ public static class PersonalInfoMapper
         return request.Adapt<ResumeEntity>();
     }
 
-    public static void UpdateEntity(this ResumeEntity entity, ResumeUpdateRequest request)
-    {
-        request.Adapt(entity);
-    }
-
     public static ResumeUpdateRequest ToUpdateRequest(ResumeEntity entity)
     {
         return entity.Adapt<ResumeUpdateRequest>();
+    }
+
+    public static void UpdateEntity(this ResumeEntity entity, ResumeUpdateRequest request)
+    {
+        request.Adapt(entity);
     }
 }

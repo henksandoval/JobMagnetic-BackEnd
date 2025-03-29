@@ -16,45 +16,30 @@ public class ResumeController(
     IQueryRepository<ResumeEntity, long> queryRepository,
     ICommandRepository<ResumeEntity> commandRepository) : ControllerBase
 {
-    [HttpGet("{id:int}", Name = nameof(GetAboutByIdAsync))]
-    [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> GetAboutByIdAsync(long id)
-    {
-        var entity = await queryRepository.GetByIdAsync(id);
-
-        if (entity is null)
-            return Results.NotFound();
-
-        var responseModel = PersonalInfoMapper.ToModel(entity);
-
-        return Results.Ok(responseModel);
-    }
-
     [HttpPost]
     [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ResumeCreateRequest createRequest)
     {
-        var entity = PersonalInfoMapper.ToEntity(createRequest);
+        var entity = ResumeMapper.ToEntity(createRequest);
         await commandRepository.CreateAsync(entity);
-        var newRecord = PersonalInfoMapper.ToModel(entity);
+        var newRecord = ResumeMapper.ToModel(entity);
 
-        return Results.CreatedAtRoute(nameof(GetAboutByIdAsync), new { id = newRecord.Id }, newRecord);
+        return Results.CreatedAtRoute(nameof(GetResumeByIdAsync), new { id = newRecord.Id }, newRecord);
     }
 
-    [HttpDelete("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [HttpGet("{id:int}", Name = nameof(GetResumeByIdAsync))]
+    [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> DeleteAsync(int id)
+    public async Task<IResult> GetResumeByIdAsync(long id)
     {
         var entity = await queryRepository.GetByIdAsync(id);
 
         if (entity is null)
             return Results.NotFound();
 
-        _ = await commandRepository.HardDeleteAsync(entity);
+        var responseModel = ResumeMapper.ToModel(entity);
 
-        return Results.NoContent();
+        return Results.Ok(responseModel);
     }
 
     [HttpPut("{id:int}")]
@@ -78,24 +63,39 @@ public class ResumeController(
         return Results.NoContent();
     }
 
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> DeleteAsync(int id)
+    {
+        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        _ = await commandRepository.HardDeleteAsync(entity).ConfigureAwait(false);
+
+        return Results.NoContent();
+    }
+
     [HttpPatch("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ResumeUpdateRequest> patchDocument)
     {
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = PersonalInfoMapper.ToUpdateRequest(entity);
+        var updateRequest = ResumeMapper.ToUpdateRequest(entity);
 
         patchDocument.ApplyTo(updateRequest);
 
         entity.UpdateEntity(updateRequest);
 
-        await commandRepository.UpdateAsync(entity);
+        await commandRepository.UpdateAsync(entity).ConfigureAwait(false);
 
         return Results.NoContent();
     }
