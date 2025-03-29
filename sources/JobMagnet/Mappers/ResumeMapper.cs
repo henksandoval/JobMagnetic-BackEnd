@@ -4,7 +4,7 @@ using Mapster;
 
 namespace JobMagnet.Mappers;
 
-public static class ResumeMapper
+internal static class ResumeMapper
 {
     static ResumeMapper()
     {
@@ -12,22 +12,22 @@ public static class ResumeMapper
             .Ignore(destination => destination.Id);
     }
 
-    public static ResumeModel ToModel(ResumeEntity entity)
+    internal static ResumeModel ToModel(ResumeEntity entity)
     {
         return entity.Adapt<ResumeModel>();
     }
 
-    public static ResumeEntity ToEntity(ResumeCreateRequest request)
+    internal static ResumeEntity ToEntity(ResumeCreateRequest request)
     {
         return request.Adapt<ResumeEntity>();
     }
 
-    public static ResumeUpdateRequest ToUpdateRequest(ResumeEntity entity)
+    internal static ResumeUpdateRequest ToUpdateRequest(ResumeEntity entity)
     {
         return entity.Adapt<ResumeUpdateRequest>();
     }
 
-    public static void UpdateEntity(this ResumeEntity entity, ResumeUpdateRequest request)
+    internal static void UpdateEntity(this ResumeEntity entity, ResumeUpdateRequest request)
     {
         request.Adapt(entity);
     }

@@ -4,24 +4,24 @@ using Mapster;
 
 namespace JobMagnet.Mappers;
 
-public static class SkillMapper
+internal static class SkillMapper
 {
-    public static SkillEntity ToEntity(SkillCreateRequest request)
+    internal static SkillEntity ToEntity(SkillCreateRequest request)
     {
         return request.Adapt<SkillEntity>();
     }
 
-    public static SkillModel ToModel(SkillEntity entity)
+    internal static SkillModel ToModel(SkillEntity entity)
     {
         return entity.Adapt<SkillModel>();
     }
 
-    public static SkillRequest ToUpdateRequest(SkillEntity entity)
+    internal static SkillRequest ToUpdateRequest(SkillEntity entity)
     {
         return entity.Adapt<SkillRequest>();
     }
 
-    public static void UpdateEntity(this SkillEntity entity, SkillRequest request)
+    internal static void UpdateEntity(this SkillEntity entity, SkillRequest request)
     {
         request.Adapt(entity);
     }
