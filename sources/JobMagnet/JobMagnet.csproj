@@ -34,9 +34,5 @@
     <ItemGroup>
       <Folder Include="Infrastructure\" />
     </ItemGroup>
-    
-    <ItemGroup>
-      <Compile Remove="Controllers\SkillController.cs" />
-    </ItemGroup>
 
 </Project>

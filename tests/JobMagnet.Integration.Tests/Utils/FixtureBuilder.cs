@@ -13,6 +13,7 @@ public static class FixtureBuilder
     {
         var fixture = new Fixture();
         fixture.Customize(new PortfolioGalleryItemCustomization());
+        fixture.Customize(new SkillItemCustomization());
         fixture.Register(() => DateOnly.FromDateTime(Faker.Date.Past(30)));
         fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => fixture.Behaviors.Remove(b));
         fixture.Behaviors.Add(new OmitOnRecursionBehavior());
@@ -71,5 +72,20 @@ public static class FixtureBuilder
             .Create();
 
         return portfolioEntity;
+    }
+
+
+    public static SkillEntity BuildSkillEntity(this IFixture fixture, int skillItems = 5)
+    {
+        var skillDetailItems = fixture.CreateMany<SkillItemEntity>(skillItems).ToList();
+        var skillEntity = fixture.Build<SkillEntity>()
+            .With(x => x.Id, 0)
+            .With(x => x.IsDeleted, false)
+            .Without(x => x.DeletedAt)
+            .Without(x => x.DeletedBy)
+            .With(x => x.SkillDetails, skillDetailItems)
+            .Create();
+
+        return skillEntity;
     }
 }
