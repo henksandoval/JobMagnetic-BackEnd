@@ -22,6 +22,6 @@ public static class TestUtilities
     public static T? OptionalValue<T>(Faker faker, Func<Faker, T> valueGenerator, int probabilityPercentage = 50)
     {
         var random = new Random();
-        return random.Next(100) < probabilityPercentage ? valueGenerator(faker) : default(T);
+        return random.Next(100) < probabilityPercentage ? valueGenerator(faker) : default;
     }
 }

@@ -13,7 +13,7 @@ public class EducationEntity : SoftDeletableEntity<long>
     public DateTime? EndDate { get; set; } // `null` si sigue estudiando
     public string Description { get; set; } // Detalles adicionales
 
-    [ForeignKey(nameof(Summary))]
-    public long SummaryId { get; set; }
+    [ForeignKey(nameof(Summary))] public long SummaryId { get; set; }
+
     public virtual SummaryEntity Summary { get; set; }
 }

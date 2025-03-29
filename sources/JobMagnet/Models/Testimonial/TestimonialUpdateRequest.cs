@@ -1,5 +1,4 @@
-﻿using JobMagnet.Models.Resume;
-using JobMagnet.Models.Shared;
+﻿using JobMagnet.Models.Shared;
 
 namespace JobMagnet.Models.Testimonial;
 

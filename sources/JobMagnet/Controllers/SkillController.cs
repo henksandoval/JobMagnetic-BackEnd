@@ -4,7 +4,6 @@ using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Mappers;
 using JobMagnet.Models.Skill;
-using JobMagnet.Models.Resume;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,7 +29,7 @@ public class SkillController(
     }
 
     [HttpGet("{id:long}", Name = nameof(GetSkillByIdAsync))]
-    [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SkillModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetSkillByIdAsync(long id)
     {

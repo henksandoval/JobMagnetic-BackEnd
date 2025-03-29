@@ -12,7 +12,7 @@ public class SkillItemEntity : TrackableEntity<long>
     public int Rank { get; set; }
     public string IconUrl { get; set; }
 
-    [ForeignKey(nameof(Skill))]
-    public long SkillId { get; set; }
+    [ForeignKey(nameof(Skill))] public long SkillId { get; set; }
+
     public virtual SkillEntity Skill { get; set; }
 }
