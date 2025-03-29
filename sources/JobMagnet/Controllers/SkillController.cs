@@ -1,8 +1,11 @@
 ﻿using System.Net.Mime;
 using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Infrastructure.Repositories.Generic.Interfaces;
+using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
+using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Mappers;
-using JobMagnet.Models;
+using JobMagnet.Models.Skill;
+using JobMagnet.Models.Resume;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers;
@@ -12,30 +15,72 @@ namespace JobMagnet.Controllers;
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]
 public class SkillController(
-    IQueryRepository<SkillEntity> queryRepository,
+    ISkillQueryRepository queryRepository,
     ICommandRepository<SkillEntity> commandRepository) : ControllerBase
 {
-    [HttpGet("{id:int}", Name = nameof(GetSkillByIdAsync))]
-    public async Task<IResult> GetSkillByIdAsync(int id)
+    [HttpPost]
+    [ProducesResponseType(typeof(SkillModel), StatusCodes.Status201Created)]
+    public async Task<IResult> CreateAsync([FromBody] SkillCreateRequest createRequest)
     {
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = SkillMapper.ToEntity(createRequest);
+        await commandRepository.CreateAsync(entity).ConfigureAwait(false);
+        var newRecord = SkillMapper.ToModel(entity);
+
+        return Results.CreatedAtRoute(nameof(GetSkillByIdAsync), new { id = newRecord.Id }, newRecord);
+    }
+
+    [HttpGet("{id:int}", Name = nameof(GetSkillByIdAsync))]
+    [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> GetSkillByIdAsync(long id)
+    {
+        var entity = await queryRepository
+            .IncludeDetails()
+            .GetByIdWithIncludesAsync(id).ConfigureAwait(false);
 
         if (entity is null)
-            return Results.NotFound($"Record [{id}] not found");
+            return Results.NotFound();
 
         var responseModel = SkillMapper.ToModel(entity);
 
         return Results.Ok(responseModel);
     }
 
-    [HttpPost]
-    [ProducesResponseType(typeof(SkillModel), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] SkillCreateRequest createRequest)
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> DeleteAsync(int id)
     {
-        var entity = SkillMapper.ToEntity(createRequest);
-        await commandRepository.CreateAsync(entity);
-        var newRecord = SkillMapper.ToModel(entity);
+        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
-        return Results.CreatedAtRoute(nameof(GetSkillByIdAsync), new { id = newRecord.Id }, newRecord);
+        if (entity is null)
+            return Results.NotFound();
+
+        _ = await commandRepository.HardDeleteAsync(entity).ConfigureAwait(false);
+
+        return Results.NoContent();
+    }
+
+    [HttpPatch("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SkillRequest> patchDocument)
+    {
+        _ = queryRepository.IncludeDetails();
+        var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        var updateRequest = SkillMapper.ToUpdateRequest(entity);
+
+        patchDocument.ApplyTo(updateRequest);
+
+        entity.UpdateEntity(updateRequest);
+
+        await commandRepository.UpdateAsync(entity).ConfigureAwait(false);
+
+        return Results.NoContent();
     }
 }

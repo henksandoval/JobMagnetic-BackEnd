@@ -157,10 +157,10 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         _ = queryPortfolioRepository.IncludeGalleryItems();
         var portfolioEntity = await queryPortfolioRepository.GetByIdWithIncludesAsync(portfolio.Id);
         portfolioEntity!.GalleryItems.Count.ShouldBe(portfolio.GalleryItems.Count + patchDocument.Operations.Count);
-        portfolioEntity!.GalleryItems.ShouldContain(x => x.Title == itemAdded01.Title);
-        portfolioEntity!.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded01.UrlImage);
-        portfolioEntity!.GalleryItems.ShouldContain(x => x.Title == itemAdded02.Title);
-        portfolioEntity!.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded02.UrlImage);
+        portfolioEntity.GalleryItems.ShouldContain(x => x.Title == itemAdded01.Title);
+        portfolioEntity.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded01.UrlImage);
+        portfolioEntity.GalleryItems.ShouldContain(x => x.Title == itemAdded02.Title);
+        portfolioEntity.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded02.UrlImage);
     }
 
     [Fact(DisplayName = "Should handle Remove operations in a PATCH request")]
@@ -186,7 +186,7 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         _ = queryPortfolioRepository.IncludeGalleryItems();
         var portfolioEntity = await queryPortfolioRepository.GetByIdWithIncludesAsync(portfolio.Id);
         portfolioEntity!.GalleryItems.Count.ShouldBe(portfolio.GalleryItems.Count - 1);
-        portfolioEntity!.GalleryItems.Contains(itemToRemove).ShouldBeFalse();
+        portfolioEntity.GalleryItems.Contains(itemToRemove).ShouldBeFalse();
     }
 
     [Fact(DisplayName = "Should handle Replace operations in a PATCH request")]
@@ -214,7 +214,7 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         _ = queryPortfolioRepository.IncludeGalleryItems();
         var portfolioEntity = await queryPortfolioRepository.GetByIdWithIncludesAsync(portfolio.Id);
         portfolioEntity!.GalleryItems.Count.ShouldBe(portfolio.GalleryItems.Count);
-        var entityUpdated = portfolioEntity!.GalleryItems.First(x => x.Id == itemUpdated.Id);
+        var entityUpdated = portfolioEntity.GalleryItems.First(x => x.Id == itemUpdated.Id);
         entityUpdated.Should().BeEquivalentTo(itemUpdated, options => options
             .ExcludingMissingMembers()
             .Excluding(x => x.Id)
@@ -254,16 +254,16 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         _ = queryPortfolioRepository.IncludeGalleryItems();
         var portfolioEntity = await queryPortfolioRepository.GetByIdWithIncludesAsync(portfolio.Id);
         portfolioEntity!.GalleryItems.Count.ShouldBe(portfolio.GalleryItems.Count + 1);
-        portfolioEntity!.GalleryItems.ShouldContain(x => x.Title == itemAdded01.Title);
-        portfolioEntity!.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded01.UrlImage);
-        portfolioEntity!.GalleryItems.ShouldContain(x => x.Title == itemAdded02.Title);
-        portfolioEntity!.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded02.UrlImage);
-        var entityUpdated = portfolioEntity!.GalleryItems.First(x => x.Id == itemUpdated.Id);
+        portfolioEntity.GalleryItems.ShouldContain(x => x.Title == itemAdded01.Title);
+        portfolioEntity.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded01.UrlImage);
+        portfolioEntity.GalleryItems.ShouldContain(x => x.Title == itemAdded02.Title);
+        portfolioEntity.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded02.UrlImage);
+        var entityUpdated = portfolioEntity.GalleryItems.First(x => x.Id == itemUpdated.Id);
         entityUpdated.Should().BeEquivalentTo(itemUpdated, options => options
             .ExcludingMissingMembers()
             .Excluding(x => x.Id)
         );
-        portfolioEntity!.GalleryItems.Contains(itemToRemove).ShouldBeFalse();
+        portfolioEntity.GalleryItems.Contains(itemToRemove).ShouldBeFalse();
     }
 
     private async Task<PortfolioEntity> SetupEntityAsync()
