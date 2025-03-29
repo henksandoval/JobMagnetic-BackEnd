@@ -22,13 +22,13 @@ public static class ResumeMapper
         return request.Adapt<ResumeEntity>();
     }
 
-    public static void UpdateEntity(this ResumeEntity entity, ResumeUpdateRequest request)
-    {
-        request.Adapt(entity);
-    }
-
     public static ResumeUpdateRequest ToUpdateRequest(ResumeEntity entity)
     {
         return entity.Adapt<ResumeUpdateRequest>();
+    }
+
+    public static void UpdateEntity(this ResumeEntity entity, ResumeUpdateRequest request)
+    {
+        request.Adapt(entity);
     }
 }

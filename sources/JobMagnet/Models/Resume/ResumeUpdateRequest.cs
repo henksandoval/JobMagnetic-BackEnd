@@ -2,7 +2,7 @@
 
 namespace JobMagnet.Models.Resume;
 
-public class ResumeUpdateRequest : ResumeBase, IIdentifierBase<long>
+public sealed class ResumeUpdateRequest : ResumeBase, IIdentifierBase<long>
 {
     public required long Id { get; init; }
 }

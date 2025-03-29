@@ -1,6 +1,3 @@
 ﻿namespace JobMagnet.Models.Portfolio;
 
-public sealed class PortfolioGalleryItemCreateRequest : PortfolioGalleryItemBase
-{
-
-}
+public sealed class PortfolioGalleryItemCreateRequest : PortfolioGalleryItemBase;

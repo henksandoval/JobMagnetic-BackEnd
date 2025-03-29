@@ -5,6 +5,7 @@ using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Mappers;
 using JobMagnet.Models.Portfolio;
 using JobMagnet.Models.Resume;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers;
@@ -56,6 +57,29 @@ public class PortfolioController(
             return Results.NotFound();
 
         _ = await commandRepository.HardDeleteAsync(entity).ConfigureAwait(false);
+
+        return Results.NoContent();
+    }
+
+    [HttpPatch("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<PortfolioUpdateRequest> patchDocument)
+    {
+        _ = queryRepository.IncludeGalleryItems();
+        var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        var updateRequest = PortfolioMapper.ToUpdateRequest(entity);
+
+        patchDocument.ApplyTo(updateRequest);
+
+        entity.UpdateEntity(updateRequest);
+
+        await commandRepository.UpdateAsync(entity).ConfigureAwait(false);
 
         return Results.NoContent();
     }

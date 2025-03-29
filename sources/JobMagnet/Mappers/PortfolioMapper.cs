@@ -4,8 +4,14 @@ using Mapster;
 
 namespace JobMagnet.Mappers;
 
-public class PortfolioMapper
+public static class PortfolioMapper
 {
+    static PortfolioMapper()
+    {
+        TypeAdapterConfig<PortfolioUpdateRequest, PortfolioEntity>.NewConfig()
+            .Ignore(destination => destination.Id);
+    }
+
     public static PortfolioEntity ToEntity(PortfolioCreateRequest request)
     {
         return request.Adapt<PortfolioEntity>();
@@ -14,5 +20,15 @@ public class PortfolioMapper
     public static PortfolioModel ToModel(PortfolioEntity entity)
     {
         return entity.Adapt<PortfolioModel>();
+    }
+
+    public static PortfolioUpdateRequest ToUpdateRequest(PortfolioEntity entity)
+    {
+        return entity.Adapt<PortfolioUpdateRequest>();
+    }
+
+    public static void UpdateEntity(this PortfolioEntity entity, PortfolioUpdateRequest request)
+    {
+        request.Adapt(entity);
     }
 }

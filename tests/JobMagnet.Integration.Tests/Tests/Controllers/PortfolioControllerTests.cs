@@ -4,10 +4,12 @@ using FluentAssertions;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
+using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
 using JobMagnet.Models.Portfolio;
 using JobMagnet.Models.Resume;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit.Abstractions;
@@ -125,6 +127,29 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         // Then
         response.IsSuccessStatusCode.ShouldBeFalse();
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact(DisplayName = "Should handle multiple operations in a PATCH request")]
+    public async Task ShouldHandleMultipleOperationsInPatchRequestAsync()
+    {
+        // Given
+        var portfolio = await SetupEntityAsync();
+        var patchDocument = new JsonPatchDocument<PortfolioUpdateRequest>();
+        patchDocument.Add(p => p.GalleryItems, _fixture.Create<PortfolioGalleryItemCreateRequest>());
+        patchDocument.Add(p => p.GalleryItems, _fixture.Create<PortfolioGalleryItemCreateRequest>());
+
+        // When
+        var response = await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{portfolio.Id}", patchDocument);
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryPortfolioRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
+        _ = queryPortfolioRepository.IncludeGalleryItems();
+        var portfolioEntity = await queryPortfolioRepository.GetByIdWithIncludesAsync(portfolio.Id);
+        portfolioEntity!.GalleryItems.Count.ShouldBe(portfolio.GalleryItems.Count + 2);
     }
 
     private async Task<PortfolioEntity> SetupEntityAsync()
