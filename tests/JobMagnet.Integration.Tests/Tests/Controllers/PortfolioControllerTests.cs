@@ -189,6 +189,38 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         portfolioEntity!.GalleryItems.Contains(itemToRemove).ShouldBeFalse();
     }
 
+    [Fact(DisplayName = "Should handle Replace operations in a PATCH request")]
+    public async Task ShouldHandleReplaceOperationsInPatchRequestAsync()
+    {
+        // Given
+        var portfolio = await SetupEntityAsync();
+        var itemUpdated = _fixture.Create<PortfolioGalleryItemRequest>();
+        var itemToReplace = portfolio.GalleryItems.ElementAt(3);
+        itemUpdated.Id = itemToReplace.Id;
+        var indexItemToReplace = portfolio.GalleryItems.ToList().FindIndex(item => item.Id == itemToReplace.Id);
+        var patchDocument = new JsonPatchDocument<PortfolioRequest>();
+        patchDocument.Replace(p => p.GalleryItems[indexItemToReplace], itemUpdated);
+
+        // When
+        var response =
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{portfolio.Id}", patchDocument);
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryPortfolioRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
+        _ = queryPortfolioRepository.IncludeGalleryItems();
+        var portfolioEntity = await queryPortfolioRepository.GetByIdWithIncludesAsync(portfolio.Id);
+        portfolioEntity!.GalleryItems.Count.ShouldBe(portfolio.GalleryItems.Count);
+        var entityUpdated = portfolioEntity!.GalleryItems.First(x => x.Id == itemUpdated.Id);
+        entityUpdated.Should().BeEquivalentTo(itemUpdated, options => options
+            .ExcludingMissingMembers()
+            .Excluding(x => x.Id)
+        );
+    }
+
     private async Task<PortfolioEntity> SetupEntityAsync()
     {
         await _testFixture.ResetDatabaseAsync();
