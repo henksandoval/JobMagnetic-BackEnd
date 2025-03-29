@@ -4,7 +4,7 @@ using JobMagnet.Infrastructure.Entities.Base;
 namespace JobMagnet.Infrastructure.Entities;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class SkillItemEntity : SoftDeletableEntity<long>
+public class SkillItemEntity : TrackableEntity<long>
 {
     public string Name { get; set; } // Nombre de la habilidad (ej. "C#", "React")
     public int ProficiencyLevel { get; set; } // Nivel de habilidad (1-10)
