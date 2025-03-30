@@ -106,8 +106,8 @@ public class TestimonialControllerTests : IClassFixture<JobMagnetTestSetupFixtur
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<TestimonialEntity, long>>();
-        var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
-        aboutEntity.ShouldBeNull();
+        var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
+        dbEntity.ShouldBeNull();
     }
 
     [Fact(DisplayName = "Should return 404 when a DELETE request with invalid ID is provided")]
@@ -140,9 +140,9 @@ public class TestimonialControllerTests : IClassFixture<JobMagnetTestSetupFixtur
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<TestimonialEntity, long>>();
-        var aboutEntity = await queryRepository.GetByIdAsync(entity.Id);
-        aboutEntity.ShouldNotBeNull();
-        aboutEntity.Should().BeEquivalentTo(updatedEntity);
+        var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
+        dbEntity.ShouldNotBeNull();
+        dbEntity.Should().BeEquivalentTo(updatedEntity);
     }
 
     [Fact(DisplayName = "Should return 400 when a PUT request with invalid ID is provided")]

@@ -20,10 +20,7 @@ builder.Services
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseOpenApi();
-}
+if (app.Environment.IsDevelopment()) app.UseOpenApi();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

@@ -7,7 +7,6 @@ namespace JobMagnet.Integration.Tests.Fixtures.Customizations;
 
 public class SkillItemCustomization : ICustomization
 {
-    private static int _autoIncrementId = 1;
     private readonly Faker _faker = new();
 
     public void Customize(IFixture fixture)

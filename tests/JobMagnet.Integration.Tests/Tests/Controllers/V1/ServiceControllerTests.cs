@@ -110,7 +110,8 @@ public class ServiceControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryServiceRepository = scope.ServiceProvider.GetRequiredService<IServiceQueryRepository>();
-        var queryItemsRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ServiceGalleryItemEntity, long>>();
+        var queryItemsRepository =
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<ServiceGalleryItemEntity, long>>();
         var serviceEntity = await queryServiceRepository.GetByIdAsync(entity.Id);
         var entityItems = await queryItemsRepository.FindAsync(x => x.ServiceId == entity.Id);
         serviceEntity.ShouldBeNull();
