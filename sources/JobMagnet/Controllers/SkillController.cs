@@ -4,7 +4,6 @@ using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Mappers;
 using JobMagnet.Models.Skill;
-using JobMagnet.Models.Resume;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,8 +28,8 @@ public class SkillController(
         return Results.CreatedAtRoute(nameof(GetSkillByIdAsync), new { id = newRecord.Id }, newRecord);
     }
 
-    [HttpGet("{id:int}", Name = nameof(GetSkillByIdAsync))]
-    [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status200OK)]
+    [HttpGet("{id:long}", Name = nameof(GetSkillByIdAsync))]
+    [ProducesResponseType(typeof(SkillModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetSkillByIdAsync(long id)
     {
@@ -46,7 +45,7 @@ public class SkillController(
         return Results.Ok(responseModel);
     }
 
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteAsync(int id)
@@ -61,7 +60,7 @@ public class SkillController(
         return Results.NoContent();
     }
 
-    [HttpPatch("{id:int}")]
+    [HttpPatch("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

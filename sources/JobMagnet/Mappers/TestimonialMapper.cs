@@ -4,7 +4,7 @@ using Mapster;
 
 namespace JobMagnet.Mappers;
 
-public static class TestimonialMapper
+internal static class TestimonialMapper
 {
     static TestimonialMapper()
     {
@@ -12,22 +12,22 @@ public static class TestimonialMapper
             .Ignore(destination => destination.Id);
     }
 
-    public static TestimonialModel ToModel(TestimonialEntity entity)
+    internal static TestimonialModel ToModel(TestimonialEntity entity)
     {
         return entity.Adapt<TestimonialModel>();
     }
 
-    public static TestimonialEntity ToEntity(TestimonialCreateRequest request)
+    internal static TestimonialEntity ToEntity(TestimonialCreateRequest request)
     {
         return request.Adapt<TestimonialEntity>();
     }
 
-    public static void UpdateEntity(this TestimonialEntity entity, TestimonialUpdateRequest request)
+    internal static void UpdateEntity(this TestimonialEntity entity, TestimonialUpdateRequest request)
     {
         request.Adapt(entity);
     }
 
-    public static TestimonialUpdateRequest ToUpdateRequest(TestimonialEntity entity)
+    internal static TestimonialUpdateRequest ToUpdateRequest(TestimonialEntity entity)
     {
         return entity.Adapt<TestimonialUpdateRequest>();
     }

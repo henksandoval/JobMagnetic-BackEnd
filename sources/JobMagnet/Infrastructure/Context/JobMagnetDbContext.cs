@@ -50,7 +50,6 @@ public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor h
     {
         var currentUserId = GetCurrentUserId();
         foreach (var entry in ChangeTracker.Entries())
-        {
             switch (entry.State)
             {
                 case EntityState.Added:
@@ -59,6 +58,7 @@ public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor h
                         auditableEntityAdded.AddedAt = DateTime.UtcNow;
                         auditableEntityAdded.AddedBy = currentUserId;
                     }
+
                     break;
 
                 case EntityState.Modified:
@@ -67,6 +67,7 @@ public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor h
                         auditableEntityModified.LastModifiedAt = DateTime.UtcNow;
                         auditableEntityModified.LastModifiedBy = currentUserId;
                     }
+
                     break;
 
                 case EntityState.Deleted:
@@ -78,6 +79,7 @@ public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor h
 
                         entry.State = EntityState.Modified;
                     }
+
                     break;
                 case EntityState.Detached:
                 case EntityState.Unchanged:
@@ -85,7 +87,6 @@ public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor h
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
     }
 
     private Guid GetCurrentUserId()

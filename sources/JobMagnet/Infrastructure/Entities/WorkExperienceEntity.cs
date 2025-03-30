@@ -14,7 +14,7 @@ public class WorkExperienceEntity : SoftDeletableEntity<long>
     public string Description { get; set; }
     public ICollection<string> Responsibilities { get; set; } = new List<string>();
 
-    [ForeignKey(nameof(Summary))]
-    public long SummaryId { get; set; }
+    [ForeignKey(nameof(Summary))] public long SummaryId { get; set; }
+
     public virtual SummaryEntity Summary { get; set; }
 }

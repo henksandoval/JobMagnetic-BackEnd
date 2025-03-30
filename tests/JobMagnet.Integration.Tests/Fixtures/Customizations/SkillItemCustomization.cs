@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
 using Bogus;
 using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Models.Portfolio;
 using JobMagnet.Models.Skill;
 
 namespace JobMagnet.Integration.Tests.Fixtures.Customizations;

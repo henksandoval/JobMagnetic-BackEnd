@@ -29,7 +29,7 @@ public class PortfolioController(
         return Results.CreatedAtRoute(nameof(GetPortfolioByIdAsync), new { id = newRecord.Id }, newRecord);
     }
 
-    [HttpGet("{id:int}", Name = nameof(GetPortfolioByIdAsync))]
+    [HttpGet("{id:long}", Name = nameof(GetPortfolioByIdAsync))]
     [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetPortfolioByIdAsync(long id)
@@ -46,7 +46,7 @@ public class PortfolioController(
         return Results.Ok(responseModel);
     }
 
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteAsync(int id)
@@ -61,7 +61,7 @@ public class PortfolioController(
         return Results.NoContent();
     }
 
-    [HttpPatch("{id:int}")]
+    [HttpPatch("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

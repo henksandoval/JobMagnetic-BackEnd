@@ -6,17 +6,17 @@ using JobMagnet.Infrastructure.Repositories.Interfaces;
 
 namespace JobMagnet.DependencyInjection;
 
-public static class DependencyInjectionExtensions
+internal static class DependencyInjectionExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    internal static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         return services
             .AddLogging()
-            .SetupConfigureQueryRepositories()
-            .SetupConfigureCommandRepositories();
+            .AddQueryRepositories()
+            .AddCommandRepositories();
     }
 
-    private static IServiceCollection SetupConfigureQueryRepositories(this IServiceCollection services)
+    private static IServiceCollection AddQueryRepositories(this IServiceCollection services)
     {
         return services
             .AddTransient(typeof(IQueryRepository<ResumeEntity, long>), typeof(Repository<ResumeEntity, long>))
@@ -29,7 +29,7 @@ public static class DependencyInjectionExtensions
             .AddTransient<ISkillQueryRepository, SkillQueryRepository>();
     }
 
-    private static IServiceCollection SetupConfigureCommandRepositories(this IServiceCollection services)
+    private static IServiceCollection AddCommandRepositories(this IServiceCollection services)
     {
         return services
             .AddTransient<ICommandRepository<ResumeEntity>, Repository<ResumeEntity, long>>()

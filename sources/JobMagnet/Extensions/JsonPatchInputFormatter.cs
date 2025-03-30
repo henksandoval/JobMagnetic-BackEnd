@@ -4,9 +4,9 @@ using Microsoft.Extensions.Options;
 
 namespace JobMagnet.Extensions;
 
-public static class JsonPatchInputFormatter
+internal static class JsonPatchInputFormatter
 {
-    public static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
+    internal static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
     {
         var builder = new ServiceCollection()
             .AddLogging()
