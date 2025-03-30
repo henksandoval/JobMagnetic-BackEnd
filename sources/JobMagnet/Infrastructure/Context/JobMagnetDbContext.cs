@@ -85,7 +85,11 @@ public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor h
                 case EntityState.Unchanged:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(
+                        nameof(entry.State),
+                        entry.State,
+                        "The entity state is not supported in this context."
+                    );
             }
     }
 
