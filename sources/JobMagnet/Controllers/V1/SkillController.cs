@@ -1,47 +1,43 @@
-﻿using System.Net.Mime;
+﻿using JobMagnet.Controllers.Base;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Mappers;
-using JobMagnet.Models.Portfolio;
-using JobMagnet.Models.Resume;
+using JobMagnet.Models.Skill;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobMagnet.Controllers;
+namespace JobMagnet.Controllers.V1;
 
-[ApiController]
-[Route("api/[controller]")]
-[Produces(MediaTypeNames.Application.Json)]
-[Consumes(MediaTypeNames.Application.Json)]
-public class PortfolioController(
-    IPortfolioQueryRepository queryRepository,
-    ICommandRepository<PortfolioEntity> commandRepository) : ControllerBase
+public class SkillController(
+    ILogger<SkillController> logger,
+    ISkillQueryRepository queryRepository,
+    ICommandRepository<SkillEntity> commandRepository) : BaseController<SkillController>(logger)
 {
     [HttpPost]
-    [ProducesResponseType(typeof(PortfolioModel), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] PortfolioCreateRequest createRequest)
+    [ProducesResponseType(typeof(SkillModel), StatusCodes.Status201Created)]
+    public async Task<IResult> CreateAsync([FromBody] SkillCreateRequest createRequest)
     {
-        var entity = PortfolioMapper.ToEntity(createRequest);
+        var entity = SkillMapper.ToEntity(createRequest);
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
-        var newRecord = PortfolioMapper.ToModel(entity);
+        var newRecord = SkillMapper.ToModel(entity);
 
-        return Results.CreatedAtRoute(nameof(GetPortfolioByIdAsync), new { id = newRecord.Id }, newRecord);
+        return Results.CreatedAtRoute(nameof(GetSkillByIdAsync), new { id = newRecord.Id }, newRecord);
     }
 
-    [HttpGet("{id:long}", Name = nameof(GetPortfolioByIdAsync))]
-    [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status200OK)]
+    [HttpGet("{id:long}", Name = nameof(GetSkillByIdAsync))]
+    [ProducesResponseType(typeof(SkillModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> GetPortfolioByIdAsync(long id)
+    public async Task<IResult> GetSkillByIdAsync(long id)
     {
         var entity = await queryRepository
-            .IncludeGalleryItems()
+            .IncludeDetails()
             .GetByIdWithIncludesAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
 
-        var responseModel = PortfolioMapper.ToModel(entity);
+        var responseModel = SkillMapper.ToModel(entity);
 
         return Results.Ok(responseModel);
     }
@@ -65,15 +61,15 @@ public class PortfolioController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<PortfolioRequest> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SkillRequest> patchDocument)
     {
-        _ = queryRepository.IncludeGalleryItems();
+        _ = queryRepository.IncludeDetails();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = PortfolioMapper.ToUpdateRequest(entity);
+        var updateRequest = SkillMapper.ToUpdateRequest(entity);
 
         patchDocument.ApplyTo(updateRequest);
 

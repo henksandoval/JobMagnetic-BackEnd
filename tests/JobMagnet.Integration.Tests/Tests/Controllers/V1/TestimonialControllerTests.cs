@@ -13,11 +13,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit.Abstractions;
 
-namespace JobMagnet.Integration.Tests.Tests.Controllers;
+namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
 
 public class TestimonialControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 {
-    private const string RequestUriController = "api/testimonial";
+    private const string RequestUriController = "api/v1/testimonial";
     private const string InvalidId = "100";
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly HttpClient _httpClient;
