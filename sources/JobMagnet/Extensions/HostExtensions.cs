@@ -6,7 +6,7 @@ using JobMagnet.Infrastructure.Repositories.Interfaces;
 
 namespace JobMagnet.DependencyInjection;
 
-internal static class DependencyInjectionExtensions
+internal static class HostExtensions
 {
     internal static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
