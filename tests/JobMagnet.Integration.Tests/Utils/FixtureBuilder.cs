@@ -14,6 +14,7 @@ public static class FixtureBuilder
         var fixture = new Fixture();
         fixture.Customize(new PortfolioGalleryItemCustomization());
         fixture.Customize(new SkillItemCustomization());
+        fixture.Customize(new ServiceGalleryItemCustomization());
         fixture.Register(() => DateOnly.FromDateTime(Faker.Date.Past(30)));
         fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => fixture.Behaviors.Remove(b));
         fixture.Behaviors.Add(new OmitOnRecursionBehavior());
@@ -74,7 +75,6 @@ public static class FixtureBuilder
         return portfolioEntity;
     }
 
-
     public static SkillEntity BuildSkillEntity(this IFixture fixture, int skillItems = 5)
     {
         var skillDetailItems = fixture.CreateMany<SkillItemEntity>(skillItems).ToList();
@@ -87,5 +87,20 @@ public static class FixtureBuilder
             .Create();
 
         return skillEntity;
+    }
+
+    public static ServiceEntity BuildServiceEntity(this IFixture fixture, int serviceItems = 5)
+    {
+        var serviceGalleryItems = fixture.CreateMany<ServiceGalleryItemEntity>(serviceItems).ToList();
+        var serviceEntity = fixture.Build<ServiceEntity>()
+            .With(x => x.Id, 0)
+            .With(x => x.Overview, Faker.Lorem.Paragraph())
+            .With(x => x.IsDeleted, false)
+            .Without(x => x.DeletedAt)
+            .Without(x => x.DeletedBy)
+            .With(x => x.GalleryItems, serviceGalleryItems)
+            .Create();
+
+        return serviceEntity;
     }
 }
