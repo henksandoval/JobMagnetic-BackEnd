@@ -11,7 +11,7 @@ public class HostWebApplicationFactory<TProgram>(string? msSqlServerConnectionSt
     {
         builder.UseSetting("ConnectionStrings:DefaultConnection", msSqlServerConnectionString);
         builder.UseSetting("Logging:LogLevel:Default", "Information");
-        builder.ConfigureServices(services => { services.AddApplicationServices(); });
+        builder.ConfigureServices(services => { services.AddHostDependencies(); });
         builder.UseEnvironment("Development");
     }
 }
