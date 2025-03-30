@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
+// ReSharper disable ClassNeverInstantiated.Global
 namespace JobMagnet.Extensions;
 
 internal static class SwaggerExtensions
@@ -30,8 +31,6 @@ internal static class SwaggerExtensions
 
                 options.SwaggerDoc(description.GroupName, info);
             }
-
-            AddXmlDocumentation(options);
         });
 
         return service;
@@ -71,21 +70,6 @@ internal static class SwaggerExtensions
 
         return application;
     }
-
-    private static void AddXmlDocumentation(SwaggerGenOptions options)
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-
-        var files = directory.GetFiles("*.xml");
-
-        foreach (var file in files)
-        {
-            var xmlPath = Path.Combine(AppContext.BaseDirectory, file.Name);
-
-            options.IncludeXmlComments(xmlPath);
-            options.CustomSchemaIds(x => x.FullName);
-        }
-    }
 }
 
 internal class LowerCaseDocumentFilter : IDocumentFilter
@@ -108,13 +92,12 @@ internal class EnumSchemaFilter : ISchemaFilter
 {
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
-        if (context.Type.IsEnum)
-        {
-            schema.Enum.Clear();
+        if (!context.Type.IsEnum) return;
 
-            Enum.GetNames(context.Type)
-                .ToList()
-                .ForEach(name => schema.Enum.Add(new OpenApiString($"{name}")));
-        }
+        schema.Enum.Clear();
+
+        Enum.GetNames(context.Type)
+            .ToList()
+            .ForEach(name => schema.Enum.Add(new OpenApiString($"{name}")));
     }
 }

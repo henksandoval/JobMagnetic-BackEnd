@@ -1,4 +1,4 @@
-﻿using System.Net.Mime;
+﻿using JobMagnet.Controllers.Base;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Mappers;
@@ -6,15 +6,12 @@ using JobMagnet.Models.Resume;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobMagnet.Controllers;
+namespace JobMagnet.Controllers.V1;
 
-[ApiController]
-[Route("api/[controller]")]
-[Produces(MediaTypeNames.Application.Json)]
-[Consumes(MediaTypeNames.Application.Json)]
 public class ResumeController(
+    ILogger<ResumeController> logger,
     IQueryRepository<ResumeEntity, long> queryRepository,
-    ICommandRepository<ResumeEntity> commandRepository) : ControllerBase
+    ICommandRepository<ResumeEntity> commandRepository) : BaseController<ResumeController>(logger)
 {
     [HttpPost]
     [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status201Created)]

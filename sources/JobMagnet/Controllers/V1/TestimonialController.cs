@@ -1,4 +1,4 @@
-﻿using System.Net.Mime;
+﻿using JobMagnet.Controllers.Base;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Mappers;
@@ -6,15 +6,12 @@ using JobMagnet.Models.Testimonial;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobMagnet.Controllers;
+namespace JobMagnet.Controllers.V1;
 
-[ApiController]
-[Route("api/[controller]")]
-[Produces(MediaTypeNames.Application.Json)]
-[Consumes(MediaTypeNames.Application.Json)]
 public class TestimonialController(
+    ILogger<TestimonialController> logger,
     IQueryRepository<TestimonialEntity, long> queryRepository,
-    ICommandRepository<TestimonialEntity> commandRepository) : ControllerBase
+    ICommandRepository<TestimonialEntity> commandRepository) : BaseController<TestimonialController>(logger)
 {
     [HttpGet("{id:long}", Name = nameof(GetTestimonialByIdAsync))]
     [ProducesResponseType(typeof(TestimonialModel), StatusCodes.Status200OK)]
