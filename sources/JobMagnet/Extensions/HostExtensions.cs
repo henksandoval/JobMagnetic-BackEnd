@@ -25,16 +25,19 @@ internal static class HostExtensions
             .AddTransient(typeof(IQueryRepository<PortfolioGalleryItemEntity, long>),
                 typeof(Repository<PortfolioGalleryItemEntity, long>))
             .AddTransient(typeof(IQueryRepository<SkillItemEntity, long>), typeof(Repository<SkillItemEntity, long>))
+            .AddTransient(typeof(IQueryRepository<ServiceGalleryItemEntity, long>), typeof(Repository<ServiceGalleryItemEntity, long>))
             .AddTransient<IPortfolioQueryRepository, PortfolioQueryRepository>()
-            .AddTransient<ISkillQueryRepository, SkillQueryRepository>();
+            .AddTransient<ISkillQueryRepository, SkillQueryRepository>()
+            .AddTransient<IServiceQueryRepository, ServiceQueryRepository>();
     }
 
     private static IServiceCollection AddCommandRepositories(this IServiceCollection services)
     {
         return services
             .AddTransient<ICommandRepository<ResumeEntity>, Repository<ResumeEntity, long>>()
-            .AddTransient(typeof(ICommandRepository<TestimonialEntity>), typeof(Repository<TestimonialEntity, long>))
-            .AddTransient(typeof(ICommandRepository<PortfolioEntity>), typeof(Repository<PortfolioEntity, long>))
-            .AddTransient<ICommandRepository<SkillEntity>, Repository<SkillEntity, long>>();
+            .AddTransient<ICommandRepository<TestimonialEntity>, Repository<TestimonialEntity, long>>()
+            .AddTransient<ICommandRepository<PortfolioEntity>, Repository<PortfolioEntity, long>>()
+            .AddTransient<ICommandRepository<SkillEntity>, Repository<SkillEntity, long>>()
+            .AddTransient<ICommandRepository<ServiceEntity>, Repository<ServiceEntity, long>>();
     }
 }
