@@ -26,7 +26,7 @@ internal static class SwaggerExtensions
                 {
                     Title = "JobMagnet API",
                     Version = description.ApiVersion.ToString(),
-                    Description = "Public API JobMagnet",
+                    Description = "Public API JobMagnet"
                 };
 
                 options.SwaggerDoc(description.GroupName, info);
@@ -55,7 +55,8 @@ internal static class SwaggerExtensions
         });
         application.UseSwaggerUI(config =>
         {
-            var groupNames = application.Services.GetRequiredService<IApiVersionDescriptionProvider>().ApiVersionDescriptions
+            var groupNames = application.Services.GetRequiredService<IApiVersionDescriptionProvider>()
+                .ApiVersionDescriptions
                 .Select(x => x.GroupName);
 
             foreach (var groupName in groupNames)
@@ -76,7 +77,8 @@ internal class LowerCaseDocumentFilter : IDocumentFilter
 {
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
-        var paths = swaggerDoc.Paths.ToDictionary(entry => LowercaseEverythingButParameters(entry.Key), entry => entry.Value);
+        var paths = swaggerDoc.Paths.ToDictionary(entry => LowercaseEverythingButParameters(entry.Key),
+            entry => entry.Value);
 
         swaggerDoc.Paths = new OpenApiPaths();
 
@@ -84,8 +86,10 @@ internal class LowerCaseDocumentFilter : IDocumentFilter
             swaggerDoc.Paths.Add(key, value);
     }
 
-    private static string LowercaseEverythingButParameters(string key) =>
-        string.Join('/', key.Split('/').Select(x => x.Contains('{') ? x : x.ToLower()));
+    private static string LowercaseEverythingButParameters(string key)
+    {
+        return string.Join('/', key.Split('/').Select(x => x.Contains('{') ? x : x.ToLower()));
+    }
 }
 
 internal class EnumSchemaFilter : ISchemaFilter

@@ -21,9 +21,11 @@ internal static class HostExtensions
         return services
             .AddTransient<IQueryRepository<ResumeEntity, long>, Repository<ResumeEntity, long>>()
             .AddTransient<IQueryRepository<TestimonialEntity, long>, Repository<TestimonialEntity, long>>()
-            .AddTransient<IQueryRepository<PortfolioGalleryItemEntity, long>, Repository<PortfolioGalleryItemEntity, long>>()
+            .AddTransient<IQueryRepository<PortfolioGalleryItemEntity, long>,
+                Repository<PortfolioGalleryItemEntity, long>>()
             .AddTransient<IQueryRepository<SkillItemEntity, long>, Repository<SkillItemEntity, long>>()
-            .AddTransient<IQueryRepository<ServiceGalleryItemEntity, long>, Repository<ServiceGalleryItemEntity, long>>()
+            .AddTransient<IQueryRepository<ServiceGalleryItemEntity, long>,
+                Repository<ServiceGalleryItemEntity, long>>()
             .AddTransient<IPortfolioQueryRepository, PortfolioQueryRepository>()
             .AddTransient<ISkillQueryRepository, SkillQueryRepository>()
             .AddTransient<IServiceQueryRepository, ServiceQueryRepository>();
