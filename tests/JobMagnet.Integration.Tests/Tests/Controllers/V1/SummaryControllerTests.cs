@@ -4,11 +4,9 @@ using FluentAssertions;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
-using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
 using JobMagnet.Models.Summary;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit.Abstractions;
@@ -30,7 +28,6 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         _testFixture.SetTestOutputHelper(testOutputHelper);
     }
 
-    
     [Fact(DisplayName = "Should create a new record and return 201 when the POST request is valid")]
     public async Task ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync()
     {
