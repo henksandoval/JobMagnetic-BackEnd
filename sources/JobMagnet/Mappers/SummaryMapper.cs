@@ -21,7 +21,17 @@ internal static class SummaryMapper
         return entity.Adapt<SummaryRequest>();
     }
 
+    internal static SummaryComplexRequest ToUpdateComplexRequest(SummaryEntity entity)
+    {
+        return entity.Adapt<SummaryComplexRequest>();
+    }
+
     internal static void UpdateEntity(this SummaryEntity entity, SummaryRequest request)
+    {
+        request.Adapt(entity);
+    }
+
+    internal static void UpdateComplexEntity(this SummaryEntity entity, SummaryComplexRequest request)
     {
         request.Adapt(entity);
     }

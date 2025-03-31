@@ -4,9 +4,12 @@ using FluentAssertions;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
+using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
 using JobMagnet.Models.Summary;
+using JobMagnet.Models.Summary.Education;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit.Abstractions;
@@ -119,6 +122,31 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         // Then
         response.IsSuccessStatusCode.ShouldBeFalse();
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact(DisplayName = "Should handle multiple Education Add operations in a PATCH request")]
+    public async Task ShouldHandleAddMultipleEducationOperationsInPatchEducationRequestAsync()
+    {
+        // Given
+        var summary = await SetupEntityAsync();
+        var itemAdded01 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
+        var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
+        patchDocument.Add(x => x.Education, itemAdded01);
+        patchDocument.Add(x => x.Education, itemAdded02);
+
+        // When
+        var response =
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{summary.Id}/education", patchDocument);
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISummaryQueryRepository>();
+        var summaryEntity = await querySkillRepository.GetByIdWithIncludesAsync(summary.Id);
+        summaryEntity.ShouldNotBeNull();
     }
 
     private async Task<SummaryEntity> SetupEntityAsync()

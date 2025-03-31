@@ -80,4 +80,27 @@ public class SummaryController(
 
         return Results.NoContent();
     }
+
+    [HttpPatch("{id:long}/education")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> PatchEducationAsync(int id, [FromBody] JsonPatchDocument<SummaryComplexRequest> patchDocument)
+    {
+        _ = queryRepository.IncludeEducation();
+        var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        var updateRequest = SummaryMapper.ToUpdateComplexRequest(entity);
+
+        patchDocument.ApplyTo(updateRequest);
+
+        entity.UpdateComplexEntity(updateRequest);
+
+        await commandRepository.UpdateAsync(entity).ConfigureAwait(false);
+
+        return Results.NoContent();
+    }
 }
