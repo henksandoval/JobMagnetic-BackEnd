@@ -103,4 +103,17 @@ public static class FixtureBuilder
 
         return serviceEntity;
     }
+
+    public static SummaryEntity BuildSummaryEntity(this IFixture fixture)
+    {
+        var summaryEntity = fixture.Build<SummaryEntity>()
+            .With(x => x.Id, 0)
+            .With(x => x.Introduction, Faker.Lorem.Paragraph())
+            .With(x => x.IsDeleted, false)
+            .Without(x => x.DeletedAt)
+            .Without(x => x.DeletedBy)
+            .Create();
+
+        return summaryEntity;
+    }
 }
