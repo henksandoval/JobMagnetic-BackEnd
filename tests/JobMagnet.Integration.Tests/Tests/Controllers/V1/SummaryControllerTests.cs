@@ -30,6 +30,36 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         _testFixture.SetTestOutputHelper(testOutputHelper);
     }
 
+    
+    [Fact(DisplayName = "Should create a new record and return 201 when the POST request is valid")]
+    public async Task ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync()
+    {
+        // Given
+        await _testFixture.ResetDatabaseAsync();
+        var createRequest = _fixture.Build<SummaryCreateRequest>().Create();
+        var httpContent = TestUtilities.SerializeRequestContent(createRequest);
+
+        // When
+        var response = await _httpClient.PostAsync(RequestUriController, httpContent);
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+
+        var responseData = await TestUtilities.DeserializeResponseAsync<SummaryModel>(response);
+        responseData.ShouldNotBeNull();
+
+        var locationHeader = response.Headers.Location!.ToString();
+        locationHeader.ShouldNotBeNull();
+        locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<ISummaryQueryRepository>();
+        var entityCreated = await queryRepository.GetByIdWithIncludesAsync(responseData.Id);
+
+        entityCreated.ShouldNotBeNull();
+    }
+
     [Fact(DisplayName = "Should return the record and return 200 when GET request with valid ID is provided")]
     public async Task ShouldReturnRecord_WhenValidIdIsProvidedAsync()
     {

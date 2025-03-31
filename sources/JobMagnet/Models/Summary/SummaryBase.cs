@@ -2,5 +2,5 @@
 
 public abstract class SummaryBase
 {
-    public string Overview { get; set; }
+    public string Introduction { get; set; }
 }

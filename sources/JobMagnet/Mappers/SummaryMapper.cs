@@ -1,0 +1,28 @@
+﻿using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Models.Summary;
+using Mapster;
+
+namespace JobMagnet.Mappers;
+
+internal static class SummaryMapper
+{
+    internal static SummaryEntity ToEntity(SummaryCreateRequest request)
+    {
+        return request.Adapt<SummaryEntity>();
+    }
+
+    internal static SummaryModel ToModel(SummaryEntity entity)
+    {
+        return entity.Adapt<SummaryModel>();
+    }
+
+    internal static SummaryRequest ToUpdateRequest(SummaryEntity entity)
+    {
+        return entity.Adapt<SummaryRequest>();
+    }
+
+    internal static void UpdateEntity(this SummaryEntity entity, SummaryRequest request)
+    {
+        request.Adapt(entity);
+    }
+}

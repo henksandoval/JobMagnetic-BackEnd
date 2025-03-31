@@ -110,6 +110,8 @@ public static class FixtureBuilder
             .With(x => x.Id, 0)
             .With(x => x.Introduction, Faker.Lorem.Paragraph())
             .With(x => x.IsDeleted, false)
+            .Without(x => x.Education)
+            .Without(x => x.WorkExperiences)
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy)
             .Create();
