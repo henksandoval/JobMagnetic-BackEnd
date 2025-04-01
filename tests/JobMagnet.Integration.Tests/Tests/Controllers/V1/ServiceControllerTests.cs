@@ -256,18 +256,9 @@ public class ServiceControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         _ = queryServiceRepository.IncludeGalleryItems();
         var serviceEntity = await queryServiceRepository.GetByIdWithIncludesAsync(service.Id);
         serviceEntity!.GalleryItems.Count.ShouldBe(service.GalleryItems.Count + 1);
-        serviceEntity.GalleryItems.ShouldContain(x => x.Title == itemAdded01.Title);
-        serviceEntity.GalleryItems.ShouldContain(x => x.Description == itemAdded01.Description);
-        serviceEntity.GalleryItems.ShouldContain(x => x.UrlLink == itemAdded02.UrlLink);
-        serviceEntity.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded02.UrlImage);
-        serviceEntity.GalleryItems.ShouldContain(x => x.UrlVideo == itemAdded02.UrlVideo);
-        serviceEntity.GalleryItems.ShouldContain(x => x.Type == itemAdded02.Type);
-        serviceEntity.GalleryItems.ShouldContain(x => x.Position == itemAdded02.Position);
-        var entityUpdated = serviceEntity.GalleryItems.First(x => x.Id == itemUpdated.Id);
-        entityUpdated.Should().BeEquivalentTo(itemUpdated, options => options
-            .ExcludingMissingMembers()
-            .Excluding(x => x.Id)
-        );
+        serviceEntity.GalleryItems.Should().ContainEquivalentOf(itemAdded01, options => options.ExcludingMissingMembers().Excluding(x => x.Id));
+        serviceEntity.GalleryItems.Should().ContainEquivalentOf(itemAdded02, options => options.ExcludingMissingMembers().Excluding(x => x.Id));
+        serviceEntity.GalleryItems.Should().ContainEquivalentOf(itemUpdated, options => options.ExcludingMissingMembers());
         serviceEntity.GalleryItems.Contains(itemToRemove).ShouldBeFalse();
     }
 
