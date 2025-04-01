@@ -64,7 +64,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldReturnRecord_WhenValidIdIsProvidedAsync()
     {
         // Given
-        var entity = await SetupEntityAsync();
+        var entity = await SetupEntityAsync(_fixture.BuildSummaryEntity());
 
         // When
         var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
@@ -82,7 +82,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync()
     {
         // Given
-        _ = await SetupEntityAsync();
+        _ = await SetupEntityAsync(_fixture.BuildSummaryEntity());
 
         // When
         var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
@@ -96,7 +96,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldDeleteRecord_WhenDeleteRequestIsReceivedAsync()
     {
         // Given
-        var entity = await SetupEntityAsync();
+        var entity = await SetupEntityAsync(_fixture.BuildSummaryEntity());
 
         // When
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{entity.Id}");
@@ -114,7 +114,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
-        _ = await SetupEntityAsync();
+        _ = await SetupEntityAsync(_fixture.BuildSummaryEntity());
 
         // When
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{InvalidId}");
@@ -128,7 +128,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldHandleAddMultipleEducationOperationsInPatchEducationRequestAsync()
     {
         // Given
-        var summary = await SetupEntityAsync();
+        var summary = await SetupEntityAsync(_fixture.BuildSummaryEntity());
         var itemAdded01 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
         var itemAdded02 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
         var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
@@ -153,18 +153,17 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
             options => options.ExcludingMissingMembers().Excluding(x => x.Id));
     }
 
-    private async Task<SummaryEntity> SetupEntityAsync()
+    private async Task<SummaryEntity> SetupEntityAsync(SummaryEntity summaryEntity)
     {
         await _testFixture.ResetDatabaseAsync();
-        return await CreateAndPersistEntityAsync();
+        return await CreateAndPersistEntityAsync(summaryEntity);
     }
 
-    private async Task<SummaryEntity> CreateAndPersistEntityAsync()
+    private async Task<SummaryEntity> CreateAndPersistEntityAsync(SummaryEntity entity)
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<SummaryEntity>>();
 
-        var entity = _fixture.BuildSummaryEntity();
         await commandRepository.CreateAsync(entity);
 
         return entity;
