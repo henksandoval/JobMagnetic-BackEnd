@@ -157,12 +157,22 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldHandleMultipleEducationOperationsInPatchEducationRequestAsync()
     {
         // Given
-        var initialSummaryEntity = await SetupEntityAsync(() => _fixture.BuildSummaryEntityWithRelations());
         var itemAdded01 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
         var itemAdded02 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
+        var itemUpdated = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
+
+        var initialSummaryEntity = await SetupEntityAsync(() => _fixture.BuildSummaryEntityWithRelations());
+        var itemToReplace = initialSummaryEntity.Education.ElementAt(3);
+        var itemToRemove = initialSummaryEntity.Education.ElementAt(1);
+        itemUpdated.Id = itemToReplace.Id;
+        var indexItemToReplace = initialSummaryEntity.Education.ToList().FindIndex(item => item.Id == itemToReplace.Id);
+        var indexItemToRemove = initialSummaryEntity.Education.ToList().FindIndex(item => item.Id == itemToRemove.Id);
+
         var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
         patchDocument.Add(x => x.Education, itemAdded01);
         patchDocument.Add(x => x.Education, itemAdded02);
+        patchDocument.Replace(p => p.Education[indexItemToReplace], itemUpdated);
+        patchDocument.Remove(p => p.Education, indexItemToRemove);
 
         // When
         var response =
@@ -177,11 +187,14 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         _ = querySkillRepository.IncludeEducation();
         var summaryEntity = await querySkillRepository.GetByIdWithIncludesAsync(initialSummaryEntity.Id);
         summaryEntity.ShouldNotBeNull();
-        summaryEntity.Education.Count.ShouldBe(initialSummaryEntity.Education.Count + 2);
+        summaryEntity.Education.Count.ShouldBe(initialSummaryEntity.Education.Count + 1);
         summaryEntity.Education.Should().ContainEquivalentOf(itemAdded01,
             options => options.ExcludingMissingMembers().Excluding(x => x.Id));
         summaryEntity.Education.Should().ContainEquivalentOf(itemAdded02,
             options => options.ExcludingMissingMembers().Excluding(x => x.Id));
+        summaryEntity.Education.Should().ContainEquivalentOf(itemUpdated,
+            options => options.ExcludingMissingMembers());
+        summaryEntity.Education.Contains(itemToRemove).ShouldBeFalse();
     }
 
     private async Task<SummaryEntity> SetupEntityAsync(Func<SummaryEntity> entityBuilder)
