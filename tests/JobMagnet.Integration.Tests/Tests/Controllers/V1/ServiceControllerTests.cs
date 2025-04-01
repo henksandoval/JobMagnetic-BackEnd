@@ -227,12 +227,13 @@ public class ServiceControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldHandleMultipleOperationsInPatchRequestAsync()
     {
         // Given
-        var service = await SetupEntityAsync();
-        var itemToReplace = service.GalleryItems.ElementAt(3);
-        var itemToRemove = service.GalleryItems.ElementAt(1);
         var itemAdded01 = _fixture.Create<ServiceGalleryItemRequest>();
         var itemAdded02 = _fixture.Create<ServiceGalleryItemRequest>();
         var itemUpdated = _fixture.Create<ServiceGalleryItemRequest>();
+
+        var service = await SetupEntityAsync();
+        var itemToReplace = service.GalleryItems.ElementAt(3);
+        var itemToRemove = service.GalleryItems.ElementAt(1);
         itemUpdated.Id = itemToReplace.Id;
         var indexItemToReplace = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var indexItemToRemove = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToRemove.Id);
