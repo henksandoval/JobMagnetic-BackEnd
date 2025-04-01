@@ -15,6 +15,7 @@ public static class FixtureBuilder
         fixture.Customize(new PortfolioGalleryItemCustomization());
         fixture.Customize(new SkillItemCustomization());
         fixture.Customize(new ServiceGalleryItemCustomization());
+        fixture.Customize(new EducationCustomization());
         fixture.Register(() => DateOnly.FromDateTime(Faker.Date.Past(30)));
         fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => fixture.Behaviors.Remove(b));
         fixture.Behaviors.Add(new OmitOnRecursionBehavior());

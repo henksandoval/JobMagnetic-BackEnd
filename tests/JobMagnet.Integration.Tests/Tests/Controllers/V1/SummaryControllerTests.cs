@@ -153,6 +153,37 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
             options => options.ExcludingMissingMembers().Excluding(x => x.Id));
     }
 
+    [Fact(DisplayName = "Should handle multiple Education operations in a PATCH request")]
+    public async Task ShouldHandleMultipleEducationOperationsInPatchEducationRequestAsync()
+    {
+        // Given
+        var initialSummaryEntity = await SetupEntityAsync(() => _fixture.BuildSummaryEntityWithRelations());
+        var itemAdded01 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
+        var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
+        patchDocument.Add(x => x.Education, itemAdded01);
+        patchDocument.Add(x => x.Education, itemAdded02);
+
+        // When
+        var response =
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{initialSummaryEntity.Id}/education", patchDocument);
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISummaryQueryRepository>();
+        _ = querySkillRepository.IncludeEducation();
+        var summaryEntity = await querySkillRepository.GetByIdWithIncludesAsync(initialSummaryEntity.Id);
+        summaryEntity.ShouldNotBeNull();
+        summaryEntity.Education.Count.ShouldBe(initialSummaryEntity.Education.Count + 2);
+        summaryEntity.Education.Should().ContainEquivalentOf(itemAdded01,
+            options => options.ExcludingMissingMembers().Excluding(x => x.Id));
+        summaryEntity.Education.Should().ContainEquivalentOf(itemAdded02,
+            options => options.ExcludingMissingMembers().Excluding(x => x.Id));
+    }
+
     private async Task<SummaryEntity> SetupEntityAsync(Func<SummaryEntity> entityBuilder)
     {
         var summaryEntity = entityBuilder();
