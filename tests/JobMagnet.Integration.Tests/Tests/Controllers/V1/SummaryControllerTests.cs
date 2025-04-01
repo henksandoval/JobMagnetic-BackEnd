@@ -145,8 +145,12 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISummaryQueryRepository>();
+        _ = querySkillRepository.IncludeEducation();
         var summaryEntity = await querySkillRepository.GetByIdWithIncludesAsync(summary.Id);
         summaryEntity.ShouldNotBeNull();
+        summaryEntity.Education.Count.ShouldBe(2);
+        summaryEntity.Education.Should().BeEquivalentTo(new List<EducationRequest> { itemAdded01, itemAdded02 },
+            options => options.ExcludingMissingMembers().Excluding(x => x.Id));
     }
 
     private async Task<SummaryEntity> SetupEntityAsync()
