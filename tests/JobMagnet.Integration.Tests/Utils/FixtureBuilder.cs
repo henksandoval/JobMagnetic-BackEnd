@@ -118,4 +118,21 @@ public static class FixtureBuilder
 
         return summaryEntity;
     }
+
+    public static SummaryEntity BuildSummaryEntityWithRelations(this IFixture fixture, int relatedItems = 5)
+    {
+        var educationList = fixture.CreateMany<EducationEntity>(relatedItems).ToList();
+
+        var summaryEntity = fixture.Build<SummaryEntity>()
+            .With(x => x.Id, 0)
+            .With(x => x.Introduction, Faker.Lorem.Paragraph())
+            .With(x => x.IsDeleted, false)
+            .With(x => x.Education, educationList)
+            .Without(x => x.WorkExperiences)
+            .Without(x => x.DeletedAt)
+            .Without(x => x.DeletedBy)
+            .Create();
+
+        return summaryEntity;
+    }
 }
