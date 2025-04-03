@@ -175,8 +175,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         patchDocument.Remove(p => p.Education, indexItemToRemove);
 
         // When
-        var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{initialSummaryEntity.Id}/education", patchDocument);
+        var response =  await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{initialSummaryEntity.Id}/education", patchDocument);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
@@ -195,6 +194,33 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         summaryEntity.Education.Should().ContainEquivalentOf(itemUpdated,
             options => options.ExcludingMissingMembers());
         summaryEntity.Education.Contains(itemToRemove).ShouldBeFalse();
+    }
+    
+    [Fact(DisplayName = "Should handle multiple Work Experience Add operations in a PATCH request")]
+    public async Task ShouldHandleAddMultipleEducationWorkExperienceOperationsInPatchWorkExperienceRequestAsync()
+    {
+        // Given
+        var summary = await SetupEntityAsync(() => _fixture.BuildSummaryEntityWithRelations());
+        var itemAdded01 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
+        var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
+        patchDocument.Add(x => x.Education, itemAdded01);
+
+        // When
+        var response =
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{summary.Id}/education", patchDocument);
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISummaryQueryRepository>();
+        _ = querySkillRepository.IncludeEducation();
+        var summaryEntity = await querySkillRepository.GetByIdWithIncludesAsync(summary.Id);
+        summaryEntity.ShouldNotBeNull();
+        summaryEntity.Education.Count.ShouldBe(2);
+        summaryEntity.Education.Should().BeEquivalentTo(new List<EducationRequest> { itemAdded01},
+            options => options.ExcludingMissingMembers().Excluding(x => x.Id));
     }
 
     private async Task<SummaryEntity> SetupEntityAsync(Func<SummaryEntity> entityBuilder)
