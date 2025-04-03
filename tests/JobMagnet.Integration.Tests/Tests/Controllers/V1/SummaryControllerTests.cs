@@ -9,6 +9,7 @@ using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
 using JobMagnet.Models.Summary;
 using JobMagnet.Models.Summary.Education;
+using JobMagnet.Models.Summary.WorkExperience;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -200,14 +201,15 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldHandleAddMultipleEducationWorkExperienceOperationsInPatchWorkExperienceRequestAsync()
     {
         // Given
-        var summary = await SetupEntityAsync(() => _fixture.BuildSummaryEntityWithRelations());
-        var itemAdded01 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
+        var summary = await SetupEntityAsync(() => _fixture.BuildSummaryEntity());
+        var itemAdded01 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
         var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
-        patchDocument.Add(x => x.Education, itemAdded01);
+        patchDocument.Add(x => x.WorkExperience, itemAdded01);
+        patchDocument.Add(x => x.WorkExperience, itemAdded02);
 
         // When
-        var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{summary.Id}/education", patchDocument);
+        var response = await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{summary.Id}/WorkExperience", patchDocument);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
@@ -219,7 +221,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var summaryEntity = await querySkillRepository.GetByIdWithIncludesAsync(summary.Id);
         summaryEntity.ShouldNotBeNull();
         summaryEntity.Education.Count.ShouldBe(2);
-        summaryEntity.Education.Should().BeEquivalentTo(new List<EducationRequest> { itemAdded01},
+        summaryEntity.Education.Should().BeEquivalentTo(new List<WorkExperienceRequest> { itemAdded01, itemAdded02 },
             options => options.ExcludingMissingMembers().Excluding(x => x.Id));
     }
 
