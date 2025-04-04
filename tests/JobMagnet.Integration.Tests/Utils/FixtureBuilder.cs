@@ -129,7 +129,7 @@ public static class FixtureBuilder
             .With(x => x.Introduction, Faker.Lorem.Paragraph())
             .With(x => x.IsDeleted, false)
             .With(x => x.Education, educationList)
-            .Without(x => x.WorkExperiences)
+            .With(x => x.WorkExperiences)
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy)
             .Create();
