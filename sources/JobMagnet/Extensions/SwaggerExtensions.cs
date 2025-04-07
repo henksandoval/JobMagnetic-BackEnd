@@ -38,7 +38,10 @@ internal static class SwaggerExtensions
 
     internal static WebApplication UseOpenApi(this WebApplication application)
     {
-        var url = application.Configuration.GetValue<string>("SwaggerUrlApi");
+        var url = application.Configuration.GetValue<string>("SwaggerUrl");
+
+        if (string.IsNullOrWhiteSpace(url))
+            throw new ArgumentNullException(nameof(url), "SwaggerUrl is not set in the configuration.");
 
         application.UseSwagger(x =>
         {

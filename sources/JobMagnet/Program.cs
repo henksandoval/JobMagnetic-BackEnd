@@ -1,12 +1,18 @@
 using JobMagnet.DependencyInjection;
 using JobMagnet.Extensions;
 using JobMagnet.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services
-    .AddSqlServer<JobMagnetDbContext>(connectionString)
+    .AddSqlServer<JobMagnetDbContext>(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        options =>
+        {
+            options.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+        })
     .AddHostDependencies()
     .AddHttpContextAccessor()
     .AddEndpointsApiExplorer()
@@ -20,10 +26,14 @@ builder.Services
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment()) app.UseOpenApi();
+if (builder.Configuration.GetValue<bool>("UseSwaggerUI")) app.UseOpenApi();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-app.Run();
+using var scope = app.Services.CreateScope();
+var context = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
+await context.Database.MigrateAsync();
+
+await app.RunAsync();
