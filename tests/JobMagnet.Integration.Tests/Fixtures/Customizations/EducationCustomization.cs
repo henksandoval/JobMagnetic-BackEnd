@@ -7,7 +7,6 @@ namespace JobMagnet.Integration.Tests.Fixtures.Customizations;
 
 public class EducationCustomization : ICustomization
 {
-    private readonly Faker _faker = new();
     private static readonly string[] Degrees =
     [
         "Bachelor's in Computer Science",
@@ -32,6 +31,8 @@ public class EducationCustomization : ICustomization
         "University of Toronto",
         "University of Melbourne"
     ];
+
+    private readonly Faker _faker = new();
 
     public void Customize(IFixture fixture)
     {

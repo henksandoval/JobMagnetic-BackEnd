@@ -2,8 +2,9 @@
 using Bogus;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Integration.Tests.Fixtures.Customizations;
+using JobMagnet.Integration.Tests.Utils;
 
-namespace JobMagnet.Integration.Tests.Utils;
+namespace JobMagnet.Integration.Tests.Fixtures;
 
 public static class FixtureBuilder
 {

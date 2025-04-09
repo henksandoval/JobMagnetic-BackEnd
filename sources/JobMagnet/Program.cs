@@ -10,8 +10,8 @@ builder.Services
         builder.Configuration.GetConnectionString("DefaultConnection"),
         options =>
         {
-            options.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30),
-                errorNumbersToAdd: null);
+            options.EnableRetryOnFailure(10, TimeSpan.FromSeconds(30),
+                null);
         })
     .AddHostDependencies()
     .AddHttpContextAccessor()

@@ -257,9 +257,12 @@ public class ServiceControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         _ = queryServiceRepository.IncludeGalleryItems();
         var serviceEntity = await queryServiceRepository.GetByIdWithIncludesAsync(service.Id);
         serviceEntity!.GalleryItems.Count.ShouldBe(service.GalleryItems.Count + 1);
-        serviceEntity.GalleryItems.Should().ContainEquivalentOf(itemAdded01, options => options.ExcludingMissingMembers().Excluding(x => x.Id));
-        serviceEntity.GalleryItems.Should().ContainEquivalentOf(itemAdded02, options => options.ExcludingMissingMembers().Excluding(x => x.Id));
-        serviceEntity.GalleryItems.Should().ContainEquivalentOf(itemUpdated, options => options.ExcludingMissingMembers());
+        serviceEntity.GalleryItems.Should().ContainEquivalentOf(itemAdded01,
+            options => options.ExcludingMissingMembers().Excluding(x => x.Id));
+        serviceEntity.GalleryItems.Should().ContainEquivalentOf(itemAdded02,
+            options => options.ExcludingMissingMembers().Excluding(x => x.Id));
+        serviceEntity.GalleryItems.Should()
+            .ContainEquivalentOf(itemUpdated, options => options.ExcludingMissingMembers());
         serviceEntity.GalleryItems.Contains(itemToRemove).ShouldBeFalse();
     }
 

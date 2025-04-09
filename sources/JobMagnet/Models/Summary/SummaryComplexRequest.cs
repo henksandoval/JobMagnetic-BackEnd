@@ -7,5 +7,7 @@ public sealed class SummaryComplexRequest : SummaryBase
 {
     public long? Id { get; init; }
     public IList<EducationRequest> Education { get; set; } = Enumerable.Empty<EducationRequest>().ToList();
-    public IList<WorkExperienceRequest> WorkExperiences { get; set; } = Enumerable.Empty<WorkExperienceRequest>().ToList();
+
+    public IList<WorkExperienceRequest> WorkExperiences { get; set; } =
+        Enumerable.Empty<WorkExperienceRequest>().ToList();
 }

@@ -37,9 +37,4 @@
         <Folder Include="Infrastructure\"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Remove="Migrations\20250409192417_initial.Designer.cs" />
-      <Compile Remove="Migrations\20250409203436_initial.Designer.cs" />
-    </ItemGroup>
-
 </Project>
