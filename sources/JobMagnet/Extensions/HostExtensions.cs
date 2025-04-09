@@ -26,9 +26,11 @@ internal static class HostExtensions
             .AddTransient<IQueryRepository<SkillItemEntity, long>, Repository<SkillItemEntity, long>>()
             .AddTransient<IQueryRepository<ServiceGalleryItemEntity, long>,
                 Repository<ServiceGalleryItemEntity, long>>()
+            .AddTransient<IQueryRepository<SummaryEntity, long>, Repository<SummaryEntity, long>>()
             .AddTransient<IPortfolioQueryRepository, PortfolioQueryRepository>()
             .AddTransient<ISkillQueryRepository, SkillQueryRepository>()
-            .AddTransient<IServiceQueryRepository, ServiceQueryRepository>();
+            .AddTransient<IServiceQueryRepository, ServiceQueryRepository>()
+            .AddTransient<ISummaryQueryRepository, SummaryQueryRepository>();
     }
 
     private static IServiceCollection AddCommandRepositories(this IServiceCollection services)
@@ -38,6 +40,7 @@ internal static class HostExtensions
             .AddTransient<ICommandRepository<TestimonialEntity>, Repository<TestimonialEntity, long>>()
             .AddTransient<ICommandRepository<PortfolioEntity>, Repository<PortfolioEntity, long>>()
             .AddTransient<ICommandRepository<SkillEntity>, Repository<SkillEntity, long>>()
-            .AddTransient<ICommandRepository<ServiceEntity>, Repository<ServiceEntity, long>>();
+            .AddTransient<ICommandRepository<ServiceEntity>, Repository<ServiceEntity, long>>()
+            .AddTransient<ICommandRepository<SummaryEntity>, Repository<SummaryEntity, long>>();
     }
 }
