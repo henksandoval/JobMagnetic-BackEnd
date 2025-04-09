@@ -9,6 +9,7 @@ using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
 using JobMagnet.Models.Summary;
 using JobMagnet.Models.Summary.Education;
+using JobMagnet.Models.Summary.WorkExperience;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -175,8 +176,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         patchDocument.Remove(p => p.Education, indexItemToRemove);
 
         // When
-        var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{initialSummaryEntity.Id}/education", patchDocument);
+        var response =  await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{initialSummaryEntity.Id}/education", patchDocument);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
@@ -196,7 +196,78 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
             options => options.ExcludingMissingMembers());
         summaryEntity.Education.Contains(itemToRemove).ShouldBeFalse();
     }
+    
+    [Fact(DisplayName = "Should handle multiple Work Experience Add operations in a PATCH request")]
+    public async Task ShouldHandleAddMultipleWorkExperienceOperationsInPatchWorkExperienceRequestAsync()
+    {
+        // Given
+        var summary = await SetupEntityAsync(() => _fixture.BuildSummaryEntity());
+        var itemAdded01 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
+        var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
+        patchDocument.Add(x => x.WorkExperiences, itemAdded01);
+        patchDocument.Add(x => x.WorkExperiences, itemAdded02);
 
+        // When
+        var response = await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{summary.Id}/WorkExperience", patchDocument);
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISummaryQueryRepository>();
+        _ = querySkillRepository.IncludeWorkExperience();
+        var summaryEntity = await querySkillRepository.GetByIdWithIncludesAsync(summary.Id);
+        summaryEntity.ShouldNotBeNull(); 
+        summaryEntity.WorkExperiences.Count.ShouldBe(2);
+        summaryEntity.WorkExperiences.Should().BeEquivalentTo(new List<WorkExperienceRequest> { itemAdded01, itemAdded02 },
+            options => options.ExcludingMissingMembers().Excluding(x => x.Id));
+    }
+    
+     [Fact(DisplayName = "Should handle multiple Work Experience in a PATCH request")]
+    public async Task ShouldHandleMultipleWorkExperienceOperationsInPatchRequestAsync()
+    {
+        // Given
+        var itemAdded01 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
+        var itemUpdated = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
+
+        var initialSummaryEntity = await SetupEntityAsync(() => _fixture.BuildSummaryEntityWithRelations());
+        var itemToReplace = initialSummaryEntity.WorkExperiences.ElementAt(3);
+        var itemToRemove = initialSummaryEntity.WorkExperiences.ElementAt(1);
+        itemUpdated.Id = itemToReplace.Id;
+        var indexItemToReplace = initialSummaryEntity.WorkExperiences.ToList().FindIndex(item => item.Id == itemToReplace.Id);
+        var indexItemToRemove = initialSummaryEntity.WorkExperiences.ToList().FindIndex(item => item.Id == itemToRemove.Id);
+        
+        var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
+        patchDocument.Add(x => x.WorkExperiences, itemAdded01);
+        patchDocument.Add(x => x.WorkExperiences, itemAdded02);
+        patchDocument.Replace(p => p.WorkExperiences[indexItemToReplace], itemUpdated);
+        patchDocument.Remove(p => p.WorkExperiences, indexItemToRemove);
+
+        // // When
+        var response =  await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{initialSummaryEntity.Id}/WorkExperience", patchDocument);
+        
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISummaryQueryRepository>();
+        _ = querySkillRepository.IncludeWorkExperience();
+        var summaryEntity = await querySkillRepository.GetByIdWithIncludesAsync(initialSummaryEntity.Id);
+        summaryEntity.ShouldNotBeNull();
+        summaryEntity.WorkExperiences.Count.ShouldBe(initialSummaryEntity.WorkExperiences.Count + 1);
+        summaryEntity.WorkExperiences.Should().ContainEquivalentOf(itemAdded01,
+            options => options.ExcludingMissingMembers().Excluding(x => x.Id));
+        summaryEntity.WorkExperiences.Should().ContainEquivalentOf(itemAdded02,
+            options => options.ExcludingMissingMembers().Excluding(x => x.Id));
+        summaryEntity.WorkExperiences.Should().ContainEquivalentOf(itemUpdated,
+            options => options.ExcludingMissingMembers());
+        summaryEntity.WorkExperiences.Contains(itemToRemove).ShouldBeFalse();
+    }
+    
     private async Task<SummaryEntity> SetupEntityAsync(Func<SummaryEntity> entityBuilder)
     {
         var summaryEntity = entityBuilder();

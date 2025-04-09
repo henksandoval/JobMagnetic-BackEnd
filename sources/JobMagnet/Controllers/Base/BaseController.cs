@@ -12,7 +12,6 @@ public class BaseController<TController> : ControllerBase
     where TController : BaseController<TController>
 {
     protected readonly ILogger<TController> Logger;
-
     protected BaseController(ILogger<TController> logger)
     {
         Logger = logger;

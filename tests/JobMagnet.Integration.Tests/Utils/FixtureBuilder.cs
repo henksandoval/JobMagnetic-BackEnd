@@ -16,6 +16,7 @@ public static class FixtureBuilder
         fixture.Customize(new SkillItemCustomization());
         fixture.Customize(new ServiceGalleryItemCustomization());
         fixture.Customize(new EducationCustomization());
+        fixture.Customize(new WorkExperienceCustomization());
         fixture.Register(() => DateOnly.FromDateTime(Faker.Date.Past(30)));
         fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => fixture.Behaviors.Remove(b));
         fixture.Behaviors.Add(new OmitOnRecursionBehavior());
@@ -123,13 +124,14 @@ public static class FixtureBuilder
     public static SummaryEntity BuildSummaryEntityWithRelations(this IFixture fixture, int relatedItems = 5)
     {
         var educationList = fixture.CreateMany<EducationEntity>(relatedItems).ToList();
+        var workExperienceList = fixture.CreateMany<WorkExperienceEntity>(relatedItems).ToList();
 
         var summaryEntity = fixture.Build<SummaryEntity>()
             .With(x => x.Id, 0)
             .With(x => x.Introduction, Faker.Lorem.Paragraph())
             .With(x => x.IsDeleted, false)
             .With(x => x.Education, educationList)
-            .Without(x => x.WorkExperiences)
+            .With(x => x.WorkExperiences, workExperienceList)
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy)
             .Create();
