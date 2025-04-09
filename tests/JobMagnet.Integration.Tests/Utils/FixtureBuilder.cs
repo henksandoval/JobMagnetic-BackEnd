@@ -21,23 +21,37 @@ public static class FixtureBuilder
         return fixture;
     }
 
+    public static ProfileEntity BuildProfileEntity(this IFixture fixture)
+    {
+        var entity = fixture.Build<ProfileEntity>()
+            .With(x => x.Id, 0)
+            .With(x => x.IsDeleted, false)
+            .With(x => x.FirstName, Faker.Name.FirstName())
+            .With(x => x.LastName, Faker.Name.LastName())
+            .With(x => x.BirthDate, DateOnly.FromDateTime(Faker.Date.Past(30)))
+            .With(x => x.ProfileImageUrl, Faker.Image.PicsumUrl())
+            .With(x => x.MiddleName, TestUtilities.OptionalValue(Faker, f => f.Name.FirstName()))
+            .With(x => x.SecondLastName, TestUtilities.OptionalValue(Faker, f => f.Name.LastName()))
+            .Without(x => x.DeletedAt)
+            .Without(x => x.DeletedBy)
+            .Create();
+
+        return entity;
+    }
+
     public static ResumeEntity BuildResumeEntity(this IFixture fixture)
     {
         var entity = fixture.Build<ResumeEntity>()
             .With(x => x.Id, 0)
             .With(x => x.IsDeleted, false)
-            .With(x => x.FirstName, Faker.Name.FirstName())
-            .With(x => x.LastName, Faker.Name.LastName())
             .With(x => x.JobTitle, Faker.Name.JobTitle())
-            .With(x => x.BirthDate, DateOnly.FromDateTime(Faker.Date.Past(30)))
             .With(x => x.About, Faker.Lorem.Paragraph())
             .With(x => x.Summary, Faker.Lorem.Paragraph())
             .With(x => x.Overview, Faker.Lorem.Paragraph())
-            .With(x => x.ProfileImageUrl, Faker.Image.PicsumUrl())
             .With(x => x.Title, TestUtilities.OptionalValue(Faker, f => f.Name.Prefix()))
             .With(x => x.Suffix, TestUtilities.OptionalValue(Faker, f => f.Name.Suffix()))
-            .With(x => x.MiddleName, TestUtilities.OptionalValue(Faker, f => f.Name.FirstName()))
-            .With(x => x.SecondLastName, TestUtilities.OptionalValue(Faker, f => f.Name.LastName()))
+            .With(x => x.ProfileId, 0)
+            .With(x => x.Profile, BuildProfileEntity(fixture))
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy)
             .Create();
