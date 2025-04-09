@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using JobMagnet.Infrastructure.Entities.Base;
 
 namespace JobMagnet.Infrastructure.Entities;
@@ -10,4 +11,8 @@ public class SummaryEntity : SoftDeletableEntity<long>
 
     public virtual ICollection<WorkExperienceEntity> WorkExperiences { get; set; } =
         new HashSet<WorkExperienceEntity>();
+
+    [ForeignKey(nameof(Profile))] public long ProfileId { get; set; }
+
+    public virtual ProfileEntity Profile { get; set; }
 }
