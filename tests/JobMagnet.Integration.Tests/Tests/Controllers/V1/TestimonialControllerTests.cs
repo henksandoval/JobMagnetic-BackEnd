@@ -130,7 +130,10 @@ public class TestimonialControllerTests : IClassFixture<JobMagnetTestSetupFixtur
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>().With(x => x.Id, entity.Id).Create();
+        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>()
+            .With(x => x.Id, entity.Id)
+            .With(x => x.ProfileId, entity.ProfileId)
+            .Create();
 
         // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updatedEntity);
