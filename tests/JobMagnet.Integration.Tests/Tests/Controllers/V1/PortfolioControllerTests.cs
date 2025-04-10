@@ -36,7 +36,8 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var createRequest = _fixture.Build<PortfolioCreateRequest>().Create();
+        var profileEntity = await SetupProfileEntityAsync();
+        var createRequest = _fixture.Build<PortfolioCreateRequest>().With(x => x.ProfileId, profileEntity.Id).Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -264,6 +265,18 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
             .Excluding(x => x.Id)
         );
         portfolioEntity.GalleryItems.Contains(itemToRemove).ShouldBeFalse();
+    }
+
+    private async Task<ProfileEntity> SetupProfileEntityAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
+
+        var entity = _fixture.BuildProfileEntity();
+        await commandRepository.CreateAsync(entity);
+
+        return entity;
     }
 
     private async Task<PortfolioEntity> SetupEntityAsync()
