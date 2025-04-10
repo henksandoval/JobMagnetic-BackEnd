@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning.ApiExplorer;
+using JobMagnet.Extensions.ConfigSections;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -9,8 +10,15 @@ namespace JobMagnet.Extensions;
 
 internal static class SwaggerExtensions
 {
-    internal static IServiceCollection AddSwagger(this IServiceCollection service)
+    internal static IServiceCollection AddSwagger(this IServiceCollection service, IConfiguration configuration)
     {
+        var swaggerSettings = configuration.GetSection("SwaggerSettings").Get<SwaggerSettings>();
+
+        if (swaggerSettings is null ||
+            string.IsNullOrWhiteSpace(swaggerSettings.Title) ||
+            string.IsNullOrWhiteSpace(swaggerSettings.Description))
+            throw new InvalidOperationException("SwaggerSettings is not set in the configuration.");
+
         var provider = service.BuildServiceProvider();
         var apiProvider = provider.GetRequiredService<IApiVersionDescriptionProvider>();
 
@@ -24,9 +32,9 @@ internal static class SwaggerExtensions
             {
                 var info = new OpenApiInfo
                 {
-                    Title = "JobMagnet API",
+                    Title = swaggerSettings.Title,
                     Version = description.ApiVersion.ToString(),
-                    Description = "Public API JobMagnet"
+                    Description = swaggerSettings.Description,
                 };
 
                 options.SwaggerDoc(description.GroupName, info);
@@ -38,20 +46,20 @@ internal static class SwaggerExtensions
 
     internal static WebApplication UseOpenApi(this WebApplication application)
     {
-        var url = application.Configuration.GetValue<string>("SwaggerUrl");
+        var swaggerSettings = application.Configuration.GetSection("SwaggerSettings").Get<SwaggerSettings>();
 
-        if (string.IsNullOrWhiteSpace(url))
-            throw new ArgumentNullException(nameof(url), "SwaggerUrl is not set in the configuration.");
+        if (swaggerSettings is null || string.IsNullOrWhiteSpace(swaggerSettings.Url))
+            throw new InvalidOperationException("SwaggerSettings:Url is not set in the configuration.");
 
         application.UseSwagger(x =>
         {
-            x.PreSerializeFilters.Add((openApiDocument, request) =>
+            x.PreSerializeFilters.Add((openApiDocument, _) =>
             {
                 openApiDocument.Servers = new List<OpenApiServer>
                 {
                     new()
                     {
-                        Url = url
+                        Url = swaggerSettings.Url
                     }
                 };
             });
@@ -64,7 +72,8 @@ internal static class SwaggerExtensions
 
             foreach (var groupName in groupNames)
             {
-                config.SwaggerEndpoint($"{url}/swagger/{groupName}/swagger.json", groupName.ToUpperInvariant());
+                config.SwaggerEndpoint($"{swaggerSettings.Url}/swagger/{groupName}/swagger.json",
+                    groupName.ToUpperInvariant());
                 config.DocExpansion(DocExpansion.None);
                 config.EnableTryItOutByDefault();
             }

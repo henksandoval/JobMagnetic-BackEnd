@@ -14,19 +14,19 @@ builder.Services
                 null);
         })
     .AddHostDependencies()
+    .AddCorsPolicies(builder.Configuration)
     .AddHttpContextAccessor()
     .AddEndpointsApiExplorer()
     .AddApiVersion()
-    .AddSwagger()
+    .AddSwagger(builder.Configuration)
     .AddControllers(options =>
     {
         options.InputFormatters.Insert(0, JsonPatchInputFormatter.GetJsonPatchInputFormatter());
     });
 
-
 var app = builder.Build();
 
-if (builder.Configuration.GetValue<bool>("UseSwaggerUI")) app.UseOpenApi();
+if (builder.Configuration.GetValue<bool>("SwaggerSettings:UseUI")) app.UseOpenApi();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
