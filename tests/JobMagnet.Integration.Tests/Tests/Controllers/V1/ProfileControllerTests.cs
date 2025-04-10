@@ -6,6 +6,8 @@ using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
 using JobMagnet.Models.Profile;
+using JobMagnet.Models.Queries.Profile;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit.Abstractions;
@@ -32,9 +34,15 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var entity = await SetupEntityAsync();
+        var queryParameters = new Dictionary<string, string>
+        {
+            { nameof(ProfileQueryParameters.Name), entity.FirstName }
+        };
+
+        var requestUrl = QueryHelpers.AddQueryString(RequestUriController, queryParameters!);
 
         // When
-        var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
+        var response = await _httpClient.GetAsync(requestUrl);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
