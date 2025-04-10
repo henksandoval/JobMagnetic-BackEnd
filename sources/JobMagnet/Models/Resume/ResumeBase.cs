@@ -3,6 +3,7 @@
 public abstract class ResumeBase
 {
     public required string JobTitle { get; set; }
+    public required long ProfileId { get; set; }
     public DateOnly? BirthDate { get; set; }
     public required string About { get; set; }
     public required string Summary { get; set; }

@@ -67,7 +67,9 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
+        var entity = await SetupProfileEntityAsync();
         var createRequest = _fixture.Build<ResumeCreateRequest>().Create();
+        createRequest.ProfileId = entity.Id;
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -129,10 +131,13 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().With(x => x.Id, entity.Id).Create();
+        var updateRequest = _fixture.Build<ResumeUpdateRequest>()
+            .With(x => x.Id, entity.Id)
+            .With(x => x.ProfileId, entity.ProfileId)
+            .Create();
 
         // When
-        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updatedEntity);
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updateRequest);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
@@ -142,7 +147,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
         dbEntity.ShouldNotBeNull();
-        dbEntity.Should().BeEquivalentTo(updatedEntity);
+        dbEntity.Should().BeEquivalentTo(updateRequest, options => options.ExcludingMissingMembers());
     }
 
     [Fact(DisplayName = "Should return 400 when a PUT request with invalid ID is provided")]
@@ -215,6 +220,18 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         // Then
         response.IsSuccessStatusCode.ShouldBeFalse();
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    private async Task<ProfileEntity> SetupProfileEntityAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
+
+        var entity = _fixture.BuildProfileEntity();
+        await commandRepository.CreateAsync(entity);
+
+        return entity;
     }
 
     private async Task<ResumeEntity> SetupEntityAsync()
