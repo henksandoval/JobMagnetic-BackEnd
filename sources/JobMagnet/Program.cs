@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
+    .AddSettingSections(builder.Configuration)
     .AddSqlServer<JobMagnetDbContext>(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         options =>

@@ -231,7 +231,7 @@ namespace JobMagnet.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProfileEntity");
+                    b.ToTable("Profiles", (string)null);
                 });
 
             modelBuilder.Entity("JobMagnet.Infrastructure.Entities.ResumeEntity", b =>

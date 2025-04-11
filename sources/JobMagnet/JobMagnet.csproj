@@ -34,7 +34,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Infrastructure\"/>
+      <Folder Include="Infrastructure\Seeders\" />
     </ItemGroup>
 
 </Project>

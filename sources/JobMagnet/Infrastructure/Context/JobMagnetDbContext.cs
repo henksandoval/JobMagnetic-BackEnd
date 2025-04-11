@@ -7,6 +7,7 @@ namespace JobMagnet.Infrastructure.Context;
 
 public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor httpContextAccessor) : DbContext(options)
 {
+    public DbSet<ProfileEntity> Profile { get; set; }
     public DbSet<EducationEntity> Education { get; set; }
     public DbSet<PortfolioEntity> Portfolio { get; set; }
     public DbSet<PortfolioGalleryItemEntity> PortfolioGallery { get; set; }
@@ -21,6 +22,7 @@ public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor h
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ProfileEntity>().ToTable("Profiles");
         modelBuilder.Entity<EducationEntity>().ToTable("Educations");
         modelBuilder.Entity<PortfolioEntity>().ToTable("Porfolios");
         modelBuilder.Entity<PortfolioGalleryItemEntity>().ToTable("PorfolioGalleryItems");
