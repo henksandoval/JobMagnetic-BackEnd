@@ -1,7 +1,10 @@
 using JobMagnet.DependencyInjection;
 using JobMagnet.Extensions;
+using JobMagnet.Extensions.ConfigSections;
 using JobMagnet.Infrastructure.Context;
+using JobMagnet.Infrastructure.Seeders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,12 +32,17 @@ var app = builder.Build();
 
 if (builder.Configuration.GetValue<bool>("SwaggerSettings:UseUI")) app.UseOpenApi();
 
-app.UseHttpsRedirection();
-app.UseAuthorization();
+app
+    .UseHttpsRedirection()
+    .UseAuthorization()
+    .UseCors("DefaultCorsPolicy");
 app.MapControllers();
 
 using var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
 await context.Database.MigrateAsync();
+
+var clientSettings = scope.ServiceProvider.GetRequiredService<IOptions<ClientSettings>>().Value;
+if (clientSettings.SeedData) await SeedData.InitializeAsync(scope.ServiceProvider);
 
 await app.RunAsync();
