@@ -85,7 +85,8 @@ public class SummaryController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchEducationAsync(int id, [FromBody] JsonPatchDocument<SummaryComplexRequest> patchDocument)
+    public async Task<IResult> PatchEducationAsync(int id,
+        [FromBody] JsonPatchDocument<SummaryComplexRequest> patchDocument)
     {
         _ = queryRepository.IncludeEducation();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
@@ -103,12 +104,13 @@ public class SummaryController(
 
         return Results.NoContent();
     }
-    
+
     [HttpPatch("{id:long}/WorkExperience")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchWorkExperienceAsync(int id, [FromBody] JsonPatchDocument<SummaryComplexRequest> patchDocument)
+    public async Task<IResult> PatchWorkExperienceAsync(int id,
+        [FromBody] JsonPatchDocument<SummaryComplexRequest> patchDocument)
     {
         _ = queryRepository.IncludeWorkExperience();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);

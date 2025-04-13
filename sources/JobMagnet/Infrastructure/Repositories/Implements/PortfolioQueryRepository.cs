@@ -11,7 +11,7 @@ public class PortfolioQueryRepository(JobMagnetDbContext dbContext)
 {
     private IQueryable<PortfolioEntity> _query = dbContext.Set<PortfolioEntity>();
 
-    public PortfolioQueryRepository IncludeGalleryItems()
+    public IPortfolioQueryRepository IncludeGalleryItems()
     {
         _query = _query.Include(p => p.GalleryItems);
         return this;

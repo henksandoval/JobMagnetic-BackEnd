@@ -7,7 +7,6 @@ namespace JobMagnet.Integration.Tests.Fixtures.Customizations;
 
 public class WorkExperienceCustomization : ICustomization
 {
-    private readonly Faker _faker = new();
     private static readonly string[] JobTitle =
     [
         "Software Engineer",
@@ -21,7 +20,7 @@ public class WorkExperienceCustomization : ICustomization
         "Cybersecurity Analyst",
         "Cloud Architect"
     ];
-    
+
     private static readonly string[] CompanyName =
     [
         "Google",
@@ -35,8 +34,7 @@ public class WorkExperienceCustomization : ICustomization
         "IBM",
         "Intel"
     ];
-    
-    
+
     private static readonly string[] Description =
     [
         "Developed and maintained software applications using modern technologies.",
@@ -50,8 +48,9 @@ public class WorkExperienceCustomization : ICustomization
         "Monitored and mitigated security threats to ensure data integrity.",
         "Designed and implemented scalable cloud-based solutions for enterprise clients."
     ];
-    
-    
+
+    private readonly Faker _faker = new();
+
     public void Customize(IFixture fixture)
     {
         fixture.Customize<WorkExperienceEntity>(composer =>

@@ -67,7 +67,8 @@ public class TestimonialControllerTests : IClassFixture<JobMagnetTestSetupFixtur
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var createRequest = _fixture.Build<TestimonialCreateRequest>().Create();
+        var profileEntity = await SetupProfileEntityAsync();
+        var createRequest = _fixture.Build<TestimonialCreateRequest>().With(x => x.ProfileId, profileEntity.Id).Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -129,7 +130,10 @@ public class TestimonialControllerTests : IClassFixture<JobMagnetTestSetupFixtur
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>().With(x => x.Id, entity.Id).Create();
+        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>()
+            .With(x => x.Id, entity.Id)
+            .With(x => x.ProfileId, entity.ProfileId)
+            .Create();
 
         // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updatedEntity);
@@ -232,5 +236,17 @@ public class TestimonialControllerTests : IClassFixture<JobMagnetTestSetupFixtur
     {
         await _testFixture.ResetDatabaseAsync();
         return await CreateAndPersistEntityAsync();
+    }
+
+    private async Task<ProfileEntity> SetupProfileEntityAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
+
+        var entity = _fixture.BuildProfileEntity();
+        await commandRepository.CreateAsync(entity);
+
+        return entity;
     }
 }
