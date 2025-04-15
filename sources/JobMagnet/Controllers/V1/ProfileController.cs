@@ -17,6 +17,7 @@ public class ProfileController(
     public async Task<IResult> GetProfileAsync([FromQuery] ProfileQueryParameters queryParameters)
     {
         var entity = await queryRepository
+            .IncludeTalents()
             .IncludeResume()
             .GetFirstByExpressionWithIncludesAsync(x => x.FirstName == queryParameters.Name)
             .ConfigureAwait(false);
