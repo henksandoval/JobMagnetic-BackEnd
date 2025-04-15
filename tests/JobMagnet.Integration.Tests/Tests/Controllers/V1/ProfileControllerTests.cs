@@ -64,7 +64,12 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
-        var entity = _fixture.BuildProfileEntity();
+        var buildProfileEntity = _fixture.BuildProfileEntity();
+        var talentEntities = _fixture.CreateMany<TalentEntity>(3).ToList();
+        var entity = buildProfileEntity
+            .With(x => x.Talents, talentEntities)
+            .Create();
+
         await commandRepository.CreateAsync(entity);
 
         return entity;
