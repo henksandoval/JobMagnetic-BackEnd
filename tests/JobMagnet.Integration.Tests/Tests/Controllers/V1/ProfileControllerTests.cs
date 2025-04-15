@@ -51,6 +51,9 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var responseData = await TestUtilities.DeserializeResponseAsync<ProfileModel>(response);
         responseData.ShouldNotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
+
+        var expectedTalents = entity.Talents.Select(x => x.Description).ToList();
+        responseData.Talents.Should().BeEquivalentTo(expectedTalents);
     }
 
     private async Task<ProfileEntity> SetupEntityAsync()

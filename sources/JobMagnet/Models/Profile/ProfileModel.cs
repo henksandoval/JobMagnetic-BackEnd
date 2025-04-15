@@ -8,4 +8,5 @@ public class ProfileModel
     public DateOnly? BirthDate { get; set; }
     public string? MiddleName { get; set; }
     public string? SecondLastName { get; set; }
+    public string[] Talents { get; set; }
 }
