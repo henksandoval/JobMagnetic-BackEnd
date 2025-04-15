@@ -12,6 +12,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public string? MiddleName { get; set; }
     public string? SecondLastName { get; set; }
 
+    public virtual ICollection<TalentEntity> Talents { get; set; }
     public virtual ICollection<ResumeEntity> Resumes { get; set; }
     public virtual ICollection<PortfolioEntity> Portfolios { get; set; }
     public virtual ICollection<SummaryEntity> Summaries { get; set; }
