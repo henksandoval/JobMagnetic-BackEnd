@@ -19,6 +19,7 @@ public class ProfileController(
         var entity = await queryRepository
             .IncludeTalents()
             .IncludeResume()
+            .IncludeTestimonials()
             .GetFirstByExpressionWithIncludesAsync(x => x.FirstName == queryParameters.Name)
             .ConfigureAwait(false);
 
