@@ -5,8 +5,8 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Integration.Tests.Utils;
-using JobMagnet.Models.Profile;
 using JobMagnet.Models.Queries.Profile;
+using JobMagnet.ViewModels.Profile;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -47,12 +47,12 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<ProfileModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<ProfileViewModel>(response);
         responseData.ShouldNotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
 
-        var expectedTalents = entity.Talents.Select(x => x.Description).ToList();
-        responseData.Talents.Should().BeEquivalentTo(expectedTalents);
+        var expectedTalents = entity.Talents.Select(x => x.Description).ToArray();
+        responseData.PersonalData!.Professions.Should().BeEquivalentTo(expectedTalents);
     }
 
     private async Task<ProfileEntity> SetupEntityAsync()
@@ -67,10 +67,14 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
         var buildProfileEntity = _fixture.BuildProfileEntity();
+        var resumeEntity = _fixture.BuildResumeEntity();
         var talentEntities = _fixture.CreateMany<TalentEntity>(3).ToList();
         var entity = buildProfileEntity
             .With(x => x.Talents, talentEntities)
+            .With(x => x.Resume, resumeEntity)
             .Create();
+
+        resumeEntity.Profile = entity;
 
         await commandRepository.CreateAsync(entity);
 

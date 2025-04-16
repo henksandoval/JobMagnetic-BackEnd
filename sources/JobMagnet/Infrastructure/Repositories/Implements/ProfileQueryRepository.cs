@@ -25,7 +25,11 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
     public IProfileQueryRepository IncludeResume()
     {
-        _query = _query.Include(p => p.Resume);
+        _query = _query
+            .Include(p => p.Resume)
+            .ThenInclude(p => p.ContactInfo)
+            .ThenInclude(p => p.ContactType);
+
         return this;
     }
 }

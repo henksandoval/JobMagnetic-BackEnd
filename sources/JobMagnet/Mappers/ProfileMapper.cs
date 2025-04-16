@@ -1,21 +1,38 @@
 ﻿using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Models.Profile;
-using Mapster;
+using JobMagnet.ViewModels.Profile;
 
 namespace JobMagnet.Mappers;
 
 internal static class ProfileMapper
 {
-    static ProfileMapper()
+    internal static ProfileViewModel ToModel(ProfileEntity entity)
     {
-        TypeAdapterConfig<ProfileEntity, ProfileModel>
-            .NewConfig()
-            .Map(dest => dest.Talents,
-                src => src.Talents.Select(talent => talent.Description).ToArray());
-    }
+        var fullName = string.Join(" ", entity.FirstName, entity.MiddleName, entity.LastName, entity.SecondLastName);
+        var profession = entity.Talents.Select(x => x.Description).ToArray();
+        var socialNetworks = entity.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(c.ContactType.Name, c.Value)).ToArray();
+        var personalData = new PersonalDataViewModel(fullName, profession, socialNetworks);
 
-    internal static ProfileModel ToModel(ProfileEntity entity)
-    {
-        return entity.Adapt<ProfileModel>();
+        var webSite = entity.Resume.ContactInfo.FirstOrDefault(x => x.ContactType.Name == "Website")?.Value!;
+        var email = entity.Resume.ContactInfo.FirstOrDefault(x => x.ContactType.Name == "Email")?.Value!;
+        var mobilePhone = entity.Resume.ContactInfo.FirstOrDefault(x => x.ContactType.Name == "Mobile Phone")?.Value!;
+
+        var about = new AboutViewModel(entity.ProfileImageUrl,
+            entity.Resume.About,
+            entity.Resume.JobTitle,
+            entity.Resume.Overview,
+            entity.BirthDate.ToString()!,
+            webSite,
+            mobilePhone,
+            "",
+            "",
+            entity.Resume.Title!,
+            email,
+            "",
+            entity.Resume.Summary
+            );
+
+        var profile = new ProfileViewModel(personalData, about);
+
+        return profile;
     }
 }
