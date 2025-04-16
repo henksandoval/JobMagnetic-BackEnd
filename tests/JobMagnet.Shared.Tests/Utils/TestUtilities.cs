@@ -3,7 +3,7 @@ using System.Text;
 using Bogus;
 using Newtonsoft.Json;
 
-namespace JobMagnet.Integration.Tests.Utils;
+namespace JobMagnet.Shared.Tests.Utils;
 
 public static class TestUtilities
 {
