@@ -1,24 +1,24 @@
 ﻿using AutoFixture;
 using Bogus;
 using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Models.Portfolio;
+using JobMagnet.Models.Service;
 
-namespace JobMagnet.Integration.Tests.Fixtures.Customizations;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
-public class PortfolioGalleryItemCustomization : ICustomization
+public class ServiceGalleryItemCustomization : ICustomization
 {
     private static int _autoIncrementId = 1;
     private readonly Faker _faker = new();
 
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<PortfolioGalleryItemEntity>(composer =>
+        fixture.Customize<ServiceGalleryItemEntity>(composer =>
             composer
                 .Without(x => x.Id)
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());
 
-        fixture.Customize<PortfolioGalleryItemRequest>(composer =>
+        fixture.Customize<ServiceGalleryItemRequest>(composer =>
             composer
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());

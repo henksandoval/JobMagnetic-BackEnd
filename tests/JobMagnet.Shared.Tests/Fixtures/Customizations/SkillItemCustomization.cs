@@ -3,7 +3,7 @@ using Bogus;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Models.Skill;
 
-namespace JobMagnet.Integration.Tests.Fixtures.Customizations;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class SkillItemCustomization : ICustomization
 {

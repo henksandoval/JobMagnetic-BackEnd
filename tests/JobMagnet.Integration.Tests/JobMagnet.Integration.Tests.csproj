@@ -42,6 +42,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\sources\JobMagnet\JobMagnet.csproj" Aliases="global,JobMagnetHost"/>
+        <ProjectReference Include="..\JobMagnet.Shared.Tests\JobMagnet.Shared.Tests.csproj" />
     </ItemGroup>
 
 </Project>

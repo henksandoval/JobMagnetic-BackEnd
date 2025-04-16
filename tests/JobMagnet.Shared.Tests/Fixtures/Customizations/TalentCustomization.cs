@@ -2,7 +2,7 @@
 using Bogus;
 using JobMagnet.Infrastructure.Entities;
 
-namespace JobMagnet.Integration.Tests.Fixtures.Customizations;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class TalentCustomization : ICustomization
 {

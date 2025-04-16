@@ -1,4 +1,5 @@
-﻿using JobMagnet.Infrastructure.Entities;
+﻿using JobMagnet.Extensions.Utils;
+using JobMagnet.Infrastructure.Entities;
 using JobMagnet.ViewModels.Profile;
 
 namespace JobMagnet.Mappers;
@@ -20,11 +21,11 @@ internal static class ProfileMapper
             entity.Resume.About,
             entity.Resume.JobTitle,
             entity.Resume.Overview,
-            entity.BirthDate.ToString()!,
+            entity.BirthDate!.Value,
             webSite,
             mobilePhone,
             "",
-            "",
+            entity.BirthDate.GetAge(),
             entity.Resume.Title!,
             email,
             "",

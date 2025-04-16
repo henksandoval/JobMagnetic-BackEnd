@@ -1,9 +1,9 @@
 ﻿using AutoFixture;
 using Bogus;
 using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Integration.Tests.Utils;
+using JobMagnet.Shared.Tests.Utils;
 
-namespace JobMagnet.Integration.Tests.Fixtures.Customizations;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class EducationCustomization : ICustomization
 {
