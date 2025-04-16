@@ -27,7 +27,7 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        _testOutputHelper?.WriteLine("Inicializando JobMagnetTestSetupFixture...");
+        _testOutputHelper?.WriteLine("Starting JobMagnetTestSetupFixture...");
         await _msSqlServerTestContainer.InitializeAsync();
         SetConnectionString();
         _webApplicationFactory = new HostWebApplicationFactory<Program>(_connectionString);
@@ -51,7 +51,7 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         {
             await using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
-            _testOutputHelper?.WriteLine("Conexión a la base de datos exitosa: {0}", _connectionString);
+            _testOutputHelper?.WriteLine("Successful connection to the database: {0}", _connectionString);
 
             var respawn = await Respawner.CreateAsync(connection, _respawnerOptions);
             await respawn.ResetAsync(connection);
@@ -60,12 +60,12 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         }
         catch (SqlException sqlEx)
         {
-            _testOutputHelper?.WriteLine("Error al intentar conectar a la base de datos: {0}", sqlEx.Message);
+            _testOutputHelper?.WriteLine("Error while trying to connect to the database: {0}", sqlEx.Message);
             throw;
         }
         catch (Exception e)
         {
-            _testOutputHelper?.WriteLine("Error inesperado: {0}", e.Message);
+            _testOutputHelper?.WriteLine("Unexpected error: {0}", e.Message);
             throw;
         }
     }
