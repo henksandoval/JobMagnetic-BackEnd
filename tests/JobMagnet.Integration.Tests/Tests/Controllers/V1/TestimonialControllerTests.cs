@@ -246,7 +246,7 @@ public class TestimonialControllerTests : IClassFixture<JobMagnetTestSetupFixtur
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
-        var entity = _fixture.GetProfileEntityBuilder().Create();
+        var entity = _fixture.Create<ProfileEntity>();
         await commandRepository.CreateAsync(entity);
 
         return entity;

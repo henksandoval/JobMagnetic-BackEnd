@@ -12,12 +12,14 @@ public static class FixtureBuilder
     {
         var fixture = new Fixture();
         fixture.Customize(new ContactTypeCustomization());
+        fixture.Customize(new SummaryCustomization());
         fixture.Customize(new PortfolioGalleryItemCustomization());
         fixture.Customize(new SkillItemCustomization());
         fixture.Customize(new ServiceGalleryItemCustomization());
         fixture.Customize(new EducationCustomization());
         fixture.Customize(new WorkExperienceCustomization());
         fixture.Customize(new TalentCustomization());
+        fixture.Customize(new ProfileCustomization());
         fixture.Register(() => DateOnly.FromDateTime(Faker.Date.Past(30)));
         fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => fixture.Behaviors.Remove(b));
         fixture.Behaviors.Add(new OmitOnRecursionBehavior());
