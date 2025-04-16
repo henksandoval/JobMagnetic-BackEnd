@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using AutoFixture.Dsl;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Shared.Tests.Utils;
 
@@ -6,17 +7,9 @@ namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
 public static class ResumeFixtureBuilder
 {
-    public static ResumeEntity BuildResumeEntity(this IFixture fixture)
+    public static IPostprocessComposer<ResumeEntity> GetResumeEntityComposer(this IFixture fixture, List<ContactInfoEntity> contactInfoList)
     {
-        var contactInfoList = fixture
-            .Build<ContactInfoEntity>()
-            .Without(x => x.Id)
-            .Without(x => x.ResumeId)
-            .Without(x => x.ContactType)
-            .With(x => x.ContactTypeId, FixtureBuilder.Faker.Random.Int(1, 5))
-            .CreateMany(5).ToList();
-
-        var entity = fixture.Build<ResumeEntity>()
+        return fixture.Build<ResumeEntity>()
             .With(x => x.Id, 0)
             .With(x => x.IsDeleted, false)
             .With(x => x.JobTitle, FixtureBuilder.Faker.Name.JobTitle())
@@ -29,7 +22,14 @@ public static class ResumeFixtureBuilder
             .With(x => x.Profile, fixture.CreateProfileEntity)
             .With(x => x.ContactInfo, contactInfoList)
             .Without(x => x.DeletedAt)
-            .Without(x => x.DeletedBy)
+            .Without(x => x.DeletedBy);
+    }
+
+    public static ResumeEntity CreateResumeEntity(this IFixture fixture)
+    {
+        var contactInfoList = fixture.CreateContactInfoEntity();
+
+        var entity = GetResumeEntityComposer(fixture, contactInfoList)
             .Create();
 
         return entity;

@@ -292,7 +292,8 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<PortfolioEntity>>();
 
-        var entity = _fixture.BuildPortfolioEntity();
+        var entityComposer = _fixture.GetPortfolioEntityComposer();
+        var entity = entityComposer.Create();
         await commandRepository.CreateAsync(entity);
 
         return entity;

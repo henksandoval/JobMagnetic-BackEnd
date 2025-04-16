@@ -69,7 +69,7 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
         var buildProfileEntity = _fixture.BuildProfileEntity();
-        var resumeEntity = _fixture.BuildResumeEntity();
+        var resumeEntity = _fixture.CreateResumeEntity();
         var talentEntities = _fixture.CreateMany<TalentEntity>(3).ToList();
         var entity = buildProfileEntity
             .With(x => x.Talents, talentEntities)

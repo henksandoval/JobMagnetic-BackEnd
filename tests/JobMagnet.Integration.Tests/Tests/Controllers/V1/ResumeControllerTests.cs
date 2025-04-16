@@ -247,7 +247,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ResumeEntity>>();
 
-        var entity = _fixture.BuildResumeEntity();
+        var entity = _fixture.CreateResumeEntity();
         await commandRepository.CreateAsync(entity);
 
         return entity;
