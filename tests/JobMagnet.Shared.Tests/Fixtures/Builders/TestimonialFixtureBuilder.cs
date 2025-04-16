@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using AutoFixture.Dsl;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Shared.Tests.Utils;
 
@@ -6,9 +7,9 @@ namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
 public static class TestimonialFixtureBuilder
 {
-    public static TestimonialEntity BuildTestimonialEntity(this IFixture fixture)
+    public static IPostprocessComposer<TestimonialEntity> GetTestimonialEntityBuilder(this IFixture fixture)
     {
-        var entity = fixture.Build<TestimonialEntity>()
+        var entityBuilder = fixture.Build<TestimonialEntity>()
             .With(x => x.Id, 0)
             .With(x => x.IsDeleted, false)
             .With(x => x.Name, FixtureBuilder.Faker.Name.FullName())
@@ -17,9 +18,8 @@ public static class TestimonialFixtureBuilder
             .With(x => x.PhotoUrl, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Image.PicsumUrl()))
             .With(x => x.Profile, fixture.GetProfileEntityBuilder().Create())
             .Without(x => x.DeletedAt)
-            .Without(x => x.DeletedBy)
-            .Create();
+            .Without(x => x.DeletedBy);
 
-        return entity;
+        return entityBuilder;
     }
 }
