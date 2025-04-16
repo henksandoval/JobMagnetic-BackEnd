@@ -1,5 +1,7 @@
 ﻿extern alias JobMagnetHost;
 using JobMagnet.Infrastructure.Context;
+using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Infrastructure.Seeders;
 using JobMagnet.Integration.Tests.Factories;
 using JobMagnet.Integration.Tests.TestContainers;
 using Microsoft.Data.SqlClient;
@@ -53,6 +55,8 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
 
             var respawn = await Respawner.CreateAsync(connection, _respawnerOptions);
             await respawn.ResetAsync(connection);
+
+            await SeedMasterTableDbContextAsync();
         }
         catch (SqlException sqlEx)
         {
@@ -91,5 +95,21 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         using var scope = _webApplicationFactory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
         await dbContext.Database.EnsureCreatedAsync();
+    }
+
+    private async Task SeedMasterTableDbContextAsync()
+    {
+        using var scope = _webApplicationFactory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
+        var contactTypes = SeedData.ContactTypes.Select(x => new ContactTypeEntity
+        {
+            Id = x.Id,
+            Name = x.Name,
+            IconClass = x.IconClass,
+            AddedAt = x.AddedAt,
+            AddedBy = x.AddedBy
+        }).ToList();
+        await dbContext.ContactTypes.AddRangeAsync(contactTypes);
+        await dbContext.SaveChangesAsync();
     }
 }

@@ -58,6 +58,14 @@ public static class FixtureBuilder
 
     public static ResumeEntity BuildResumeEntity(this IFixture fixture)
     {
+        var contactInfoList = fixture
+            .Build<ContactInfoEntity>()
+            .Without(x => x.Id)
+            .Without(x => x.ResumeId)
+            .Without(x => x.ContactType)
+            .With(x => x.ContactTypeId, Faker.Random.Int(1, 5))
+            .CreateMany(5).ToList();
+
         var entity = fixture.Build<ResumeEntity>()
             .With(x => x.Id, 0)
             .With(x => x.IsDeleted, false)
@@ -69,6 +77,7 @@ public static class FixtureBuilder
             .With(x => x.Suffix, TestUtilities.OptionalValue(Faker, f => f.Name.Suffix()))
             .With(x => x.ProfileId, 0)
             .With(x => x.Profile, CreateProfileEntity(fixture))
+            .With(x => x.ContactInfo, contactInfoList)
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy)
             .Create();

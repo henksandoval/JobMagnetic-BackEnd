@@ -35,17 +35,6 @@ public class ContactInfoEntity : SoftDeletableEntity<long>
 
 public class ContactTypeEntity : SoftDeletableEntity<int>
 {
-    /*
-    public string? Phone { get; set; }
-    public string? Email { get; set; }
-    public string? Website { get; set; }
-    public string? SocialMedia { get; set; }
-    public string? LinkedIn { get; set; }
-    public string? GitHub { get; set; }
-    public string? Twitter { get; set; }
-    public string? Facebook { get; set; }
-    public string? Instagram { get; set; }
-     */
     public required string Name { get; set; }
     public string? IconClass { get; set; }
     public string? IconUrl { get; set; }
