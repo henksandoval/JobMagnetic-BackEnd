@@ -11,6 +11,7 @@ public static class FixtureBuilder
     public static IFixture Build()
     {
         var fixture = new Fixture();
+        fixture.Customize(new ContactTypeCustomization());
         fixture.Customize(new PortfolioGalleryItemCustomization());
         fixture.Customize(new SkillItemCustomization());
         fixture.Customize(new ServiceGalleryItemCustomization());

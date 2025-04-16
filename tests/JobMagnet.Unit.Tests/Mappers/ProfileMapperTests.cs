@@ -15,12 +15,13 @@ public class ProfileMapperTests
     [Fact]
     public void ShouldMapperProfileEntityToProfileViewModelWithPersonalData()
     {
-        var buildProfileEntity = _fixture.GetProfileEntityBuilder();
-        var resumeEntityComposer = _fixture.GetResumeEntityBuilder(_fixture.CreateContactInfoEntity());
-        var resumeEntity = resumeEntityComposer.Create();
+        var profileBuilder = _fixture.GetProfileEntityBuilder();
+        var contactInfoList = _fixture.GetContactInfoEntityBuilder();
+        var resumeBuilder = _fixture.GetResumeEntityBuilder();
+        var resumeEntity = resumeBuilder.Create();
 
         var talentEntities = _fixture.CreateMany<TalentEntity>(3).ToList();
-        var profileEntity = buildProfileEntity
+        var profileEntity = profileBuilder
             .With(x => x.Talents, talentEntities)
             .With(x => x.Resume, resumeEntity)
             .Create();
