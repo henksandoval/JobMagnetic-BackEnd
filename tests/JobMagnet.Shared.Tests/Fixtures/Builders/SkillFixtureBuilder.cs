@@ -13,7 +13,7 @@ public static class SkillFixtureBuilder
             .With(x => x.IsDeleted, false)
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy)
-            .With(x => x.Profile, fixture.GetProfileEntityComposer().Create())
+            .With(x => x.Profile, fixture.GetProfileEntityBuilder().Create())
             .With(x => x.SkillDetails, skillDetailItems)
             .Create();
 

@@ -15,7 +15,7 @@ public static class TestimonialFixtureBuilder
             .With(x => x.JobTitle, FixtureBuilder.Faker.Name.JobTitle())
             .With(x => x.Feedback, FixtureBuilder.Faker.Lorem.Paragraph())
             .With(x => x.PhotoUrl, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Image.PicsumUrl()))
-            .With(x => x.Profile, fixture.GetProfileEntityComposer().Create())
+            .With(x => x.Profile, fixture.GetProfileEntityBuilder().Create())
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy)
             .Create();

@@ -7,7 +7,7 @@ namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
 public static class ResumeFixtureBuilder
 {
-    public static IPostprocessComposer<ResumeEntity> GetResumeEntityComposer(this IFixture fixture, List<ContactInfoEntity> contactInfoList)
+    public static IPostprocessComposer<ResumeEntity> GetResumeEntityBuilder(this IFixture fixture, List<ContactInfoEntity> contactInfoList)
     {
         return fixture.Build<ResumeEntity>()
             .With(x => x.Id, 0)
@@ -19,7 +19,7 @@ public static class ResumeFixtureBuilder
             .With(x => x.Title, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.Prefix()))
             .With(x => x.Suffix, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.Suffix()))
             .With(x => x.ProfileId, 0)
-            .With(x => x.Profile, fixture.GetProfileEntityComposer().Create())
+            .With(x => x.Profile, fixture.GetProfileEntityBuilder().Create())
             .With(x => x.ContactInfo, contactInfoList)
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy);
@@ -29,7 +29,7 @@ public static class ResumeFixtureBuilder
     {
         var contactInfoList = fixture.CreateContactInfoEntity();
 
-        var entity = GetResumeEntityComposer(fixture, contactInfoList)
+        var entity = GetResumeEntityBuilder(fixture, contactInfoList)
             .Create();
 
         return entity;
