@@ -10,6 +10,7 @@ using JobMagnet.Shared.Tests.Utils;
 using JobMagnet.Models.Portfolio;
 using JobMagnet.Models.Resume;
 using JobMagnet.Shared.Tests.Fixtures;
+using JobMagnet.Shared.Tests.Fixtures.Builders;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;

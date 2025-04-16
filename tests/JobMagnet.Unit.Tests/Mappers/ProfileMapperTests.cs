@@ -2,6 +2,7 @@
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Mappers;
 using JobMagnet.Shared.Tests.Fixtures;
+using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.ViewModels.Profile;
 using Shouldly;
 

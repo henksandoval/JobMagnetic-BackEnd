@@ -10,6 +10,7 @@ using JobMagnet.Models.Summary;
 using JobMagnet.Models.Summary.Education;
 using JobMagnet.Models.Summary.WorkExperience;
 using JobMagnet.Shared.Tests.Fixtures;
+using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
