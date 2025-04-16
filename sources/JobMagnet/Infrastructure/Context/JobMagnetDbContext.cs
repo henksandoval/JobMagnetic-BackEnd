@@ -7,6 +7,7 @@ namespace JobMagnet.Infrastructure.Context;
 
 public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor httpContextAccessor) : DbContext(options)
 {
+    public DbSet<ContactTypeEntity> ContactTypes { get; set; }
     public DbSet<ProfileEntity> Profiles { get; set; }
     public DbSet<EducationEntity> Educations { get; set; }
     public DbSet<PortfolioEntity> Portfolios { get; set; }
@@ -15,6 +16,7 @@ public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor h
     public DbSet<ServiceEntity> Services { get; set; }
     public DbSet<ServiceGalleryItemEntity> ServiceGalleries { get; set; }
     public DbSet<ResumeEntity> Resumes { get; set; }
+    public DbSet<ContactInfoEntity> ContactInfo { get; set; }
     public DbSet<SkillItemEntity> SkillSets { get; set; }
     public DbSet<SkillEntity> Skills { get; set; }
     public DbSet<SummaryEntity> Summaries { get; set; }
@@ -23,6 +25,7 @@ public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor h
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ContactTypeEntity>().ToTable("ContactTypes");
         modelBuilder.Entity<ProfileEntity>().ToTable("Profiles");
         modelBuilder.Entity<EducationEntity>().ToTable("Educations");
         modelBuilder.Entity<PortfolioEntity>().ToTable("Porfolios");
@@ -31,6 +34,7 @@ public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor h
         modelBuilder.Entity<ServiceEntity>().ToTable("Services");
         modelBuilder.Entity<ServiceGalleryItemEntity>().ToTable("ServiceGalleryItems");
         modelBuilder.Entity<ResumeEntity>().ToTable("Resumes");
+        modelBuilder.Entity<ContactInfoEntity>().ToTable("ContactInfo");
         modelBuilder.Entity<SkillItemEntity>().ToTable("SkillItems");
         modelBuilder.Entity<SkillEntity>().ToTable("Skills");
         modelBuilder.Entity<SummaryEntity>().ToTable("Summaries");
