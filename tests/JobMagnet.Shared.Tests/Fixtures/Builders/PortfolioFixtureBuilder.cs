@@ -14,7 +14,7 @@ public static class PortfolioFixtureBuilder
             .With(x => x.IsDeleted, false)
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy)
-            .With(x => x.Profile, fixture.CreateProfileEntity)
+            .With(x => x.Profile, fixture.GetProfileEntityComposer().Create())
             .With(x => x.GalleryItems, portfolioGalleryItems);
 
         return portfolioEntity;

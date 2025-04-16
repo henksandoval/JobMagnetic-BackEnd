@@ -7,7 +7,7 @@ namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
 public static class ProfileFixtureBuilder
 {
-    public static IPostprocessComposer<ProfileEntity> BuildProfileEntity(this IFixture fixture)
+    public static IPostprocessComposer<ProfileEntity> GetProfileEntityComposer(this IFixture fixture)
     {
         return fixture.Build<ProfileEntity>()
             .With(x => x.Id, 0)
@@ -27,13 +27,5 @@ public static class ProfileFixtureBuilder
             .Without(x => x.Skills)
             .Without(x => x.Summaries)
             .Without(x => x.Testimonials);
-    }
-
-    public static ProfileEntity CreateProfileEntity(this IFixture fixture)
-    {
-        var entity = BuildProfileEntity(fixture)
-            .Create();
-
-        return entity;
     }
 }

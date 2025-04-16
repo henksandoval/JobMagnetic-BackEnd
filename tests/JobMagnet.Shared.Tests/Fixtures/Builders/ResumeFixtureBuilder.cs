@@ -19,7 +19,7 @@ public static class ResumeFixtureBuilder
             .With(x => x.Title, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.Prefix()))
             .With(x => x.Suffix, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.Suffix()))
             .With(x => x.ProfileId, 0)
-            .With(x => x.Profile, fixture.CreateProfileEntity)
+            .With(x => x.Profile, fixture.GetProfileEntityComposer().Create())
             .With(x => x.ContactInfo, contactInfoList)
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy);

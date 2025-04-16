@@ -15,7 +15,7 @@ public class ProfileMapperTests
     [Fact]
     public void ShouldMapperProfileEntityToProfileViewModelWithPersonalData()
     {
-        var buildProfileEntity = _fixture.BuildProfileEntity();
+        var buildProfileEntity = _fixture.GetProfileEntityComposer();
         var resumeEntityComposer = _fixture.GetResumeEntityComposer(_fixture.CreateContactInfoEntity());
         var resumeEntity = resumeEntityComposer.Create();
 
