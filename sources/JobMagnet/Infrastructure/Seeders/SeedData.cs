@@ -6,7 +6,7 @@ namespace JobMagnet.Infrastructure.Seeders;
 
 public static class SeedData
 {
-    public static List<ContactTypeEntity> ContactTypes =
+    public static readonly List<ContactTypeEntity> ContactTypes =
     [
         new()
         {
