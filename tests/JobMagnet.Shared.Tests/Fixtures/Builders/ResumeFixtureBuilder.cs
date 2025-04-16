@@ -14,6 +14,7 @@ public static class ResumeFixtureBuilder
             .With(x => x.IsDeleted, false)
             .With(x => x.JobTitle, FixtureBuilder.Faker.Name.JobTitle())
             .With(x => x.About, FixtureBuilder.Faker.Lorem.Paragraph())
+            .With(x => x.Address, FixtureBuilder.Faker.Address.FullAddress())
             .With(x => x.Summary, FixtureBuilder.Faker.Lorem.Paragraph())
             .With(x => x.Overview, FixtureBuilder.Faker.Lorem.Paragraph())
             .With(x => x.Title, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.Prefix()))
@@ -25,23 +26,13 @@ public static class ResumeFixtureBuilder
             .Without(x => x.DeletedBy);
     }
 
-    public static IPostprocessComposer<ResumeEntity> WithContactInfo(this IPostprocessComposer<ResumeEntity> fixture)
+    public static IPostprocessComposer<ResumeEntity> WithContactInfo(this IPostprocessComposer<ResumeEntity> fixtureBuilder, IFixture fixture)
     {
-        return fixture
-            .With(x => x.ContactInfo, fixture.CreateMany<ContactInfoEntity>(3).ToList());
-    }
+        var contactInfoBuilder = fixture.GetContactInfoEntityBuilder().WithContactTypeEntity();
+        var contactInfo = contactInfoBuilder.CreateMany(3).ToList();
 
-    public static ResumeEntity CreateResumeEntity(this IFixture fixture)
-    {
-        var contactInfoList = fixture
-            .GetContactInfoEntityBuilder()
-            .WithContactTypeEntity()
-            .CreateMany(3)
-            .ToList();
-
-        var entity = GetResumeEntityBuilder(fixture)
-            .Create();
-
-        return entity;
+        return fixtureBuilder
+            .Without(x => x.ContactInfo)
+            .With(x => x.ContactInfo, contactInfo);
     }
 }

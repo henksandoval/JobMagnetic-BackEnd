@@ -12,6 +12,7 @@ public static class ContactInfoFixtureBuilder
             .Build<ContactInfoEntity>()
             .Without(x => x.Id)
             .Without(x => x.ResumeId)
+            .Without(x => x.Resume)
             .Without(x => x.ContactType)
             .With(x => x.ContactTypeId, FixtureBuilder.Faker.Random.Int(1, 5));
     }

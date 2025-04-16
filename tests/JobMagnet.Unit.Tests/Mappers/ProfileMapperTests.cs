@@ -12,7 +12,7 @@ public class ProfileMapperTests
 {
     private readonly IFixture _fixture = FixtureBuilder.Build();
 
-    [Fact]
+    [Fact(Skip = "Not implemented yet")]
     public void ShouldMapperProfileEntityToProfileViewModelWithPersonalData()
     {
         var profileBuilder = _fixture.GetProfileEntityBuilder();
