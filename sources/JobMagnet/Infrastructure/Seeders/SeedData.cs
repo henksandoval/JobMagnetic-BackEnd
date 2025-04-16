@@ -14,7 +14,13 @@ public static class SeedData
 
         await RegisterMasterTablesAsync(context);
         var profile = await RegisterProfileDataAsync(context);
-        await RegisterTalentsAsync(context, profile.Id);
+        var registerTasks  = new List<Task>
+        {
+            RegisterTalentsAsync(context, profile.Id),
+            RegisterResumeAsync(context, profile.Id),
+        };
+
+        await Task.WhenAll(registerTasks);
 
         await context.SaveChangesAsync();
     }
@@ -268,7 +274,8 @@ public static class SeedData
         {
             Id = 0,
             ProfileId = profileId,
-            Title = "UI/UX Designer & Web Developer",
+            JobTitle = "UI/UX Designer & Web Developer",
+            Title = "Mr.",
             About = """
                     ¡Hello! I'm Johnson Brandon, a passionate web developer who loves creating dynamic, easy-to-use websites.
                     I have over 5 years of experience in the technology industry, working with a variety of clients to make their visions a reality.
