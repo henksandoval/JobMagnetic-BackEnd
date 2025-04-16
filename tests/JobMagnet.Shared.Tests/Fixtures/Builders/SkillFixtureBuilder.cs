@@ -1,22 +1,22 @@
 ﻿using AutoFixture;
+using AutoFixture.Dsl;
 using JobMagnet.Infrastructure.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
 public static class SkillFixtureBuilder
 {
-    public static SkillEntity BuildSkillEntity(this IFixture fixture, int skillItems = 5)
+    public static IPostprocessComposer<SkillEntity> GetSkillEntityBuilder(this IFixture fixture, int skillItems = 5)
     {
         var skillDetailItems = fixture.CreateMany<SkillItemEntity>(skillItems).ToList();
-        var skillEntity = fixture.Build<SkillEntity>()
+        var skillEntityBuilder = fixture.Build<SkillEntity>()
             .With(x => x.Id, 0)
             .With(x => x.IsDeleted, false)
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy)
             .With(x => x.Profile, fixture.GetProfileEntityBuilder().Create())
-            .With(x => x.SkillDetails, skillDetailItems)
-            .Create();
+            .With(x => x.SkillDetails, skillDetailItems);
 
-        return skillEntity;
+        return skillEntityBuilder;
     }
 }

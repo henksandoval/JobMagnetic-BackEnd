@@ -292,7 +292,7 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<SkillEntity>>();
 
-        var entity = _fixture.BuildSkillEntity();
+        var entity = _fixture.GetSkillEntityBuilder().Create();
         await commandRepository.CreateAsync(entity);
 
         return entity;
