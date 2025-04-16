@@ -8,4 +8,5 @@ public interface IProfileQueryRepository : IQueryRepository<ProfileEntity, long>
 {
     Task<ProfileEntity?> GetFirstByExpressionWithIncludesAsync(Expression<Func<ProfileEntity, bool>> expression);
     IProfileQueryRepository IncludeResume();
+    IProfileQueryRepository IncludeTalents();
 }

@@ -12,8 +12,10 @@ public class ResumeEntity : SoftDeletableEntity<long>
     public string Overview { get; set; }
     public string? Title { get; set; }
     public string? Suffix { get; set; }
+    public string? Address { get; set; }
 
     [ForeignKey(nameof(Profile))] public long ProfileId { get; set; }
 
     public virtual ProfileEntity Profile { get; set; }
+    public virtual ICollection<ContactInfoEntity> ContactInfo { get; set; }
 }

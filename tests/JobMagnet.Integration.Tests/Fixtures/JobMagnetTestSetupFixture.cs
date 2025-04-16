@@ -1,5 +1,7 @@
 ﻿extern alias JobMagnetHost;
 using JobMagnet.Infrastructure.Context;
+using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Infrastructure.Seeders;
 using JobMagnet.Integration.Tests.Factories;
 using JobMagnet.Integration.Tests.TestContainers;
 using Microsoft.Data.SqlClient;
@@ -25,7 +27,7 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        _testOutputHelper?.WriteLine("Inicializando JobMagnetTestSetupFixture...");
+        _testOutputHelper?.WriteLine("Starting JobMagnetTestSetupFixture...");
         await _msSqlServerTestContainer.InitializeAsync();
         SetConnectionString();
         _webApplicationFactory = new HostWebApplicationFactory<Program>(_connectionString);
@@ -49,19 +51,21 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         {
             await using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
-            _testOutputHelper?.WriteLine("Conexión a la base de datos exitosa: {0}", _connectionString);
+            _testOutputHelper?.WriteLine("Successful connection to the database: {0}", _connectionString);
 
             var respawn = await Respawner.CreateAsync(connection, _respawnerOptions);
             await respawn.ResetAsync(connection);
+
+            await SeedMasterTableDbContextAsync();
         }
         catch (SqlException sqlEx)
         {
-            _testOutputHelper?.WriteLine("Error al intentar conectar a la base de datos: {0}", sqlEx.Message);
+            _testOutputHelper?.WriteLine("Error while trying to connect to the database: {0}", sqlEx.Message);
             throw;
         }
         catch (Exception e)
         {
-            _testOutputHelper?.WriteLine("Error inesperado: {0}", e.Message);
+            _testOutputHelper?.WriteLine("Unexpected error: {0}", e.Message);
             throw;
         }
     }
@@ -91,5 +95,21 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         using var scope = _webApplicationFactory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
         await dbContext.Database.EnsureCreatedAsync();
+    }
+
+    private async Task SeedMasterTableDbContextAsync()
+    {
+        using var scope = _webApplicationFactory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
+        var contactTypes = SeedData.ContactTypes.Select(x => new ContactTypeEntity
+        {
+            Id = x.Id,
+            Name = x.Name,
+            IconClass = x.IconClass,
+            AddedAt = x.AddedAt,
+            AddedBy = x.AddedBy
+        }).ToList();
+        await dbContext.ContactTypes.AddRangeAsync(contactTypes);
+        await dbContext.SaveChangesAsync();
     }
 }

@@ -17,9 +17,19 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
         return await _query.FirstOrDefaultAsync(expression).ConfigureAwait(false);
     }
 
+    public IProfileQueryRepository IncludeTalents()
+    {
+        _query = _query.Include(p => p.Talents);
+        return this;
+    }
+
     public IProfileQueryRepository IncludeResume()
     {
-        _query = _query.Include(p => p.Resumes);
+        _query = _query
+            .Include(p => p.Resume)
+            .ThenInclude(p => p.ContactInfo)
+            .ThenInclude(p => p.ContactType);
+
         return this;
     }
 }

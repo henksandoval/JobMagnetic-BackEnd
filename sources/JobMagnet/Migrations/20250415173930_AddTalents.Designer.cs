@@ -4,6 +4,7 @@ using JobMagnet.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobMagnet.Migrations
 {
     [DbContext(typeof(JobMagnetDbContext))]
-    partial class JobMagnetDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250415173930_AddTalents")]
+    partial class AddTalents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,98 +24,6 @@ namespace JobMagnet.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("JobMagnet.Infrastructure.Entities.ContactInfoEntity", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("AddedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("AddedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("ContactTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("LastModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("ResumeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContactTypeId");
-
-                    b.HasIndex("ResumeId");
-
-                    b.ToTable("ContactInfo", (string)null);
-                });
-
-            modelBuilder.Entity("JobMagnet.Infrastructure.Entities.ContactTypeEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AddedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("AddedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("IconClass")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IconUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("LastModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ContactTypes", (string)null);
-                });
 
             modelBuilder.Entity("JobMagnet.Infrastructure.Entities.EducationEntity", b =>
                 {
@@ -344,9 +255,6 @@ namespace JobMagnet.Migrations
                     b.Property<Guid>("AddedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
@@ -385,8 +293,7 @@ namespace JobMagnet.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProfileId")
-                        .IsUnique();
+                    b.HasIndex("ProfileId");
 
                     b.ToTable("Resumes", (string)null);
                 });
@@ -786,25 +693,6 @@ namespace JobMagnet.Migrations
                     b.ToTable("WorkExperiences", (string)null);
                 });
 
-            modelBuilder.Entity("JobMagnet.Infrastructure.Entities.ContactInfoEntity", b =>
-                {
-                    b.HasOne("JobMagnet.Infrastructure.Entities.ContactTypeEntity", "ContactType")
-                        .WithMany("ContactDetails")
-                        .HasForeignKey("ContactTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("JobMagnet.Infrastructure.Entities.ResumeEntity", "Resume")
-                        .WithMany("ContactInfo")
-                        .HasForeignKey("ResumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ContactType");
-
-                    b.Navigation("Resume");
-                });
-
             modelBuilder.Entity("JobMagnet.Infrastructure.Entities.EducationEntity", b =>
                 {
                     b.HasOne("JobMagnet.Infrastructure.Entities.SummaryEntity", "Summary")
@@ -841,8 +729,8 @@ namespace JobMagnet.Migrations
             modelBuilder.Entity("JobMagnet.Infrastructure.Entities.ResumeEntity", b =>
                 {
                     b.HasOne("JobMagnet.Infrastructure.Entities.ProfileEntity", "Profile")
-                        .WithOne("Resume")
-                        .HasForeignKey("JobMagnet.Infrastructure.Entities.ResumeEntity", "ProfileId")
+                        .WithMany("Resumes")
+                        .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -937,11 +825,6 @@ namespace JobMagnet.Migrations
                     b.Navigation("Summary");
                 });
 
-            modelBuilder.Entity("JobMagnet.Infrastructure.Entities.ContactTypeEntity", b =>
-                {
-                    b.Navigation("ContactDetails");
-                });
-
             modelBuilder.Entity("JobMagnet.Infrastructure.Entities.PortfolioEntity", b =>
                 {
                     b.Navigation("GalleryItems");
@@ -951,8 +834,7 @@ namespace JobMagnet.Migrations
                 {
                     b.Navigation("Portfolios");
 
-                    b.Navigation("Resume")
-                        .IsRequired();
+                    b.Navigation("Resumes");
 
                     b.Navigation("Services");
 
@@ -963,11 +845,6 @@ namespace JobMagnet.Migrations
                     b.Navigation("Talents");
 
                     b.Navigation("Testimonials");
-                });
-
-            modelBuilder.Entity("JobMagnet.Infrastructure.Entities.ResumeEntity", b =>
-                {
-                    b.Navigation("ContactInfo");
                 });
 
             modelBuilder.Entity("JobMagnet.Infrastructure.Entities.ServiceEntity", b =>

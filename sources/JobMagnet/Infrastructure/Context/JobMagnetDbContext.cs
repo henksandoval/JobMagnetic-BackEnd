@@ -7,28 +7,34 @@ namespace JobMagnet.Infrastructure.Context;
 
 public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor httpContextAccessor) : DbContext(options)
 {
-    public DbSet<ProfileEntity> Profile { get; set; }
-    public DbSet<EducationEntity> Education { get; set; }
-    public DbSet<PortfolioEntity> Portfolio { get; set; }
-    public DbSet<PortfolioGalleryItemEntity> PortfolioGallery { get; set; }
-    public DbSet<ServiceEntity> Service { get; set; }
-    public DbSet<PortfolioGalleryItemEntity> ServiceGallery { get; set; }
-    public DbSet<ResumeEntity> Resume { get; set; }
-    public DbSet<SkillItemEntity> SkillSet { get; set; }
+    public DbSet<ContactTypeEntity> ContactTypes { get; set; }
+    public DbSet<ProfileEntity> Profiles { get; set; }
+    public DbSet<EducationEntity> Educations { get; set; }
+    public DbSet<PortfolioEntity> Portfolios { get; set; }
+    public DbSet<TalentEntity> Talents { get; set; }
+    public DbSet<PortfolioGalleryItemEntity> PortfolioGalleries { get; set; }
+    public DbSet<ServiceEntity> Services { get; set; }
+    public DbSet<ServiceGalleryItemEntity> ServiceGalleries { get; set; }
+    public DbSet<ResumeEntity> Resumes { get; set; }
+    public DbSet<ContactInfoEntity> ContactInfo { get; set; }
+    public DbSet<SkillItemEntity> SkillSets { get; set; }
     public DbSet<SkillEntity> Skills { get; set; }
-    public DbSet<SummaryEntity> Summary { get; set; }
-    public DbSet<TestimonialEntity> Testimonial { get; set; }
-    public DbSet<WorkExperienceEntity> WorkExperience { get; set; }
+    public DbSet<SummaryEntity> Summaries { get; set; }
+    public DbSet<TestimonialEntity> Testimonials { get; set; }
+    public DbSet<WorkExperienceEntity> WorkExperiences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ContactTypeEntity>().ToTable("ContactTypes");
         modelBuilder.Entity<ProfileEntity>().ToTable("Profiles");
         modelBuilder.Entity<EducationEntity>().ToTable("Educations");
         modelBuilder.Entity<PortfolioEntity>().ToTable("Porfolios");
+        modelBuilder.Entity<TalentEntity>().ToTable("Talents");
         modelBuilder.Entity<PortfolioGalleryItemEntity>().ToTable("PorfolioGalleryItems");
         modelBuilder.Entity<ServiceEntity>().ToTable("Services");
         modelBuilder.Entity<ServiceGalleryItemEntity>().ToTable("ServiceGalleryItems");
         modelBuilder.Entity<ResumeEntity>().ToTable("Resumes");
+        modelBuilder.Entity<ContactInfoEntity>().ToTable("ContactInfo");
         modelBuilder.Entity<SkillItemEntity>().ToTable("SkillItems");
         modelBuilder.Entity<SkillEntity>().ToTable("Skills");
         modelBuilder.Entity<SummaryEntity>().ToTable("Summaries");
