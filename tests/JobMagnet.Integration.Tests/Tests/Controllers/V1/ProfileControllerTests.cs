@@ -70,9 +70,11 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var buildProfileEntity = _fixture.BuildProfileEntity();
         var resumeEntity = _fixture.BuildResumeEntity();
         var talentEntities = _fixture.CreateMany<TalentEntity>(3).ToList();
+        var testimonialEntities = _fixture.CreateMany<TestimonialEntity>(3).ToList();
         var entity = buildProfileEntity
             .With(x => x.Talents, talentEntities)
             .With(x => x.Resume, resumeEntity)
+            .With(x => x.Testimonials, testimonialEntities)
             .Create();
 
         resumeEntity.Profile = entity;
