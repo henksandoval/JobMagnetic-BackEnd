@@ -18,14 +18,14 @@ public class ProfileCustomization : ICustomization
                 .With(x => x.ProfileImageUrl, FixtureBuilder.Faker.Image.PicsumUrl())
                 .With(x => x.MiddleName, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.FirstName()))
                 .With(x => x.SecondLastName, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.LastName()))
-                .Without(x => x.Resume)
                 .Without(x => x.DeletedAt)
                 .Without(x => x.DeletedBy)
+                .Without(x => x.Resume)
                 .Without(x => x.Talents)
                 .Without(x => x.Portfolios)
+                .Without(x => x.Summaries)
                 .Without(x => x.Services)
                 .Without(x => x.Skills)
-                .Without(x => x.Summaries)
                 .Without(x => x.Testimonials)
         );
     }
