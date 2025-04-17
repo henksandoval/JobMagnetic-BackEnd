@@ -17,6 +17,7 @@ public static class FixtureBuilder
 
         fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => fixture.Behaviors.Remove(b));
         fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
         return fixture;
     }
 
@@ -35,7 +36,9 @@ public static class FixtureBuilder
             .Customize(new ServiceCustomization())
             .Customize(new PortfolioCustomization())
             .Customize(new SkillCustomization())
-            .Customize(new TestimonialCustomization());
+            .Customize(new TestimonialCustomization())
+            .Customize(new ResumeCustomization())
+            .Customize(new ContactInfoCustomization());
 
         return fixture;
     }

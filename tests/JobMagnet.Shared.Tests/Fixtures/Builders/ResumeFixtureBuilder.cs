@@ -28,8 +28,7 @@ public static class ResumeFixtureBuilder
 
     public static IPostprocessComposer<ResumeEntity> WithContactInfo(this IPostprocessComposer<ResumeEntity> fixtureBuilder, IFixture fixture)
     {
-        var contactInfoBuilder = fixture.GetContactInfoEntityBuilder().WithContactTypeEntity();
-        var contactInfo = contactInfoBuilder.CreateMany(3).ToList();
+        var contactInfo = fixture.CreateMany<ContactInfoEntity>();
 
         return fixtureBuilder
             .Without(x => x.ContactInfo)
