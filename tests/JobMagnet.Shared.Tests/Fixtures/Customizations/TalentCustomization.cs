@@ -1,5 +1,4 @@
 ﻿using AutoFixture;
-using Bogus;
 using JobMagnet.Infrastructure.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
@@ -17,19 +16,20 @@ public class TalentCustomization : ICustomization
         "Analytical"
     ];
 
-    private readonly Faker _faker = new();
-
     public void Customize(IFixture fixture)
     {
         fixture.Customize<TalentEntity>(composer =>
             composer
-                .Without(x => x.Id)
+                .With(x => x.Id, 0)
+                .With(x => x.IsDeleted, false)
+                .Without(x => x.DeletedAt)
+                .Without(x => x.DeletedBy)
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());
     }
 
-    private void ApplyCommonProperties(dynamic item)
+    private static void ApplyCommonProperties(dynamic item)
     {
-        item.Description = _faker.PickRandom(Talens);
+        item.Description = FixtureBuilder.Faker.PickRandom(Talens);
     }
 }

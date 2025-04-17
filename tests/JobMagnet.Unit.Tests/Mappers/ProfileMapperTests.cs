@@ -13,23 +13,24 @@ public class ProfileMapperTests
 {
     private readonly IFixture _fixture = FixtureBuilder.Build();
 
-    [Fact(Skip = "Not implemented yet")]
+    [Fact]
     public void ShouldMapperProfileEntityToProfileViewModelWithPersonalData()
     {
-        var profileBuilder = _fixture.GetProfileEntityBuilder();
-        var resumeEntity = _fixture.Create<ResumeEntity>();
+        var profileBuilder = new ProfileEntityBuilder(_fixture)
+            .WithResume()
+            .WithContactInfo()
+            .WithTalents()
+            .WithPortfolio()
+            .WithSummaries()
+            .WithServices()
+            .WithSkills()
+            .WithTestimonials();
 
-        var talentEntities = _fixture.CreateMany<TalentEntity>(3).ToList();
-        var profileEntity = profileBuilder
-            .With(x => x.Talents, talentEntities)
-            .With(x => x.Resume, resumeEntity)
-            .Create();
+        var profile = profileBuilder.Build();
 
-        resumeEntity.Profile = profileEntity;
+        var expectedResult = GetExpectedResult(profile);
 
-        var expectedResult = GetExpectedResult(profileEntity);
-
-        var result = ProfileMapper.ToModel(profileEntity);
+        var result = ProfileMapper.ToModel(profile);
 
         result.ShouldNotBeNull();
     }
@@ -38,13 +39,16 @@ public class ProfileMapperTests
     {
         var profileViewModel = new ProfileViewModel();
 
-        var personaData = new PersonalDataViewModel(
-            $"{entity.FirstName} {entity.MiddleName} {entity.LastName} {entity.SecondLastName}",
-            entity.Talents.Select(x => x.Description).ToArray(),
-            entity.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(c.ContactType.Name, c.Value)).ToArray()
+        var name = $"{entity.FirstName} {entity.MiddleName} {entity.LastName} {entity.SecondLastName}";
+        var professions = entity.Talents.Select(x => x.Description).ToArray();
+        var socialNetworksViewModels = entity.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(c.ContactType.Name, c.Value)).ToArray();
+        var personalData = new PersonalDataViewModel(
+            name,
+            professions,
+            socialNetworksViewModels
         );
 
-        profileViewModel = profileViewModel with { PersonalData = personaData };
+        profileViewModel = profileViewModel with { PersonalData = personalData };
 
         return profileViewModel;
     }
