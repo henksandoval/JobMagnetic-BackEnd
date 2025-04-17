@@ -10,6 +10,7 @@ using JobMagnet.Models.Summary;
 using JobMagnet.Models.Summary.Education;
 using JobMagnet.Models.Summary.WorkExperience;
 using JobMagnet.Shared.Tests.Fixtures;
+using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
@@ -67,7 +68,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldReturnRecord_WhenValidIdIsProvidedAsync()
     {
         // Given
-        var entity = await SetupEntityAsync(() => _fixture.BuildSummaryEntity());
+        var entity = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
 
         // When
         var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
@@ -85,7 +86,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync()
     {
         // Given
-        _ = await SetupEntityAsync(() => _fixture.BuildSummaryEntity());
+        _ = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
 
         // When
         var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
@@ -99,7 +100,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldDeleteRecord_WhenDeleteRequestIsReceivedAsync()
     {
         // Given
-        var entity = await SetupEntityAsync(() => _fixture.BuildSummaryEntity());
+        var entity = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
 
         // When
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{entity.Id}");
@@ -117,7 +118,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
-        _ = await SetupEntityAsync(() => _fixture.BuildSummaryEntity());
+        _ = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
 
         // When
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{InvalidId}");
@@ -131,7 +132,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldHandleAddMultipleEducationOperationsInPatchEducationRequestAsync()
     {
         // Given
-        var summary = await SetupEntityAsync(() => _fixture.BuildSummaryEntity());
+        var summary = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
         var itemAdded01 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
         var itemAdded02 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
         var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
@@ -165,7 +166,9 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var itemAdded02 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
         var itemUpdated = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
 
-        var initialSummaryEntity = await SetupEntityAsync(() => _fixture.BuildSummaryEntityWithRelations());
+        var entity = new SummaryEntityBuilder(_fixture).WithEducation().WithWorkExperiences().Build();
+
+        var initialSummaryEntity = await SetupEntityAsync(() => entity);
         var itemToReplace = initialSummaryEntity.Education.ElementAt(3);
         var itemToRemove = initialSummaryEntity.Education.ElementAt(1);
         itemUpdated.Id = itemToReplace.Id;
@@ -206,7 +209,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ShouldHandleAddMultipleWorkExperienceOperationsInPatchWorkExperienceRequestAsync()
     {
         // Given
-        var summary = await SetupEntityAsync(() => _fixture.BuildSummaryEntity());
+        var summary = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
         var itemAdded01 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
         var itemAdded02 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
         var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
@@ -241,7 +244,9 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var itemAdded02 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
         var itemUpdated = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
 
-        var initialSummaryEntity = await SetupEntityAsync(() => _fixture.BuildSummaryEntityWithRelations());
+        var entity = new SummaryEntityBuilder(_fixture).WithEducation().WithWorkExperiences().Build();
+
+        var initialSummaryEntity = await SetupEntityAsync(() => entity);
         var itemToReplace = initialSummaryEntity.WorkExperiences.ElementAt(3);
         var itemToRemove = initialSummaryEntity.WorkExperiences.ElementAt(1);
         itemUpdated.Id = itemToReplace.Id;
@@ -293,7 +298,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
-        var entity = _fixture.CreateProfileEntity();
+        var entity = _fixture.Create<ProfileEntity>();
         await commandRepository.CreateAsync(entity);
 
         return entity;
