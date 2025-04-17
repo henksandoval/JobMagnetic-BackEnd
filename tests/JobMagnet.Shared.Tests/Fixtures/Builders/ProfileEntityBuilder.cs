@@ -19,6 +19,12 @@ public class ProfileEntityBuilder(IFixture fixture)
         return this;
     }
 
+    public ProfileEntityBuilder WithContactInfo(int count = 5)
+    {
+        _resume.ContactInfo = fixture.CreateMany<ContactInfoEntity>(count).ToList();
+        return this;
+    }
+
     public ProfileEntityBuilder WithTalents(int count = 5)
     {
         _talents = fixture.CreateMany<TalentEntity>(count).ToList();

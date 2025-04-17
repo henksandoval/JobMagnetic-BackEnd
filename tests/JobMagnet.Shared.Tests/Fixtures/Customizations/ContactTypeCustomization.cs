@@ -31,15 +31,18 @@ public class ContactTypeCustomization : ICustomization
         ("Vimeo", "bx bxl-vimeo")
     };
 
-    private readonly Faker _faker = new();
-
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<ContactTypeEntity>(composer =>
-            composer
-                .Without(x => x.Id)
-                .With(x => x.Name, _faker.PickRandom(ContactTypes).Name)
-                .With(x => x.IconClass, _faker.PickRandom(ContactTypes).IconClass)
-                .OmitAutoProperties());
+        fixture.Customize<ContactTypeEntity>(composer => composer
+            .Without(x => x.Id)
+            .Do(ApplyCommonProperties)
+            .OmitAutoProperties()
+        );
+    }
+
+    private static void ApplyCommonProperties(dynamic item)
+    {
+        item.Name = FixtureBuilder.Faker.PickRandom(ContactTypes).Name;
+        item.IconClass = FixtureBuilder.Faker.PickRandom(ContactTypes).IconClass;
     }
 }

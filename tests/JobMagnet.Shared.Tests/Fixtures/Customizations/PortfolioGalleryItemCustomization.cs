@@ -8,7 +8,6 @@ namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 public class PortfolioGalleryItemCustomization : ICustomization
 {
     private static int _autoIncrementId = 1;
-    private readonly Faker _faker = new();
 
     public void Customize(IFixture fixture)
     {
@@ -24,14 +23,16 @@ public class PortfolioGalleryItemCustomization : ICustomization
                 .OmitAutoProperties());
     }
 
-    private void ApplyCommonProperties(dynamic item)
+    private static void ApplyCommonProperties(dynamic item)
     {
-        item.Title = _faker.Company.CompanyName();
-        item.Description = _faker.Lorem.Sentence();
-        item.UrlLink = _faker.Image.PicsumUrl();
-        item.UrlImage = _faker.Image.PicsumUrl();
-        item.UrlVideo = _faker.Image.PicsumUrl();
-        item.Type = _faker.Address.CountryCode();
+        var faker = FixtureBuilder.Faker;
+
+        item.Title = faker.Company.CompanyName();
+        item.Description = faker.Lorem.Sentence();
+        item.UrlLink = faker.Image.PicsumUrl();
+        item.UrlImage = faker.Image.PicsumUrl();
+        item.UrlVideo = faker.Image.PicsumUrl();
+        item.Type = faker.Address.CountryCode();
         item.Position = _autoIncrementId++;
     }
 }
