@@ -32,7 +32,8 @@ public static class FixtureBuilder
             .Customize(new WorkExperienceCustomization())
             .Customize(new TalentCustomization())
             .Customize(new ProfileCustomization())
-            .Customize(new ServiceCustomization());
+            .Customize(new ServiceCustomization())
+            .Customize(new PortfolioCustomization());
 
         return fixture;
     }

@@ -171,7 +171,7 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var portfolio = await SetupEntityAsync();
-        var itemToRemove = portfolio.GalleryItems.ElementAt(3);
+        var itemToRemove = portfolio.GalleryItems.ElementAt(0);
         var indexItemToRemove = portfolio.GalleryItems.ToList().FindIndex(item => item.Id == itemToRemove.Id);
         var patchDocument = new JsonPatchDocument<PortfolioRequest>();
         patchDocument.Remove(p => p.GalleryItems, indexItemToRemove);
@@ -198,7 +198,7 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         var portfolio = await SetupEntityAsync();
         var itemUpdated = _fixture.Create<PortfolioGalleryItemRequest>();
-        var itemToReplace = portfolio.GalleryItems.ElementAt(3);
+        var itemToReplace = portfolio.GalleryItems.ElementAt(1);
         itemUpdated.Id = itemToReplace.Id;
         var indexItemToReplace = portfolio.GalleryItems.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var patchDocument = new JsonPatchDocument<PortfolioRequest>();
@@ -229,8 +229,8 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var portfolio = await SetupEntityAsync();
-        var itemToReplace = portfolio.GalleryItems.ElementAt(3);
-        var itemToRemove = portfolio.GalleryItems.ElementAt(1);
+        var itemToReplace = portfolio.GalleryItems.ElementAt(2);
+        var itemToRemove = portfolio.GalleryItems.ElementAt(0);
         var itemAdded01 = _fixture.Create<PortfolioGalleryItemRequest>();
         var itemAdded02 = _fixture.Create<PortfolioGalleryItemRequest>();
         var itemUpdated = _fixture.Create<PortfolioGalleryItemRequest>();
@@ -292,8 +292,7 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<PortfolioEntity>>();
 
-        var entityComposer = _fixture.GetPortfolioEntityBuilder();
-        var entity = entityComposer.Create();
+        var entity = _fixture.Create<PortfolioEntity>();
         await commandRepository.CreateAsync(entity);
 
         return entity;
