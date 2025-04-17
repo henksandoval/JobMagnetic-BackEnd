@@ -14,12 +14,17 @@ public class TestimonialCustomization : ICustomization
                 .With(x => x.IsDeleted, false)
                 .Without(x => x.DeletedAt)
                 .Without(x => x.DeletedBy)
-                .With(x => x.Name, FixtureBuilder.Faker.Name.FullName())
-                .With(x => x.JobTitle, FixtureBuilder.Faker.Name.JobTitle())
-                .With(x => x.Feedback, FixtureBuilder.Faker.Lorem.Paragraph())
-                .With(x => x.PhotoUrl, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Image.PicsumUrl()))
+                .Do(ApplyCommonProperties)
                 .With(x => x.Profile, fixture.Create<ProfileEntity>())
                 .OmitAutoProperties()
         );
+    }
+
+    private static void ApplyCommonProperties(dynamic item)
+    {
+        item.Name = FixtureBuilder.Faker.Name.FullName();
+        item.JobTitle = FixtureBuilder.Faker.Name.JobTitle();
+        item.Feedback = FixtureBuilder.Faker.Lorem.Paragraph();
+        item.PhotoUrl = TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Image.PicsumUrl());
     }
 }
