@@ -172,7 +172,7 @@ public class ServiceControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var service = await SetupEntityAsync();
-        var itemToRemove = service.GalleryItems.ElementAt(3);
+        var itemToRemove = service.GalleryItems.ElementAt(2);
         var indexItemToRemove = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToRemove.Id);
         var patchDocument = new JsonPatchDocument<ServiceRequest>();
         patchDocument.Remove(p => p.GalleryItems, indexItemToRemove);
@@ -199,7 +199,7 @@ public class ServiceControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         var service = await SetupEntityAsync();
         var itemUpdated = _fixture.Create<ServiceGalleryItemRequest>();
-        var itemToReplace = service.GalleryItems.ElementAt(3);
+        var itemToReplace = service.GalleryItems.ElementAt(2);
         itemUpdated.Id = itemToReplace.Id;
         var indexItemToReplace = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var patchDocument = new JsonPatchDocument<ServiceRequest>();
@@ -234,8 +234,8 @@ public class ServiceControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var itemUpdated = _fixture.Create<ServiceGalleryItemRequest>();
 
         var service = await SetupEntityAsync();
-        var itemToReplace = service.GalleryItems.ElementAt(3);
-        var itemToRemove = service.GalleryItems.ElementAt(1);
+        var itemToReplace = service.GalleryItems.ElementAt(2);
+        var itemToRemove = service.GalleryItems.ElementAt(0);
         itemUpdated.Id = itemToReplace.Id;
         var indexItemToReplace = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var indexItemToRemove = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToRemove.Id);
@@ -280,7 +280,7 @@ public class ServiceControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
-        var entity = _fixture.CreateProfileEntity();
+        var entity = _fixture.Create<ProfileEntity>();
         await commandRepository.CreateAsync(entity);
 
         return entity;
@@ -291,7 +291,7 @@ public class ServiceControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ServiceEntity>>();
 
-        var entity = _fixture.BuildServiceEntity();
+        var entity = _fixture.Create<ServiceEntity>();
         await commandRepository.CreateAsync(entity);
 
         return entity;

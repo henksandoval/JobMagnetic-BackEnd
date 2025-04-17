@@ -8,6 +8,7 @@ using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Models.Skill;
 using JobMagnet.Shared.Tests.Fixtures;
+using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
@@ -169,7 +170,7 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var skill = await SetupEntityAsync();
-        var itemToRemove = skill.SkillDetails.ElementAt(3);
+        var itemToRemove = skill.SkillDetails.ElementAt(2);
         var indexItemToRemove = skill.SkillDetails.ToList().FindIndex(item => item.Id == itemToRemove.Id);
         var patchDocument = new JsonPatchDocument<SkillRequest>();
         patchDocument.Remove(p => p.SkillDetails, indexItemToRemove);
@@ -196,7 +197,7 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         var skill = await SetupEntityAsync();
         var itemUpdated = _fixture.Create<SkillItemRequest>();
-        var itemToReplace = skill.SkillDetails.ElementAt(3);
+        var itemToReplace = skill.SkillDetails.ElementAt(0);
         itemUpdated.Id = itemToReplace.Id;
         var indexItemToReplace = skill.SkillDetails.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var patchDocument = new JsonPatchDocument<SkillRequest>();
@@ -227,8 +228,8 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var skill = await SetupEntityAsync();
-        var itemToReplace = skill.SkillDetails.ElementAt(3);
-        var itemToRemove = skill.SkillDetails.ElementAt(1);
+        var itemToReplace = skill.SkillDetails.ElementAt(2);
+        var itemToRemove = skill.SkillDetails.ElementAt(0);
         var itemAdded01 = _fixture.Create<SkillItemRequest>();
         var itemAdded02 = _fixture.Create<SkillItemRequest>();
         var itemUpdated = _fixture.Create<SkillItemRequest>();
@@ -280,7 +281,7 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
-        var entity = _fixture.CreateProfileEntity();
+        var entity = _fixture.Create<ProfileEntity>();
         await commandRepository.CreateAsync(entity);
 
         return entity;
@@ -291,7 +292,7 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<SkillEntity>>();
 
-        var entity = _fixture.BuildSkillEntity();
+        var entity = _fixture.Create<SkillEntity>();
         await commandRepository.CreateAsync(entity);
 
         return entity;
