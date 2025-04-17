@@ -20,6 +20,7 @@ public static class FixtureBuilder
         fixture.Customize(new WorkExperienceCustomization());
         fixture.Customize(new TalentCustomization());
         fixture.Customize(new ProfileCustomization());
+        fixture.Customize(new ServiceCustomization());
         fixture.Register(() => DateOnly.FromDateTime(Faker.Date.Past(30)));
         fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => fixture.Behaviors.Remove(b));
         fixture.Behaviors.Add(new OmitOnRecursionBehavior());
