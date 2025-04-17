@@ -11,19 +11,29 @@ public static class FixtureBuilder
     public static IFixture Build()
     {
         var fixture = new Fixture();
-        fixture.Customize(new ContactTypeCustomization());
-        fixture.Customize(new SummaryCustomization());
-        fixture.Customize(new PortfolioGalleryItemCustomization());
-        fixture.Customize(new SkillItemCustomization());
-        fixture.Customize(new ServiceGalleryItemCustomization());
-        fixture.Customize(new EducationCustomization());
-        fixture.Customize(new WorkExperienceCustomization());
-        fixture.Customize(new TalentCustomization());
-        fixture.Customize(new ProfileCustomization());
-        fixture.Customize(new ServiceCustomization());
-        fixture.Register(() => DateOnly.FromDateTime(Faker.Date.Past(30)));
+        fixture
+            .RegisterCustomizations()
+            .Register(() => DateOnly.FromDateTime(Faker.Date.Past(30)));
+
         fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => fixture.Behaviors.Remove(b));
         fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+        return fixture;
+    }
+
+    private static Fixture RegisterCustomizations(this Fixture fixture)
+    {
+        fixture
+            .Customize(new ContactTypeCustomization())
+            .Customize(new SummaryCustomization())
+            .Customize(new PortfolioGalleryItemCustomization())
+            .Customize(new SkillItemCustomization())
+            .Customize(new ServiceGalleryItemCustomization())
+            .Customize(new EducationCustomization())
+            .Customize(new WorkExperienceCustomization())
+            .Customize(new TalentCustomization())
+            .Customize(new ProfileCustomization())
+            .Customize(new ServiceCustomization());
+
         return fixture;
     }
 }
