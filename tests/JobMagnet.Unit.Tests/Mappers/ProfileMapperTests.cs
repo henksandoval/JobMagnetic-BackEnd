@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using AutoFixture.Dsl;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Mappers;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -16,8 +17,7 @@ public class ProfileMapperTests
     public void ShouldMapperProfileEntityToProfileViewModelWithPersonalData()
     {
         var profileBuilder = _fixture.GetProfileEntityBuilder();
-        var resumeBuilder = _fixture.GetResumeEntityBuilder();
-        var resumeEntity = resumeBuilder.Create();
+        var resumeEntity = _fixture.Create<ResumeEntity>();
 
         var talentEntities = _fixture.CreateMany<TalentEntity>(3).ToList();
         var profileEntity = profileBuilder
