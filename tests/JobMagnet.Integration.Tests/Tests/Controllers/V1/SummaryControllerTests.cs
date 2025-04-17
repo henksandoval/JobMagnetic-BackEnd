@@ -166,9 +166,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var itemAdded02 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
         var itemUpdated = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
 
-        var entity = _fixture.Create<SummaryEntity>();
-        entity.Education = _fixture.CreateMany<EducationEntity>(5).ToList();
-        entity.WorkExperiences = _fixture.CreateMany<WorkExperienceEntity>(5).ToList();
+        var entity = new SummaryEntityBuilder(_fixture).WithEducation().WithWorkExperiences().Build();
 
         var initialSummaryEntity = await SetupEntityAsync(() => entity);
         var itemToReplace = initialSummaryEntity.Education.ElementAt(3);
@@ -246,9 +244,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var itemAdded02 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
         var itemUpdated = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
 
-        var entity = _fixture.Create<SummaryEntity>();
-        entity.Education = _fixture.CreateMany<EducationEntity>(5).ToList();
-        entity.WorkExperiences = _fixture.CreateMany<WorkExperienceEntity>(5).ToList();
+        var entity = new SummaryEntityBuilder(_fixture).WithEducation().WithWorkExperiences().Build();
 
         var initialSummaryEntity = await SetupEntityAsync(() => entity);
         var itemToReplace = initialSummaryEntity.WorkExperiences.ElementAt(3);
