@@ -1,14 +1,37 @@
-﻿using JobMagnet.Infrastructure.Entities;
+﻿using AutoFixture;
+using AutoFixture.Dsl;
+using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Mappers;
+using JobMagnet.Shared.Tests.Fixtures;
+using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.ViewModels.Profile;
+using Shouldly;
 
 namespace JobMagnet.Unit.Tests.Mappers;
 
 public class ProfileMapperTests
 {
-    [Fact]
+    private readonly IFixture _fixture = FixtureBuilder.Build();
+
+    [Fact(Skip = "Not implemented yet")]
     public void ShouldMapperProfileEntityToProfileViewModelWithPersonalData()
     {
+        var profileBuilder = _fixture.GetProfileEntityBuilder();
+        var resumeEntity = _fixture.Create<ResumeEntity>();
 
+        var talentEntities = _fixture.CreateMany<TalentEntity>(3).ToList();
+        var profileEntity = profileBuilder
+            .With(x => x.Talents, talentEntities)
+            .With(x => x.Resume, resumeEntity)
+            .Create();
+
+        resumeEntity.Profile = profileEntity;
+
+        var expectedResult = GetExpectedResult(profileEntity);
+
+        var result = ProfileMapper.ToModel(profileEntity);
+
+        result.ShouldNotBeNull();
     }
 
     private static ProfileViewModel GetExpectedResult(ProfileEntity entity)

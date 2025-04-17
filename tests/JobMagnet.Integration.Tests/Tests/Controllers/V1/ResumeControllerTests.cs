@@ -8,6 +8,7 @@ using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Models.Resume;
 using JobMagnet.Shared.Tests.Fixtures;
+using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
@@ -229,7 +230,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
-        var entity = _fixture.CreateProfileEntity();
+        var entity = _fixture.Create<ProfileEntity>();
         await commandRepository.CreateAsync(entity);
 
         return entity;
@@ -246,7 +247,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ResumeEntity>>();
 
-        var entity = _fixture.BuildResumeEntity();
+        var entity = _fixture.Create<ResumeEntity>();
         await commandRepository.CreateAsync(entity);
 
         return entity;

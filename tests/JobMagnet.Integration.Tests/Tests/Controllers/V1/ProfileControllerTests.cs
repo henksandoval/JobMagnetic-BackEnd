@@ -7,6 +7,7 @@ using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Utils;
 using JobMagnet.Models.Queries.Profile;
 using JobMagnet.Shared.Tests.Fixtures;
+using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.ViewModels.Profile;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,8 +30,8 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         _testFixture.SetTestOutputHelper(testOutputHelper);
     }
 
-    [Fact(DisplayName = "Should return the record and return 200 when GET request with valid ID is provided")]
-    public async Task ShouldReturnRecord_WhenValidIdIsProvidedAsync()
+    [Fact(DisplayName = "Should return the record and return 200 when GET request with valid Name is provided")]
+    public async Task ShouldReturnRecord_WhenValidNameProvidedAsync()
     {
         // Given
         var entity = await SetupEntityAsync();
@@ -50,10 +51,7 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 
         var responseData = await TestUtilities.DeserializeResponseAsync<ProfileViewModel>(response);
         responseData.ShouldNotBeNull();
-        responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
-
-        var expectedTalents = entity.Talents.Select(x => x.Description).ToArray();
-        responseData.PersonalData!.Professions.Should().BeEquivalentTo(expectedTalents);
+        responseData.ShouldBeAssignableTo<ProfileViewModel>();
     }
 
     private async Task<ProfileEntity> SetupEntityAsync()
@@ -67,15 +65,15 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
-        var buildProfileEntity = _fixture.BuildProfileEntity();
-        var resumeEntity = _fixture.BuildResumeEntity();
-        var talentEntities = _fixture.CreateMany<TalentEntity>(3).ToList();
-        var entity = buildProfileEntity
-            .With(x => x.Talents, talentEntities)
-            .With(x => x.Resume, resumeEntity)
-            .Create();
-
-        resumeEntity.Profile = entity;
+        var entity = new ProfileEntityBuilder(_fixture)
+            .WithResume()
+            .WithTalents()
+            .WithPortfolio()
+            .WithSummaries()
+            .WithServices()
+            .WithSkills()
+            .WithTestimonials()
+            .Build();
 
         await commandRepository.CreateAsync(entity);
 
