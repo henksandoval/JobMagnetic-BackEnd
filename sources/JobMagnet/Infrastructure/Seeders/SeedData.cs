@@ -194,7 +194,7 @@ public static class SeedData
             RegisterTalentsAsync(context, profile.Id),
             RegisterResumeAsync(context, profile.Id),
             RegisterTestimonialAsync(context, profile.Id),
-            RegisterServiceAsync(context, profile.Id)
+            RegisterServiceAsync(context, profile.Id),
             RegisterTestimonialAsync(context, profile.Id),
             RegisterSkillAsync(context, profile.Id),
             RegisterPortfolioAsync(context, profile.Id)
