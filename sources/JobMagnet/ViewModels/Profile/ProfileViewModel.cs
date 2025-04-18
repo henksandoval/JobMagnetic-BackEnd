@@ -7,7 +7,7 @@ public record ProfileViewModel(
     SkillSetViewModel? SkillSet = null,
     TitlesViewModel? Titles = null,
     SummaryViewModel? Summary = null,
-    PortfolioViewModel? Portfolio = null,
+    PortfolioViewModel[]? PortfolioGallery = null,
     ServiceViewModel? Service = null,
     ContactViewModel? Contact = null
     );
