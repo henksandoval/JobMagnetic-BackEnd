@@ -186,14 +186,16 @@ public static class SeedData
 
         await RegisterMasterTablesAsync(context);
         var profile = await RegisterProfileDataAsync(context);
-        var registerTasks  = new List<Task>
+        await context.SaveChangesAsync();
+
+        var tasks = new List<Task>
         {
             RegisterTalentsAsync(context, profile.Id),
             RegisterResumeAsync(context, profile.Id),
-            RegisterTestimonioAsync(context, profile.Id)
+            RegisterTestimonialAsync(context, profile.Id)
         };
 
-        await Task.WhenAll(registerTasks);
+        await Task.WhenAll(tasks);
 
         await context.SaveChangesAsync();
     }
@@ -316,7 +318,7 @@ public static class SeedData
             {
                 Id = 0,
                 Value = "+1234567890",
-                ContactTypeId = 2,
+                ContactTypeId = 12,
                 ResumeId = resumeEntity.Id,
                 AddedAt = DateTime.Now,
                 AddedBy = Guid.Empty
@@ -325,33 +327,6 @@ public static class SeedData
             {
                 Id = 0,
                 Value = "https://linkedin.com/in/brandonjohnson",
-                ContactTypeId = 3,
-                ResumeId = resumeEntity.Id,
-                AddedAt = DateTime.Now,
-                AddedBy = Guid.Empty
-            },
-            new()
-            {
-                Id = 0,
-                Value = "https://github.com/brandonjohnson",
-                ContactTypeId = 4,
-                ResumeId = resumeEntity.Id,
-                AddedAt = DateTime.Now,
-                AddedBy = Guid.Empty
-            },
-            new()
-            {
-                Id = 0,
-                Value = "https://twitter.com/brandonjohnson",
-                ContactTypeId = 5,
-                ResumeId = resumeEntity.Id,
-                AddedAt = DateTime.Now,
-                AddedBy = Guid.Empty
-            },
-            new()
-            {
-                Id = 0,
-                Value = "https://brandonjohnson.dev",
                 ContactTypeId = 6,
                 ResumeId = resumeEntity.Id,
                 AddedAt = DateTime.Now,
@@ -360,7 +335,7 @@ public static class SeedData
             new()
             {
                 Id = 0,
-                Value = "https://instagram.com/brandonjohnson",
+                Value = "https://github.com/brandonjohnson",
                 ContactTypeId = 7,
                 ResumeId = resumeEntity.Id,
                 AddedAt = DateTime.Now,
@@ -369,7 +344,7 @@ public static class SeedData
             new()
             {
                 Id = 0,
-                Value = "https://facebook.com/brandonjohnson",
+                Value = "https://twitter.com/brandonjohnson",
                 ContactTypeId = 8,
                 ResumeId = resumeEntity.Id,
                 AddedAt = DateTime.Now,
@@ -378,8 +353,35 @@ public static class SeedData
             new()
             {
                 Id = 0,
-                Value = "+1234567890",
+                Value = "https://brandonjohnson.dev",
+                ContactTypeId = 5,
+                ResumeId = resumeEntity.Id,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Value = "https://instagram.com/brandonjohnson",
+                ContactTypeId = 10,
+                ResumeId = resumeEntity.Id,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Value = "https://facebook.com/brandonjohnson",
                 ContactTypeId = 9,
+                ResumeId = resumeEntity.Id,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Value = "+1234567890",
+                ContactTypeId = 2,
                 ResumeId = resumeEntity.Id,
                 AddedAt = DateTime.Now,
                 AddedBy = Guid.Empty
@@ -387,7 +389,7 @@ public static class SeedData
         };
     }
 
-    private static async Task RegisterTestimonioAsync(JobMagnetDbContext context, long profileId)
+    private static async Task RegisterTestimonialAsync(JobMagnetDbContext context, long profileId)
     {
         if (context.Testimonials.Any()) return;
 
