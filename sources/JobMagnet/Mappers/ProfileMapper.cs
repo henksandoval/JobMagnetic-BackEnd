@@ -50,7 +50,8 @@ internal static class ProfileMapper
                     .ToArray(),
                 src => src.Testimonials.Any()
             )
-            .Map(dest => dest.Service, src => src.Services
+            .Map(dest => dest.Service,
+                src => src.Services
                     .Select(s => new ServiceViewModel(
                         s.Overview,
                         s.GalleryItems.Select(g => new ServiceDetailsViewModel(
@@ -58,10 +59,9 @@ internal static class ProfileMapper
                                 g.Description,
                                 g.UrlImage))
                             .ToArray()))
-                    .ToArray(),
-                src => src.Services.Any()
+                    .FirstOrDefault() 
             );
-    }
+    }   
     
     internal static ProfileViewModel ToModel(ProfileEntity entity)
     {
