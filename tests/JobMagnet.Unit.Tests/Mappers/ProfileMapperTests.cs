@@ -77,6 +77,26 @@ public class ProfileMapperTests
 
         result.Testimonials!.ShouldBeEquivalentTo(profileExpected.Testimonials);
     }
+    
+    [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when Service is defined")]
+    public void ShouldMapperProfileEntityToProfileViewModelWithService()
+    {
+        var profileBuilder = new ProfileEntityBuilder(_fixture)
+            .WithServices();
+
+        var profile = profileBuilder.Build();
+
+        var profileExpected = new ProfileViewModel();
+
+        profileExpected = profileExpected with { Service = GetServiceViewModel(profile) };
+
+        var result = ProfileMapper.ToModel(profile);
+
+        result.ShouldNotBeNull();
+        result.ShouldBeOfType<ProfileViewModel>();
+
+        result.Service!.ShouldBeEquivalentTo(profileExpected.Service);
+    }
 
     [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when PortfolioGallery is defined")]
     public void ShouldMapperProfileEntityToProfileViewModelWithPortfolioGallery()
@@ -158,6 +178,19 @@ public class ProfileMapperTests
             entity.Resume.ContactInfo
                 .FirstOrDefault(x => x.ContactType.Name == contactTypeName)
                 ?.Value ?? string.Empty;
+    }
+    
+    private static ServiceViewModel GetServiceViewModel(ProfileEntity profile)
+    {
+        return profile.Services
+            .Select(s => new ServiceViewModel(
+                s.Overview,
+                s.GalleryItems.Select(g => new ServiceDetailsViewModel(
+                        g.Title,
+                        g.Description,
+                        g.UrlImage))
+                    .ToArray()))
+            .FirstOrDefault() ?? throw new InvalidOperationException("No hay servicios disponibles en el perfil.");
     }
 
     private static TestimonialsViewModel[]? GetTestimonialViewModel(ProfileEntity profile)

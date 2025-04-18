@@ -20,6 +20,7 @@ public class ProfileController(
             .IncludeTalents()
             .IncludeResume()
             .IncludeTestimonials()
+            .IncludeService()
             .IncludeSkill()
             .IncludePortfolioGallery()
             .GetFirstByExpressionWithIncludesAsync(x => x.FirstName == queryParameters.Name)
