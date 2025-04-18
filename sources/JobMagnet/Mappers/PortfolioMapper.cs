@@ -16,13 +16,13 @@ internal static class PortfolioMapper
         return galleryEntity.Adapt<PortfolioModel>();
     }
 
-    internal static PortfolioRequest ToUpdateRequest(PortfolioGalleryEntity galleryEntity)
+    internal static PortfolioUpdateRequest ToUpdateRequest(PortfolioGalleryEntity galleryEntity)
     {
-        return galleryEntity.Adapt<PortfolioRequest>();
+        return galleryEntity.Adapt<PortfolioUpdateRequest>();
     }
 
-    internal static void UpdateEntity(this PortfolioGalleryEntity galleryEntity, PortfolioRequest request)
+    internal static void UpdateEntity(this PortfolioGalleryEntity galleryEntity, PortfolioUpdateRequest updateRequest)
     {
-        request.Adapt(galleryEntity);
+        updateRequest.Adapt(galleryEntity);
     }
 }

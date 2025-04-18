@@ -56,11 +56,32 @@ public class PortfolioController(
         return Results.NoContent();
     }
 
+    [HttpPut("{id:long}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> PutAsync(int id, PortfolioUpdateRequest updateRequest)
+    {
+        if (id != updateRequest.Id)
+            return Results.BadRequest();
+
+        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        entity.UpdateEntity(updateRequest);
+
+        await commandRepository.UpdateAsync(entity);
+
+        return Results.NoContent();
+    }
+
     [HttpPatch("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<PortfolioRequest> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<PortfolioUpdateRequest> patchDocument)
     {
         var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
