@@ -52,6 +52,11 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var responseData = await TestUtilities.DeserializeResponseAsync<ProfileViewModel>(response);
         responseData.ShouldNotBeNull();
         responseData.ShouldBeAssignableTo<ProfileViewModel>();
+
+        responseData.PersonalData.ShouldNotBeNull();
+        responseData.About.ShouldNotBeNull();
+        responseData.Testimonials.ShouldNotBeNull();
+        responseData.SkillSet.ShouldNotBeNull();
     }
 
     private async Task<ProfileEntity> SetupEntityAsync()
