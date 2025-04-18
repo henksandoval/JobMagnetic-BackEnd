@@ -25,7 +25,7 @@ public class ProfileCustomization : ICustomization
                 .Without(x => x.Portfolios)
                 .Without(x => x.Summaries)
                 .Without(x => x.Services)
-                .Without(x => x.Skills)
+                .Without(x => x.Skill)
                 .Without(x => x.Testimonials)
         );
     }

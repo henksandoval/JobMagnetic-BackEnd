@@ -6,11 +6,11 @@ namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 public class ProfileEntityBuilder(IFixture fixture)
 {
     private ResumeEntity _resume = null!;
+    private SkillEntity _skill = null!;
     private List<TalentEntity> _talents = [];
     private List<PortfolioEntity> _portfolio = [];
     private List<SummaryEntity> _summaries = [];
     private List<ServiceEntity> _services = [];
-    private List<SkillEntity> _skills = [];
     private List<TestimonialEntity> _testimonials = [];
 
     public ProfileEntityBuilder WithResume()
@@ -49,9 +49,9 @@ public class ProfileEntityBuilder(IFixture fixture)
         return this;
     }
 
-    public ProfileEntityBuilder WithSkills(int count = 5)
+    public ProfileEntityBuilder WithSkills()
     {
-        _skills = fixture.CreateMany<SkillEntity>(count).ToList();
+        _skill = fixture.Create<SkillEntity>();
         return this;
     }
 
@@ -70,7 +70,7 @@ public class ProfileEntityBuilder(IFixture fixture)
         profile.Portfolios = _portfolio;
         profile.Summaries = _summaries;
         profile.Services = _services;
-        profile.Skills = _skills;
+        profile.Skill = _skill;
         profile.Testimonials = _testimonials;
 
         return profile;
