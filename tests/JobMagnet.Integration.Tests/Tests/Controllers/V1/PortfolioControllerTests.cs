@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Http.Json;
 using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Infrastructure.Entities;
@@ -9,6 +10,7 @@ using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Utils;
 using JobMagnet.Models.Portfolio;
 using JobMagnet.Models.Resume;
+using JobMagnet.Models.Testimonial;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using Microsoft.AspNetCore.JsonPatch;
@@ -57,14 +59,19 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
-        _ = queryRepository.IncludeGalleryItems();
-        var entityCreated = await queryRepository.GetByIdWithIncludesAsync(responseData.Id);
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+        var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
-        entityCreated.GalleryItems.Should().BeEquivalentTo(createRequest.GalleryItems, options => options
-            .ExcludingMissingMembers()
-            .Excluding(x => x.Id)
+        entityCreated.ShouldSatisfyAllConditions(
+            () => entityCreated.ProfileId.ShouldBe(profileEntity.Id),
+            () => entityCreated.Title.ShouldBe(createRequest.Title),
+            () => entityCreated.Description.ShouldBe(createRequest.Description),
+            () => entityCreated.UrlLink.ShouldBe(createRequest.UrlLink),
+            () => entityCreated.UrlImage.ShouldBe(createRequest.UrlImage),
+            () => entityCreated.UrlVideo.ShouldBe(createRequest.UrlVideo),
+            () => entityCreated.Type.ShouldBe(createRequest.Type),
+            () => entityCreated.Position.ShouldBe(createRequest.Position)
         );
     }
 
@@ -113,13 +120,10 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryPortfolioRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
-        var queryItemsRepository =
-            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryItemEntity, long>>();
+        var queryPortfolioRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+
         var portfolioEntity = await queryPortfolioRepository.GetByIdAsync(entity.Id);
-        var entityItems = await queryItemsRepository.FindAsync(x => x.PorfolioId == entity.Id);
         portfolioEntity.ShouldBeNull();
-        entityItems.ShouldBeEmpty();
     }
 
     [Fact(DisplayName = "Should return 404 when a DELETE request with invalid ID is provided")]
@@ -136,137 +140,100 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Should handle multiple Add operations in a PATCH request")]
+    [Fact(DisplayName = "Should return 204 when a valid PATCH request is provided")]
     public async Task ShouldHandleAddMultipleOperationsInPatchRequestAsync()
     {
         // Given
-        var portfolio = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<PortfolioRequest>();
-        var itemAdded01 = _fixture.Create<PortfolioGalleryItemRequest>();
-        var itemAdded02 = _fixture.Create<PortfolioGalleryItemRequest>();
-        patchDocument.Add(p => p.GalleryItems, itemAdded01);
-        patchDocument.Add(p => p.GalleryItems, itemAdded02);
+        const string newTitle = "Red And Blue Parrot";
+        var entity = await SetupEntityAsync();
+        var patchDocument = new JsonPatchDocument<PortfolioUpdateRequest>();
+        patchDocument.Replace(a => a.Title, newTitle);
 
         // When
         var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{portfolio.Id}", patchDocument);
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{entity.Id}", patchDocument);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryPortfolioRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
-        _ = queryPortfolioRepository.IncludeGalleryItems();
-        var portfolioEntity = await queryPortfolioRepository.GetByIdWithIncludesAsync(portfolio.Id);
-        portfolioEntity!.GalleryItems.Count.ShouldBe(portfolio.GalleryItems.Count + patchDocument.Operations.Count);
-        portfolioEntity.GalleryItems.ShouldContain(x => x.Title == itemAdded01.Title);
-        portfolioEntity.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded01.UrlImage);
-        portfolioEntity.GalleryItems.ShouldContain(x => x.Title == itemAdded02.Title);
-        portfolioEntity.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded02.UrlImage);
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+        var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
+        dbEntity.ShouldNotBeNull();
+        dbEntity.Title.ShouldBe(newTitle);
     }
 
-    [Fact(DisplayName = "Should handle Remove operations in a PATCH request")]
-    public async Task ShouldHandleRemoveOperationsInPatchRequestAsync()
+    [Fact(DisplayName = "Should return 204 when a valid PUT request is provided")]
+    public async Task ShouldReturnNotContent_WhenReceivedValidPutRequestAsync()
     {
         // Given
-        var portfolio = await SetupEntityAsync();
-        var itemToRemove = portfolio.GalleryItems.ElementAt(0);
-        var indexItemToRemove = portfolio.GalleryItems.ToList().FindIndex(item => item.Id == itemToRemove.Id);
-        var patchDocument = new JsonPatchDocument<PortfolioRequest>();
-        patchDocument.Remove(p => p.GalleryItems, indexItemToRemove);
+        var entity = await SetupEntityAsync();
+        var updatedEntity = _fixture.Build<PortfolioUpdateRequest>()
+            .With(x => x.Id, entity.Id)
+            .With(x => x.ProfileId, entity.ProfileId)
+            .Create();
 
         // When
-        var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{portfolio.Id}", patchDocument);
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updatedEntity);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryPortfolioRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
-        _ = queryPortfolioRepository.IncludeGalleryItems();
-        var portfolioEntity = await queryPortfolioRepository.GetByIdWithIncludesAsync(portfolio.Id);
-        portfolioEntity!.GalleryItems.Count.ShouldBe(portfolio.GalleryItems.Count - 1);
-        portfolioEntity.GalleryItems.Contains(itemToRemove).ShouldBeFalse();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+        var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
+        dbEntity.ShouldNotBeNull();
+        dbEntity.Should().BeEquivalentTo(updatedEntity);
     }
 
-    [Fact(DisplayName = "Should handle Replace operations in a PATCH request")]
-    public async Task ShouldHandleReplaceOperationsInPatchRequestAsync()
+    [Fact(DisplayName = "Should return 400 when a PUT request with invalid ID is provided")]
+    public async Task ShouldReturnBadRequest_WhenPutRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
-        var portfolio = await SetupEntityAsync();
-        var itemUpdated = _fixture.Create<PortfolioGalleryItemRequest>();
-        var itemToReplace = portfolio.GalleryItems.ElementAt(1);
-        itemUpdated.Id = itemToReplace.Id;
-        var indexItemToReplace = portfolio.GalleryItems.ToList().FindIndex(item => item.Id == itemToReplace.Id);
-        var patchDocument = new JsonPatchDocument<PortfolioRequest>();
-        patchDocument.Replace(p => p.GalleryItems[indexItemToReplace], itemUpdated);
+        await _testFixture.ResetDatabaseAsync();
+        var updatedEntity = _fixture.Build<PortfolioUpdateRequest>().Create();
+        var differentId = updatedEntity.Id + InvalidId;
 
         // When
-        var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{portfolio.Id}", patchDocument);
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{differentId}", updatedEntity);
 
         // Then
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryPortfolioRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
-        _ = queryPortfolioRepository.IncludeGalleryItems();
-        var portfolioEntity = await queryPortfolioRepository.GetByIdWithIncludesAsync(portfolio.Id);
-        portfolioEntity!.GalleryItems.Count.ShouldBe(portfolio.GalleryItems.Count);
-        var entityUpdated = portfolioEntity.GalleryItems.First(x => x.Id == itemUpdated.Id);
-        entityUpdated.Should().BeEquivalentTo(itemUpdated, options => options
-            .ExcludingMissingMembers()
-            .Excluding(x => x.Id)
-        );
+        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
-    [Fact(DisplayName = "Should handle multiple operations in a PATCH request")]
-    public async Task ShouldHandleMultipleOperationsInPatchRequestAsync()
+    [Fact(DisplayName = "Should return 404 when a PUT request with invalid ID is provided")]
+    public async Task ShouldReturnNotFound_WhenPutRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
-        var portfolio = await SetupEntityAsync();
-        var itemToReplace = portfolio.GalleryItems.ElementAt(2);
-        var itemToRemove = portfolio.GalleryItems.ElementAt(0);
-        var itemAdded01 = _fixture.Create<PortfolioGalleryItemRequest>();
-        var itemAdded02 = _fixture.Create<PortfolioGalleryItemRequest>();
-        var itemUpdated = _fixture.Create<PortfolioGalleryItemRequest>();
-        itemUpdated.Id = itemToReplace.Id;
-        var indexItemToReplace = portfolio.GalleryItems.ToList().FindIndex(item => item.Id == itemToReplace.Id);
-        var indexItemToRemove = portfolio.GalleryItems.ToList().FindIndex(item => item.Id == itemToRemove.Id);
+        await _testFixture.ResetDatabaseAsync();
+        var updatedEntity = _fixture.Build<PortfolioUpdateRequest>().Create();
 
-        var patchDocument = new JsonPatchDocument<PortfolioRequest>();
-        patchDocument.Add(p => p.GalleryItems, itemAdded01);
-        patchDocument.Add(p => p.GalleryItems, itemAdded02);
-        patchDocument.Replace(p => p.GalleryItems[indexItemToReplace], itemUpdated);
-        patchDocument.Remove(p => p.GalleryItems, indexItemToRemove);
+        // When
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact(DisplayName = "Should return 404 when a PATCH request with invalid ID is provided")]
+    public async Task ShouldReturnNotFound_WhenPatchRequestWithInvalidIdIsProvidedAsync()
+    {
+        // Given
+        await _testFixture.ResetDatabaseAsync();
+        var updatedEntity = _fixture.Build<PortfolioUpdateRequest>().Create();
+        var patchDocument = new JsonPatchDocument<PortfolioUpdateRequest>();
 
         // When
         var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{portfolio.Id}", patchDocument);
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{updatedEntity.Id}", patchDocument);
 
         // Then
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryPortfolioRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
-        _ = queryPortfolioRepository.IncludeGalleryItems();
-        var portfolioEntity = await queryPortfolioRepository.GetByIdWithIncludesAsync(portfolio.Id);
-        portfolioEntity!.GalleryItems.Count.ShouldBe(portfolio.GalleryItems.Count + 1);
-        portfolioEntity.GalleryItems.ShouldContain(x => x.Title == itemAdded01.Title);
-        portfolioEntity.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded01.UrlImage);
-        portfolioEntity.GalleryItems.ShouldContain(x => x.Title == itemAdded02.Title);
-        portfolioEntity.GalleryItems.ShouldContain(x => x.UrlImage == itemAdded02.UrlImage);
-        var entityUpdated = portfolioEntity.GalleryItems.First(x => x.Id == itemUpdated.Id);
-        entityUpdated.Should().BeEquivalentTo(itemUpdated, options => options
-            .ExcludingMissingMembers()
-            .Excluding(x => x.Id)
-        );
-        portfolioEntity.GalleryItems.Contains(itemToRemove).ShouldBeFalse();
+        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     private async Task<ProfileEntity> SetupProfileEntityAsync()
@@ -275,24 +242,24 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
-        var entity = _fixture.Create<ProfileEntity>();
+        var entity = new ProfileEntityBuilder(_fixture).WithPortfolio().Build();
         await commandRepository.CreateAsync(entity);
 
         return entity;
     }
 
-    private async Task<PortfolioEntity> SetupEntityAsync()
+    private async Task<PortfolioGalleryEntity> SetupEntityAsync()
     {
         await _testFixture.ResetDatabaseAsync();
         return await CreateAndPersistEntityAsync();
     }
 
-    private async Task<PortfolioEntity> CreateAndPersistEntityAsync()
+    private async Task<PortfolioGalleryEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<PortfolioEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<PortfolioGalleryEntity>>();
 
-        var entity = _fixture.Create<PortfolioEntity>();
+        var entity = _fixture.Create<PortfolioGalleryEntity>();
         await commandRepository.CreateAsync(entity);
 
         return entity;

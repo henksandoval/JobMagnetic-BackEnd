@@ -24,9 +24,9 @@ public class SkillItemCustomization : ICustomization
     private static void ApplyCommonProperties(dynamic item)
     {
         item.Name = FixtureBuilder.Faker.Company.CompanyName();
-        item.ProficiencyLevel = FixtureBuilder.Faker.Random.Int(1, 10);
+        item.ProficiencyLevel = FixtureBuilder.Faker.Random.UShort(1, 10);
         item.Category = FixtureBuilder.Faker.Music.Genre();
-        item.Rank = FixtureBuilder.Faker.Random.Int(1, 10);
+        item.Rank = FixtureBuilder.Faker.Random.UShort(1, 10);
         item.IconUrl = FixtureBuilder.Faker.Image.PicsumUrl();
     }
 }

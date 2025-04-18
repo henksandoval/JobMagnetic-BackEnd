@@ -21,6 +21,8 @@ public class ProfileController(
             .IncludeResume()
             .IncludeTestimonials()
             .IncludeService()
+            .IncludeSkill()
+            .IncludePortfolioGallery()
             .GetFirstByExpressionWithIncludesAsync(x => x.FirstName == queryParameters.Name)
             .ConfigureAwait(false);
 
@@ -28,6 +30,7 @@ public class ProfileController(
             return Results.NotFound();
 
         var responseModel = ProfileMapper.ToModel(entity);
+
         return Results.Ok(responseModel);
     }
 }

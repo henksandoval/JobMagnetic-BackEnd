@@ -46,4 +46,21 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
         return this;
     }
+
+    public IProfileQueryRepository IncludeSkill()
+    {
+        _query = _query
+            .Include(p => p.Skill)
+            .ThenInclude(p => p.SkillDetails);
+
+        return this;
+    }
+
+    public IProfileQueryRepository IncludePortfolioGallery()
+    {
+        _query = _query
+            .Include(p => p.PortfolioGallery);
+
+        return this;
+    }
 }

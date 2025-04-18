@@ -182,6 +182,7 @@ public static class SeedData
     {
         await using var context = serviceProvider.GetRequiredService<JobMagnetDbContext>();
 
+        await context.Database.EnsureCreatedAsync();
         await context.Database.MigrateAsync();
 
         await RegisterMasterTablesAsync(context);
@@ -194,6 +195,9 @@ public static class SeedData
             RegisterResumeAsync(context, profile.Id),
             RegisterTestimonialAsync(context, profile.Id),
             RegisterServiceAsync(context, profile.Id)
+            RegisterTestimonialAsync(context, profile.Id),
+            RegisterSkillAsync(context, profile.Id),
+            RegisterPortfolioAsync(context, profile.Id)
         };
 
         await Task.WhenAll(tasks);
@@ -300,6 +304,312 @@ public static class SeedData
         FillContactInfo(resumeEntity);
 
         await context.Resumes.AddAsync(resumeEntity);
+    }
+
+    private static async Task RegisterSkillAsync(JobMagnetDbContext context, long profileId)
+    {
+        if (context.Skills.Any()) return;
+
+        var skillItemEntities = new List<SkillItemEntity>
+        {
+            new()
+            {
+                Id = 0,
+                Name = "HTML",
+                IconUrl = "https://cdn.simpleicons.org/html5",
+                ProficiencyLevel = 6,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 8,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "CSS",
+                IconUrl = "https://cdn.simpleicons.org/css3",
+                ProficiencyLevel = 6,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 9,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "JavaScript",
+                IconUrl = "https://cdn.simpleicons.org/javascript",
+                ProficiencyLevel = 7,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 2,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "C#",
+                IconUrl = "https://cdn.simpleicons.org/dotnet",
+                ProficiencyLevel = 9,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 1,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "TS",
+                IconUrl = "https://cdn.simpleicons.org/typescript",
+                ProficiencyLevel = 7,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 3,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Angular",
+                IconUrl = "https://cdn.simpleicons.org/angular",
+                ProficiencyLevel = 7,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 4,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "PostgreSQL",
+                IconUrl = "https://cdn.simpleicons.org/postgresql",
+                ProficiencyLevel = 6,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 6,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "React",
+                IconUrl = "https://cdn.simpleicons.org/react",
+                ProficiencyLevel = 7,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 7,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Bootstrap",
+                IconUrl = "https://cdn.simpleicons.org/bootstrap",
+                ProficiencyLevel = 5,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 10,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Vue",
+                IconUrl = "https://cdn.simpleicons.org/vuedotjs",
+                ProficiencyLevel = 5,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 11,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Git",
+                IconUrl = "https://cdn.simpleicons.org/git",
+                ProficiencyLevel = 8,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 12,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Blazor",
+                IconUrl = "https://cdn.simpleicons.org/blazor",
+                ProficiencyLevel = 7,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 13,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Rabbit MQ",
+                IconUrl = "https://cdn.simpleicons.org/rabbitmq",
+                ProficiencyLevel = 6,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 14,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Docker",
+                IconUrl = "https://cdn.simpleicons.org/docker",
+                ProficiencyLevel = 8,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 15,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            }
+        };
+
+        var skillEntity = new SkillEntity()
+        {
+            Id = 0,
+            ProfileId = profileId,
+            Overview = """
+                       I am a passionate web developer with a strong background in front-end and back-end technologies.
+                       I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
+                       I am always eager to learn new technologies and improve my skills.
+                       """,
+            SkillDetails = skillItemEntities,
+            AddedAt = DateTime.Now,
+            AddedBy = Guid.Empty
+        };
+
+        await context.Skills.AddAsync(skillEntity);
+    }
+
+    private static async Task RegisterPortfolioAsync(JobMagnetDbContext context, long profileId)
+    {
+        if (context.PortfolioGalleries.Any()) return;
+
+        var portfolioEntities = new PortfolioGalleryEntity[]
+        {
+            new()
+            {
+                Id = 0,
+                Position = 1,
+                Title = "Aventuras Animales",
+                Description = "Cada fotografía captura momentos únicos y comportamientos fascinantes.",
+                UrlLink = "https://waylet.es/",
+                UrlImage = "https://images.pexels.com/photos/617278/pexels-photo-617278.jpeg",
+                Type = "CAT",
+                UrlVideo = string.Empty,
+                ProfileId = profileId,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Position = 2,
+                Title = "Horizontes Naturales",
+                Description =
+                    "Cada imagen captura la esencia de lugares únicos, desde montañas imponentes hasta costas tranquilas, invitándote a explorar la belleza del mundo",
+                UrlLink = "https://biati-digital.github.io/glightbox/",
+                UrlImage = "https://th.bing.com/th/id/OIP.iwFhHHKPOqAJUDO-iSov_wHaE8?rs=1&pid=ImgDetMain",
+                Type = "NATURE",
+                UrlVideo = string.Empty,
+                ProfileId = profileId,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Position = 3,
+                Title = "Movil Truck",
+                Description =
+                    "Plataforma de transporte inteligente; solución tecnológica diseñada para abordar de manera eficiente el transporte de mercancías por carretera.",
+                UrlLink = "https://moviltruck.com/",
+                UrlImage = "https://moviltruck.com/wp-content/uploads/2023/11/Hero-1-.png",
+                Type = "WebPage",
+                UrlVideo = string.Empty,
+                ProfileId = profileId,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Position = 4,
+                Title = "Aventuras Animales",
+                Description = "Cada fotografía captura momentos únicos y comportamientos fascinantes.",
+                UrlLink = string.Empty,
+                UrlImage = "https://images.pexels.com/photos/617278/pexels-photo-617278.jpeg",
+                Type = "CAT",
+                UrlVideo = string.Empty,
+                ProfileId = profileId,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Position = 5,
+                Title = "Aventuras Animales",
+                Description = "Cada fotografía captura momentos únicos y comportamientos fascinantes.",
+                UrlLink = string.Empty,
+                UrlImage = "https://images.pexels.com/photos/617278/pexels-photo-617278.jpeg",
+                Type = "CAT",
+                UrlVideo = string.Empty,
+                ProfileId = profileId,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Position = 6,
+                Title = "Music",
+                Description =
+                    "Cada imagen captura la esencia de la musica, el sonido llega al alma dando una hermosa sensacion de relajacion",
+                UrlLink = "",
+                UrlImage = "https://i0.wp.com/www.nus.agency/wp-content/uploads/2023/03/musica-arte-scaled.jpg?ssl=1",
+                Type = "Music",
+                UrlVideo = string.Empty,
+                ProfileId = profileId,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Position = 7,
+                Title = "Red And Blue Parrot",
+                Description = "Hermosos y encantadores Guacamayas en ambiente natural.",
+                UrlLink = string.Empty,
+                UrlImage =
+                    "https://images.pexels.com/photos/1427447/pexels-photo-1427447.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                Type = "NATURE",
+                UrlVideo = "https://videos.pexels.com/video-files/17325162/17325162-uhd_1440_2560_30fps.mp4",
+                ProfileId = profileId,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            }
+        };
+
+        await context.PortfolioGalleries.AddRangeAsync(portfolioEntities);
     }
 
     private static void FillContactInfo(ResumeEntity resumeEntity)
@@ -484,7 +794,8 @@ public static class SeedData
                 Name = "Jane Smith",
                 JobTitle = "Project Manager",
                 PhotoUrl = "https://randomuser.me/api/portraits/women/28.jpg",
-                Feedback = "Brandon is a talented developer who consistently delivers high-quality work. His ability to understand client needs and translate them into functional designs is impressive.",
+                Feedback =
+                    "Brandon is a talented developer who consistently delivers high-quality work. His ability to understand client needs and translate them into functional designs is impressive.",
                 ProfileId = profileId,
                 AddedAt = DateTime.Now,
                 AddedBy = Guid.Empty
@@ -495,7 +806,8 @@ public static class SeedData
                 Name = "Alice Johnson",
                 JobTitle = "Software Engineer",
                 PhotoUrl = "https://randomuser.me/api/portraits/women/82.jpg",
-                Feedback = "Working with Brandon has been a pleasure. He is always willing to go the extra mile to ensure the project is a success. His technical skills and creativity are top-notch.",
+                Feedback =
+                    "Working with Brandon has been a pleasure. He is always willing to go the extra mile to ensure the project is a success. His technical skills and creativity are top-notch.",
                 ProfileId = profileId,
                 AddedAt = DateTime.Now,
                 AddedBy = Guid.Empty
@@ -517,8 +829,8 @@ public static class SeedData
                 Name = "Michael Brown",
                 JobTitle = "CTO",
                 PhotoUrl = "https://randomuser.me/api/portraits/men/82.jpg",
-                Feedback = "The team consistently delivered beyond expectations and maintained excellent communication."
-                ,
+                Feedback =
+                    "The team consistently delivered beyond expectations and maintained excellent communication.",
                 ProfileId = profileId,
                 AddedAt = DateTime.Now,
                 AddedBy = Guid.Empty
@@ -529,7 +841,8 @@ public static class SeedData
                 Name = "Emily Davis",
                 JobTitle = "Product Owner",
                 PhotoUrl = "https://randomuser.me/api/portraits/women/11.jpg",
-                Feedback = "Their innovative solutions and commitment to quality have been pivotal in our project’s success, making them an invaluable partner in our journey.",
+                Feedback =
+                    "Their innovative solutions and commitment to quality have been pivotal in our project’s success, making them an invaluable partner in our journey.",
                 ProfileId = profileId,
                 AddedAt = DateTime.Now,
                 AddedBy = Guid.Empty

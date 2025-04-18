@@ -98,6 +98,46 @@ public class ProfileMapperTests
         result.Service!.ShouldBeEquivalentTo(profileExpected.Service);
     }
 
+    [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when PortfolioGallery is defined")]
+    public void ShouldMapperProfileEntityToProfileViewModelWithPortfolioGallery()
+    {
+        var profileBuilder = new ProfileEntityBuilder(_fixture)
+            .WithPortfolio();
+
+        var profile = profileBuilder.Build();
+
+        var profileExpected = new ProfileViewModel();
+
+        profileExpected = profileExpected with { PortfolioGallery = GetPortfolioViewModel(profile) };
+
+        var result = ProfileMapper.ToModel(profile);
+
+        result.ShouldNotBeNull();
+        result.ShouldBeOfType<ProfileViewModel>();
+
+        result.PortfolioGallery.ShouldBeEquivalentTo(profileExpected.PortfolioGallery);
+    }
+
+    [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when Skills are defined")]
+    public void ShouldMapperProfileEntityToProfileViewModelWithSkills()
+    {
+        var profileBuilder = new ProfileEntityBuilder(_fixture)
+            .WithSkills();
+
+        var profile = profileBuilder.Build();
+
+        var profileExpected = new ProfileViewModel();
+
+        profileExpected = profileExpected with { SkillSet = GetSkillViewModel(profile) };
+
+        var result = ProfileMapper.ToModel(profile);
+
+        result.ShouldNotBeNull();
+        result.ShouldBeOfType<ProfileViewModel>();
+
+        result.SkillSet!.ShouldBeEquivalentTo(profileExpected.SkillSet);
+    }
+
     private static PersonalDataViewModel GetPersonalDataViewModel(ProfileEntity entity)
     {
         return new PersonalDataViewModel(
@@ -161,5 +201,27 @@ public class ProfileMapperTests
                 t.PhotoUrl,
                 t.Feedback))
             .ToArray();
+    }
+
+    private static PortfolioViewModel[]? GetPortfolioViewModel(ProfileEntity profile)
+    {
+        return profile.PortfolioGallery.Select(p => new PortfolioViewModel(
+                p.Position,
+                p.Title,
+                p.Description,
+                p.UrlLink,
+                p.UrlImage,
+                p.Type,
+                p.UrlVideo))
+            .ToArray();
+    }
+
+    private static SkillSetViewModel GetSkillViewModel(ProfileEntity profile)
+    {
+        var skills = profile.Skill.SkillDetails
+            .Select(skill => new SkillDetailsViewModel(skill.Name, skill.IconUrl, skill.Rank))
+            .ToArray();
+
+        return new SkillSetViewModel(profile.Skill.Overview!, skills);
     }
 }
