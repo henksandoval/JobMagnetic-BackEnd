@@ -22,7 +22,7 @@ public class ProfileCustomization : ICustomization
                 .Without(x => x.DeletedBy)
                 .Without(x => x.Resume)
                 .Without(x => x.Talents)
-                .Without(x => x.Portfolios)
+                .Without(x => x.PortfolioGallery)
                 .Without(x => x.Summaries)
                 .Without(x => x.Services)
                 .Without(x => x.Skill)

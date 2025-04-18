@@ -1,4 +1,4 @@
-﻿using JobMagnet.DependencyInjection;
+﻿using JobMagnet.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 

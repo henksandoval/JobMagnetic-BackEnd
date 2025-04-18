@@ -1,7 +1,6 @@
 ﻿using JobMagnet.Controllers.Base;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
-using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Mappers;
 using JobMagnet.Models.Portfolio;
 using JobMagnet.Models.Resume;
@@ -12,7 +11,7 @@ namespace JobMagnet.Controllers.V1;
 
 public class PortfolioController(
     ILogger<PortfolioController> logger,
-    IPortfolioQueryRepository queryRepository,
+    IQueryRepository<PortfolioGalleryEntity, long> queryRepository,
     ICommandRepository<PortfolioGalleryEntity> commandRepository) : BaseController<PortfolioController>(logger)
 {
     [HttpPost]
@@ -32,8 +31,7 @@ public class PortfolioController(
     public async Task<IResult> GetPortfolioByIdAsync(long id)
     {
         var entity = await queryRepository
-            .IncludeGalleryItems()
-            .GetByIdWithIncludesAsync(id).ConfigureAwait(false);
+            .GetByIdAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
@@ -64,8 +62,7 @@ public class PortfolioController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<PortfolioRequest> patchDocument)
     {
-        _ = queryRepository.IncludeGalleryItems();
-        var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
+        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();

@@ -4,7 +4,7 @@ using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Implements;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 
-namespace JobMagnet.DependencyInjection;
+namespace JobMagnet.Extensions;
 
 internal static class HostExtensions
 {
@@ -21,14 +21,13 @@ internal static class HostExtensions
         return services
             .AddTransient<IQueryRepository<ResumeEntity, long>, Repository<ResumeEntity, long>>()
             .AddTransient<IQueryRepository<TestimonialEntity, long>, Repository<TestimonialEntity, long>>()
-            .AddTransient<IQueryRepository<PortfolioGalleryItemEntityToRemove, long>,
-                Repository<PortfolioGalleryItemEntityToRemove, long>>()
+            .AddTransient<IQueryRepository<PortfolioGalleryEntity, long>,
+                Repository<PortfolioGalleryEntity, long>>()
             .AddTransient<IQueryRepository<SkillItemEntity, long>, Repository<SkillItemEntity, long>>()
             .AddTransient<IQueryRepository<ServiceGalleryItemEntity, long>,
                 Repository<ServiceGalleryItemEntity, long>>()
             .AddTransient<IQueryRepository<SummaryEntity, long>, Repository<SummaryEntity, long>>()
             .AddTransient<IProfileQueryRepository, ProfileQueryRepository>()
-            .AddTransient<IPortfolioQueryRepository, PortfolioQueryRepository>()
             .AddTransient<ISkillQueryRepository, SkillQueryRepository>()
             .AddTransient<IServiceQueryRepository, ServiceQueryRepository>()
             .AddTransient<ISummaryQueryRepository, SummaryQueryRepository>();
