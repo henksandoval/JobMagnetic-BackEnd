@@ -281,18 +281,18 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         return entity;
     }
 
-    private async Task<PortfolioEntity> SetupEntityAsync()
+    private async Task<PortfolioGalleryEntity> SetupEntityAsync()
     {
         await _testFixture.ResetDatabaseAsync();
         return await CreateAndPersistEntityAsync();
     }
 
-    private async Task<PortfolioEntity> CreateAndPersistEntityAsync()
+    private async Task<PortfolioGalleryEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<PortfolioEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<PortfolioGalleryEntity>>();
 
-        var entity = _fixture.Create<PortfolioEntity>();
+        var entity = _fixture.Create<PortfolioGalleryEntity>();
         await commandRepository.CreateAsync(entity);
 
         return entity;

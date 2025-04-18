@@ -10,7 +10,7 @@ public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor h
     public DbSet<ContactTypeEntity> ContactTypes { get; set; }
     public DbSet<ProfileEntity> Profiles { get; set; }
     public DbSet<EducationEntity> Educations { get; set; }
-    public DbSet<PortfolioEntity> Portfolios { get; set; }
+    public DbSet<PortfolioGalleryEntity> Portfolios { get; set; }
     public DbSet<TalentEntity> Talents { get; set; }
     public DbSet<PortfolioGalleryItemEntityToRemove> PortfolioGalleries { get; set; }
     public DbSet<ServiceEntity> Services { get; set; }
@@ -28,7 +28,7 @@ public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor h
         modelBuilder.Entity<ContactTypeEntity>().ToTable("ContactTypes");
         modelBuilder.Entity<ProfileEntity>().ToTable("Profiles");
         modelBuilder.Entity<EducationEntity>().ToTable("Educations");
-        modelBuilder.Entity<PortfolioEntity>().ToTable("Porfolios");
+        modelBuilder.Entity<PortfolioGalleryEntity>().ToTable("Porfolios");
         modelBuilder.Entity<TalentEntity>().ToTable("Talents");
         modelBuilder.Entity<PortfolioGalleryItemEntityToRemove>().ToTable("PorfolioGalleryItems");
         modelBuilder.Entity<ServiceEntity>().ToTable("Services");

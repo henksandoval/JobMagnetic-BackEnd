@@ -4,7 +4,7 @@ using JobMagnet.Infrastructure.Entities.Base;
 namespace JobMagnet.Infrastructure.Entities;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class PortfolioEntity : SoftDeletableEntity<long>
+public class PortfolioGalleryEntity : SoftDeletableEntity<long>
 {
     public virtual ICollection<PortfolioGalleryItemEntityToRemove> GalleryItems { get; set; } =
         new HashSet<PortfolioGalleryItemEntityToRemove>();

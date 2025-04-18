@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 namespace JobMagnet.Infrastructure.Repositories.Implements;
 
 public class PortfolioQueryRepository(JobMagnetDbContext dbContext)
-    : Repository<PortfolioEntity, long>(dbContext), IPortfolioQueryRepository
+    : Repository<PortfolioGalleryEntity, long>(dbContext), IPortfolioQueryRepository
 {
-    private IQueryable<PortfolioEntity> _query = dbContext.Set<PortfolioEntity>();
+    private IQueryable<PortfolioGalleryEntity> _query = dbContext.Set<PortfolioGalleryEntity>();
 
     public IPortfolioQueryRepository IncludeGalleryItems()
     {
@@ -17,12 +17,12 @@ public class PortfolioQueryRepository(JobMagnetDbContext dbContext)
         return this;
     }
 
-    public async Task<IReadOnlyCollection<PortfolioEntity>> GetAllWithIncludesAsync()
+    public async Task<IReadOnlyCollection<PortfolioGalleryEntity>> GetAllWithIncludesAsync()
     {
         return await _query.ToListAsync().ConfigureAwait(false);
     }
 
-    public async Task<PortfolioEntity?> GetByIdWithIncludesAsync(long id)
+    public async Task<PortfolioGalleryEntity?> GetByIdWithIncludesAsync(long id)
     {
         return await _query.FirstOrDefaultAsync(p => p.Id == id).ConfigureAwait(false);
     }

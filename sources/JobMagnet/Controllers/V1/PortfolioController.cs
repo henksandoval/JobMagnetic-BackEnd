@@ -13,7 +13,7 @@ namespace JobMagnet.Controllers.V1;
 public class PortfolioController(
     ILogger<PortfolioController> logger,
     IPortfolioQueryRepository queryRepository,
-    ICommandRepository<PortfolioEntity> commandRepository) : BaseController<PortfolioController>(logger)
+    ICommandRepository<PortfolioGalleryEntity> commandRepository) : BaseController<PortfolioController>(logger)
 {
     [HttpPost]
     [ProducesResponseType(typeof(PortfolioModel), StatusCodes.Status201Created)]

@@ -16,5 +16,5 @@ public class PortfolioGalleryItemEntityToRemove : TrackableEntity<long>
 
     [ForeignKey(nameof(Porfolio))] public long PorfolioId { get; set; }
 
-    public virtual PortfolioEntity Porfolio { get; set; }
+    public virtual PortfolioGalleryEntity Porfolio { get; set; }
 }

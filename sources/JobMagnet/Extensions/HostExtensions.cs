@@ -40,7 +40,7 @@ internal static class HostExtensions
             .AddTransient<ICommandRepository<ProfileEntity>, Repository<ProfileEntity, long>>()
             .AddTransient<ICommandRepository<ResumeEntity>, Repository<ResumeEntity, long>>()
             .AddTransient<ICommandRepository<TestimonialEntity>, Repository<TestimonialEntity, long>>()
-            .AddTransient<ICommandRepository<PortfolioEntity>, Repository<PortfolioEntity, long>>()
+            .AddTransient<ICommandRepository<PortfolioGalleryEntity>, Repository<PortfolioGalleryEntity, long>>()
             .AddTransient<ICommandRepository<SkillEntity>, Repository<SkillEntity, long>>()
             .AddTransient<ICommandRepository<ServiceEntity>, Repository<ServiceEntity, long>>()
             .AddTransient<ICommandRepository<SummaryEntity>, Repository<SummaryEntity, long>>();

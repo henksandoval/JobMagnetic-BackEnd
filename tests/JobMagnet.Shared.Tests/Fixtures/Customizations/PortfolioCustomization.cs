@@ -7,7 +7,7 @@ public class PortfolioCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<PortfolioEntity>(composer =>
+        fixture.Customize<PortfolioGalleryEntity>(composer =>
             composer
                 .With(x => x.Id, 0)
                 .With(x => x.IsDeleted, false)
