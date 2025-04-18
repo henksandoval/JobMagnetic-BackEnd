@@ -72,6 +72,7 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 
         var entity = new ProfileEntityBuilder(_fixture)
             .WithResume()
+            .WithContactInfo()
             .WithTalents()
             .WithPortfolio()
             .WithSummaries()
