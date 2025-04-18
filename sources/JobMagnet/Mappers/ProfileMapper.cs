@@ -32,14 +32,15 @@ internal static class ProfileMapper
             .Map(dest => dest.Email, src => GetContactValue(src, "Email"))
             .Map(dest => dest.City, src => src.Resume.Address)
             .Map(dest => dest.Age, src => src.BirthDate.GetAge())
-            .Map(dest => dest.Degree, src => src.Resume.Title)
+            .Map(dest => dest.Degree, src => src.Resume.Title ?? string.Empty)
             .Map(dest => dest.WorkExperience, src => src.Resume.Summary)
             .Map(dest => dest.Freelance, src => string.Empty);
 
         TypeAdapterConfig<ProfileEntity, SkillSetViewModel>
             .NewConfig()
             .Map(dest => dest.Overview, src => src.Skill.Overview)
-            .Map(dest => dest.SkillDetails, src => src.Adapt<SkillDetailsViewModel>());
+            .Map(dest => dest.SkillDetails,
+                src => src.Skill.SkillDetails.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
 
         TypeAdapterConfig<ProfileEntity, ProfileViewModel>
             .NewConfig()
@@ -62,13 +63,7 @@ internal static class ProfileMapper
             .Map(dest => dest.PortfolioGallery,
                 src => src.PortfolioGallery.Select(p => p.Adapt<PortfolioViewModel>()).ToArray(),
                 src => src.PortfolioGallery.Any())
-            .Map(dest => dest.SkillSet, src => new SkillSetViewModel(
-                    src.Skill.Overview ?? string.Empty,
-                    src.Skill.SkillDetails.Select(detail => new SkillDetailsViewModel(
-                            detail.Name,
-                            detail.IconUrl,
-                            detail.Rank))
-                        .ToArray()),
+            .Map(dest => dest.SkillSet, src => src.Skill.Adapt<SkillSetViewModel>(),
                 src => src.Skill != null && src.Skill.SkillDetails.Count != 0);
     }
 
