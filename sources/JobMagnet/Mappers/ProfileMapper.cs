@@ -14,7 +14,12 @@ internal static class ProfileMapper
             .Map(dest => dest.PersonalData, src => new PersonalDataViewModel(
                 GetFullName(src),
                 src.Talents.Select(t => t.Description).ToArray(),
-                src.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(c.ContactType.Name, c.Value)).ToArray()
+                src.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(
+                        c.ContactType.Name,
+                        c.Value,
+                        c.ContactType.IconClass,
+                        c.ContactType.IconUrl))
+                    .ToArray()
             ))
             .Map(dest => dest.About, src => new AboutViewModel(
                 src.ProfileImageUrl,
