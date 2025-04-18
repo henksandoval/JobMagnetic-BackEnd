@@ -22,6 +22,6 @@ public class PortfolioCustomization : ICustomization
 
     private static void ApplyCommonProperties(dynamic item)
     {
-        item.GalleryItems = FixtureBuilder.Build().CreateMany<PortfolioGalleryItemEntity>().ToList();
+        item.GalleryItems = FixtureBuilder.Build().CreateMany<PortfolioGalleryItemEntityToRemove>().ToList();
     }
 }

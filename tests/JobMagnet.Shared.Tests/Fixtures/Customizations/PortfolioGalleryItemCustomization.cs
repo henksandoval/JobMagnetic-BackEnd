@@ -11,7 +11,7 @@ public class PortfolioGalleryItemCustomization : ICustomization
 
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<PortfolioGalleryItemEntity>(composer =>
+        fixture.Customize<PortfolioGalleryItemEntityToRemove>(composer =>
             composer
                 .Without(x => x.Id)
                 .Do(ApplyCommonProperties)

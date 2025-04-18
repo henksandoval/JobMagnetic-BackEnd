@@ -4,7 +4,7 @@ using JobMagnet.Infrastructure.Entities.Base;
 namespace JobMagnet.Infrastructure.Entities;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class PortfolioGalleryItemEntity : TrackableEntity<long>
+public class PortfolioGalleryItemEntityToRemove : TrackableEntity<long>
 {
     public int Position { get; set; }
     public string Title { get; set; }

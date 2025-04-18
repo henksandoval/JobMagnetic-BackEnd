@@ -115,7 +115,7 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryPortfolioRepository = scope.ServiceProvider.GetRequiredService<IPortfolioQueryRepository>();
         var queryItemsRepository =
-            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryItemEntity, long>>();
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryItemEntityToRemove, long>>();
         var portfolioEntity = await queryPortfolioRepository.GetByIdAsync(entity.Id);
         var entityItems = await queryItemsRepository.FindAsync(x => x.PorfolioId == entity.Id);
         portfolioEntity.ShouldBeNull();
