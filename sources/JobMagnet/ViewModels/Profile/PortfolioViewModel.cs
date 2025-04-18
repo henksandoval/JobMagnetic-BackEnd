@@ -1,5 +1,11 @@
 ﻿namespace JobMagnet.ViewModels.Profile;
 
 public record PortfolioViewModel(
-    GalleryViewModel[] Gallery
+    int Position,
+    string Title,
+    string Description,
+    string Link,
+    string Image,
+    string Type,
+    string Video
 );
