@@ -58,6 +58,26 @@ public class ProfileMapperTests
         result.About!.ShouldBeEquivalentTo(profileExpected.About);
     }
 
+    [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when Testimonial is defined")]
+    public void ShouldMapperProfileEntityToProfileViewModelWithTestimonials()
+    {
+        var profileBuilder = new ProfileEntityBuilder(_fixture)
+            .WithTestimonials();
+
+        var profile = profileBuilder.Build();
+
+        var profileExpected = new ProfileViewModel();
+
+        profileExpected = profileExpected with { Testimonials = GetTestimonialViewModel(profile) };
+
+        var result = ProfileMapper.ToModel(profile);
+
+        result.ShouldNotBeNull();
+        result.ShouldBeOfType<ProfileViewModel>();
+
+        result.Testimonials!.ShouldBeEquivalentTo(profileExpected.Testimonials);
+    }
+
     private static PersonalDataViewModel GetPersonalDataViewModel(ProfileEntity entity)
     {
         return new PersonalDataViewModel(
@@ -66,8 +86,8 @@ public class ProfileMapperTests
             entity.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(
                 c.ContactType.Name,
                 c.Value,
-                c.ContactType.IconClass,
-                c.ContactType.IconUrl
+                c.ContactType.IconClass ?? string.Empty,
+                c.ContactType.IconUrl ?? string.Empty
             )).ToArray()
         );
     }
@@ -88,7 +108,7 @@ public class ProfileMapperTests
             mobilePhone,
             entity.Resume.Address!,
             entity.BirthDate.GetAge(),
-            entity.Resume.Title!,
+            entity.Resume.Title ?? string.Empty,
             email,
             "",
             entity.Resume.Summary
@@ -98,5 +118,15 @@ public class ProfileMapperTests
             entity.Resume.ContactInfo
                 .FirstOrDefault(x => x.ContactType.Name == contactTypeName)
                 ?.Value ?? string.Empty;
+    }
+
+    private static TestimonialsViewModel[]? GetTestimonialViewModel(ProfileEntity profile)
+    {
+        return profile.Testimonials.Select(t => new TestimonialsViewModel(
+                t.Name,
+                t.JobTitle,
+                t.PhotoUrl,
+                t.Feedback))
+            .ToArray();
     }
 }

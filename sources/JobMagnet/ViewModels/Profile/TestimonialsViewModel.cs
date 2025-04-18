@@ -3,6 +3,6 @@
 public record TestimonialsViewModel(
     string Name,
     string JobTitle,
-    string PhotoUrl,
+    string? PhotoUrl,
     string Testimonial
 );
