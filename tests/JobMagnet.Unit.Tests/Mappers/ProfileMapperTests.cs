@@ -95,7 +95,7 @@ public class ProfileMapperTests
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
 
-        result.PortfolioGallery!.ShouldBeEquivalentTo(profileExpected.PortfolioGallery);
+        result.PortfolioGallery.ShouldBeEquivalentTo(profileExpected.PortfolioGallery);
     }
 
     [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when Skills are defined")]

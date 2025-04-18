@@ -10,6 +10,16 @@ internal static class ProfileMapper
 {
     static ProfileMapper()
     {
+        TypeAdapterConfig<PortfolioGalleryEntity, PortfolioViewModel>
+            .NewConfig()
+            .Map(dest => dest.Image, src => src.UrlImage)
+            .Map(dest => dest.Link, src => src.UrlLink)
+            .Map(dest => dest.Video, src => src.UrlVideo);
+
+        TypeAdapterConfig<TestimonialEntity, TestimonialsViewModel>
+            .NewConfig()
+            .Map(dest => dest.Testimonial, src => src.Feedback);
+
         TypeAdapterConfig<ProfileEntity, ProfileViewModel>
             .NewConfig()
             .Map(dest => dest.PersonalData,
@@ -42,26 +52,11 @@ internal static class ProfileMapper
                 ),
                 src => src.Resume != null && src.BirthDate != null
             )
-            .Map(dest => dest.Testimonials, src => src.Testimonials
-                    .Select(t => new TestimonialsViewModel(
-                        t.Name,
-                        t.JobTitle,
-                        t.PhotoUrl,
-                        t.Feedback))
-                    .ToArray(),
-                src => src.Testimonials.Any()
-            )
-            .Map(dest => dest.PortfolioGallery, src => src.PortfolioGallery
-                    .Select(p => new PortfolioViewModel(
-                        p.Position,
-                        p.Title,
-                        p.Description,
-                        p.UrlLink,
-                        p.UrlImage,
-                        p.Type,
-                        p.UrlVideo))
-                    .ToArray(),
-                src => src.PortfolioGallery.Any()
+            .Map(dest => dest.Testimonials,
+                src => src.Testimonials.Select(t => t.Adapt<TestimonialsViewModel>()).ToArray(),
+                src => src.Testimonials.Any())
+            .Map(dest => dest.PortfolioGallery,
+                src => src.PortfolioGallery.Select(p => p.Adapt<PortfolioViewModel>()).ToArray()
             )
             .Map(dest => dest.SkillSet, src => new SkillSetViewModel(
                     src.Skill.Overview ?? string.Empty,
