@@ -48,4 +48,12 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
         return this;
     }
+
+    public IProfileQueryRepository IncludePortfolioGallery()
+    {
+        _query = _query
+            .Include(p => p.PortfolioGallery);
+
+        return this;
+    }
 }

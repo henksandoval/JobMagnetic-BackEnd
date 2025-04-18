@@ -21,6 +21,7 @@ public class ProfileController(
             .IncludeResume()
             .IncludeTestimonials()
             .IncludeSkill()
+            .IncludePortfolioGallery()
             .GetFirstByExpressionWithIncludesAsync(x => x.FirstName == queryParameters.Name)
             .ConfigureAwait(false);
 
