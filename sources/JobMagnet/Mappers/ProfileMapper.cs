@@ -31,8 +31,10 @@ internal static class ProfileMapper
             "",
             entity.Resume.Summary
             );
+        
+        var testimonials = entity.Testimonials.Select(x => new TestimonialsViewModel(x.Name, x.JobTitle, x.PhotoUrl, x.Feedback)).ToArray();
 
-        var profile = new ProfileViewModel(personalData, about);
+        var profile = new ProfileViewModel(personalData, about, testimonials);
 
         return profile;
     }
