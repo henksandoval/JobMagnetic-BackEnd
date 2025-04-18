@@ -51,6 +51,18 @@ internal static class ProfileMapper
                     .ToArray(),
                 src => src.Testimonials.Any()
             )
+            .Map(dest => dest.PortfolioGallery, src => src.PortfolioGallery
+                    .Select(p => new PortfolioViewModel(
+                        p.Position,
+                        p.Title,
+                        p.Description,
+                        p.UrlLink,
+                        p.UrlImage,
+                        p.Type,
+                        p.UrlVideo))
+                    .ToArray(),
+                src => src.PortfolioGallery.Any()
+            )
             .Map(dest => dest.SkillSet, src => new SkillSetViewModel(
                     src.Skill.Overview ?? string.Empty,
                     src.Skill.SkillDetails.Select(detail => new SkillDetailsViewModel(
