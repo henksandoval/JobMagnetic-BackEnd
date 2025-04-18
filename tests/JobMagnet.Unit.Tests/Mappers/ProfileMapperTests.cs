@@ -63,7 +63,12 @@ public class ProfileMapperTests
         return new PersonalDataViewModel(
             $"{entity.FirstName} {entity.LastName}",
             entity.Talents.Select(x => x.Description).ToArray(),
-            entity.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(c.ContactType.Name, c.Value)).ToArray()
+            entity.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(
+                c.ContactType.Name,
+                c.Value,
+                c.ContactType.IconClass,
+                c.ContactType.IconUrl
+            )).ToArray()
         );
     }
 
