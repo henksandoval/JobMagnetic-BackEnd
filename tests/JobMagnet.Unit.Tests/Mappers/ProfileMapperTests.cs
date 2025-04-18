@@ -22,6 +22,8 @@ public class ProfileMapperTests
             .WithContactInfo();
 
         var profile = profileBuilder.Build();
+        profile.SecondLastName = string.Empty;
+        profile.MiddleName = string.Empty;
 
         var profileExpected = new ProfileViewModel();
 
@@ -59,7 +61,7 @@ public class ProfileMapperTests
     private static PersonalDataViewModel GetPersonalDataViewModel(ProfileEntity entity)
     {
         return new PersonalDataViewModel(
-            $"{entity.FirstName} {entity.MiddleName} {entity.LastName} {entity.SecondLastName}",
+            $"{entity.FirstName} {entity.LastName}",
             entity.Talents.Select(x => x.Description).ToArray(),
             entity.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(c.ContactType.Name, c.Value)).ToArray()
         );
