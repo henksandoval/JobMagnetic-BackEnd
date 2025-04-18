@@ -2,7 +2,6 @@
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.ViewModels.Profile;
 using Mapster;
-
 // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 namespace JobMagnet.Mappers;
 
@@ -50,9 +49,20 @@ internal static class ProfileMapper
                         t.Feedback))
                     .ToArray(),
                 src => src.Testimonials.Any()
+            )
+            .Map(dest => dest.Service, src => src.Services
+                    .Select(s => new ServiceViewModel(
+                        s.Overview,
+                        s.GalleryItems.Select(g => new ServiceDetailsViewModel(
+                                g.Title,
+                                g.Description,
+                                g.UrlImage))
+                            .ToArray()))
+                    .ToArray(),
+                src => src.Services.Any()
             );
     }
-
+    
     internal static ProfileViewModel ToModel(ProfileEntity entity)
     {
         return entity.Adapt<ProfileViewModel>();
