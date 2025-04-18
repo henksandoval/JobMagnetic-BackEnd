@@ -1,4 +1,3 @@
-using JobMagnet.DependencyInjection;
 using JobMagnet.Extensions;
 using JobMagnet.Extensions.ConfigSections;
 using JobMagnet.Infrastructure.Context;

@@ -1,7 +1,6 @@
 ﻿using JobMagnet.Controllers.Base;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
-using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Mappers;
 using JobMagnet.Models.Portfolio;
 using JobMagnet.Models.Resume;
@@ -12,8 +11,8 @@ namespace JobMagnet.Controllers.V1;
 
 public class PortfolioController(
     ILogger<PortfolioController> logger,
-    IPortfolioQueryRepository queryRepository,
-    ICommandRepository<PortfolioEntity> commandRepository) : BaseController<PortfolioController>(logger)
+    IQueryRepository<PortfolioGalleryEntity, long> queryRepository,
+    ICommandRepository<PortfolioGalleryEntity> commandRepository) : BaseController<PortfolioController>(logger)
 {
     [HttpPost]
     [ProducesResponseType(typeof(PortfolioModel), StatusCodes.Status201Created)]
@@ -32,8 +31,7 @@ public class PortfolioController(
     public async Task<IResult> GetPortfolioByIdAsync(long id)
     {
         var entity = await queryRepository
-            .IncludeGalleryItems()
-            .GetByIdWithIncludesAsync(id).ConfigureAwait(false);
+            .GetByIdAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
@@ -58,14 +56,34 @@ public class PortfolioController(
         return Results.NoContent();
     }
 
+    [HttpPut("{id:long}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> PutAsync(int id, PortfolioUpdateRequest updateRequest)
+    {
+        if (id != updateRequest.Id)
+            return Results.BadRequest();
+
+        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        entity.UpdateEntity(updateRequest);
+
+        await commandRepository.UpdateAsync(entity);
+
+        return Results.NoContent();
+    }
+
     [HttpPatch("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<PortfolioRequest> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<PortfolioUpdateRequest> patchDocument)
     {
-        _ = queryRepository.IncludeGalleryItems();
-        var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
+        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();

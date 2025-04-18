@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace JobMagnet.Migrations
 {
     /// <inheritdoc />
-    public partial class AddInitial : Migration
+    public partial class InitialDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -59,11 +59,18 @@ namespace JobMagnet.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Porfolios",
+                name: "PorfolioGalleryItems",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Position = table.Column<int>(type: "int", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UrlLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UrlImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UrlVideo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProfileId = table.Column<long>(type: "bigint", nullable: false),
                     AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -75,9 +82,9 @@ namespace JobMagnet.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Porfolios", x => x.Id);
+                    table.PrimaryKey("PK_PorfolioGalleryItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Porfolios_Profiles_ProfileId",
+                        name: "FK_PorfolioGalleryItems_Profiles_ProfileId",
                         column: x => x.ProfileId,
                         principalTable: "Profiles",
                         principalColumn: "Id",
@@ -256,36 +263,6 @@ namespace JobMagnet.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PorfolioGalleryItems",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Position = table.Column<int>(type: "int", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UrlLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UrlImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UrlVideo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PorfolioId = table.Column<long>(type: "bigint", nullable: false),
-                    AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    LastModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PorfolioGalleryItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PorfolioGalleryItems_Porfolios_PorfolioId",
-                        column: x => x.PorfolioId,
-                        principalTable: "Porfolios",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ContactInfo",
                 columns: table => new
                 {
@@ -458,13 +435,8 @@ namespace JobMagnet.Migrations
                 column: "SummaryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PorfolioGalleryItems_PorfolioId",
+                name: "IX_PorfolioGalleryItems_ProfileId",
                 table: "PorfolioGalleryItems",
-                column: "PorfolioId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Porfolios_ProfileId",
-                table: "Porfolios",
                 column: "ProfileId");
 
             migrationBuilder.CreateIndex(
@@ -547,9 +519,6 @@ namespace JobMagnet.Migrations
 
             migrationBuilder.DropTable(
                 name: "Resumes");
-
-            migrationBuilder.DropTable(
-                name: "Porfolios");
 
             migrationBuilder.DropTable(
                 name: "Services");

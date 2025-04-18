@@ -56,7 +56,10 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         responseData.PersonalData.ShouldNotBeNull();
         responseData.About.ShouldNotBeNull();
         responseData.Testimonials.ShouldNotBeNull();
+        responseData.Testimonials.Length.ShouldBeGreaterThan(0);
         responseData.SkillSet.ShouldNotBeNull();
+        responseData.PortfolioGallery.ShouldNotBeNull();
+        responseData.PortfolioGallery.Length.ShouldBeGreaterThan(0);
     }
 
     private async Task<ProfileEntity> SetupEntityAsync()
