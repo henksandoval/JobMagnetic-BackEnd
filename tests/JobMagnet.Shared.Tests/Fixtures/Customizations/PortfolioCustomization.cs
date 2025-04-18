@@ -13,9 +13,15 @@ public class PortfolioCustomization : ICustomization
                 .With(x => x.IsDeleted, false)
                 .Without(x => x.DeletedAt)
                 .Without(x => x.DeletedBy)
+                .With(x => x.ProfileId, 0)
                 .With(x => x.Profile, fixture.Create<ProfileEntity>())
-                .With(x => x.GalleryItems, fixture.CreateMany<PortfolioGalleryItemEntity>().ToList())
+                .Do(ApplyCommonProperties)
                 .OmitAutoProperties()
         );
+    }
+
+    private static void ApplyCommonProperties(dynamic item)
+    {
+        item.GalleryItems = FixtureBuilder.Build().CreateMany<PortfolioGalleryItemEntity>().ToList();
     }
 }

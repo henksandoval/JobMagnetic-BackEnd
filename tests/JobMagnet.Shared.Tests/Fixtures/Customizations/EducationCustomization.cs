@@ -1,5 +1,4 @@
 ﻿using AutoFixture;
-using Bogus;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Shared.Tests.Utils;
 
@@ -32,8 +31,6 @@ public class EducationCustomization : ICustomization
         "University of Melbourne"
     ];
 
-    private readonly Faker _faker = new();
-
     public void Customize(IFixture fixture)
     {
         fixture.Customize<EducationEntity>(composer =>
@@ -43,13 +40,13 @@ public class EducationCustomization : ICustomization
                 .OmitAutoProperties());
     }
 
-    private void ApplyCommonProperties(dynamic item)
+    private static void ApplyCommonProperties(dynamic item)
     {
-        item.Degree = _faker.PickRandom(Degrees);
-        item.InstitutionName = _faker.PickRandom(Universities);
-        item.InstitutionLocation = _faker.Address.FullAddress();
-        item.StartDate = _faker.Date.Past(20, DateTime.Now.AddYears(-5));
-        item.EndDate = TestUtilities.OptionalValue(_faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)));
-        item.Description = _faker.Lorem.Sentences();
+        item.Degree = FixtureBuilder.Faker.PickRandom(Degrees);
+        item.InstitutionName = FixtureBuilder.Faker.PickRandom(Universities);
+        item.InstitutionLocation = FixtureBuilder.Faker.Address.FullAddress();
+        item.StartDate = FixtureBuilder.Faker.Date.Past(20, DateTime.Now.AddYears(-5));
+        item.EndDate = TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)));
+        item.Description = FixtureBuilder.Faker.Lorem.Sentences();
     }
 }

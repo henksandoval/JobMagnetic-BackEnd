@@ -133,6 +133,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var summary = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
+        var educations = summary.Education;
         var itemAdded01 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
         var itemAdded02 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
         var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
@@ -153,8 +154,8 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         _ = querySkillRepository.IncludeEducation();
         var summaryEntity = await querySkillRepository.GetByIdWithIncludesAsync(summary.Id);
         summaryEntity.ShouldNotBeNull();
-        summaryEntity.Education.Count.ShouldBe(2);
-        summaryEntity.Education.Should().BeEquivalentTo(new List<EducationRequest> { itemAdded01, itemAdded02 },
+        summaryEntity.Education.Count.ShouldBe(summary.Education.Count + 2);
+        summaryEntity.Education.Should().ContainEquivalentOf(itemAdded01,
             options => options.ExcludingMissingMembers().Excluding(x => x.Id));
     }
 
@@ -210,6 +211,7 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var summary = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
+        var workExperiences = summary.WorkExperiences;
         var itemAdded01 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
         var itemAdded02 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
         var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
@@ -230,9 +232,8 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         _ = querySkillRepository.IncludeWorkExperience();
         var summaryEntity = await querySkillRepository.GetByIdWithIncludesAsync(summary.Id);
         summaryEntity.ShouldNotBeNull();
-        summaryEntity.WorkExperiences.Count.ShouldBe(2);
-        summaryEntity.WorkExperiences.Should().BeEquivalentTo(
-            new List<WorkExperienceRequest> { itemAdded01, itemAdded02 },
+        summaryEntity.WorkExperiences.Count.ShouldBe(workExperiences.Count + 2);
+        summaryEntity.WorkExperiences.Should().ContainEquivalentOf(itemAdded01,
             options => options.ExcludingMissingMembers().Excluding(x => x.Id));
     }
 

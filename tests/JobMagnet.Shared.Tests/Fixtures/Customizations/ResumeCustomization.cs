@@ -15,18 +15,23 @@ public class ResumeCustomization : ICustomization
                 .Without(x => x.DeletedAt)
                 .Without(x => x.DeletedBy)
                 .Without(x => x.ContactInfo)
-                .Without(x => x.Profile)
+                .With(x => x.ProfileId, 0)
+                .With(x => x.Profile, fixture.Create<ProfileEntity>())
                 .With(x => x.Id, 0)
                 .With(x => x.IsDeleted, false)
-                .With(x => x.JobTitle, FixtureBuilder.Faker.Name.JobTitle())
-                .With(x => x.About, FixtureBuilder.Faker.Lorem.Paragraph())
-                .With(x => x.Address, FixtureBuilder.Faker.Address.FullAddress())
-                .With(x => x.Summary, FixtureBuilder.Faker.Lorem.Paragraph())
-                .With(x => x.Overview, FixtureBuilder.Faker.Lorem.Paragraph())
-                .With(x => x.Title, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.Prefix()))
-                .With(x => x.Suffix, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.Suffix()))
-                .With(x => x.Profile, fixture.Create<ProfileEntity>())
+                .Do(ApplyCommonProperties)
                 .OmitAutoProperties()
         );
+    }
+
+    private static void ApplyCommonProperties(dynamic item)
+    {
+        item.JobTitle = FixtureBuilder.Faker.Name.JobTitle();
+        item.About = FixtureBuilder.Faker.Lorem.Paragraph();
+        item.Address = FixtureBuilder.Faker.Address.FullAddress();
+        item.Summary = FixtureBuilder.Faker.Lorem.Paragraph();
+        item.Overview = FixtureBuilder.Faker.Lorem.Paragraph();
+        item.Title = TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.Prefix());
+        item.Suffix = TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.Suffix());
     }
 }
