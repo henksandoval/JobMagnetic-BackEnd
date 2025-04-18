@@ -14,6 +14,7 @@ public class ContactInfoCustomization : ICustomization
             .Without(x => x.DeletedAt)
             .Without(x => x.DeletedBy)
             .Without(x => x.Resume)
+            .With(x => x.ContactType, fixture.Create<ContactTypeEntity>())
             .Do(ApplyCommonProperties)
             .OmitAutoProperties());
     }
@@ -21,6 +22,5 @@ public class ContactInfoCustomization : ICustomization
     private static void ApplyCommonProperties(dynamic item)
     {
         item.Value = FixtureBuilder.Faker.Phone.PhoneNumber();
-        item.ContactType = FixtureBuilder.Faker.PickRandom<ContactTypeEntity>();
     }
 }
