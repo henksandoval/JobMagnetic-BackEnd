@@ -25,14 +25,12 @@ public class PortfolioGalleryItemCustomization : ICustomization
 
     private static void ApplyCommonProperties(dynamic item)
     {
-        var faker = FixtureBuilder.Faker;
-
-        item.Title = faker.Company.CompanyName();
-        item.Description = faker.Lorem.Sentence();
-        item.UrlLink = faker.Image.PicsumUrl();
-        item.UrlImage = faker.Image.PicsumUrl();
-        item.UrlVideo = faker.Image.PicsumUrl();
-        item.Type = faker.Address.CountryCode();
+        item.Title = FixtureBuilder.Faker.Company.CompanyName();
+        item.Description = FixtureBuilder.Faker.Lorem.Sentence();
+        item.UrlLink = FixtureBuilder.Faker.Image.PicsumUrl();
+        item.UrlImage = FixtureBuilder.Faker.Image.PicsumUrl();
+        item.UrlVideo = FixtureBuilder.Faker.Image.PicsumUrl();
+        item.Type = FixtureBuilder.Faker.Address.CountryCode();
         item.Position = _autoIncrementId++;
     }
 }

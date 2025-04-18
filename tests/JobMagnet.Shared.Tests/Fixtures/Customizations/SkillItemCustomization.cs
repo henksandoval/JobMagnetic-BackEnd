@@ -7,8 +7,6 @@ namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class SkillItemCustomization : ICustomization
 {
-    private readonly Faker _faker = new();
-
     public void Customize(IFixture fixture)
     {
         fixture.Customize<SkillItemEntity>(composer =>
@@ -23,12 +21,12 @@ public class SkillItemCustomization : ICustomization
                 .OmitAutoProperties());
     }
 
-    private void ApplyCommonProperties(dynamic item)
+    private static void ApplyCommonProperties(dynamic item)
     {
-        item.Name = _faker.Company.CompanyName();
-        item.ProficiencyLevel = _faker.Random.Int(1, 10);
-        item.Category = _faker.Music.Genre();
-        item.Rank = _faker.Random.Int(1, 10);
-        item.IconUrl = _faker.Image.PicsumUrl();
+        item.Name = FixtureBuilder.Faker.Company.CompanyName();
+        item.ProficiencyLevel = FixtureBuilder.Faker.Random.Int(1, 10);
+        item.Category = FixtureBuilder.Faker.Music.Genre();
+        item.Rank = FixtureBuilder.Faker.Random.Int(1, 10);
+        item.IconUrl = FixtureBuilder.Faker.Image.PicsumUrl();
     }
 }

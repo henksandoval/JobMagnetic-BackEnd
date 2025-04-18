@@ -42,13 +42,11 @@ public class EducationCustomization : ICustomization
 
     private static void ApplyCommonProperties(dynamic item)
     {
-        var faker = FixtureBuilder.Faker;
-
-        item.Degree = faker.PickRandom(Degrees);
-        item.InstitutionName = faker.PickRandom(Universities);
-        item.InstitutionLocation = faker.Address.FullAddress();
-        item.StartDate = faker.Date.Past(20, DateTime.Now.AddYears(-5));
-        item.EndDate = TestUtilities.OptionalValue(faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)));
-        item.Description = faker.Lorem.Sentences();
+        item.Degree = FixtureBuilder.Faker.PickRandom(Degrees);
+        item.InstitutionName = FixtureBuilder.Faker.PickRandom(Universities);
+        item.InstitutionLocation = FixtureBuilder.Faker.Address.FullAddress();
+        item.StartDate = FixtureBuilder.Faker.Date.Past(20, DateTime.Now.AddYears(-5));
+        item.EndDate = TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)));
+        item.Description = FixtureBuilder.Faker.Lorem.Sentences();
     }
 }

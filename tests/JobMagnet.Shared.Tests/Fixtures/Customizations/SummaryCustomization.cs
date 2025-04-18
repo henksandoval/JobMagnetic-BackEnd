@@ -10,17 +10,19 @@ public class SummaryCustomization : ICustomization
         fixture.Customize<SummaryEntity>(composer =>
             composer
                 .With(x => x.Id, 0)
+                .With(x => x.ProfileId, 0)
                 .With(x => x.IsDeleted, false)
-                .Do(ApplyCommonProperties)
-                .Without(x => x.Education)
-                .Without(x => x.WorkExperiences)
                 .Without(x => x.DeletedAt)
                 .Without(x => x.DeletedBy)
+                .Do(ApplyCommonProperties)
+                .OmitAutoProperties()
         );
     }
 
     private static void ApplyCommonProperties(dynamic item)
     {
         item.Introduction = FixtureBuilder.Faker.Lorem.Paragraph();
+        item.Education = FixtureBuilder.Build().CreateMany<EducationEntity>().ToList();
+        item.WorkExperiences = FixtureBuilder.Build().CreateMany<WorkExperienceEntity>().ToList();
     }
 }

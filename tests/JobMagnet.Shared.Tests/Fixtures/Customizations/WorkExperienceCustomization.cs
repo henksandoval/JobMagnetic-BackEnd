@@ -49,8 +49,6 @@ public class WorkExperienceCustomization : ICustomization
         "Designed and implemented scalable cloud-based solutions for enterprise clients."
     ];
 
-    private readonly Faker _faker = new();
-
     public void Customize(IFixture fixture)
     {
         fixture.Customize<WorkExperienceEntity>(composer =>
@@ -60,13 +58,13 @@ public class WorkExperienceCustomization : ICustomization
                 .OmitAutoProperties());
     }
 
-    private void ApplyCommonProperties(dynamic item)
+    private static void ApplyCommonProperties(dynamic item)
     {
-        item.JobTitle = _faker.PickRandom(JobTitle);
-        item.CompanyName = _faker.PickRandom(CompanyName);
-        item.CompanyLocation = _faker.Address.FullAddress();
-        item.StartDate = _faker.Date.Past(20, DateTime.Now.AddYears(-5));
-        item.EndDate = TestUtilities.OptionalValue(_faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)));
-        item.Description = _faker.PickRandom(Description);
+        item.JobTitle = FixtureBuilder.Faker.PickRandom(JobTitle);
+        item.CompanyName = FixtureBuilder.Faker.PickRandom(CompanyName);
+        item.CompanyLocation = FixtureBuilder.Faker.Address.FullAddress();
+        item.StartDate = FixtureBuilder.Faker.Date.Past(20, DateTime.Now.AddYears(-5));
+        item.EndDate = TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)));
+        item.Description = FixtureBuilder.Faker.PickRandom(Description);
     }
 }
