@@ -39,7 +39,8 @@ internal static class ProfileMapper
     }
 
     private static string GetFullName(ProfileEntity entity) =>
-        string.Join(" ", entity.FirstName, entity.MiddleName, entity.LastName, entity.SecondLastName);
+        string.Join(" ", new[] { entity.FirstName, entity.MiddleName, entity.LastName, entity.SecondLastName }
+            .Where(x => !string.IsNullOrWhiteSpace(x)));
 
     private static string GetContactValue(ProfileEntity entity, string contactTypeName) =>
         entity.Resume.ContactInfo
