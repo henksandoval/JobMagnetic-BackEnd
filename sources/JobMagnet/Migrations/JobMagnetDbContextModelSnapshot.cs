@@ -528,7 +528,8 @@ namespace JobMagnet.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProfileId");
+                    b.HasIndex("ProfileId")
+                        .IsUnique();
 
                     b.ToTable("Skills", (string)null);
                 });
@@ -874,8 +875,8 @@ namespace JobMagnet.Migrations
             modelBuilder.Entity("JobMagnet.Infrastructure.Entities.SkillEntity", b =>
                 {
                     b.HasOne("JobMagnet.Infrastructure.Entities.ProfileEntity", "Profile")
-                        .WithMany("Skills")
-                        .HasForeignKey("ProfileId")
+                        .WithOne("Skill")
+                        .HasForeignKey("JobMagnet.Infrastructure.Entities.SkillEntity", "ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -956,7 +957,8 @@ namespace JobMagnet.Migrations
 
                     b.Navigation("Services");
 
-                    b.Navigation("Skills");
+                    b.Navigation("Skill")
+                        .IsRequired();
 
                     b.Navigation("Summaries");
 

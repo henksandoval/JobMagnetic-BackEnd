@@ -6,11 +6,33 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace JobMagnet.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDB : Migration
+    public partial class AddInitial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "ContactTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IconClass = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IconUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContactTypes", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Profiles",
                 columns: table => new
@@ -74,6 +96,7 @@ namespace JobMagnet.Migrations
                     Overview = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Suffix = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProfileId = table.Column<long>(type: "bigint", nullable: false),
                     AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -176,6 +199,33 @@ namespace JobMagnet.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Talents",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProfileId = table.Column<long>(type: "bigint", nullable: false),
+                    AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Talents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Talents_Profiles_ProfileId",
+                        column: x => x.ProfileId,
+                        principalTable: "Profiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Testimonials",
                 columns: table => new
                 {
@@ -231,6 +281,40 @@ namespace JobMagnet.Migrations
                         name: "FK_PorfolioGalleryItems_Porfolios_PorfolioId",
                         column: x => x.PorfolioId,
                         principalTable: "Porfolios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ContactInfo",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ContactTypeId = table.Column<int>(type: "int", nullable: false),
+                    ResumeId = table.Column<long>(type: "bigint", nullable: false),
+                    AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContactInfo", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContactInfo_ContactTypes_ContactTypeId",
+                        column: x => x.ContactTypeId,
+                        principalTable: "ContactTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ContactInfo_Resumes_ResumeId",
+                        column: x => x.ResumeId,
+                        principalTable: "Resumes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -359,6 +443,16 @@ namespace JobMagnet.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ContactInfo_ContactTypeId",
+                table: "ContactInfo",
+                column: "ContactTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContactInfo_ResumeId",
+                table: "ContactInfo",
+                column: "ResumeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Educations_SummaryId",
                 table: "Educations",
                 column: "SummaryId");
@@ -376,7 +470,8 @@ namespace JobMagnet.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Resumes_ProfileId",
                 table: "Resumes",
-                column: "ProfileId");
+                column: "ProfileId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ServiceGalleryItems_ServiceId",
@@ -396,11 +491,17 @@ namespace JobMagnet.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Skills_ProfileId",
                 table: "Skills",
-                column: "ProfileId");
+                column: "ProfileId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Summaries_ProfileId",
                 table: "Summaries",
+                column: "ProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Talents_ProfileId",
+                table: "Talents",
                 column: "ProfileId");
 
             migrationBuilder.CreateIndex(
@@ -418,13 +519,13 @@ namespace JobMagnet.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ContactInfo");
+
+            migrationBuilder.DropTable(
                 name: "Educations");
 
             migrationBuilder.DropTable(
                 name: "PorfolioGalleryItems");
-
-            migrationBuilder.DropTable(
-                name: "Resumes");
 
             migrationBuilder.DropTable(
                 name: "ServiceGalleryItems");
@@ -433,10 +534,19 @@ namespace JobMagnet.Migrations
                 name: "SkillItems");
 
             migrationBuilder.DropTable(
+                name: "Talents");
+
+            migrationBuilder.DropTable(
                 name: "Testimonials");
 
             migrationBuilder.DropTable(
                 name: "WorkExperiences");
+
+            migrationBuilder.DropTable(
+                name: "ContactTypes");
+
+            migrationBuilder.DropTable(
+                name: "Resumes");
 
             migrationBuilder.DropTable(
                 name: "Porfolios");

@@ -50,6 +50,15 @@ internal static class ProfileMapper
                         t.Feedback))
                     .ToArray(),
                 src => src.Testimonials.Any()
+            )
+            .Map(dest => dest.SkillSet, src => new SkillSetViewModel(
+                    src.Skill.Overview ?? string.Empty,
+                    src.Skill.SkillDetails.Select(detail => new SkillDetailsViewModel(
+                            detail.Name,
+                            detail.IconUrl,
+                            detail.Rank))
+                        .ToArray()),
+                src => src.Skill != null && src.Skill.SkillDetails.Count != 0
             );
     }
 

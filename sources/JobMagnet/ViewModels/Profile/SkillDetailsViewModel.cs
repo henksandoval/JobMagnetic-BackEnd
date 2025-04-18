@@ -3,5 +3,5 @@
 public record SkillDetailsViewModel(
     string Name,
     string IconUrl,
-    string Rank
+    ushort Rank
 );

@@ -78,6 +78,26 @@ public class ProfileMapperTests
         result.Testimonials!.ShouldBeEquivalentTo(profileExpected.Testimonials);
     }
 
+    [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when Skills are defined")]
+    public void ShouldMapperProfileEntityToProfileViewModelWithSkills()
+    {
+        var profileBuilder = new ProfileEntityBuilder(_fixture)
+            .WithSkills();
+
+        var profile = profileBuilder.Build();
+
+        var profileExpected = new ProfileViewModel();
+
+        profileExpected = profileExpected with { SkillSet = GetSkillViewModel(profile) };
+
+        var result = ProfileMapper.ToModel(profile);
+
+        result.ShouldNotBeNull();
+        result.ShouldBeOfType<ProfileViewModel>();
+
+        result.SkillSet!.ShouldBeEquivalentTo(profileExpected.SkillSet);
+    }
+
     private static PersonalDataViewModel GetPersonalDataViewModel(ProfileEntity entity)
     {
         return new PersonalDataViewModel(
@@ -128,5 +148,14 @@ public class ProfileMapperTests
                 t.PhotoUrl,
                 t.Feedback))
             .ToArray();
+    }
+
+    private static SkillSetViewModel GetSkillViewModel(ProfileEntity profile)
+    {
+        var skills = profile.Skill.SkillDetails
+            .Select(skill => new SkillDetailsViewModel(skill.Name, skill.IconUrl, skill.Rank))
+            .ToArray();
+
+        return new SkillSetViewModel(profile.Skill.Overview!, skills);
     }
 }

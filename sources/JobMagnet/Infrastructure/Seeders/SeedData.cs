@@ -182,6 +182,7 @@ public static class SeedData
     {
         await using var context = serviceProvider.GetRequiredService<JobMagnetDbContext>();
 
+        await context.Database.EnsureCreatedAsync();
         await context.Database.MigrateAsync();
 
         await RegisterMasterTablesAsync(context);
@@ -192,7 +193,8 @@ public static class SeedData
         {
             RegisterTalentsAsync(context, profile.Id),
             RegisterResumeAsync(context, profile.Id),
-            RegisterTestimonialAsync(context, profile.Id)
+            RegisterTestimonialAsync(context, profile.Id),
+            RegisterSkillAsync(context, profile.Id)
         };
 
         await Task.WhenAll(tasks);
@@ -301,6 +303,199 @@ public static class SeedData
         await context.Resumes.AddAsync(resumeEntity);
     }
 
+    private static async Task RegisterSkillAsync(JobMagnetDbContext context, long profileId)
+    {
+        if (context.Skills.Any()) return;
+
+        var skillItemEntities = new List<SkillItemEntity>
+        {
+            new()
+            {
+                Id = 0,
+                Name = "HTML",
+                IconUrl = "https://cdn.simpleicons.org/html5",
+                ProficiencyLevel = 6,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 8,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "CSS",
+                IconUrl = "https://cdn.simpleicons.org/css3",
+                ProficiencyLevel = 6,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 9,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "JavaScript",
+                IconUrl = "https://cdn.simpleicons.org/javascript",
+                ProficiencyLevel = 7,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 2,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "C#",
+                IconUrl = "https://cdn.simpleicons.org/dotnet",
+                ProficiencyLevel = 9,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 1,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "TS",
+                IconUrl = "https://cdn.simpleicons.org/typescript",
+                ProficiencyLevel = 7,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 3,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Angular",
+                IconUrl = "https://cdn.simpleicons.org/angular",
+                ProficiencyLevel = 7,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 4,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "PostgreSQL",
+                IconUrl = "https://cdn.simpleicons.org/postgresql",
+                ProficiencyLevel = 6,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 6,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "React",
+                IconUrl = "https://cdn.simpleicons.org/react",
+                ProficiencyLevel = 7,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 7,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Bootstrap",
+                IconUrl = "https://cdn.simpleicons.org/bootstrap",
+                ProficiencyLevel = 5,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 10,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Vue",
+                IconUrl = "https://cdn.simpleicons.org/vuedotjs",
+                ProficiencyLevel = 5,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 11,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Git",
+                IconUrl = "https://cdn.simpleicons.org/git",
+                ProficiencyLevel = 8,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 12,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Blazor",
+                IconUrl = "https://cdn.simpleicons.org/blazor",
+                ProficiencyLevel = 7,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 13,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Rabbit MQ",
+                IconUrl = "https://cdn.simpleicons.org/rabbitmq",
+                ProficiencyLevel = 6,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 14,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Docker",
+                IconUrl = "https://cdn.simpleicons.org/docker",
+                ProficiencyLevel = 8,
+                Category = "Software Development",
+                SkillId = 0,
+                Rank = 15,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            }
+        };
+
+        var skillEntity = new SkillEntity()
+        {
+            Id = 0,
+            ProfileId = profileId,
+            Overview = """
+                       I am a passionate web developer with a strong background in front-end and back-end technologies.
+                       I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
+                       I am always eager to learn new technologies and improve my skills.
+                       """,
+            SkillDetails = skillItemEntities,
+            AddedAt = DateTime.Now,
+            AddedBy = Guid.Empty
+        };
+
+        await context.Skills.AddAsync(skillEntity);
+    }
+
     private static void FillContactInfo(ResumeEntity resumeEntity)
     {
         resumeEntity.ContactInfo = new List<ContactInfoEntity>
@@ -401,7 +596,8 @@ public static class SeedData
                 Name = "Jane Smith",
                 JobTitle = "Project Manager",
                 PhotoUrl = "https://randomuser.me/api/portraits/women/28.jpg",
-                Feedback = "Brandon is a talented developer who consistently delivers high-quality work. His ability to understand client needs and translate them into functional designs is impressive.",
+                Feedback =
+                    "Brandon is a talented developer who consistently delivers high-quality work. His ability to understand client needs and translate them into functional designs is impressive.",
                 ProfileId = profileId,
                 AddedAt = DateTime.Now,
                 AddedBy = Guid.Empty
@@ -412,7 +608,8 @@ public static class SeedData
                 Name = "Alice Johnson",
                 JobTitle = "Software Engineer",
                 PhotoUrl = "https://randomuser.me/api/portraits/women/82.jpg",
-                Feedback = "Working with Brandon has been a pleasure. He is always willing to go the extra mile to ensure the project is a success. His technical skills and creativity are top-notch.",
+                Feedback =
+                    "Working with Brandon has been a pleasure. He is always willing to go the extra mile to ensure the project is a success. His technical skills and creativity are top-notch.",
                 ProfileId = profileId,
                 AddedAt = DateTime.Now,
                 AddedBy = Guid.Empty
@@ -434,8 +631,8 @@ public static class SeedData
                 Name = "Michael Brown",
                 JobTitle = "CTO",
                 PhotoUrl = "https://randomuser.me/api/portraits/men/82.jpg",
-                Feedback = "The team consistently delivered beyond expectations and maintained excellent communication."
-                ,
+                Feedback =
+                    "The team consistently delivered beyond expectations and maintained excellent communication.",
                 ProfileId = profileId,
                 AddedAt = DateTime.Now,
                 AddedBy = Guid.Empty
@@ -446,7 +643,8 @@ public static class SeedData
                 Name = "Emily Davis",
                 JobTitle = "Product Owner",
                 PhotoUrl = "https://randomuser.me/api/portraits/women/11.jpg",
-                Feedback = "Their innovative solutions and commitment to quality have been pivotal in our project’s success, making them an invaluable partner in our journey.",
+                Feedback =
+                    "Their innovative solutions and commitment to quality have been pivotal in our project’s success, making them an invaluable partner in our journey.",
                 ProfileId = profileId,
                 AddedAt = DateTime.Now,
                 AddedBy = Guid.Empty
