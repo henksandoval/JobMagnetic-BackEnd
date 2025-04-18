@@ -190,7 +190,8 @@ public static class SeedData
         {
             RegisterTalentsAsync(context, profile.Id),
             RegisterResumeAsync(context, profile.Id),
-            RegisterTestimonioAsync(context, profile.Id)
+            RegisterTestimonioAsync(context, profile.Id),
+            RegisterServiceAsync(context, profile.Id)
         };
 
         await Task.WhenAll(registerTasks);
@@ -386,7 +387,61 @@ public static class SeedData
             }
         };
     }
+    
+    private static async Task RegisterServiceAsync(JobMagnetDbContext context, long profileId)
+    {
+        if (context.Services.Any()) return;
+        
+        var serviceEntity = new ServiceEntity
+        {
+            Id = 0,
+            Overview = "I offer a wide range of web development services, including front-end and back-end development, UI/UX design, and more.",
+            ProfileId = profileId,
+            AddedAt = DateTime.Now,
+            AddedBy = Guid.Empty
+        };
+        
+        ServiceGalleryItem(serviceEntity);
 
+        await context.Services.AddAsync(serviceEntity);
+        
+    }
+
+    private static void ServiceGalleryItem(ServiceEntity serviceEntity)
+    {
+        serviceEntity.GalleryItems = new List<ServiceGalleryItemEntity>
+        {
+            new()
+            {
+                Id = 0,
+                Position = 1,
+                Title = "Web Development",
+                Description = "Building responsive and user-friendly websites.",
+                UrlLink = "https://example.com/web-development",
+                UrlImage = "https://cdn.pixabay.com/photo/2024/08/06/10/43/wine-8949009_1280.jpg",
+                UrlVideo = "https://example.com/video1.mp4",
+                Type = "image",
+                ServiceId = serviceEntity.Id,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Position = 2,
+                Title = "UI/UX Design",
+                Description = "Creating intuitive and engaging user interfaces.",
+                UrlLink = "https://example.com/ui-ux-design",
+                UrlImage = "https://cdn.pixabay.com/photo/2023/08/11/08/29/highland-cattle-8183107_1280.jpg",
+                UrlVideo = "https://example.com/video2.mp4",
+                Type = "video",
+                ServiceId = serviceEntity.Id,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            }
+        };
+    }
+    
     private static async Task RegisterTestimonioAsync(JobMagnetDbContext context, long profileId)
     {
         if (context.Testimonials.Any()) return;
