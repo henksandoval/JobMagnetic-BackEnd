@@ -28,7 +28,6 @@ public class ProfileController(
             return Results.NotFound();
 
         var responseModel = ProfileMapper.ToModel(entity);
-
         return Results.Ok(responseModel);
     }
 }
