@@ -27,40 +27,40 @@ public class AdminController(
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DestroyDatabase()
+    public async Task<IActionResult> DestroyDatabase(CancellationToken cancellationToken)
     {
-        await dbContext.Database.EnsureDeletedAsync();
+        await dbContext.Database.EnsureDeletedAsync(cancellationToken);
         return NoContent();
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateDatabase()
+    public async Task<IActionResult> CreateDatabase(CancellationToken cancellationToken)
     {
-        await dbContext.Database.EnsureCreatedAsync();
+        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
         return Ok();
     }
 
     [HttpPost("seedMasterTables")]
-    public async Task<IResult> SeedMasterTables()
+    public async Task<IResult> SeedMasterTables(CancellationToken cancellationToken)
     {
         if (dbContext.ContactTypes.Any())
         {
             throw new InvalidOperationException("Contact types are filled");
         }
 
-        await Seeder.RegisterMasterTablesAsync();
+        await Seeder.RegisterMasterTablesAsync(cancellationToken);
         return Results.Accepted();
     }
 
     [HttpPost("seedProfile")]
-    public async Task<IResult> SeedProfile()
+    public async Task<IResult> SeedProfile(CancellationToken cancellationToken)
     {
         if (!dbContext.ContactTypes.Any())
         {
             throw new InvalidOperationException("Contact types are not yet implemented");
         }
 
-        await Seeder.RegisterProfileAsync();
+        await Seeder.RegisterProfileAsync(cancellationToken);
         return Results.Accepted();
     }
 }

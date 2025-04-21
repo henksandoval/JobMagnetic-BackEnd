@@ -7,7 +7,7 @@ namespace JobMagnet.Infrastructure.Seeders
 {
     public class Seeder(JobMagnetDbContext context) : ISeeder
     {
-        public async Task RegisterMasterTablesAsync()
+        public async Task RegisterMasterTablesAsync(CancellationToken cancellationToken)
         {
             if (context.ContactTypes.Any()) return;
 
@@ -15,7 +15,7 @@ namespace JobMagnet.Infrastructure.Seeders
             await context.SaveChangesAsync();
         }
 
-        public async Task RegisterProfileAsync()
+        public async Task RegisterProfileAsync(CancellationToken cancellationToken)
         {
             var profile = await RegisterProfileDataAsync();
             await context.SaveChangesAsync();

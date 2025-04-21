@@ -2,6 +2,6 @@
 
 public interface ISeeder
 {
-    Task RegisterMasterTablesAsync();
-    Task RegisterProfileAsync();
+    Task RegisterMasterTablesAsync(CancellationToken cancellationToken);
+    Task RegisterProfileAsync(CancellationToken cancellationToken);
 }

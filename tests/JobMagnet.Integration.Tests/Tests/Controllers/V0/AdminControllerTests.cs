@@ -90,15 +90,16 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
     public async Task ShouldSeedData_WhenPostSeedProfileRequestIsReceivedIsAsync()
     {
         // Given
+        var cancellationToken = CancellationToken.None;
         await using var scope = testFixture.GetProvider().CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
         var seeder = scope.ServiceProvider.GetRequiredService<ISeeder>();
-        await dbContext.Database.EnsureCreatedAsync();
+        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
         await testFixture.ResetDatabaseAsync();
-        await seeder.RegisterMasterTablesAsync();
+        await seeder.RegisterMasterTablesAsync(cancellationToken);
 
         // When
-        var response = await _httpClient.PostAsync($"{RequestUriController}/seedProfile", null);
+        var response = await _httpClient.PostAsync($"{RequestUriController}/seedProfile", null, cancellationToken);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
