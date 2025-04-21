@@ -2,10 +2,12 @@
 using JobMagnet.Infrastructure.Context;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Infrastructure.Seeders;
+using JobMagnet.Infrastructure.Seeders.Collections;
 using JobMagnet.Integration.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit.Abstractions;
+using ServicesCollection = JobMagnet.Infrastructure.Seeders.Collections.ServiceCollection;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V0;
 
@@ -113,10 +115,11 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
             .GetFirstByExpressionWithIncludesAsync(x => x.Id == 1);
 
         profile.ShouldNotBeNull();
-        profile.Skill.SkillDetails.Count.ShouldBe(14);
-        profile.Talents.Count.ShouldBe(4);
+        profile.Skill.SkillDetails.Count.ShouldBe(new SkillsCollection().Skills.Count);
+        profile.Talents.Count.ShouldBe(new TalentsCollection().Talents.Count);
         profile.Services.Count.ShouldBe(1);
-        profile.Testimonials.Count.ShouldBe(10);
-        profile.PortfolioGallery.Count.ShouldBe(7);
+        profile.Services.First().GalleryItems.Count.ShouldBe(new ServicesCollection().ServicesGallery.Count);
+        profile.Testimonials.Count.ShouldBe(new TestimonialCollection().Testimonials.Count);
+        profile.PortfolioGallery.Count.ShouldBe(new PortfolioCollection().PortfolioGallery.Count);
     }
 }

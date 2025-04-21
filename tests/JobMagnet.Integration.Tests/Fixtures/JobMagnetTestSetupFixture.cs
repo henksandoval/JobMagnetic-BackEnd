@@ -2,6 +2,7 @@
 using JobMagnet.Infrastructure.Context;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Seeders;
+using JobMagnet.Infrastructure.Seeders.Collections;
 using JobMagnet.Integration.Tests.Factories;
 using JobMagnet.Integration.Tests.TestContainers;
 using Microsoft.Data.SqlClient;
@@ -102,15 +103,7 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
     {
         using var scope = _webApplicationFactory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
-        var contactTypes = Seeder.ContactTypes.Select(x => new ContactTypeEntity
-        {
-            Id = x.Id,
-            Name = x.Name,
-            IconClass = x.IconClass,
-            AddedAt = x.AddedAt,
-            AddedBy = x.AddedBy
-        }).ToList();
-        await dbContext.ContactTypes.AddRangeAsync(contactTypes);
+        await dbContext.ContactTypes.AddRangeAsync(new ContactTypesCollection().ContactTypes);
         await dbContext.SaveChangesAsync();
     }
 }
