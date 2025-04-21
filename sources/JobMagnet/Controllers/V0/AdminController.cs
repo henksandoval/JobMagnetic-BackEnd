@@ -1,11 +1,9 @@
 ﻿using System.Net.Mime;
 using Asp.Versioning;
 using JobMagnet.Controllers.Base;
-using JobMagnet.Extensions.ConfigSections;
 using JobMagnet.Infrastructure.Context;
 using JobMagnet.Infrastructure.Seeders;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace JobMagnet.Controllers.V0;
 
