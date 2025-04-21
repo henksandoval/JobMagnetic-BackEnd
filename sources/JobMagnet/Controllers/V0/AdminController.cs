@@ -1,4 +1,5 @@
-﻿using Asp.Versioning;
+﻿using System.Net.Mime;
+using Asp.Versioning;
 using JobMagnet.Controllers.Base;
 using JobMagnet.Extensions.ConfigSections;
 using JobMagnet.Infrastructure.Context;
@@ -17,10 +18,11 @@ public class AdminController(
 
     [HttpGet("ping")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [Produces(MediaTypeNames.Text.Plain)]
     public IResult Ping()
     {
         Logger.LogInformation(PongMessage);
-        return Results.Ok(PongMessage);
+        return Results.Text(PongMessage);
     }
 
     [HttpDelete]
