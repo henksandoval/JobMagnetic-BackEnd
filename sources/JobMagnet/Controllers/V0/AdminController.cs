@@ -13,7 +13,7 @@ namespace JobMagnet.Controllers.V0;
 public class AdminController(
     ILogger<AdminController> logger,
     JobMagnetDbContext dbContext,
-    ISeeder Seeder) : BaseController<AdminController>(logger)
+    ISeeder seeder) : BaseController<AdminController>(logger)
 {
     private const string PongMessage = "Pong";
 
@@ -48,7 +48,7 @@ public class AdminController(
             throw new InvalidOperationException("Contact types are filled");
         }
 
-        await Seeder.RegisterMasterTablesAsync(cancellationToken);
+        await seeder.RegisterMasterTablesAsync(cancellationToken);
         return Results.Accepted();
     }
 
@@ -60,7 +60,7 @@ public class AdminController(
             throw new InvalidOperationException("Contact types are not yet implemented");
         }
 
-        await Seeder.RegisterProfileAsync(cancellationToken);
+        await seeder.RegisterProfileAsync(cancellationToken);
         return Results.Accepted();
     }
 }
