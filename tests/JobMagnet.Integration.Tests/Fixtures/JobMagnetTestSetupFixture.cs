@@ -40,9 +40,10 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         await _webApplicationFactory.DisposeAsync();
     }
 
-    public void SetTestOutputHelper(ITestOutputHelper? testOutputHelper)
+    public ITestOutputHelper SetTestOutputHelper(ITestOutputHelper? testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
+        return _testOutputHelper!;
     }
 
     public async Task ResetDatabaseAsync()
