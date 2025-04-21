@@ -7,8 +7,8 @@ using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V0;
 
-public class AdminControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
-    : IClassFixture<JobMagnetTestSetupFixture>
+public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFixture, ITestOutputHelper testOutputHelper)
+    : IClassFixture<JobMagnetTestEmptyDatabaseSetupFixture>
 {
     private const string RequestUriController = "api/v0.1/admin";
     private readonly HttpClient _httpClient = testFixture.GetClient();
@@ -35,6 +35,7 @@ public class AdminControllerTests(JobMagnetTestSetupFixture testFixture, ITestOu
         // Given
         await using var scope = testFixture.GetProvider().CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
         var canConnect = await dbContext.Database.CanConnectAsync();
         _testOutputHelper.WriteLine("Database connection status: {0}", canConnect);
 
@@ -46,5 +47,21 @@ public class AdminControllerTests(JobMagnetTestSetupFixture testFixture, ITestOu
 
         canConnect = await dbContext.Database.CanConnectAsync();
         canConnect.ShouldBeFalse();
+    }
+
+    [Fact(DisplayName = "Should Create and return 200 when Post request is received")]
+    public async Task ShouldCreateDatabase_WhenPostRequestIsReceivedIsAsync()
+    {
+        // When
+        var response = await _httpClient.PostAsync($"{RequestUriController}", null);
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        await using var scope = testFixture.GetProvider().CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
+        var canConnect = await dbContext.Database.CanConnectAsync();
+        canConnect.ShouldBeTrue();
     }
 }
