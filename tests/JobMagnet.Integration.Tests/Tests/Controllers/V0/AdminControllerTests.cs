@@ -67,6 +67,23 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
         canConnect.ShouldBeTrue();
     }
 
+
+    [Fact(DisplayName = "Should return 200 when Post seedMasterTables request is received")]
+    public async Task ShouldSeedData_WhenPostSeedMasterTablesRequestIsReceivedIsAsync()
+    {
+        // Given
+        await using var scope = testFixture.GetProvider().CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
+
+        // When
+        var response = await _httpClient.PostAsync($"{RequestUriController}/seedMasterTables", null);
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+    }
+
     [Fact(DisplayName = "Should return 200 when Post seedProfile request is received")]
     public async Task ShouldSeedData_WhenPostSeedProfileRequestIsReceivedIsAsync()
     {
