@@ -11,14 +11,14 @@ namespace JobMagnet.Infrastructure.Seeders
         {
             if (context.ContactTypes.Any()) return;
 
-            await context.ContactTypes.AddRangeAsync(new ContactTypesCollection().ContactTypes);
-            await context.SaveChangesAsync();
+            await context.ContactTypes.AddRangeAsync(new ContactTypesCollection().ContactTypes, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task RegisterProfileAsync(CancellationToken cancellationToken)
         {
             var profile = await RegisterProfileDataAsync();
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
             var tasks = new List<Task>
             {
                 RegisterTalentsAsync(profile.Id),
@@ -30,7 +30,7 @@ namespace JobMagnet.Infrastructure.Seeders
             };
 
             await Task.WhenAll(tasks);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
         }
 
         private async Task<ProfileEntity> RegisterProfileDataAsync()

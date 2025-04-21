@@ -123,4 +123,29 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
         profile.Testimonials.Count.ShouldBe(new TestimonialCollection().Testimonials.Count);
         profile.PortfolioGallery.Count.ShouldBe(new PortfolioCollection().PortfolioGallery.Count);
     }
+
+    [Fact(DisplayName = "Should cancel SeedMasterTables operation after a delay")]
+    public async Task ShouldCancelSeedMasterTablesOperation_AfterDelayAsync()
+    {
+        // Given
+        await using var scope = testFixture.GetProvider().CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
+        await dbContext.Database.EnsureCreatedAsync(CancellationToken.None);
+        dbContext.ContactTypes.RemoveRange(dbContext.ContactTypes);
+        await dbContext.SaveChangesAsync(CancellationToken.None);
+
+        var cancellationTokenSource = new CancellationTokenSource();
+        var delayBeforeCancel = TimeSpan.FromMilliseconds(100);
+        cancellationTokenSource.CancelAfter(delayBeforeCancel);
+
+        // When
+        var task = _httpClient.PostAsync($"{RequestUriController}/seedMasterTables", null, cancellationTokenSource.Token);
+
+        // Then
+        var exception = await Should.ThrowAsync<TaskCanceledException>(() => task);
+
+        exception.CancellationToken.ShouldBe(cancellationTokenSource.Token);
+        exception.Task!.IsCanceled.ShouldBeTrue();
+        exception.Message.ShouldBe("A task was canceled.");
+    }
 }
