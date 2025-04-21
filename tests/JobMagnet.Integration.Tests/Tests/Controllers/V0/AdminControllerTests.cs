@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using JobMagnet.Infrastructure.Context;
+using JobMagnet.Infrastructure.Repositories.Interfaces;
+using JobMagnet.Infrastructure.Seeders;
 using JobMagnet.Integration.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -63,5 +65,41 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
         var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
         var canConnect = await dbContext.Database.CanConnectAsync();
         canConnect.ShouldBeTrue();
+    }
+
+    [Fact(DisplayName = "Should return 200 when Post seedProfile request is received")]
+    public async Task ShouldSeedData_WhenPostSeedProfileRequestIsReceivedIsAsync()
+    {
+        // Given
+        await using var scope = testFixture.GetProvider().CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
+        var seeder = scope.ServiceProvider.GetRequiredService<ISeeder>();
+        await dbContext.Database.EnsureCreatedAsync();
+        await testFixture.ResetDatabaseAsync();
+        await seeder.RegisterMasterTablesAsync();
+
+        // When
+        var response = await _httpClient.PostAsync($"{RequestUriController}/seedProfile", null);
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+
+        var profileQueryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
+        var profile = await profileQueryRepository
+            .IncludeResume()
+            .IncludeTalents()
+            .IncludeService()
+            .IncludeTestimonials()
+            .IncludeSkill()
+            .IncludePortfolioGallery()
+            .GetFirstByExpressionWithIncludesAsync(x => x.Id == 1);
+
+        profile.ShouldNotBeNull();
+        profile.Skill.SkillDetails.Count.ShouldBe(14);
+        profile.Talents.Count.ShouldBe(4);
+        profile.Services.Count.ShouldBe(1);
+        profile.Testimonials.Count.ShouldBe(10);
+        profile.PortfolioGallery.Count.ShouldBe(7);
     }
 }

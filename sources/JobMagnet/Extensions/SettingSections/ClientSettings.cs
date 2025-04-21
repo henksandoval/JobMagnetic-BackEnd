@@ -1,7 +1,6 @@
-﻿namespace JobMagnet.Extensions.ConfigSections;
+﻿namespace JobMagnet.Extensions.SettingSections;
 
 public class ClientSettings
 {
     public string Url { get; set; }
-    public bool SeedData { get; set; } = false;
 }

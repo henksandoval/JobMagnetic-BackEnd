@@ -1,10 +1,9 @@
 ﻿using JobMagnet.Infrastructure.Context;
 using JobMagnet.Infrastructure.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace JobMagnet.Infrastructure.Seeders;
 
-public static class SeedData
+public class Seeder(JobMagnetDbContext context) : ISeeder
 {
     public static readonly List<ContactTypeEntity> ContactTypes =
     [
@@ -178,26 +177,28 @@ public static class SeedData
         }
     ];
 
-    public static async Task InitializeAsync(IServiceProvider serviceProvider)
+    public async Task RegisterMasterTablesAsync()
     {
-        await using var context = serviceProvider.GetRequiredService<JobMagnetDbContext>();
+        if (context.ContactTypes.Any()) return;
 
-        await context.Database.EnsureCreatedAsync();
-        await context.Database.MigrateAsync();
+        await context.ContactTypes.AddRangeAsync(ContactTypes);
+        await context.SaveChangesAsync();
+    }
 
-        await RegisterMasterTablesAsync(context);
-        var profile = await RegisterProfileDataAsync(context);
+    public async Task RegisterProfileAsync()
+    {
+        var profile = await RegisterProfileDataAsync();
         await context.SaveChangesAsync();
 
         var tasks = new List<Task>
         {
-            RegisterTalentsAsync(context, profile.Id),
-            RegisterResumeAsync(context, profile.Id),
-            RegisterTestimonialAsync(context, profile.Id),
-            RegisterServiceAsync(context, profile.Id),
-            RegisterTestimonialAsync(context, profile.Id),
-            RegisterSkillAsync(context, profile.Id),
-            RegisterPortfolioAsync(context, profile.Id)
+            RegisterTalentsAsync(profile.Id),
+            RegisterResumeAsync(profile.Id),
+            RegisterTestimonialAsync(profile.Id),
+            RegisterServiceAsync(profile.Id),
+            RegisterTestimonialAsync(profile.Id),
+            RegisterSkillAsync(profile.Id),
+            RegisterPortfolioAsync(profile.Id)
         };
 
         await Task.WhenAll(tasks);
@@ -205,14 +206,7 @@ public static class SeedData
         await context.SaveChangesAsync();
     }
 
-    private static async Task RegisterMasterTablesAsync(JobMagnetDbContext context)
-    {
-        if (context.ContactTypes.Any()) return;
-
-        await context.ContactTypes.AddRangeAsync(ContactTypes);
-    }
-
-    private static async Task<ProfileEntity> RegisterProfileDataAsync(JobMagnetDbContext context)
+    private async Task<ProfileEntity> RegisterProfileDataAsync()
     {
         if (context.Profiles.Any()) return context.Profiles.FirstOrDefault()!;
 
@@ -231,7 +225,7 @@ public static class SeedData
         return profileEntity;
     }
 
-    private static async Task RegisterTalentsAsync(JobMagnetDbContext context, long profileId)
+    private async Task RegisterTalentsAsync(long profileId)
     {
         if (context.Talents.Any()) return;
 
@@ -274,7 +268,7 @@ public static class SeedData
         await context.Talents.AddRangeAsync(talents);
     }
 
-    private static async Task RegisterResumeAsync(JobMagnetDbContext context, long profileId)
+    private async Task RegisterResumeAsync(long profileId)
     {
         if (context.Resumes.Any()) return;
 
@@ -306,7 +300,7 @@ public static class SeedData
         await context.Resumes.AddAsync(resumeEntity);
     }
 
-    private static async Task RegisterSkillAsync(JobMagnetDbContext context, long profileId)
+    private async Task RegisterSkillAsync(long profileId)
     {
         if (context.Skills.Any()) return;
 
@@ -499,7 +493,26 @@ public static class SeedData
         await context.Skills.AddAsync(skillEntity);
     }
 
-    private static async Task RegisterPortfolioAsync(JobMagnetDbContext context, long profileId)
+    private async Task RegisterServiceAsync(long profileId)
+    {
+        if (context.Services.Any()) return;
+
+        var serviceEntity = new ServiceEntity
+        {
+            Id = 0,
+            Overview = "I offer a wide range of web development services, including front-end and back-end development, UI/UX design, and more.",
+            ProfileId = profileId,
+            AddedAt = DateTime.Now,
+            AddedBy = Guid.Empty
+        };
+
+        ServiceGalleryItem(serviceEntity);
+
+        await context.Services.AddAsync(serviceEntity);
+
+    }
+
+    private async Task RegisterPortfolioAsync(long profileId)
     {
         if (context.PortfolioGalleries.Any()) return;
 
@@ -612,6 +625,75 @@ public static class SeedData
         await context.PortfolioGalleries.AddRangeAsync(portfolioEntities);
     }
 
+    private async Task RegisterTestimonialAsync(long profileId)
+    {
+        if (context.Testimonials.Any()) return;
+
+        var testimonialEntities = new TestimonialEntity[]
+        {
+            new()
+            {
+                Id = 0,
+                Name = "Jane Smith",
+                JobTitle = "Project Manager",
+                PhotoUrl = "https://randomuser.me/api/portraits/women/28.jpg",
+                Feedback =
+                    "Brandon is a talented developer who consistently delivers high-quality work. His ability to understand client needs and translate them into functional designs is impressive.",
+                ProfileId = profileId,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Alice Johnson",
+                JobTitle = "Software Engineer",
+                PhotoUrl = "https://randomuser.me/api/portraits/women/82.jpg",
+                Feedback =
+                    "Working with Brandon has been a pleasure. He is always willing to go the extra mile to ensure the project is a success. His technical skills and creativity are top-notch.",
+                ProfileId = profileId,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "John Smith",
+                JobTitle = "UX Designer",
+                PhotoUrl = "https://randomuser.me/api/portraits/men/31.jpg",
+                Feedback = "The project was delivered on time and exceeded our expectations. Highly recommend!",
+                ProfileId = profileId,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Michael Brown",
+                JobTitle = "CTO",
+                PhotoUrl = "https://randomuser.me/api/portraits/men/82.jpg",
+                Feedback =
+                    "The team consistently delivered beyond expectations and maintained excellent communication.",
+                ProfileId = profileId,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+            new()
+            {
+                Id = 0,
+                Name = "Emily Davis",
+                JobTitle = "Product Owner",
+                PhotoUrl = "https://randomuser.me/api/portraits/women/11.jpg",
+                Feedback =
+                    "Their innovative solutions and commitment to quality have been pivotal in our project’s success, making them an invaluable partner in our journey.",
+                ProfileId = profileId,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            },
+        };
+        await context.Testimonials.AddRangeAsync(testimonialEntities);
+    }
+
     private static void FillContactInfo(ResumeEntity resumeEntity)
     {
         resumeEntity.ContactInfo = new List<ContactInfoEntity>
@@ -699,27 +781,8 @@ public static class SeedData
             }
         };
     }
-    
-     private static async Task RegisterServiceAsync(JobMagnetDbContext context, long profileId)
-     {
-         if (context.Services.Any()) return;
-         
-         var serviceEntity = new ServiceEntity
-         {
-             Id = 0,
-             Overview = "I offer a wide range of web development services, including front-end and back-end development, UI/UX design, and more.",
-             ProfileId = profileId,
-             AddedAt = DateTime.Now,
-             AddedBy = Guid.Empty
-         };
-         
-         ServiceGalleryItem(serviceEntity);
- 
-         await context.Services.AddAsync(serviceEntity);
-         
-     }
- 
-     private static void ServiceGalleryItem(ServiceEntity serviceEntity)
+
+    private static void ServiceGalleryItem(ServiceEntity serviceEntity)
      {
          serviceEntity.GalleryItems = new List<ServiceGalleryItemEntity>
          {
@@ -781,73 +844,4 @@ public static class SeedData
              }
          };
      }
-
-    private static async Task RegisterTestimonialAsync(JobMagnetDbContext context, long profileId)
-    {
-        if (context.Testimonials.Any()) return;
-
-        var testimonialEntities = new TestimonialEntity[]
-        {
-            new()
-            {
-                Id = 0,
-                Name = "Jane Smith",
-                JobTitle = "Project Manager",
-                PhotoUrl = "https://randomuser.me/api/portraits/women/28.jpg",
-                Feedback =
-                    "Brandon is a talented developer who consistently delivers high-quality work. His ability to understand client needs and translate them into functional designs is impressive.",
-                ProfileId = profileId,
-                AddedAt = DateTime.Now,
-                AddedBy = Guid.Empty
-            },
-            new()
-            {
-                Id = 0,
-                Name = "Alice Johnson",
-                JobTitle = "Software Engineer",
-                PhotoUrl = "https://randomuser.me/api/portraits/women/82.jpg",
-                Feedback =
-                    "Working with Brandon has been a pleasure. He is always willing to go the extra mile to ensure the project is a success. His technical skills and creativity are top-notch.",
-                ProfileId = profileId,
-                AddedAt = DateTime.Now,
-                AddedBy = Guid.Empty
-            },
-            new()
-            {
-                Id = 0,
-                Name = "John Smith",
-                JobTitle = "UX Designer",
-                PhotoUrl = "https://randomuser.me/api/portraits/men/31.jpg",
-                Feedback = "The project was delivered on time and exceeded our expectations. Highly recommend!",
-                ProfileId = profileId,
-                AddedAt = DateTime.Now,
-                AddedBy = Guid.Empty
-            },
-            new()
-            {
-                Id = 0,
-                Name = "Michael Brown",
-                JobTitle = "CTO",
-                PhotoUrl = "https://randomuser.me/api/portraits/men/82.jpg",
-                Feedback =
-                    "The team consistently delivered beyond expectations and maintained excellent communication.",
-                ProfileId = profileId,
-                AddedAt = DateTime.Now,
-                AddedBy = Guid.Empty
-            },
-            new()
-            {
-                Id = 0,
-                Name = "Emily Davis",
-                JobTitle = "Product Owner",
-                PhotoUrl = "https://randomuser.me/api/portraits/women/11.jpg",
-                Feedback =
-                    "Their innovative solutions and commitment to quality have been pivotal in our project’s success, making them an invaluable partner in our journey.",
-                ProfileId = profileId,
-                AddedAt = DateTime.Now,
-                AddedBy = Guid.Empty
-            },
-        };
-        await context.Testimonials.AddRangeAsync(testimonialEntities);
-    }
 }

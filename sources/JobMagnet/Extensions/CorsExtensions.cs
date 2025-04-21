@@ -1,4 +1,4 @@
-﻿using JobMagnet.Extensions.ConfigSections;
+﻿using JobMagnet.Extensions.SettingSections;
 
 namespace JobMagnet.Extensions;
 

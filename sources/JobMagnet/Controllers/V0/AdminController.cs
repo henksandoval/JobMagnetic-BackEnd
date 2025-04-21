@@ -3,6 +3,7 @@ using Asp.Versioning;
 using JobMagnet.Controllers.Base;
 using JobMagnet.Extensions.ConfigSections;
 using JobMagnet.Infrastructure.Context;
+using JobMagnet.Infrastructure.Seeders;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -12,7 +13,7 @@ namespace JobMagnet.Controllers.V0;
 public class AdminController(
     ILogger<AdminController> logger,
     JobMagnetDbContext dbContext,
-    IOptions<ClientSettings> options) : BaseController<AdminController>(logger)
+    ISeeder Seeder) : BaseController<AdminController>(logger)
 {
     private const string PongMessage = "Pong";
 
@@ -39,20 +40,27 @@ public class AdminController(
         return Ok();
     }
 
-    [HttpPost("seed")]
-    public async Task<IActionResult> SeedData()
+    [HttpPost("seedMasterTables")]
+    public async Task<IResult> SeedMasterTables()
     {
-        var clientSettings = options.Value;
-        if (!clientSettings.SeedData)
+        if (dbContext.ContactTypes.Any())
         {
-            const string message = "Seeding data is disabled in the configuration.";
-
-            Logger.LogInformation(message);
-            return BadRequest(message);
+            throw new InvalidOperationException("Contact types are filled");
         }
 
-        await dbContext.Database.EnsureCreatedAsync();
+        await Seeder.RegisterMasterTablesAsync();
+        return Results.Accepted();
+    }
 
-        return Ok();
+    [HttpPost("seedProfile")]
+    public async Task<IResult> SeedProfile()
+    {
+        if (!dbContext.ContactTypes.Any())
+        {
+            throw new InvalidOperationException("Contact types are not yet implemented");
+        }
+
+        await Seeder.RegisterProfileAsync();
+        return Results.Accepted();
     }
 }

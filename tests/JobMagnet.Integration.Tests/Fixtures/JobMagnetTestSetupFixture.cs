@@ -102,7 +102,7 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
     {
         using var scope = _webApplicationFactory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
-        var contactTypes = SeedData.ContactTypes.Select(x => new ContactTypeEntity
+        var contactTypes = Seeder.ContactTypes.Select(x => new ContactTypeEntity
         {
             Id = x.Id,
             Name = x.Name,
