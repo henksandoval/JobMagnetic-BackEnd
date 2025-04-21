@@ -1,4 +1,5 @@
-﻿using JobMagnet.Controllers.Base;
+﻿using Asp.Versioning;
+using JobMagnet.Controllers.Base;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Mappers;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers.V1;
 
+[ApiVersion("1")]
 public class ResumeController(
     ILogger<ResumeController> logger,
     IQueryRepository<ResumeEntity, long> queryRepository,

@@ -1,4 +1,5 @@
-﻿using JobMagnet.Controllers.Base;
+﻿using Asp.Versioning;
+using JobMagnet.Controllers.Base;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers.V1;
 
+[ApiVersion("1")]
 public class SkillController(
     ILogger<SkillController> logger,
     ISkillQueryRepository queryRepository,
