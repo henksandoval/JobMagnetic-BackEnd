@@ -134,7 +134,7 @@ namespace JobMagnet.Infrastructure.Seeders
         {
             if (context.PortfolioGalleries.Any()) return;
 
-            await context.PortfolioGalleries.AddRangeAsync(new PortfolioCollection(profileId).PortfolioGallery);
+            await context.PortfolioGalleries.AddRangeAsync(new PortfolioCollection(profileId).GetPortfolioGallery());
         }
 
         private async Task RegisterTestimonialAsync(long profileId)

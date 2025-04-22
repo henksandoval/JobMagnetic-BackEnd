@@ -1,113 +1,82 @@
-﻿using JobMagnet.Infrastructure.Entities;
+﻿using System.Collections.Immutable;
+using JobMagnet.Infrastructure.Entities;
 
 namespace JobMagnet.Infrastructure.Seeders.Collections;
 
 // ReSharper disable once NotAccessedPositionalProperty.Global
-public record PortfolioCollection(long ProfileId = 0)
+public record PortfolioCollection
 {
-    public readonly IReadOnlyList<PortfolioGalleryEntity> PortfolioGallery =
-    [
-        new()
+    private readonly long _profileId;
+
+    public PortfolioCollection(long profileId = 0)
+    {
+        _profileId = profileId;
+    }
+
+    private readonly IList<PortfolioProperties> _values =
+        new List<PortfolioProperties>
         {
-            Id = 0,
-            Position = 1,
-            Title = "Aventuras Animales",
-            Description = "Cada fotografía captura momentos únicos y comportamientos fascinantes.",
-            UrlLink = "https://waylet.es/",
-            UrlImage = "https://images.pexels.com/photos/617278/pexels-photo-617278.jpeg",
-            Type = "CAT",
-            UrlVideo = string.Empty,
-            ProfileId = ProfileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Position = 2,
-            Title = "Horizontes Naturales",
-            Description =
+            new("Aventuras Animales",
+                "Cada fotografía captura momentos únicos y comportamientos fascinantes.",
+                "https://waylet.es/",
+                "https://images.pexels.com/photos/617278/pexels-photo-617278.jpeg",
+                "CAT"),
+            new("Horizontes Naturales",
                 "Cada imagen captura la esencia de lugares únicos, desde montañas imponentes hasta costas tranquilas, invitándote a explorar la belleza del mundo",
-            UrlLink = "https://biati-digital.github.io/glightbox/",
-            UrlImage = "https://th.bing.com/th/id/OIP.iwFhHHKPOqAJUDO-iSov_wHaE8?rs=1&pid=ImgDetMain",
-            Type = "NATURE",
-            UrlVideo = string.Empty,
-            ProfileId = ProfileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Position = 3,
-            Title = "Movil Truck",
-            Description =
+                "https://biati-digital.github.io/glightbox/",
+                "https://th.bing.com/th/id/OIP.iwFhHHKPOqAJUDO-iSov_wHaE8?rs=1&pid=ImgDetMain",
+                "NATURE"),
+            new("Movil Truck",
                 "Plataforma de transporte inteligente; solución tecnológica diseñada para abordar de manera eficiente el transporte de mercancías por carretera.",
-            UrlLink = "https://moviltruck.com/",
-            UrlImage = "https://moviltruck.com/wp-content/uploads/2023/11/Hero-1-.png",
-            Type = "WebPage",
-            UrlVideo = string.Empty,
-            ProfileId = ProfileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Position = 4,
-            Title = "Aventuras Animales",
-            Description = "Cada fotografía captura momentos únicos y comportamientos fascinantes.",
-            UrlLink = string.Empty,
-            UrlImage = "https://images.pexels.com/photos/617278/pexels-photo-617278.jpeg",
-            Type = "CAT",
-            UrlVideo = string.Empty,
-            ProfileId = ProfileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Position = 5,
-            Title = "Aventuras Animales",
-            Description = "Cada fotografía captura momentos únicos y comportamientos fascinantes.",
-            UrlLink = string.Empty,
-            UrlImage = "https://images.pexels.com/photos/617278/pexels-photo-617278.jpeg",
-            Type = "CAT",
-            UrlVideo = string.Empty,
-            ProfileId = ProfileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Position = 6,
-            Title = "Music",
-            Description =
-                "Cada imagen captura la esencia de la musica, el sonido llega al alma dando una hermosa sensacion de relajacion",
-            UrlLink = "",
-            UrlImage = "https://i0.wp.com/www.nus.agency/wp-content/uploads/2023/03/musica-arte-scaled.jpg?ssl=1",
-            Type = "Music",
-            UrlVideo = string.Empty,
-            ProfileId = ProfileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Position = 7,
-            Title = "Red And Blue Parrot",
-            Description = "Hermosos y encantadores Guacamayas en ambiente natural.",
-            UrlLink = string.Empty,
-            UrlImage =
+                "https://moviltruck.com/",
+                "https://moviltruck.com/wp-content/uploads/2023/11/Hero-1-.png",
+                "WebPage"),
+            new("Red And Blue Parrot",
+                "Hermosos y encantadores Guacamayas en ambiente natural.",
+                "https://www.pexels.com/es-es/buscar/guacamayo/",
                 "https://images.pexels.com/photos/1427447/pexels-photo-1427447.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-            Type = "NATURE",
-            UrlVideo = "https://videos.pexels.com/video-files/17325162/17325162-uhd_1440_2560_30fps.mp4",
-            ProfileId = ProfileId,
+                "NATURE",
+                "https://videos.pexels.com/video-files/17325162/17325162-uhd_1440_2560_30fps.mp4"),
+            new("Aventuras Animales",
+                "Cada fotografía captura momentos únicos y comportamientos fascinantes.",
+                "https://www.pexels.com/es-es/buscar/animales/",
+                "https://images.pexels.com/photos/60023/baboons-monkey-mammal-freeze-60023.jpeg?auto=compress&cs=tinysrgb&w=600",
+                "Monkey"),
+            new("Cats",
+                "Cada fotografía captura momentos únicos y comportamientos fascinantes.",
+                "https://www.pexels.com/es-es/buscar/gatos/",
+                "https://images.pexels.com/photos/416160/pexels-photo-416160.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                "CAT"),
+            new("Dogs",
+                "Cada fotografía captura momentos únicos y comportamientos fascinantes.",
+                "https://www.pexels.com/es-es/buscar/pastor%20alemán%20cachorro/",
+                "https://images.pexels.com/photos/19949287/pexels-photo-19949287/free-photo-of-animal-perro-mascota-mono.jpeg?auto=compress&cs=tinysrgb&w=1200",
+                "DOG"),
+        };
+
+    public ImmutableList<PortfolioGalleryEntity> GetPortfolioGallery()
+    {
+        return _values.Select(x => new PortfolioGalleryEntity
+        {
+            Id = 0,
+            ProfileId = _profileId,
+            Title = x.Title,
+            Description = x.Description,
+            UrlLink = x.UrlLink,
+            UrlImage = x.UrlImage,
+            Type = x.Type,
+            UrlVideo = x.UrlVideo,
             AddedAt = DateTime.Now,
             AddedBy = Guid.Empty
-        }
-    ];
+        }).ToImmutableList();
+    }
+
+    private record PortfolioProperties(
+        string Title,
+        string Description,
+        string UrlLink = "",
+        string UrlImage = "",
+        string Type = "",
+        string UrlVideo = ""
+    );
 }

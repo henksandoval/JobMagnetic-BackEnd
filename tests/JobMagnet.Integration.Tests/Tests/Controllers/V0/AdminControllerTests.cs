@@ -121,7 +121,7 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
         profile.Services.Count.ShouldBe(1);
         profile.Services.First().GalleryItems.Count.ShouldBe(new ServicesCollection().ServicesGallery.Count);
         profile.Testimonials.Count.ShouldBe(new TestimonialCollection().Testimonials.Count);
-        profile.PortfolioGallery.Count.ShouldBe(new PortfolioCollection().PortfolioGallery.Count);
+        profile.PortfolioGallery.Count.ShouldBe(new PortfolioCollection().GetPortfolioGallery().Count);
     }
 
     [Fact(DisplayName = "Should cancel SeedMasterTables operation after a delay")]
