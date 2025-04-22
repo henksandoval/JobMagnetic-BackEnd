@@ -11,7 +11,7 @@ namespace JobMagnet.Infrastructure.Seeders
         {
             if (context.ContactTypes.Any()) return;
 
-            await context.ContactTypes.AddRangeAsync(new ContactTypesCollection().ContactTypes, cancellationToken);
+            await context.ContactTypes.AddRangeAsync(new ContactTypesCollection().GetContactTypes(), cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
 
