@@ -1,67 +1,58 @@
-﻿using JobMagnet.Infrastructure.Entities;
+﻿using System.Collections.Immutable;
+using JobMagnet.Infrastructure.Entities;
 
 namespace JobMagnet.Infrastructure.Seeders.Collections;
 
 // ReSharper disable once NotAccessedPositionalProperty.Global
-public record ServiceCollection(long ServiceId = 0)
+public record ServiceCollection
 {
-    public readonly IReadOnlyList<ServiceGalleryItemEntity> ServicesGallery =
+    private readonly long _serviceId;
+
+    private readonly IList<GalleryProperties> _values =
     [
-        new()
-        {
-            Id = 0,
-            Position = 1,
-            Title = "Web Development",
-            Description = "Building responsive and user-friendly websites.",
-            UrlLink = "https://example.com/web-development",
-            UrlImage = "https://cdn.pixabay.com/photo/2024/08/06/10/43/wine-8949009_1280.jpg",
-            UrlVideo = "https://example.com/video1.mp4",
-            Type = "image",
-            ServiceId = ServiceId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Position = 2,
-            Title = "UI/UX Design",
-            Description = "Creating intuitive and engaging user interfaces.",
-            UrlLink = "https://example.com/ui-ux-design",
-            UrlImage = "https://cdn.pixabay.com/photo/2023/08/11/08/29/highland-cattle-8183107_1280.jpg",
-            UrlVideo = "https://example.com/video2.mp4",
-            Type = "image",
-            ServiceId = ServiceId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Position = 3,
-            Title = "Web and Brand Graphic Design",
-            Description = "Creating intuitive and engaging user interfaces.",
-            UrlLink = "https://example.com/ux-design",
-            UrlImage = "https://cdn.pixabay.com/photo/2024/02/20/13/21/mountains-8585535_1280.jpg",
-            UrlVideo = "https://example.com/video3.mp4",
-            Type = "image",
-            ServiceId = ServiceId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Position = 4,
-            Title = "SEO Consulting",
-            Description = "Creating intuitive and engaging user interfaces.",
-            UrlLink = "https://example.com/ui-ux-design2",
-            UrlImage = "https://cdn.pixabay.com/photo/2024/01/25/10/50/mosque-8531576_1280.jpg",
-            UrlVideo = "https://example.com/video4.mp4",
-            Type = "image",
-            ServiceId = ServiceId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        }
+        new ("Web Development",
+            "Building responsive and user-friendly websites.",
+            "https://example.com/web-development",
+            "https://cdn.pixabay.com/photo/2024/08/06/10/43/wine-8949009_1280.jpg",
+            "image"),
+        new ("UI/UX Design",
+            "Creating intuitive and engaging user interfaces.",
+            "https://example.com/ui-ux-design",
+            "https://cdn.pixabay.com/photo/2023/08/11/08/29/highland-cattle-8183107_1280.jpg",
+            "image",
+            "https://example.com/video2.mp4"),
+        new ("Web and Brand Graphic Design",
+            "Creating intuitive and engaging user interfaces.",
+            "https://example.com/ux-design",
+            "https://cdn.pixabay.com/photo/2024/02/20/13/21/mountains-8585535_1280.jpg",
+            "image",
+            "https://example.com/video3.mp4"),
+        new ("SEO Consulting",
+            "Creating intuitive and engaging user interfaces.",
+            "https://example.com/ui-ux-design2",
+            "https://cdn.pixabay.com/photo/2024/01/25/10/50/mosque-8531576_1280.jpg",
+            "image")
     ];
+
+    public ServiceCollection(long serviceId = 0)
+    {
+        _serviceId = serviceId;
+    }
+
+    public IReadOnlyList<ServiceGalleryItemEntity> GetServicesGallery()
+    {
+        return _values.Select(x => new ServiceGalleryItemEntity
+        {
+            Id = 0,
+            ServiceId = _serviceId,
+            Title = x.Title,
+            Description = x.Description,
+            UrlLink = x.UrlLink,
+            UrlImage = x.UrlImage,
+            Type = x.Type,
+            UrlVideo = x.UrlVideo,
+            AddedAt = DateTime.Now,
+            AddedBy = Guid.Empty
+        }).ToImmutableList();;
+    }
 }

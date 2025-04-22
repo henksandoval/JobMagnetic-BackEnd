@@ -147,7 +147,7 @@ namespace JobMagnet.Infrastructure.Seeders
 
         private static void FillServiceGalleryItem(ServiceEntity serviceEntity)
         {
-            serviceEntity.GalleryItems = new ServiceCollection(serviceEntity.Id).ServicesGallery.ToList();
+            serviceEntity.GalleryItems = new ServiceCollection(serviceEntity.Id).GetServicesGallery().ToList();
         }
     }
 }

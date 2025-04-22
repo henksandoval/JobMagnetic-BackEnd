@@ -119,7 +119,7 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
         profile.Skill.SkillDetails.Count.ShouldBe(new SkillsCollection().Skills.Count);
         profile.Talents.Count.ShouldBe(new TalentsCollection().Talents.Count);
         profile.Services.Count.ShouldBe(1);
-        profile.Services.First().GalleryItems.Count.ShouldBe(new ServicesCollection().ServicesGallery.Count);
+        profile.Services.First().GalleryItems.Count.ShouldBe(new ServicesCollection().GetServicesGallery().Count);
         profile.Testimonials.Count.ShouldBe(new TestimonialCollection().Testimonials.Count);
         profile.PortfolioGallery.Count.ShouldBe(new PortfolioCollection().GetPortfolioGallery().Count);
     }
@@ -135,7 +135,7 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
         await dbContext.SaveChangesAsync(CancellationToken.None);
 
         var cancellationTokenSource = new CancellationTokenSource();
-        var delayBeforeCancel = TimeSpan.FromMilliseconds(50);
+        var delayBeforeCancel = TimeSpan.FromMilliseconds(40);
         cancellationTokenSource.CancelAfter(delayBeforeCancel);
 
         // When
