@@ -85,7 +85,7 @@ namespace JobMagnet.Infrastructure.Seeders
                 AddedBy = Guid.Empty
             };
 
-            resumeEntity.ContactInfo = new ContactInfoCollection(resumeEntity.Id).ContactInfo.ToList();
+            resumeEntity.ContactInfo = new ContactInfoCollection(resumeEntity.Id).GetContactInfoCollection();
 
             await context.Resumes.AddAsync(resumeEntity);
         }

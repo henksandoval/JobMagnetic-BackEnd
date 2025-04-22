@@ -1,91 +1,44 @@
-﻿using JobMagnet.Infrastructure.Entities;
+﻿using System.Collections.Immutable;
+using JobMagnet.Infrastructure.Entities;
 
 namespace JobMagnet.Infrastructure.Seeders.Collections;
 
-public record ContactInfoCollection(long ResumeId = 0)
+public record ContactInfoCollection
 {
-    public readonly IReadOnlyList<ContactInfoEntity> ContactInfo = new List<ContactInfoEntity>
+    private readonly long _resumeId;
+    private readonly List<(string value, int contactTypeId)> _values =
+    [
+        ("brandon.johnson@example.com", 1),
+        ("+1234567890", 12),
+        ("https://linkedin.com/in/brandonjohnson", 6),
+        ("https://github.com/brandonjohnson", 7),
+        ("https://twitter.com/brandonjohnson", 8),
+        ("https://brandonjohnson.dev", 5),
+        ("https://instagram.com/brandonjohnson", 10),
+        ("https://facebook.com/brandonjohnson", 9),
+        ("+1234567890", 2)
+    ];
+
+    public ContactInfoCollection(long resumeId)
     {
-        new()
+        _resumeId = resumeId;
+    }
+
+    public ImmutableList<ContactInfoEntity> GetContactInfoCollection()
+    {
+        return _values.Select(x => CreateContactInfoEntity(x.value, x.contactTypeId)).ToImmutableList();
+    }
+
+    private ContactInfoEntity CreateContactInfoEntity(string value, int contactTypeId)
+    {
+        return new ContactInfoEntity
         {
             Id = 0,
-            Value = "brandon.johnson@example.com",
-            ContactTypeId = 1,
-            ResumeId = ResumeId,
+            Value = value,
+            ContactTypeId = contactTypeId,
+            ResumeId = _resumeId,
             AddedAt = DateTime.Now,
             AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Value = "+1234567890",
-            ContactTypeId = 12,
-            ResumeId = ResumeId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Value = "https://linkedin.com/in/brandonjohnson",
-            ContactTypeId = 6,
-            ResumeId = ResumeId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Value = "https://github.com/brandonjohnson",
-            ContactTypeId = 7,
-            ResumeId = ResumeId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Value = "https://twitter.com/brandonjohnson",
-            ContactTypeId = 8,
-            ResumeId = ResumeId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Value = "https://brandonjohnson.dev",
-            ContactTypeId = 5,
-            ResumeId = ResumeId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Value = "https://instagram.com/brandonjohnson",
-            ContactTypeId = 10,
-            ResumeId = ResumeId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Value = "https://facebook.com/brandonjohnson",
-            ContactTypeId = 9,
-            ResumeId = ResumeId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Value = "+1234567890",
-            ContactTypeId = 2,
-            ResumeId = ResumeId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        }
-    };
+        };
+    }
 }
