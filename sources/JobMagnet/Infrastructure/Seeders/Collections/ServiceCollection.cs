@@ -53,6 +53,6 @@ public record ServiceCollection
             UrlVideo = x.UrlVideo,
             AddedAt = DateTime.Now,
             AddedBy = Guid.Empty
-        }).ToImmutableList();;
+        }).ToImmutableList();
     }
 }
