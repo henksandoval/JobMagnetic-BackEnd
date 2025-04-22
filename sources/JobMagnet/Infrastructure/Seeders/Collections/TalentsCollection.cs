@@ -1,43 +1,35 @@
-﻿using JobMagnet.Infrastructure.Entities;
+﻿using System.Collections.Immutable;
+using JobMagnet.Infrastructure.Entities;
 
 namespace JobMagnet.Infrastructure.Seeders.Collections;
 
 // ReSharper disable once NotAccessedPositionalProperty.Global
-public record TalentsCollection(long ProfileId = 0)
+public record TalentsCollection
 {
-    public readonly IList<TalentEntity> Talents = new List<TalentEntity>
+    private readonly string[] _values =
     {
-        new()
-        {
-            Id = 0,
-            Description = "Creative",
-            ProfileId = ProfileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Description = "Problem Solver",
-            ProfileId = ProfileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Description = "Team Player",
-            ProfileId = ProfileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
-        new()
-        {
-            Id = 0,
-            Description = "Fast Learner",
-            ProfileId = ProfileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        },
+        "Creative",
+        "Problem Solver",
+        "Team Player",
+        "Fast Learner"
     };
+
+    private readonly long _profileId;
+
+    public TalentsCollection(long profileId = 0)
+    {
+        _profileId = profileId;
+    }
+
+    public ImmutableList<TalentEntity> GetTalents()
+    {
+        return _values.Select(talent => new TalentEntity
+        {
+            Id = 0,
+            Description = talent,
+            ProfileId = _profileId,
+            AddedAt = DateTime.Now,
+            AddedBy = Guid.Empty
+        }).ToImmutableList();
+    }
 }

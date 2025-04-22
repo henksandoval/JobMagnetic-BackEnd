@@ -55,7 +55,7 @@ namespace JobMagnet.Infrastructure.Seeders
         private async Task RegisterTalentsAsync(long profileId)
         {
             if (context.Talents.Any()) return;
-            await context.Talents.AddRangeAsync(new TalentsCollection(profileId).Talents);
+            await context.Talents.AddRangeAsync(new TalentsCollection(profileId).GetTalents());
         }
 
         private async Task RegisterResumeAsync(long profileId)
