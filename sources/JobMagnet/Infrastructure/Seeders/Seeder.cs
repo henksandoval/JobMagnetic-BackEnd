@@ -141,7 +141,7 @@ namespace JobMagnet.Infrastructure.Seeders
         {
             if (context.Testimonials.Any()) return;
 
-            var testimonials = new TestimonialCollection(profileId).Testimonials;
+            var testimonials = new TestimonialCollection(profileId).GetTestimonials();
             await context.Testimonials.AddRangeAsync(testimonials);
         }
 

@@ -120,7 +120,7 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
         profile.Talents.Count.ShouldBe(new TalentsCollection().GetTalents().Count);
         profile.Services.Count.ShouldBe(1);
         profile.Services.First().GalleryItems.Count.ShouldBe(new ServicesCollection().GetServicesGallery().Count);
-        profile.Testimonials.Count.ShouldBe(new TestimonialCollection().Testimonials.Count);
+        profile.Testimonials.Count.ShouldBe(new TestimonialCollection().GetTestimonials().Count);
         profile.PortfolioGallery.Count.ShouldBe(new PortfolioCollection().GetPortfolioGallery().Count);
     }
 
