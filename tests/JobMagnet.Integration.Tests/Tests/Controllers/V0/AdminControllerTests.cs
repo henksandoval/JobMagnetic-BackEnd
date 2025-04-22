@@ -116,7 +116,7 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
             .GetFirstByExpressionWithIncludesAsync(x => x.Id == 1);
 
         profile.ShouldNotBeNull();
-        profile.Skill.SkillDetails.Count.ShouldBe(new SkillsCollection().Skills.Count);
+        profile.Skill.SkillDetails.Count.ShouldBe(new SkillsCollection().GetSkills().Count);
         profile.Talents.Count.ShouldBe(new TalentsCollection().Talents.Count);
         profile.Services.Count.ShouldBe(1);
         profile.Services.First().GalleryItems.Count.ShouldBe(new ServicesCollection().GetServicesGallery().Count);

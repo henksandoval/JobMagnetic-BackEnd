@@ -103,7 +103,7 @@ namespace JobMagnet.Infrastructure.Seeders
                            I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
                            I am always eager to learn new technologies and improve my skills.
                            """,
-                SkillDetails = new SkillsCollection().Skills.ToList(),
+                SkillDetails = new SkillsCollection().GetSkills().ToList(),
                 AddedAt = DateTime.Now,
                 AddedBy = Guid.Empty
             };
