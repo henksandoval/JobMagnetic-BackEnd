@@ -37,11 +37,4 @@ app
     .UseCors("DefaultCorsPolicy");
 app.MapControllers();
 
-using var scope = app.Services.CreateScope();
-var context = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
-await context.Database.MigrateAsync();
-
-var clientSettings = scope.ServiceProvider.GetRequiredService<IOptions<ClientSettings>>().Value;
-if (clientSettings.SeedData) await SeedData.InitializeAsync(scope.ServiceProvider);
-
 await app.RunAsync();

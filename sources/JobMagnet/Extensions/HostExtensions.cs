@@ -3,6 +3,7 @@ using JobMagnet.Infrastructure.Repositories.Base;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Implements;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
+using JobMagnet.Infrastructure.Seeders;
 
 namespace JobMagnet.Extensions;
 
@@ -12,8 +13,15 @@ internal static class HostExtensions
     {
         return services
             .AddLogging()
+            .AddDependencies()
             .AddQueryRepositories()
             .AddCommandRepositories();
+    }
+
+    private static IServiceCollection AddDependencies(this IServiceCollection services)
+    {
+        return services
+            .AddTransient<ISeeder, Seeder>();
     }
 
     private static IServiceCollection AddQueryRepositories(this IServiceCollection services)

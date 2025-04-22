@@ -1,4 +1,5 @@
-﻿using JobMagnet.Controllers.Base;
+﻿using Asp.Versioning;
+using JobMagnet.Controllers.Base;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Mappers;
 using JobMagnet.Models.Queries.Profile;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Controllers.V1;
 
+[ApiVersion("1")]
 public class ProfileController(
     ILogger<ProfileController> logger,
     IProfileQueryRepository queryRepository) : BaseController<ProfileController>(logger)

@@ -1,27 +1,19 @@
-﻿extern alias JobMagnetHost;
-using JobMagnet.Infrastructure.Context;
-using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Infrastructure.Seeders;
-using JobMagnet.Infrastructure.Seeders.Collections;
-using JobMagnet.Integration.Tests.Factories;
+﻿using JobMagnet.Integration.Tests.Factories;
 using JobMagnet.Integration.Tests.TestContainers;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.DependencyInjection;
 using Respawn;
 using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Fixtures;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class JobMagnetTestSetupFixture : IAsyncLifetime
+public class JobMagnetTestEmptyDatabaseSetupFixture : IAsyncLifetime
 {
     private readonly MsSqlServerTestContainer _msSqlServerTestContainer = new();
-
     private readonly RespawnerOptions _respawnerOptions = new()
     {
         WithReseed = true
     };
-
     private string? _connectionString;
     private ITestOutputHelper? _testOutputHelper;
     private HostWebApplicationFactory<Program> _webApplicationFactory = null!;
@@ -32,19 +24,12 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         await _msSqlServerTestContainer.InitializeAsync();
         SetConnectionString();
         _webApplicationFactory = new HostWebApplicationFactory<Program>(_connectionString);
-        await EnsureDatabaseCreatedAsync();
     }
 
     public async Task DisposeAsync()
     {
         await _msSqlServerTestContainer?.DisposeAsync()!;
         await _webApplicationFactory.DisposeAsync();
-    }
-
-    public ITestOutputHelper SetTestOutputHelper(ITestOutputHelper testOutputHelper)
-    {
-        _testOutputHelper = testOutputHelper;
-        return _testOutputHelper;
     }
 
     public async Task ResetDatabaseAsync()
@@ -57,8 +42,6 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
 
             var respawn = await Respawner.CreateAsync(connection, _respawnerOptions);
             await respawn.ResetAsync(connection);
-
-            await SeedMasterTableDbContextAsync();
         }
         catch (SqlException sqlEx)
         {
@@ -70,6 +53,12 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
             _testOutputHelper?.WriteLine("Unexpected error: {0}", e.Message);
             throw;
         }
+    }
+
+    public ITestOutputHelper SetTestOutputHelper(ITestOutputHelper testOutputHelper)
+    {
+        _testOutputHelper = testOutputHelper;
+        return _testOutputHelper;
     }
 
     public IServiceProvider GetProvider()
@@ -90,20 +79,5 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         }.ConnectionString;
 
         _testOutputHelper?.WriteLine(_connectionString);
-    }
-
-    private async Task EnsureDatabaseCreatedAsync()
-    {
-        using var scope = _webApplicationFactory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
-        await dbContext.Database.EnsureCreatedAsync();
-    }
-
-    private async Task SeedMasterTableDbContextAsync()
-    {
-        using var scope = _webApplicationFactory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
-        await dbContext.ContactTypes.AddRangeAsync(new ContactTypesCollection().GetContactTypes());
-        await dbContext.SaveChangesAsync();
     }
 }
