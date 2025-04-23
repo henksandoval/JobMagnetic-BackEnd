@@ -7,13 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JobMagnet.Infrastructure.Repositories.Implements;
 
-public class ProfileQueryRepository(JobMagnetDbContext dbContext)
+public class ProfileQueryRepository(JobMagnetDbContext dbContext, IDbContextFactory dbContextFactory)
     : Repository<ProfileEntity, long>(dbContext), IProfileQueryRepository
 {
     private readonly JobMagnetDbContext _dbContext = dbContext;
-    private IQueryable<ProfileEntity> _query = dbContext.Set<ProfileEntity>();
+    private readonly List<Func<JobMagnetDbContext, ProfileEntity, Task>> _relationLoaders = [];
     private Expression<Func<ProfileEntity, bool>> _expression = x => true;
-    private readonly List<Func<ProfileEntity, Task>> _relationLoaders = [];
 
     public IProfileQueryRepository WhereCondition(Expression<Func<ProfileEntity, bool>> expression)
     {
@@ -30,19 +29,24 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
         if (profile == null) return null;
 
-        foreach (var loader in _relationLoaders)
+        var loaders = _relationLoaders.Select(func =>
         {
-            await loader(profile);
-        }
+            var newDbContext = dbContextFactory.CreateDbContext();
+            return func(newDbContext, profile);
+        });
+
+        await Task.WhenAll(loaders).ConfigureAwait(false);
 
         return profile;
     }
 
     public IProfileQueryRepository WithResume()
     {
-        _relationLoaders.Add(async profile =>
+        _relationLoaders.Add(async (contextFactory, profile) =>
         {
-            var loadResume = _dbContext.Entry(profile)
+            contextFactory.Attach(profile);
+
+            var loadResume = contextFactory.Entry(profile)
                 .Reference(p => p.Resume)
                 .Query()
                 .Include(r => r.ContactInfo)
@@ -57,9 +61,11 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
     public IProfileQueryRepository WithSkills()
     {
-        _relationLoaders.Add(async profile =>
+        _relationLoaders.Add(async (contextFactory, profile) =>
         {
-            var loadSkills = _dbContext.Entry(profile)
+            contextFactory.Attach(profile);
+
+            var loadSkills = contextFactory.Entry(profile)
                 .Reference(p => p.Skill)
                 .Query()
                 .Include(s => s.SkillDetails)
@@ -73,9 +79,9 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
     public IProfileQueryRepository WithTalents()
     {
-        _relationLoaders.Add(async profile =>
+        _relationLoaders.Add(async (contextFactory, profile) =>
         {
-            var loadTalents = _dbContext.Entry(profile)
+            var loadTalents = contextFactory.Entry(profile)
                 .Collection(p => p.Talents)
                 .LoadAsync();
 
@@ -87,9 +93,9 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
     public IProfileQueryRepository WithPortfolioGallery()
     {
-        _relationLoaders.Add(async profile =>
+        _relationLoaders.Add(async (contextFactory, profile) =>
         {
-            var loadPortfolioGallery = _dbContext.Entry(profile)
+            var loadPortfolioGallery = contextFactory.Entry(profile)
                 .Collection(p => p.PortfolioGallery)
                 .LoadAsync();
 
@@ -101,9 +107,9 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
     public IProfileQueryRepository WithSummaries()
     {
-        _relationLoaders.Add(async profile =>
+        _relationLoaders.Add(async (contextFactory, profile) =>
         {
-            var loadSummaries = _dbContext.Entry(profile)
+            var loadSummaries = contextFactory.Entry(profile)
                 .Collection(p => p.Summaries)
                 .LoadAsync();
 
@@ -115,9 +121,9 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
     public IProfileQueryRepository WithServices()
     {
-        _relationLoaders.Add(async profile =>
+        _relationLoaders.Add(async (contextFactory, profile) =>
         {
-            var loadServices = _dbContext.Entry(profile)
+            var loadServices = contextFactory.Entry(profile)
                 .Collection(p => p.Services)
                 .Query()
                 .Include(s => s.GalleryItems)
@@ -131,9 +137,9 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
     public IProfileQueryRepository WithTestimonials()
     {
-        _relationLoaders.Add(async profile =>
+        _relationLoaders.Add(async (contextFactory, profile) =>
         {
-            var loadTestimonials = _dbContext.Entry(profile)
+            var loadTestimonials = contextFactory.Entry(profile)
                 .Collection(p => p.Testimonials)
                 .LoadAsync();
 

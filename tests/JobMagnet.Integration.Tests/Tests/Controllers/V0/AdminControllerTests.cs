@@ -117,6 +117,8 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
             .BuildAsync();
 
         profile.ShouldNotBeNull();
+        profile.Resume.ShouldNotBeNull();
+        profile.Resume.ContactInfo.ShouldNotBeNull();
         profile.Skill.SkillDetails.Count.ShouldBe(new SkillsCollection().GetSkills().Count);
         profile.Talents.Count.ShouldBe(new TalentsCollection().GetTalents().Count);
         profile.Services.Count.ShouldBe(1);
