@@ -78,7 +78,7 @@ internal static class ProfileMapper
                 src => src.Services != null && src.Services.GalleryItems.Count != 0);
     }
 
-    internal static ProfileViewModel ToModel(ProfileEntity entity)
+    internal static ProfileViewModel ToModel(this ProfileEntity entity)
     {
         return entity.Adapt<ProfileViewModel>();
     }
