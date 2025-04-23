@@ -123,8 +123,10 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext, IDbContextFact
     {
         _relationLoaders.Add(async (contextFactory, profile) =>
         {
+            contextFactory.Attach(profile);
+
             var loadServices = contextFactory.Entry(profile)
-                .Collection(p => p.Services)
+                .Reference(p => p.Services)
                 .Query()
                 .Include(s => s.GalleryItems)
                 .LoadAsync();

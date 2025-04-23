@@ -182,15 +182,13 @@ public class ProfileMapperTests
     
     private static ServiceViewModel GetServiceViewModel(ProfileEntity profile)
     {
-        return profile.Services
-            .Select(s => new ServiceViewModel(
-                s.Overview,
-                s.GalleryItems.Select(g => new ServiceDetailsViewModel(
-                        g.Title,
-                        g.Description,
-                        g.UrlImage))
-                    .ToArray()))
-            .FirstOrDefault() ?? throw new InvalidOperationException("No hay servicios disponibles en el perfil.");
+        var serviceDetails = profile.Services.GalleryItems.Select(g => new ServiceDetailsViewModel(
+                g.Title,
+                g.Description,
+                g.UrlImage))
+            .ToArray();
+
+        return new ServiceViewModel(profile.Services.Overview, serviceDetails);
     }
 
     private static TestimonialsViewModel[]? GetTestimonialViewModel(ProfileEntity profile)

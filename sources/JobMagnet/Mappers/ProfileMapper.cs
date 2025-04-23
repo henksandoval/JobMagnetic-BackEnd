@@ -42,6 +42,12 @@ internal static class ProfileMapper
             .Map(dest => dest.SkillDetails,
                 src => src.Skill.SkillDetails.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
 
+        TypeAdapterConfig<ProfileEntity, ServiceViewModel>
+            .NewConfig()
+            .Map(dest => dest.Overview, src => src.Services.Overview)
+            .Map(dest => dest.ServiceDetails,
+                src => src.Services.GalleryItems.Select(d => d.Adapt<ServiceDetailsViewModel>()).ToArray());
+
         TypeAdapterConfig<ProfileEntity, ProfileViewModel>
             .NewConfig()
             .Map(dest => dest.PersonalData,
@@ -65,17 +71,8 @@ internal static class ProfileMapper
                 src => src.PortfolioGallery.Any())
             .Map(dest => dest.SkillSet, src => src.Skill.Adapt<SkillSetViewModel>(),
                 src => src.Skill != null && src.Skill.SkillDetails.Count != 0)
-            .Map(dest => dest.Service,
-            src => src.Services
-                .Select(s => new ServiceViewModel(
-                    s.Overview,
-                    s.GalleryItems.Select(g => new ServiceDetailsViewModel(
-                            g.Title,
-                            g.Description,
-                            g.UrlImage))
-                        .ToArray()))
-                .FirstOrDefault() 
-        );
+            .Map(dest => dest.Service, src => src.Services.Adapt<ServiceViewModel>(),
+                src => src.Services != null && src.Services.GalleryItems.Count != 0);
     }
 
     internal static ProfileViewModel ToModel(ProfileEntity entity)

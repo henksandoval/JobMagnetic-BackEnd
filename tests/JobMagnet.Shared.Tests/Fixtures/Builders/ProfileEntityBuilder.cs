@@ -7,15 +7,27 @@ public class ProfileEntityBuilder(IFixture fixture)
 {
     private ResumeEntity _resume = null!;
     private SkillEntity _skill = null!;
+    private ServiceEntity _services = null!;
     private List<TalentEntity> _talents = [];
     private List<PortfolioGalleryEntity> _portfolio = [];
     private List<SummaryEntity> _summaries = [];
-    private List<ServiceEntity> _services = [];
     private List<TestimonialEntity> _testimonials = [];
 
     public ProfileEntityBuilder WithResume()
     {
         _resume = fixture.Create<ResumeEntity>();
+        return this;
+    }
+
+    public ProfileEntityBuilder WithSkills()
+    {
+        _skill = fixture.Create<SkillEntity>();
+        return this;
+    }
+
+    public ProfileEntityBuilder WithServices()
+    {
+        _services = fixture.Create<ServiceEntity>();
         return this;
     }
 
@@ -43,18 +55,6 @@ public class ProfileEntityBuilder(IFixture fixture)
         return this;
     }
 
-    public ProfileEntityBuilder WithServices(int count = 5)
-    {
-        _services = fixture.CreateMany<ServiceEntity>(count).ToList();
-        return this;
-    }
-
-    public ProfileEntityBuilder WithSkills()
-    {
-        _skill = fixture.Create<SkillEntity>();
-        return this;
-    }
-
     public ProfileEntityBuilder WithTestimonials(int count = 5)
     {
         _testimonials = fixture.CreateMany<TestimonialEntity>(count).ToList();
@@ -67,9 +67,9 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         profile.Resume = _resume;
         profile.Talents = _talents;
+        profile.Services = _services;
         profile.PortfolioGallery = _portfolio;
         profile.Summaries = _summaries;
-        profile.Services = _services;
         profile.Skill = _skill;
         profile.Testimonials = _testimonials;
 

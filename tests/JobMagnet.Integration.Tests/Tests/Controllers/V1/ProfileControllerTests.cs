@@ -84,7 +84,7 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
             .WithTalents(TalentsCount)
             .WithPortfolio(PortfolioCount)
             .WithSummaries(SummariesCount)
-            .WithServices(ServicesCount)
+            .WithServices()
             .WithSkills()
             .WithTestimonials(TestimonialsCount)
             .Build();

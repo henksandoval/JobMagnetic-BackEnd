@@ -121,8 +121,8 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
         profile.Resume.ContactInfo.ShouldNotBeNull();
         profile.Skill.SkillDetails.Count.ShouldBe(new SkillsCollection().GetSkills().Count);
         profile.Talents.Count.ShouldBe(new TalentsCollection().GetTalents().Count);
-        profile.Services.Count.ShouldBe(1);
-        profile.Services.First().GalleryItems.Count.ShouldBe(new ServicesCollection().GetServicesGallery().Count);
+        profile.Services.ShouldNotBeNull();
+        profile.Services.GalleryItems.Count.ShouldBe(new ServicesCollection().GetServicesGallery().Count);
         profile.Testimonials.Count.ShouldBe(new TestimonialCollection().GetTestimonials().Count);
         profile.PortfolioGallery.Count.ShouldBe(new PortfolioCollection().GetPortfolioGallery().Count);
     }
