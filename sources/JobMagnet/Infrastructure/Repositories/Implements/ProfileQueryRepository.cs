@@ -12,93 +12,133 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 {
     private readonly JobMagnetDbContext _dbContext = dbContext;
     private IQueryable<ProfileEntity> _query = dbContext.Set<ProfileEntity>();
+    private Expression<Func<ProfileEntity, bool>> _expression = x => true;
+    private readonly List<Func<ProfileEntity, Task>> _relationLoaders = [];
 
-    public async Task<ProfileEntity?> GetFirstByExpressionWithIncludesAsync(Expression<Func<ProfileEntity, bool>> expression)
+    public IProfileQueryRepository WhereCondition(Expression<Func<ProfileEntity, bool>> expression)
     {
-        var profile = await _query
-            .Where(expression)
+        _expression = expression;
+        return this;
+    }
+
+    public async Task<ProfileEntity?> BuildAsync()
+    {
+        var profile = await _dbContext.Set<ProfileEntity>()
+            .Where(_expression)
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
 
         if (profile == null) return null;
 
-        await _dbContext.Entry(profile)
-            .Reference(p => p.Resume)
-            .Query()
-            .Include(r => r.ContactInfo)
-            .ThenInclude(ci => ci.ContactType)
-            .LoadAsync();
+        foreach (var loader in _relationLoaders)
+        {
+            await loader(profile);
+        }
 
-        await _dbContext.Entry(profile)
-            .Reference(p => p.Skill)
-            .Query()
-            .Include(s => s.SkillDetails)
-            .LoadAsync();
-
-        await _dbContext.Entry(profile)
-            .Collection(p => p.Talents)
-            .LoadAsync();
-
-        await _dbContext.Entry(profile)
-            .Collection(p => p.PortfolioGallery)
-            .LoadAsync();
-
-        await _dbContext.Entry(profile)
-            .Collection(p => p.Services)
-            .Query()
-            .LoadAsync();
-
-        await _dbContext.Entry(profile)
-            .Collection(p => p.Testimonials)
-            .LoadAsync();
-
-        var data = profile;
-        return data;
+        return profile;
     }
 
-    public IProfileQueryRepository IncludeTalents()
+    public IProfileQueryRepository WithResume()
     {
-        _query = _query.Include(p => p.Talents);
-        return this;
-    }
-    public IProfileQueryRepository IncludeService()
-    {
-        _query = _query
-            .Include(p => p.Services)
-            .ThenInclude(p => p.GalleryItems);
-        return this;
-    }
-    
-    public IProfileQueryRepository IncludeTestimonials()
-    {
-        _query = _query
-            .Include(p => p.Testimonials);
-        return this;
-    }
+        _relationLoaders.Add(async profile =>
+        {
+            var loadResume = _dbContext.Entry(profile)
+                .Reference(p => p.Resume)
+                .Query()
+                .Include(r => r.ContactInfo)
+                .ThenInclude(ci => ci.ContactType)
+                .LoadAsync();
 
-    public IProfileQueryRepository IncludeResume()
-    {
-        _query = _query
-            .Include(p => p.Resume)
-            .ThenInclude(p => p.ContactInfo)
-            .ThenInclude(p => p.ContactType);
+            await loadResume;
+        });
 
         return this;
     }
 
-    public IProfileQueryRepository IncludeSkill()
+    public IProfileQueryRepository WithSkills()
     {
-        _query = _query
-            .Include(p => p.Skill)
-            .ThenInclude(p => p.SkillDetails);
+        _relationLoaders.Add(async profile =>
+        {
+            var loadSkills = _dbContext.Entry(profile)
+                .Reference(p => p.Skill)
+                .Query()
+                .Include(s => s.SkillDetails)
+                .LoadAsync();
+
+            await loadSkills;
+        });
 
         return this;
     }
 
-    public IProfileQueryRepository IncludePortfolioGallery()
+    public IProfileQueryRepository WithTalents()
     {
-        _query = _query
-            .Include(p => p.PortfolioGallery);
+        _relationLoaders.Add(async profile =>
+        {
+            var loadTalents = _dbContext.Entry(profile)
+                .Collection(p => p.Talents)
+                .LoadAsync();
+
+            await loadTalents;
+        });
+
+        return this;
+    }
+
+    public IProfileQueryRepository WithPortfolioGallery()
+    {
+        _relationLoaders.Add(async profile =>
+        {
+            var loadPortfolioGallery = _dbContext.Entry(profile)
+                .Collection(p => p.PortfolioGallery)
+                .LoadAsync();
+
+            await loadPortfolioGallery;
+        });
+
+        return this;
+    }
+
+    public IProfileQueryRepository WithSummaries()
+    {
+        _relationLoaders.Add(async profile =>
+        {
+            var loadSummaries = _dbContext.Entry(profile)
+                .Collection(p => p.Summaries)
+                .LoadAsync();
+
+            await loadSummaries;
+        });
+
+        return this;
+    }
+
+    public IProfileQueryRepository WithServices()
+    {
+        _relationLoaders.Add(async profile =>
+        {
+            var loadServices = _dbContext.Entry(profile)
+                .Collection(p => p.Services)
+                .Query()
+                .Include(s => s.GalleryItems)
+                .LoadAsync();
+
+            await loadServices;
+        });
+
+        return this;
+    }
+
+    public IProfileQueryRepository WithTestimonials()
+    {
+        _relationLoaders.Add(async profile =>
+        {
+            var loadTestimonials = _dbContext.Entry(profile)
+                .Collection(p => p.Testimonials)
+                .LoadAsync();
+
+            await loadTestimonials;
+        });
 
         return this;
     }

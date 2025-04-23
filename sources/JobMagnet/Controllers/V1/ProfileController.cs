@@ -19,14 +19,15 @@ public class ProfileController(
     public async Task<IResult> GetProfileAsync([FromQuery] ProfileQueryParameters queryParameters)
     {
         var entity = await queryRepository
-            .IncludeTalents()
-            .IncludeResume()
-            .IncludeTestimonials()
-            .IncludeService()
-            .IncludeSkill()
-            .IncludePortfolioGallery()
-            .GetFirstByExpressionWithIncludesAsync(x => x.FirstName == queryParameters.Name)
-            .ConfigureAwait(false);
+            .WhereCondition(x => x.FirstName == queryParameters.Name)
+            .WithResume()
+            .WithSkills()
+            .WithTalents()
+            .WithPortfolioGallery()
+            .WithSummaries()
+            .WithServices()
+            .WithTestimonials()
+            .BuildAsync();
 
         if (entity is null)
             return Results.NotFound();

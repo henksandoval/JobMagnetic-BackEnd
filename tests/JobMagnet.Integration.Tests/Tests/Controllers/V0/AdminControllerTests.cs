@@ -107,13 +107,14 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
 
         var profileQueryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
         var profile = await profileQueryRepository
-            .IncludeResume()
-            .IncludeTalents()
-            .IncludeService()
-            .IncludeTestimonials()
-            .IncludeSkill()
-            .IncludePortfolioGallery()
-            .GetFirstByExpressionWithIncludesAsync(x => x.Id == 1);
+            .WithResume()
+            .WithTalents()
+            .WithServices()
+            .WithTestimonials()
+            .WithSkills()
+            .WithPortfolioGallery()
+            .WhereCondition(x => x.Id == 1)
+            .BuildAsync();
 
         profile.ShouldNotBeNull();
         profile.Skill.SkillDetails.Count.ShouldBe(new SkillsCollection().GetSkills().Count);

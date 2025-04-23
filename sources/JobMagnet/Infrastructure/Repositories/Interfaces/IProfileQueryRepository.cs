@@ -6,11 +6,13 @@ namespace JobMagnet.Infrastructure.Repositories.Interfaces;
 
 public interface IProfileQueryRepository : IQueryRepository<ProfileEntity, long>
 {
-    Task<ProfileEntity?> GetFirstByExpressionWithIncludesAsync(Expression<Func<ProfileEntity, bool>> expression);
-    IProfileQueryRepository IncludeResume();
-    IProfileQueryRepository IncludeTalents();
-    IProfileQueryRepository IncludeService();
-    IProfileQueryRepository IncludeTestimonials();
-    IProfileQueryRepository IncludeSkill();
-    IProfileQueryRepository IncludePortfolioGallery();
+    IProfileQueryRepository WhereCondition(Expression<Func<ProfileEntity, bool>> expression);
+    Task<ProfileEntity?> BuildAsync();
+    IProfileQueryRepository WithResume();
+    IProfileQueryRepository WithSkills();
+    IProfileQueryRepository WithTalents();
+    IProfileQueryRepository WithPortfolioGallery();
+    IProfileQueryRepository WithSummaries();
+    IProfileQueryRepository WithServices();
+    IProfileQueryRepository WithTestimonials();
 }
