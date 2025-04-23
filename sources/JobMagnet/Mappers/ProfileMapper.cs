@@ -43,13 +43,11 @@ internal static class ProfileMapper
 
         TypeAdapterConfig<SkillEntity, SkillSetViewModel>
             .NewConfig()
-            .Map(dest => dest.Overview, src => src.Overview)
             .Map(dest => dest.SkillDetails,
                 src => src.SkillDetails.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
 
         TypeAdapterConfig<ServiceEntity, ServiceViewModel>
             .NewConfig()
-            .Map(dest => dest.Overview, src => src.Overview)
             .Map(dest => dest.ServiceDetails,
                 src => src.GalleryItems.Select(item => item.Adapt<ServiceDetailsViewModel>()).ToArray());
 
