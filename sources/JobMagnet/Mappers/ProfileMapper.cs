@@ -16,6 +16,11 @@ internal static class ProfileMapper
             .Map(dest => dest.Link, src => src.UrlLink)
             .Map(dest => dest.Video, src => src.UrlVideo);
 
+        TypeAdapterConfig<ServiceGalleryItemEntity, ServiceDetailsViewModel>
+            .NewConfig()
+            .Map(dest => dest.BackgroundUrl, src => src.UrlImage)
+            .Map(dest => dest.Name, src => src.Title);
+
         TypeAdapterConfig<TestimonialEntity, TestimonialsViewModel>
             .NewConfig()
             .Map(dest => dest.Testimonial, src => src.Feedback);
@@ -36,17 +41,17 @@ internal static class ProfileMapper
             .Map(dest => dest.WorkExperience, src => src.Resume.Summary)
             .Map(dest => dest.Freelance, src => string.Empty);
 
-        TypeAdapterConfig<ProfileEntity, SkillSetViewModel>
+        TypeAdapterConfig<SkillEntity, SkillSetViewModel>
             .NewConfig()
-            .Map(dest => dest.Overview, src => src.Skill.Overview)
+            .Map(dest => dest.Overview, src => src.Overview)
             .Map(dest => dest.SkillDetails,
-                src => src.Skill.SkillDetails.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
+                src => src.SkillDetails.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
 
-        TypeAdapterConfig<ProfileEntity, ServiceViewModel>
+        TypeAdapterConfig<ServiceEntity, ServiceViewModel>
             .NewConfig()
-            .Map(dest => dest.Overview, src => src.Services.Overview)
+            .Map(dest => dest.Overview, src => src.Overview)
             .Map(dest => dest.ServiceDetails,
-                src => src.Services.GalleryItems.Select(d => d.Adapt<ServiceDetailsViewModel>()).ToArray());
+                src => src.GalleryItems.Select(item => item.Adapt<ServiceDetailsViewModel>()).ToArray());
 
         TypeAdapterConfig<ProfileEntity, ProfileViewModel>
             .NewConfig()
