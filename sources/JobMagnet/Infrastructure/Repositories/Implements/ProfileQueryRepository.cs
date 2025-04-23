@@ -10,11 +10,50 @@ namespace JobMagnet.Infrastructure.Repositories.Implements;
 public class ProfileQueryRepository(JobMagnetDbContext dbContext)
     : Repository<ProfileEntity, long>(dbContext), IProfileQueryRepository
 {
+    private readonly JobMagnetDbContext _dbContext = dbContext;
     private IQueryable<ProfileEntity> _query = dbContext.Set<ProfileEntity>();
 
     public async Task<ProfileEntity?> GetFirstByExpressionWithIncludesAsync(Expression<Func<ProfileEntity, bool>> expression)
     {
-        return await _query.FirstOrDefaultAsync(expression).ConfigureAwait(false);
+        var profile = await _query
+            .Where(expression)
+            .FirstOrDefaultAsync()
+            .ConfigureAwait(false);
+
+        if (profile == null) return null;
+
+        await _dbContext.Entry(profile)
+            .Reference(p => p.Resume)
+            .Query()
+            .Include(r => r.ContactInfo)
+            .ThenInclude(ci => ci.ContactType)
+            .LoadAsync();
+
+        await _dbContext.Entry(profile)
+            .Reference(p => p.Skill)
+            .Query()
+            .Include(s => s.SkillDetails)
+            .LoadAsync();
+
+        await _dbContext.Entry(profile)
+            .Collection(p => p.Talents)
+            .LoadAsync();
+
+        await _dbContext.Entry(profile)
+            .Collection(p => p.PortfolioGallery)
+            .LoadAsync();
+
+        await _dbContext.Entry(profile)
+            .Collection(p => p.Services)
+            .Query()
+            .LoadAsync();
+
+        await _dbContext.Entry(profile)
+            .Collection(p => p.Testimonials)
+            .LoadAsync();
+
+        var data = profile;
+        return data;
     }
 
     public IProfileQueryRepository IncludeTalents()
