@@ -453,7 +453,8 @@ namespace JobMagnet.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Services_ProfileId",
                 table: "Services",
-                column: "ProfileId");
+                column: "ProfileId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SkillItems_SkillId",
