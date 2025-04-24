@@ -9,7 +9,7 @@ public class ProfileEntityBuilder(IFixture fixture)
     private SkillEntity _skill = null!;
     private List<TalentEntity> _talents = [];
     private List<PortfolioGalleryEntity> _portfolio = [];
-    private List<SummaryEntity> _summaries = [];
+    private SummaryEntity _summaries = null!;
     private List<ServiceEntity> _services = [];
     private List<TestimonialEntity> _testimonials = [];
 
@@ -39,7 +39,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithSummaries(int count = 5)
     {
-        _summaries = fixture.CreateMany<SummaryEntity>(count).ToList();
+        _summaries = fixture.Create<SummaryEntity>();
         return this;
     }
 
