@@ -11,7 +11,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
     : Repository<ProfileEntity, long>(dbContext), IProfileQueryRepository
 {
     private IQueryable<ProfileEntity> _query = dbContext.Set<ProfileEntity>();
-    private Expression<Func<ProfileEntity, bool>> _expression = x => true;
+    private Expression<Func<ProfileEntity, bool>> _whereCondition = x => true;
     private readonly List<Expression<Func<ProfileEntity, ProfileEntity>>> _projections = [];
 
     public IProfileQueryRepository WithTalents()
@@ -209,7 +209,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
     public IProfileQueryRepository WhereCondition(Expression<Func<ProfileEntity, bool>> expression)
     {
-        _expression = expression;
+        _whereCondition = expression;
         return this;
     }
 
@@ -219,14 +219,14 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
         return this;
     }
 
-    public async Task<ProfileEntity?> BuildAsync()
+    public async Task<ProfileEntity?> BuildFirstOrDefaultAsync()
     {
         var finalQuery = _query.AsNoTracking().AsSplitQuery();
 
         finalQuery = _projections.Aggregate(finalQuery, (current, projection) => current.Select(projection));
 
         return await finalQuery
-            .FirstOrDefaultAsync(_expression)
+            .FirstOrDefaultAsync(_whereCondition)
             .ConfigureAwait(false);
     }
 }

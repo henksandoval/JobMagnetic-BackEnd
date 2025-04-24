@@ -114,7 +114,7 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
             .WithSkills()
             .WithPortfolioGallery()
             .WhereCondition(x => x.Id == 1)
-            .BuildAsync();
+            .BuildFirstOrDefaultAsync();
 
         profile.ShouldNotBeNull();
         profile.Resume.ShouldNotBeNull();

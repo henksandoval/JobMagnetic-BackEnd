@@ -27,7 +27,7 @@ public class ProfileController(
             .WithSummaries()
             .WithServices()
             .WithTestimonials()
-            .BuildAsync();
+            .BuildFirstOrDefaultAsync();
 
         if (entity is null)
             return Results.NotFound();
