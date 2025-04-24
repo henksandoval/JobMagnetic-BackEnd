@@ -17,7 +17,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public virtual SkillEntity Skill { get; set; }
     public virtual ICollection<TalentEntity> Talents { get; set; }
     public virtual ICollection<PortfolioGalleryEntity> PortfolioGallery { get; set; }
-    public virtual ICollection<SummaryEntity> Summaries { get; set; }
+    public virtual SummaryEntity Summaries { get; set; }
     public virtual ICollection<ServiceEntity> Services { get; set; }
     public virtual ICollection<TestimonialEntity> Testimonials { get; set; }
 }
