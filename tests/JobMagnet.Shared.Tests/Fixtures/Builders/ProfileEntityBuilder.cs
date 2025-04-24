@@ -69,7 +69,7 @@ public class ProfileEntityBuilder(IFixture fixture)
         profile.Talents = _talents;
         profile.Services = _services;
         profile.PortfolioGallery = _portfolio;
-        profile.Summaries = _summaries;
+        profile.Summary = _summaries;
         profile.Skill = _skill;
         profile.Testimonials = _testimonials;
 

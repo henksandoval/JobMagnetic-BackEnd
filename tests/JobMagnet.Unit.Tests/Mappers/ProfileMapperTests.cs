@@ -245,7 +245,7 @@ public class ProfileMapperTests
     
     private static SummaryViewModel GetSummaryViewModel(ProfileEntity profile)
     {
-        var education = profile.Summaries.Education
+        var education = profile.Summary.Education
             .Select(e => new AcademicBackgroundViewModel(
                 e.Degree,
                 e.StartDate.ToString("yyyy-MM-dd"),
@@ -253,7 +253,7 @@ public class ProfileMapperTests
                 e.Description))
             .ToArray();
 
-        var workExperiences = profile.Summaries.WorkExperiences
+        var workExperiences = profile.Summary.WorkExperiences
             .Select(w => new PositionViewModel(
                 w.JobTitle,
                 w.StartDate.ToString("yyyy-MM-dd"),
@@ -265,7 +265,7 @@ public class ProfileMapperTests
             .ToArray();
 
         return new SummaryViewModel(
-            profile.Summaries.Introduction,
+            profile.Summary.Introduction,
             new EducationViewModel(education),
             new WorkExperienceViewModel(workExperiences));
     }
