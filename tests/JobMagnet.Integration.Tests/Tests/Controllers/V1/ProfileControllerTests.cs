@@ -22,6 +22,12 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
+    private const int ContactInfoCount = 3;
+    private const int TalentsCount = 8;
+    private const int PortfolioCount = 3;
+    private const int SummariesCount = 3;
+    private const int ServicesCount = 7;
+    private const int TestimonialsCount = 12;
 
     public ProfileControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
@@ -54,12 +60,11 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         responseData.ShouldBeAssignableTo<ProfileViewModel>();
 
         responseData.PersonalData.ShouldNotBeNull();
+        responseData.PersonalData.SocialNetworks.Length.ShouldBe(ContactInfoCount);
         responseData.About.ShouldNotBeNull();
-        responseData.Testimonials.ShouldNotBeNull();
-        responseData.Testimonials.Length.ShouldBeGreaterThan(0);
+        responseData.Testimonials!.Length.ShouldBe(TestimonialsCount);
         responseData.SkillSet.ShouldNotBeNull();
-        responseData.PortfolioGallery.ShouldNotBeNull();
-        responseData.PortfolioGallery.Length.ShouldBeGreaterThan(0);
+        responseData.PortfolioGallery!.Length.ShouldBe(PortfolioCount);
     }
 
     private async Task<ProfileEntity> SetupEntityAsync()
@@ -75,13 +80,13 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
 
         var entity = new ProfileEntityBuilder(_fixture)
             .WithResume()
-            .WithContactInfo()
-            .WithTalents()
-            .WithPortfolio()
-            .WithSummaries()
+            .WithContactInfo(ContactInfoCount)
+            .WithTalents(TalentsCount)
+            .WithPortfolio(PortfolioCount)
+            .WithSummaries(SummariesCount)
             .WithServices()
             .WithSkills()
-            .WithTestimonials()
+            .WithTestimonials(TestimonialsCount)
             .Build();
 
         await commandRepository.CreateAsync(entity);

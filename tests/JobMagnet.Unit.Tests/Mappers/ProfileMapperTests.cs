@@ -29,7 +29,7 @@ public class ProfileMapperTests
 
         profileExpected = profileExpected with { PersonalData = GetPersonalDataViewModel(profile) };
 
-        var result = ProfileMapper.ToModel(profile);
+        var result = profile.ToModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -50,7 +50,7 @@ public class ProfileMapperTests
 
         profileExpected = profileExpected with { About = GetAboutViewModel(profile) };
 
-        var result = ProfileMapper.ToModel(profile);
+        var result = profile.ToModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -70,7 +70,7 @@ public class ProfileMapperTests
 
         profileExpected = profileExpected with { Testimonials = GetTestimonialViewModel(profile) };
 
-        var result = ProfileMapper.ToModel(profile);
+        var result = profile.ToModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -90,7 +90,7 @@ public class ProfileMapperTests
 
         profileExpected = profileExpected with { Service = GetServiceViewModel(profile) };
 
-        var result = ProfileMapper.ToModel(profile);
+        var result = profile.ToModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -110,7 +110,7 @@ public class ProfileMapperTests
 
         profileExpected = profileExpected with { PortfolioGallery = GetPortfolioViewModel(profile) };
 
-        var result = ProfileMapper.ToModel(profile);
+        var result = profile.ToModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -130,7 +130,7 @@ public class ProfileMapperTests
 
         profileExpected = profileExpected with { SkillSet = GetSkillViewModel(profile) };
 
-        var result = ProfileMapper.ToModel(profile);
+        var result = profile.ToModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -182,15 +182,13 @@ public class ProfileMapperTests
     
     private static ServiceViewModel GetServiceViewModel(ProfileEntity profile)
     {
-        return profile.Services
-            .Select(s => new ServiceViewModel(
-                s.Overview,
-                s.GalleryItems.Select(g => new ServiceDetailsViewModel(
-                        g.Title,
-                        g.Description,
-                        g.UrlImage))
-                    .ToArray()))
-            .FirstOrDefault() ?? throw new InvalidOperationException("No hay servicios disponibles en el perfil.");
+        var serviceDetails = profile.Services.GalleryItems.Select(g => new ServiceDetailsViewModel(
+                g.Title,
+                g.Description,
+                g.UrlImage))
+            .ToArray();
+
+        return new ServiceViewModel(profile.Services.Overview, serviceDetails);
     }
 
     private static TestimonialsViewModel[]? GetTestimonialViewModel(ProfileEntity profile)

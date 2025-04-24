@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JobMagnet.Infrastructure.Context;
 
-public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor httpContextAccessor) : DbContext(options)
+public class JobMagnetDbContext(DbContextOptions options, IHttpContextAccessor? httpContextAccessor = null) : DbContext(options)
 {
     public DbSet<ContactTypeEntity> ContactTypes { get; set; }
     public DbSet<ProfileEntity> Profiles { get; set; }

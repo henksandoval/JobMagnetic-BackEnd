@@ -16,6 +16,11 @@ internal static class ProfileMapper
             .Map(dest => dest.Link, src => src.UrlLink)
             .Map(dest => dest.Video, src => src.UrlVideo);
 
+        TypeAdapterConfig<ServiceGalleryItemEntity, ServiceDetailsViewModel>
+            .NewConfig()
+            .Map(dest => dest.BackgroundUrl, src => src.UrlImage)
+            .Map(dest => dest.Name, src => src.Title);
+
         TypeAdapterConfig<TestimonialEntity, TestimonialsViewModel>
             .NewConfig()
             .Map(dest => dest.Testimonial, src => src.Feedback);
@@ -36,11 +41,15 @@ internal static class ProfileMapper
             .Map(dest => dest.WorkExperience, src => src.Resume.Summary)
             .Map(dest => dest.Freelance, src => string.Empty);
 
-        TypeAdapterConfig<ProfileEntity, SkillSetViewModel>
+        TypeAdapterConfig<SkillEntity, SkillSetViewModel>
             .NewConfig()
-            .Map(dest => dest.Overview, src => src.Skill.Overview)
             .Map(dest => dest.SkillDetails,
-                src => src.Skill.SkillDetails.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
+                src => src.SkillDetails.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
+
+        TypeAdapterConfig<ServiceEntity, ServiceViewModel>
+            .NewConfig()
+            .Map(dest => dest.ServiceDetails,
+                src => src.GalleryItems.Select(item => item.Adapt<ServiceDetailsViewModel>()).ToArray());
 
         TypeAdapterConfig<ProfileEntity, ProfileViewModel>
             .NewConfig()
@@ -65,20 +74,11 @@ internal static class ProfileMapper
                 src => src.PortfolioGallery.Any())
             .Map(dest => dest.SkillSet, src => src.Skill.Adapt<SkillSetViewModel>(),
                 src => src.Skill != null && src.Skill.SkillDetails.Count != 0)
-            .Map(dest => dest.Service,
-            src => src.Services
-                .Select(s => new ServiceViewModel(
-                    s.Overview,
-                    s.GalleryItems.Select(g => new ServiceDetailsViewModel(
-                            g.Title,
-                            g.Description,
-                            g.UrlImage))
-                        .ToArray()))
-                .FirstOrDefault() 
-        );
+            .Map(dest => dest.Service, src => src.Services.Adapt<ServiceViewModel>(),
+                src => src.Services != null && src.Services.GalleryItems.Count != 0);
     }
 
-    internal static ProfileViewModel ToModel(ProfileEntity entity)
+    internal static ProfileViewModel ToModel(this ProfileEntity entity)
     {
         return entity.Adapt<ProfileViewModel>();
     }

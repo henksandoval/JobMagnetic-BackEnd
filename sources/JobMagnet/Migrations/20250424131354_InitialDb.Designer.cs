@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobMagnet.Migrations
 {
     [DbContext(typeof(JobMagnetDbContext))]
-    [Migration("20250418140002_InitialDb")]
+    [Migration("20250424131354_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -402,7 +402,8 @@ namespace JobMagnet.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProfileId");
+                    b.HasIndex("ProfileId")
+                        .IsUnique();
 
                     b.ToTable("Services", (string)null);
                 });
@@ -815,8 +816,8 @@ namespace JobMagnet.Migrations
             modelBuilder.Entity("JobMagnet.Infrastructure.Entities.ServiceEntity", b =>
                 {
                     b.HasOne("JobMagnet.Infrastructure.Entities.ProfileEntity", "Profile")
-                        .WithMany("Services")
-                        .HasForeignKey("ProfileId")
+                        .WithOne("Services")
+                        .HasForeignKey("JobMagnet.Infrastructure.Entities.ServiceEntity", "ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -912,7 +913,8 @@ namespace JobMagnet.Migrations
                     b.Navigation("Resume")
                         .IsRequired();
 
-                    b.Navigation("Services");
+                    b.Navigation("Services")
+                        .IsRequired();
 
                     b.Navigation("Skill")
                         .IsRequired();

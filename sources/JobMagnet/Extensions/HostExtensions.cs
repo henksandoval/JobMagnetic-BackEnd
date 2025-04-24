@@ -1,3 +1,4 @@
+using JobMagnet.Infrastructure.Context;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
@@ -21,6 +22,7 @@ internal static class HostExtensions
     private static IServiceCollection AddDependencies(this IServiceCollection services)
     {
         return services
+            .AddTransient<IDbContextFactory, JobMagnetDbContextFactory>()
             .AddTransient<ISeeder, Seeder>();
     }
 

@@ -107,19 +107,22 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
 
         var profileQueryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
         var profile = await profileQueryRepository
-            .IncludeResume()
-            .IncludeTalents()
-            .IncludeService()
-            .IncludeTestimonials()
-            .IncludeSkill()
-            .IncludePortfolioGallery()
-            .GetFirstByExpressionWithIncludesAsync(x => x.Id == 1);
+            .WithResume()
+            .WithTalents()
+            .WithServices()
+            .WithTestimonials()
+            .WithSkills()
+            .WithPortfolioGallery()
+            .WhereCondition(x => x.Id == 1)
+            .BuildFirstOrDefaultAsync();
 
         profile.ShouldNotBeNull();
+        profile.Resume.ShouldNotBeNull();
+        profile.Resume.ContactInfo.ShouldNotBeNull();
         profile.Skill.SkillDetails.Count.ShouldBe(new SkillsCollection().GetSkills().Count);
         profile.Talents.Count.ShouldBe(new TalentsCollection().GetTalents().Count);
-        profile.Services.Count.ShouldBe(1);
-        profile.Services.First().GalleryItems.Count.ShouldBe(new ServicesCollection().GetServicesGallery().Count);
+        profile.Services.ShouldNotBeNull();
+        profile.Services.GalleryItems.Count.ShouldBe(new ServicesCollection().GetServicesGallery().Count);
         profile.Testimonials.Count.ShouldBe(new TestimonialCollection().GetTestimonials().Count);
         profile.PortfolioGallery.Count.ShouldBe(new PortfolioCollection().GetPortfolioGallery().Count);
     }
