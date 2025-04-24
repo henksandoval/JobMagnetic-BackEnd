@@ -151,6 +151,26 @@ public class ProfileMapperTests
             )).ToArray()
         );
     }
+    
+    [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when SummaryViewModel is defined")]
+    public void ShouldMapperProfileEntityToSummaryViewModelWithPortfolioGallery()
+    {
+        var profileBuilder = new ProfileEntityBuilder(_fixture)
+            .WithSummaries();
+
+        var profile = profileBuilder.Build();
+
+        var profileExpected = new ProfileViewModel();
+
+        profileExpected = profileExpected with { Summary = GetSummaryViewModel(profile) };
+
+        var result = ProfileMapper.ToModel(profile);
+
+        result.ShouldNotBeNull();
+        result.ShouldBeOfType<ProfileViewModel>();
+
+        result.Summary.ShouldBeEquivalentTo(profileExpected.Summary);
+    }
 
     private static AboutViewModel GetAboutViewModel(ProfileEntity entity)
     {
@@ -224,4 +244,33 @@ public class ProfileMapperTests
 
         return new SkillSetViewModel(profile.Skill.Overview!, skills);
     }
+    
+    private static SummaryViewModel GetSummaryViewModel(ProfileEntity profile)
+    {
+        var education = profile.Summaries.Education
+            .Select(e => new AcademicBackgroundViewModel(
+                e.Degree,
+                e.StartDate.ToString("yyyy-MM-dd"),
+                e.InstitutionName,
+                e.Description))
+            .ToArray();
+
+        var workExperiences = profile.Summaries.WorkExperiences
+            .Select(w => new PositionViewModel(
+                w.JobTitle,
+                w.StartDate.ToString("yyyy-MM-dd"),
+                w.CompanyLocation,
+                string.Join(", ", w.Responsibilities),
+                string.Join(", ", w.Responsibilities),
+                string.Join(", ", w.Responsibilities),
+                w.Description))
+            .ToArray();
+
+        return new SummaryViewModel(
+            profile.Summaries.Introduction,
+            new EducationViewModel(education),
+            new WorkExperienceViewModel(workExperiences));
+    }
+    
+    
 }

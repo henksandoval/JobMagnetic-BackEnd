@@ -51,6 +51,9 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
         _query = _query
             .Include(p => p.Summaries)
             .ThenInclude(p => p.Education);
+        _query = _query
+            .Include(p => p.Summaries)
+            .ThenInclude(p => p.WorkExperiences);
         return this;
     }
 

@@ -172,6 +172,7 @@ namespace JobMagnet.Infrastructure.Seeders
         private static void FillEducation(SummaryEntity summaryEntity)
         {
             summaryEntity.Education = new SummaryCollection(summaryEntity.Id).GetEducation().ToList();
+            summaryEntity.WorkExperiences = new SummaryCollection(summaryEntity.Id).GetWorkExperience().ToList();
         }
     }
 }

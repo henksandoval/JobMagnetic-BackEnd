@@ -2,6 +2,6 @@
 
 public record SummaryViewModel(
     string Introduction,
-    EducationViewModel EducationViewModel,
-    WorkExperienceViewModel WorkExperienceViewModel
+    EducationViewModel Education,
+    WorkExperienceViewModel WorkExperience
 );
