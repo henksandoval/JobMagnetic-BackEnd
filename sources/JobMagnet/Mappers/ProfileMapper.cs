@@ -65,17 +65,41 @@ internal static class ProfileMapper
                 src => src.PortfolioGallery.Any())
             .Map(dest => dest.SkillSet, src => src.Skill.Adapt<SkillSetViewModel>(),
                 src => src.Skill != null && src.Skill.SkillDetails.Count != 0)
+            .Map(dest => dest.Summary,src => new SummaryViewModel(
+                    src.Summaries.Introduction,
+        new EducationViewModel(
+                    src.Summaries.Education
+                        .Select(e => new AcademicBackgroundViewModel(
+                            e.Degree,
+                            e.StartDate.ToString("yyyy-MM-dd"),
+                            e.InstitutionName,
+                            e.Description
+                        )).ToArray()
+                ),
+                new WorkExperienceViewModel(
+                    src.Summaries.WorkExperiences
+                        .Select(w => new PositionViewModel(
+                            w.JobTitle,
+                            w.StartDate.ToString("yyyy-MM-dd"),
+                            w.CompanyLocation,
+                            string.Join(", ", w.Responsibilities),
+                            string.Join(", ", w.Responsibilities),
+                            string.Join(", ", w.Responsibilities),
+                            w.Description))
+                        .ToArray()
+                )))
             .Map(dest => dest.Service,
-            src => src.Services
-                .Select(s => new ServiceViewModel(
-                    s.Overview,
-                    s.GalleryItems.Select(g => new ServiceDetailsViewModel(
-                            g.Title,
-                            g.Description,
-                            g.UrlImage))
-                        .ToArray()))
-                .FirstOrDefault() 
-        );
+                src => src.Services
+                    .Select(s => new ServiceViewModel(
+                        s.Overview,
+                        s.GalleryItems.Select(g => new ServiceDetailsViewModel(
+                                g.Title,
+                                g.Description,
+                                g.UrlImage))
+                            .ToArray()))
+                    .FirstOrDefault()
+            );
+
     }
 
     internal static ProfileViewModel ToModel(ProfileEntity entity)
