@@ -32,7 +32,7 @@ public class ProfileController(
         if (entity is null)
             return Results.NotFound();
 
-        var responseModel = ProfileMapper.ToModel(entity);
+        var responseModel = entity.ToModel();
 
         return Results.Ok(responseModel);
     }
