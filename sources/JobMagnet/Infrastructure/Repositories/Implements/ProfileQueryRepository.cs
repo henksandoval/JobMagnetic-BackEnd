@@ -7,12 +7,65 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JobMagnet.Infrastructure.Repositories.Implements;
 
-public class ProfileQueryRepository(JobMagnetDbContext dbContext, IDbContextFactory dbContextFactory)
+public class ProfileQueryRepository(JobMagnetDbContext dbContext)
     : Repository<ProfileEntity, long>(dbContext), IProfileQueryRepository
 {
-    private readonly JobMagnetDbContext _dbContext = dbContext;
-    private readonly List<Func<JobMagnetDbContext, ProfileEntity, Task>> _relationLoaders = [];
+    private IQueryable<ProfileEntity> _query = dbContext.Set<ProfileEntity>();
     private Expression<Func<ProfileEntity, bool>> _expression = x => true;
+
+    public IProfileQueryRepository WithTalents()
+    {
+        _query = _query.Include(p => p.Talents);
+        return this;
+    }
+
+    public IProfileQueryRepository WithSummaries()
+    {
+        _query = _query.Include(p => p.Summaries);
+        return this;
+    }
+
+    public IProfileQueryRepository WithServices()
+    {
+        _query = _query
+            .Include(p => p.Services)
+            .ThenInclude(p => p.GalleryItems);
+        return this;
+    }
+
+    public IProfileQueryRepository WithTestimonials()
+    {
+        _query = _query
+            .Include(p => p.Testimonials);
+        return this;
+    }
+
+    public IProfileQueryRepository WithResume()
+    {
+        _query = _query
+            .Include(p => p.Resume)
+            .ThenInclude(p => p.ContactInfo)
+            .ThenInclude(p => p.ContactType);
+
+        return this;
+    }
+
+    public IProfileQueryRepository WithSkills()
+    {
+        _query = _query
+            .Include(p => p.Skill)
+            .ThenInclude(p => p.SkillDetails);
+
+        return this;
+    }
+
+    public IProfileQueryRepository WithPortfolioGallery()
+    {
+        _query = _query
+            .Include(p => p.PortfolioGallery);
+
+        return this;
+    }
 
     public IProfileQueryRepository WhereCondition(Expression<Func<ProfileEntity, bool>> expression)
     {
@@ -22,132 +75,12 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext, IDbContextFact
 
     public async Task<ProfileEntity?> BuildAsync()
     {
-        var profile = await _dbContext.Set<ProfileEntity>()
-            .Where(_expression)
-            .FirstOrDefaultAsync()
+        var profile = await _query
+            .AsNoTracking()
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(_expression)
             .ConfigureAwait(false);
 
-        if (profile == null) return null;
-
-        var loaders = _relationLoaders.Select(func =>
-        {
-            var newDbContext = dbContextFactory.CreateDbContext();
-            return func(newDbContext, profile);
-        });
-
-        await Task.WhenAll(loaders).ConfigureAwait(false);
-
         return profile;
-    }
-
-    public IProfileQueryRepository WithResume()
-    {
-        _relationLoaders.Add(async (contextFactory, profile) =>
-        {
-            contextFactory.Attach(profile);
-
-            var loadResume = contextFactory.Entry(profile)
-                .Reference(p => p.Resume)
-                .Query()
-                .Include(r => r.ContactInfo)
-                .ThenInclude(ci => ci.ContactType)
-                .LoadAsync();
-
-            await loadResume;
-        });
-
-        return this;
-    }
-
-    public IProfileQueryRepository WithSkills()
-    {
-        _relationLoaders.Add(async (contextFactory, profile) =>
-        {
-            contextFactory.Attach(profile);
-
-            var loadSkills = contextFactory.Entry(profile)
-                .Reference(p => p.Skill)
-                .Query()
-                .Include(s => s.SkillDetails)
-                .LoadAsync();
-
-            await loadSkills;
-        });
-
-        return this;
-    }
-
-    public IProfileQueryRepository WithTalents()
-    {
-        _relationLoaders.Add(async (contextFactory, profile) =>
-        {
-            var loadTalents = contextFactory.Entry(profile)
-                .Collection(p => p.Talents)
-                .LoadAsync();
-
-            await loadTalents;
-        });
-
-        return this;
-    }
-
-    public IProfileQueryRepository WithPortfolioGallery()
-    {
-        _relationLoaders.Add(async (contextFactory, profile) =>
-        {
-            var loadPortfolioGallery = contextFactory.Entry(profile)
-                .Collection(p => p.PortfolioGallery)
-                .LoadAsync();
-
-            await loadPortfolioGallery;
-        });
-
-        return this;
-    }
-
-    public IProfileQueryRepository WithSummaries()
-    {
-        _relationLoaders.Add(async (contextFactory, profile) =>
-        {
-            var loadSummaries = contextFactory.Entry(profile)
-                .Collection(p => p.Summaries)
-                .LoadAsync();
-
-            await loadSummaries;
-        });
-
-        return this;
-    }
-
-    public IProfileQueryRepository WithServices()
-    {
-        _relationLoaders.Add(async (contextFactory, profile) =>
-        {
-            contextFactory.Attach(profile);
-
-            var loadServices = contextFactory.Entry(profile)
-                .Reference(p => p.Services)
-                .Query()
-                .Include(s => s.GalleryItems)
-                .LoadAsync();
-
-            await loadServices;
-        });
-
-        return this;
-    }
-
-    public IProfileQueryRepository WithTestimonials()
-    {
-        _relationLoaders.Add(async (contextFactory, profile) =>
-        {
-            var loadTestimonials = contextFactory.Entry(profile)
-                .Collection(p => p.Testimonials)
-                .LoadAsync();
-
-            await loadTestimonials;
-        });
-
-        return this;
     }
 }
