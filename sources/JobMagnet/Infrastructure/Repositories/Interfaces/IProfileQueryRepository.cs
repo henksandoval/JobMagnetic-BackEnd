@@ -10,6 +10,7 @@ public interface IProfileQueryRepository : IQueryRepository<ProfileEntity, long>
     IProfileQueryRepository IncludeResume();
     IProfileQueryRepository IncludeTalents();
     IProfileQueryRepository IncludeService();
+    IProfileQueryRepository IncludeSummaries();
     IProfileQueryRepository IncludeTestimonials();
     IProfileQueryRepository IncludeSkill();
     IProfileQueryRepository IncludePortfolioGallery();
