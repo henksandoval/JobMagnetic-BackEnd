@@ -25,6 +25,7 @@ namespace JobMagnet.Infrastructure.Seeders
                 RegisterResumeAsync(profile.Id),
                 RegisterTestimonialAsync(profile.Id),
                 RegisterServiceAsync(profile.Id),
+                RegisterSummaryAsync(profile.Id),
                 RegisterSkillAsync(profile.Id),
                 RegisterPortfolioAsync(profile.Id)
             };
@@ -111,6 +112,24 @@ namespace JobMagnet.Infrastructure.Seeders
             await context.Skills.AddAsync(skillEntity);
         }
 
+        private async Task RegisterSummaryAsync(long profileId)
+        {
+            if (context.Summaries.Any()) return;
+            
+            var summaryEntity = new SummaryEntity
+            {
+                Id = 0,
+                Introduction = "Professional with experience in your area or profession, recognized for key skills. Committed to value or professional goal, seeking to contribute to the growth of company or industry.",
+                ProfileId = profileId,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            };
+            
+            FillEducation(summaryEntity);
+            await context.Summaries.AddAsync(summaryEntity);
+            
+        }
+
         private async Task RegisterServiceAsync(long profileId)
         {
             if (context.Services.Any()) return;
@@ -148,6 +167,12 @@ namespace JobMagnet.Infrastructure.Seeders
         private static void FillServiceGalleryItem(ServiceEntity serviceEntity)
         {
             serviceEntity.GalleryItems = new ServiceCollection(serviceEntity.Id).GetServicesGallery().ToList();
+        }
+
+        private static void FillEducation(SummaryEntity summaryEntity)
+        {
+            summaryEntity.Education = new SummaryCollection(summaryEntity.Id).GetEducation().ToList();
+            summaryEntity.WorkExperiences = new SummaryCollection(summaryEntity.Id).GetWorkExperience().ToList();
         }
     }
 }

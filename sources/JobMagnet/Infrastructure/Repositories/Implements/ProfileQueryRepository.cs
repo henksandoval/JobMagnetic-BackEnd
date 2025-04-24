@@ -44,7 +44,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
                 }).ToList(),
             },
             Skill = p.Skill,
-            Summaries = p.Summaries,
+            Summary = p.Summary,
             Testimonials = p.Testimonials
         });
         return this;
@@ -79,9 +79,19 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
                     Category = s.Category
                 }).ToList()
             },
-            Summaries = p.Summaries,
+            Summary = p.Summary,
             Testimonials = p.Testimonials
         });
+        return this;
+    }
+    public IProfileQueryRepository IncludeSummaries()
+    {
+        _query = _query
+            .Include(p => p.Summary)
+            .ThenInclude(p => p.Education);
+        _query = _query
+            .Include(p => p.Summary)
+            .ThenInclude(p => p.WorkExperiences);
         return this;
     }
 
@@ -110,7 +120,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
             PortfolioGallery = p.PortfolioGallery,
             Resume = p.Resume,
             Skill = p.Skill,
-            Summaries = p.Summaries,
+            Summary = p.Summary,
             Testimonials = p.Testimonials
         });
         return this;
@@ -118,7 +128,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
     public IProfileQueryRepository WithSummaries()
     {
-        _query = _query.Include(p => p.Summaries);
+        _query = _query.Include(p => p.Summary);
         return this;
     }
 
@@ -142,7 +152,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
             PortfolioGallery = p.PortfolioGallery,
             Resume = p.Resume,
             Skill = p.Skill,
-            Summaries = p.Summaries,
+            Summary = p.Summary,
             Testimonials = p.Testimonials
         });
         return this;
@@ -174,7 +184,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
             }).ToList(),
             Resume = p.Resume,
             Skill = p.Skill,
-            Summaries = p.Summaries,
+            Summary = p.Summary,
             Testimonials = p.Testimonials
         });
         return this;
@@ -196,7 +206,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
             PortfolioGallery = p.PortfolioGallery,
             Resume = p.Resume,
             Skill = p.Skill,
-            Summaries = p.Summaries,
+            Summary = p.Summary,
             Testimonials = p.Testimonials.Where(t => !t.IsDeleted).Select(t => new TestimonialEntity
             {
                 Id = t.Id,

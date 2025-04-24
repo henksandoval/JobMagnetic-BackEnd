@@ -51,13 +51,37 @@ internal static class ProfileMapper
             .Map(dest => dest.ServiceDetails,
                 src => src.GalleryItems.Select(item => item.Adapt<ServiceDetailsViewModel>()).ToArray());
 
+        TypeAdapterConfig<SummaryEntity, SummaryViewModel>
+            .NewConfig()
+            .Map(dest => dest.Education,
+                src => new EducationViewModel(src.Education.Select(e => new AcademicBackgroundViewModel(
+                        e.Degree,
+                        e.StartDate.ToString("yyyy-MM-dd"),
+                        e.InstitutionName,
+                        e.Description
+                    )).ToArray()
+                ),
+                src => src.Education != null && src.Education.Count > 0)
+            .Map(dest => dest.WorkExperience,
+                src => new WorkExperienceViewModel(src.WorkExperiences.Select(w => new PositionViewModel(
+                        w.JobTitle,
+                        w.StartDate.ToString("yyyy-MM-dd"),
+                        w.CompanyLocation,
+                        string.Join(",", w.Responsibilities),
+                        string.Join(",", w.Responsibilities),
+                        string.Join(",", w.Responsibilities),
+                        w.Description))
+                    .ToArray()
+                ),
+                src => src.WorkExperiences != null && src.WorkExperiences.Count > 0);
+
         TypeAdapterConfig<ProfileEntity, ProfileViewModel>
             .NewConfig()
             .Map(dest => dest.PersonalData,
                 src => new PersonalDataViewModel(
                     GetFullName(src),
                     src.Talents.Select(t => t.Description).ToArray(),
-                    src.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(
+                    src.Resume!.ContactInfo.Select(c => new SocialNetworksViewModel(
                             c.ContactType.Name,
                             c.Value,
                             c.ContactType.IconClass ?? string.Empty,
@@ -73,9 +97,11 @@ internal static class ProfileMapper
                 src => src.PortfolioGallery.Select(p => p.Adapt<PortfolioViewModel>()).ToArray(),
                 src => src.PortfolioGallery.Any())
             .Map(dest => dest.SkillSet, src => src.Skill.Adapt<SkillSetViewModel>(),
-                src => src.Skill != null && src.Skill.SkillDetails.Count != 0)
+                src => src.Skill != null && src.Skill.SkillDetails.Count > 0)
             .Map(dest => dest.Service, src => src.Services.Adapt<ServiceViewModel>(),
-                src => src.Services != null && src.Services.GalleryItems.Count != 0);
+                src => src.Services != null && src.Services.GalleryItems.Count > 0)
+            .Map(dest => dest.Summary, src => src.Summary.Adapt<SummaryViewModel>(),
+                src => src.Summary != null);
     }
 
     internal static ProfileViewModel ToModel(this ProfileEntity entity)
