@@ -164,7 +164,7 @@ public class ProfileMapperTests
 
         profileExpected = profileExpected with { Summary = GetSummaryViewModel(profile) };
 
-        var result = ProfileMapper.ToModel(profile);
+        var result = profile.ToModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
