@@ -6,9 +6,8 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
-using JobMagnet.Models.Resume;
+using JobMagnet.Models.Testimonial;
 using JobMagnet.Shared.Tests.Fixtures;
-using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,23 +16,23 @@ using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
 
-public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
+public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 {
-    private const string RequestUriController = "api/v1/resume";
+    private const string RequestUriController = "api/v1/testimonial";
     private const string InvalidId = "100";
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
 
-    public ResumeControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
+    public TestimonialControllerShould(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
         _testFixture = testFixture;
         _httpClient = _testFixture.GetClient();
         _testFixture.SetTestOutputHelper(testOutputHelper);
     }
 
-    [Fact(DisplayName = "Should return the record and return 200 when GET request with valid ID is provided")]
-    public async Task ShouldReturnRecord_WhenValidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return the record and return 200 when GET request with valid ID is provided")]
+    public async Task ReturnRecord_WhenValidIdIsProvidedAsync()
     {
         // Given
         var entity = await SetupEntityAsync();
@@ -45,13 +44,13 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<ResumeModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<TestimonialModel>(response);
         responseData.ShouldNotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
 
-    [Fact(DisplayName = "Should return 404 when GET request with invalid ID is provided")]
-    public async Task ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return 404 when GET request with invalid ID is provided")]
+    public async Task ReturnNotFound_WhenInvalidIdIsProvidedAsync()
     {
         // Given
         _ = await SetupEntityAsync();
@@ -64,14 +63,13 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Should create a new record and return 201 when the POST request is valid")]
-    public async Task ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync()
+    [Fact(DisplayName = "Create a new record and return 201 when the POST request is valid")]
+    public async Task ReturnCreatedAndPersistData_WhenRequestIsValidAsync()
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var entity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<ResumeCreateRequest>().Create();
-        createRequest.ProfileId = entity.Id;
+        var profileEntity = await SetupProfileEntityAsync();
+        var createRequest = _fixture.Build<TestimonialCreateRequest>().With(x => x.ProfileId, profileEntity.Id).Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -81,7 +79,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<ResumeModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<TestimonialModel>(response);
         responseData.ShouldNotBeNull();
 
         var locationHeader = response.Headers.Location!.ToString();
@@ -89,7 +87,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<TestimonialEntity, long>>();
         var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
@@ -97,7 +95,7 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     }
 
     [Fact(DisplayName = "Should delete and return 204 when DELETE request is received")]
-    public async Task ShouldDeleteRecord_WhenDeleteRequestIsReceivedAsync()
+    public async Task DeleteRecord_WhenDeleteRequestIsReceivedAsync()
     {
         // Given
         var entity = await SetupEntityAsync();
@@ -109,13 +107,13 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<TestimonialEntity, long>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
         dbEntity.ShouldBeNull();
     }
 
-    [Fact(DisplayName = "Should return 404 when a DELETE request with invalid ID is provided")]
-    public async Task ShouldReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return 404 when a DELETE request with invalid ID is provided")]
+    public async Task ReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
         _ = await SetupEntityAsync();
@@ -128,36 +126,36 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Should return 204 when a valid PUT request is provided")]
-    public async Task ShouldReturnNotContent_WhenReceivedValidPutRequestAsync()
+    [Fact(DisplayName = "Return 204 when a valid PUT request is provided")]
+    public async Task ReturnNotContent_WhenReceivedValidPutRequestAsync()
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updateRequest = _fixture.Build<ResumeUpdateRequest>()
+        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>()
             .With(x => x.Id, entity.Id)
             .With(x => x.ProfileId, entity.ProfileId)
             .Create();
 
         // When
-        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updateRequest);
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updatedEntity);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<TestimonialEntity, long>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
         dbEntity.ShouldNotBeNull();
-        dbEntity.Should().BeEquivalentTo(updateRequest, options => options.ExcludingMissingMembers());
+        dbEntity.Should().BeEquivalentTo(updatedEntity);
     }
 
-    [Fact(DisplayName = "Should return 400 when a PUT request with invalid ID is provided")]
-    public async Task ShouldReturnBadRequest_WhenPutRequestWithInvalidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return 400 when a PUT request with invalid ID is provided")]
+    public async Task ReturnBadRequest_WhenPutRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>().Create();
         var differentId = updatedEntity.Id + InvalidId;
 
         // When
@@ -168,12 +166,12 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
-    [Fact(DisplayName = "Should return 404 when a PUT request with invalid ID is provided")]
-    public async Task ShouldReturnNotFound_WhenPutRequestWithInvalidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return 404 when a PUT request with invalid ID is provided")]
+    public async Task ReturnNotFound_WhenPutRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>().Create();
 
         // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
@@ -183,13 +181,13 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Should return 204 when a valid PATCH request is provided")]
-    public async Task ShouldReturnNotContent_WhenReceivedValidPatchRequestAsync()
+    [Fact(DisplayName = "Return 204 when a valid PATCH request is provided")]
+    public async Task ReturnNotContent_WhenReceivedValidPatchRequestAsync()
     {
         // Given
         const string newJobTitle = "Software developer";
         var entity = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<ResumeUpdateRequest>();
+        var patchDocument = new JsonPatchDocument<TestimonialUpdateRequest>();
         patchDocument.Replace(a => a.JobTitle, newJobTitle);
 
         // When
@@ -201,19 +199,19 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<TestimonialEntity, long>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
         dbEntity.ShouldNotBeNull();
         dbEntity.JobTitle.ShouldBe(newJobTitle);
     }
 
-    [Fact(DisplayName = "Should return 404 when a PATCH request with invalid ID is provided")]
-    public async Task ShouldReturnNotFound_WhenPatchRequestWithInvalidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return 404 when a PATCH request with invalid ID is provided")]
+    public async Task ReturnNotFound_WhenPatchRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().Create();
-        var patchDocument = new JsonPatchDocument<ResumeUpdateRequest>();
+        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>().Create();
+        var patchDocument = new JsonPatchDocument<TestimonialUpdateRequest>();
 
         // When
         var response =
@@ -224,6 +222,23 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
+    private async Task<TestimonialEntity> CreateAndPersistEntityAsync()
+    {
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<TestimonialEntity>>();
+
+        var entity = _fixture.Create<TestimonialEntity>();
+        await commandRepository.CreateAsync(entity);
+
+        return entity;
+    }
+
+    private async Task<TestimonialEntity> SetupEntityAsync()
+    {
+        await _testFixture.ResetDatabaseAsync();
+        return await CreateAndPersistEntityAsync();
+    }
+
     private async Task<ProfileEntity> SetupProfileEntityAsync()
     {
         await _testFixture.ResetDatabaseAsync();
@@ -231,23 +246,6 @@ public class ResumeControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
         var entity = _fixture.Create<ProfileEntity>();
-        await commandRepository.CreateAsync(entity);
-
-        return entity;
-    }
-
-    private async Task<ResumeEntity> SetupEntityAsync()
-    {
-        await _testFixture.ResetDatabaseAsync();
-        return await CreateAndPersistEntityAsync();
-    }
-
-    private async Task<ResumeEntity> CreateAndPersistEntityAsync()
-    {
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ResumeEntity>>();
-
-        var entity = _fixture.Create<ResumeEntity>();
         await commandRepository.CreateAsync(entity);
 
         return entity;

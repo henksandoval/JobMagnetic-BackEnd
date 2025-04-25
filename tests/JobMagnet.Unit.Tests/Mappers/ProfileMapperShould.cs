@@ -9,12 +9,12 @@ using Shouldly;
 
 namespace JobMagnet.Unit.Tests.Mappers;
 
-public class ProfileMapperTests
+public class ProfileMapperShould
 {
     private readonly IFixture _fixture = FixtureBuilder.Build();
 
-    [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when PersonalData is defined")]
-    public void ShouldMapperProfileEntityToProfileViewModelWithPersonalData()
+    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when PersonalData is defined")]
+    public void MapperProfileEntityToProfileViewModelWithPersonalData()
     {
         var profileBuilder = new ProfileEntityBuilder(_fixture)
             .WithTalents()
@@ -37,8 +37,8 @@ public class ProfileMapperTests
         result.PersonalData!.ShouldBeEquivalentTo(profileExpected.PersonalData);
     }
 
-    [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when About is defined")]
-    public void ShouldMapperProfileEntityToProfileViewModelWithAbout()
+    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when About is defined")]
+    public void MapperProfileEntityToProfileViewModelWithAbout()
     {
         var profileBuilder = new ProfileEntityBuilder(_fixture)
             .WithResume()
@@ -58,8 +58,8 @@ public class ProfileMapperTests
         result.About!.ShouldBeEquivalentTo(profileExpected.About);
     }
 
-    [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when Testimonial is defined")]
-    public void ShouldMapperProfileEntityToProfileViewModelWithTestimonials()
+    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Testimonial is defined")]
+    public void MapperProfileEntityToProfileViewModelWithTestimonials()
     {
         var profileBuilder = new ProfileEntityBuilder(_fixture)
             .WithTestimonials();
@@ -78,8 +78,8 @@ public class ProfileMapperTests
         result.Testimonials!.ShouldBeEquivalentTo(profileExpected.Testimonials);
     }
     
-    [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when Service is defined")]
-    public void ShouldMapperProfileEntityToProfileViewModelWithService()
+    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Service is defined")]
+    public void MapperProfileEntityToProfileViewModelWithService()
     {
         var profileBuilder = new ProfileEntityBuilder(_fixture)
             .WithServices();
@@ -98,8 +98,8 @@ public class ProfileMapperTests
         result.Service!.ShouldBeEquivalentTo(profileExpected.Service);
     }
 
-    [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when PortfolioGallery is defined")]
-    public void ShouldMapperProfileEntityToProfileViewModelWithPortfolioGallery()
+    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when PortfolioGallery is defined")]
+    public void MapperProfileEntityToProfileViewModelWithPortfolioGallery()
     {
         var profileBuilder = new ProfileEntityBuilder(_fixture)
             .WithPortfolio();
@@ -118,8 +118,8 @@ public class ProfileMapperTests
         result.PortfolioGallery.ShouldBeEquivalentTo(profileExpected.PortfolioGallery);
     }
 
-    [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when Skills are defined")]
-    public void ShouldMapperProfileEntityToProfileViewModelWithSkills()
+    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Skills are defined")]
+    public void MapperProfileEntityToProfileViewModelWithSkills()
     {
         var profileBuilder = new ProfileEntityBuilder(_fixture)
             .WithSkills();
@@ -152,8 +152,8 @@ public class ProfileMapperTests
         );
     }
     
-    [Fact(DisplayName = "Should map ProfileEntity to ProfileViewModel when SummaryViewModel is defined")]
-    public void ShouldMapperProfileEntityToSummaryViewModelWithPortfolioGallery()
+    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when SummaryViewModel is defined")]
+    public void MapperProfileEntityToSummaryViewModelWithPortfolioGallery()
     {
         var profileBuilder = new ProfileEntityBuilder(_fixture)
             .WithSummaries();

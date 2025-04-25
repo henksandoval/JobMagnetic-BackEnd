@@ -19,7 +19,7 @@ using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
 
-public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
+public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 {
     private const string RequestUriController = "api/v1/Summary";
     private const string InvalidId = "100";
@@ -27,15 +27,15 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
 
-    public SummaryControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
+    public SummaryControllerShould(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
         _testFixture = testFixture;
         _httpClient = _testFixture.GetClient();
         _testFixture.SetTestOutputHelper(testOutputHelper);
     }
 
-    [Fact(DisplayName = "Should create a new record and return 201 when the POST request is valid")]
-    public async Task ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync()
+    [Fact(DisplayName = "Create a new record and return 201 when the POST request is valid")]
+    public async Task ReturnCreatedAndPersistData_WhenRequestIsValidAsync()
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
@@ -64,8 +64,8 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         entityCreated.ShouldNotBeNull();
     }
 
-    [Fact(DisplayName = "Should return the record and return 200 when GET request with valid ID is provided")]
-    public async Task ShouldReturnRecord_WhenValidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return the record and return 200 when GET request with valid ID is provided")]
+    public async Task ReturnRecord_WhenValidIdIsProvidedAsync()
     {
         // Given
         var entity = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
@@ -82,8 +82,8 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
 
-    [Fact(DisplayName = "Should return 404 when GET request with invalid ID is provided")]
-    public async Task ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return 404 when GET request with invalid ID is provided")]
+    public async Task ReturnNotFound_WhenInvalidIdIsProvidedAsync()
     {
         // Given
         _ = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
@@ -96,8 +96,8 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Should delete and return 204 when DELETE request is received")]
-    public async Task ShouldDeleteRecord_WhenDeleteRequestIsReceivedAsync()
+    [Fact(DisplayName = "Delete and return 204 when DELETE request is received")]
+    public async Task DeleteRecord_WhenDeleteRequestIsReceivedAsync()
     {
         // Given
         var entity = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
@@ -114,8 +114,8 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         summaryEntity.ShouldBeNull();
     }
 
-    [Fact(DisplayName = "Should return 404 when a DELETE request with invalid ID is provided")]
-    public async Task ShouldReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return 404 when a DELETE request with invalid ID is provided")]
+    public async Task ReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
         _ = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
@@ -128,12 +128,11 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Should handle multiple Education Add operations in a PATCH request")]
-    public async Task ShouldHandleAddMultipleEducationOperationsInPatchEducationRequestAsync()
+    [Fact(DisplayName = "Handle multiple Education Add operations in a PATCH request")]
+    public async Task HandleAddMultipleEducationOperationsInPatchEducationRequestAsync()
     {
         // Given
         var summary = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
-        var educations = summary.Education;
         var itemAdded01 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
         var itemAdded02 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
         var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
@@ -159,8 +158,8 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
             options => options.ExcludingMissingMembers().Excluding(x => x.Id));
     }
 
-    [Fact(DisplayName = "Should handle multiple Education operations in a PATCH request")]
-    public async Task ShouldHandleMultipleEducationOperationsInPatchEducationRequestAsync()
+    [Fact(DisplayName = "Handle multiple Education operations in a PATCH request")]
+    public async Task HandleMultipleEducationOperationsInPatchEducationRequestAsync()
     {
         // Given
         var itemAdded01 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
@@ -206,8 +205,8 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         summaryEntity.Education.Contains(itemToRemove).ShouldBeFalse();
     }
 
-    [Fact(DisplayName = "Should handle multiple Work Experience Add operations in a PATCH request")]
-    public async Task ShouldHandleAddMultipleWorkExperienceOperationsInPatchWorkExperienceRequestAsync()
+    [Fact(DisplayName = "Handle multiple Work Experience Add operations in a PATCH request")]
+    public async Task HandleAddMultipleWorkExperienceOperationsInPatchWorkExperienceRequestAsync()
     {
         // Given
         var summary = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
@@ -237,8 +236,8 @@ public class SummaryControllerTests : IClassFixture<JobMagnetTestSetupFixture>
             options => options.ExcludingMissingMembers().Excluding(x => x.Id));
     }
 
-    [Fact(DisplayName = "Should handle multiple Work Experience in a PATCH request")]
-    public async Task ShouldHandleMultipleWorkExperienceOperationsInPatchRequestAsync()
+    [Fact(DisplayName = "Handle multiple Work Experience in a PATCH request")]
+    public async Task HandleMultipleWorkExperienceOperationsInPatchRequestAsync()
     {
         // Given
         var itemAdded01 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
