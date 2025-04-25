@@ -138,7 +138,7 @@ public class AdminControllerShould(JobMagnetTestEmptyDatabaseSetupFixture testFi
         await dbContext.SaveChangesAsync(CancellationToken.None);
 
         var cancellationTokenSource = new CancellationTokenSource();
-        var delayBeforeCancel = TimeSpan.FromMilliseconds(40);
+        var delayBeforeCancel = TimeSpan.FromMilliseconds(5);
         cancellationTokenSource.CancelAfter(delayBeforeCancel);
 
         // When
