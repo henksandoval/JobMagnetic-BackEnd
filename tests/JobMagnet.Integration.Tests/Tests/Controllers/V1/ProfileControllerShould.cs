@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using AutoFixture;
-using FluentAssertions;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Integration.Tests.Fixtures;
@@ -16,7 +15,7 @@ using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
 
-public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
+public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 {
     private const string RequestUriController = "api/v1/Profile";
     private readonly IFixture _fixture = FixtureBuilder.Build();
@@ -26,18 +25,17 @@ public class ProfileControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     private const int TalentsCount = 8;
     private const int PortfolioCount = 3;
     private const int SummariesCount = 3;
-    private const int ServicesCount = 7;
     private const int TestimonialsCount = 12;
 
-    public ProfileControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
+    public ProfileControllerShould(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
         _testFixture = testFixture;
         _httpClient = _testFixture.GetClient();
         _testFixture.SetTestOutputHelper(testOutputHelper);
     }
 
-    [Fact(DisplayName = "Should return the record and return 200 when GET request with valid Name is provided")]
-    public async Task ShouldReturnRecord_WhenValidNameProvidedAsync()
+    [Fact(DisplayName = "Return the record and return 200 when GET request with valid Name is provided")]
+    public async Task ReturnRecord_WhenValidNameProvidedAsync()
     {
         // Given
         var entity = await SetupEntityAsync();

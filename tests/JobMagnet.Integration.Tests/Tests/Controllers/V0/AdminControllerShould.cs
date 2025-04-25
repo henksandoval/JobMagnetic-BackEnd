@@ -11,15 +11,15 @@ using ServicesCollection = JobMagnet.Infrastructure.Seeders.Collections.ServiceC
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V0;
 
-public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFixture, ITestOutputHelper testOutputHelper)
+public class AdminControllerShould(JobMagnetTestEmptyDatabaseSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     : IClassFixture<JobMagnetTestEmptyDatabaseSetupFixture>
 {
     private const string RequestUriController = "api/v0.1/admin";
     private readonly HttpClient _httpClient = testFixture.GetClient();
     private readonly ITestOutputHelper _testOutputHelper = testFixture.SetTestOutputHelper(testOutputHelper);
 
-    [Fact(DisplayName = "Should return 200 and Pong when GET ping request is called")]
-    public async Task ShouldReturnPong_WhenGetPingRequestAsync()
+    [Fact(DisplayName = "Return 200 and Pong when GET ping request is called")]
+    public async Task ReturnPong_WhenGetPingRequestAsync()
     {
         // When
         var response = await _httpClient.GetAsync($"{RequestUriController}/ping");
@@ -33,8 +33,8 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
         responseData.ShouldBe("Pong");
     }
 
-    [Fact(DisplayName = "Should delete and return 204 when DELETE request is received")]
-    public async Task ShouldDestroyDatabase_WhenDeleteRequestIsReceivedIsAsync()
+    [Fact(DisplayName = "Delete and return 204 when DELETE request is received")]
+    public async Task DestroyDatabase_WhenDeleteRequestIsReceivedIsAsync()
     {
         // Given
         await using var scope = testFixture.GetProvider().CreateAsyncScope();
@@ -53,8 +53,8 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
         canConnect.ShouldBeFalse();
     }
 
-    [Fact(DisplayName = "Should Create and return 200 when Post request is received")]
-    public async Task ShouldCreateDatabase_WhenPostRequestIsReceivedIsAsync()
+    [Fact(DisplayName = "Create and return 200 when Post request is received")]
+    public async Task CreateDatabase_WhenPostRequestIsReceivedIsAsync()
     {
         // When
         var response = await _httpClient.PostAsync($"{RequestUriController}", null);
@@ -70,8 +70,8 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
     }
 
 
-    [Fact(DisplayName = "Should return 200 when Post seedMasterTables request is received")]
-    public async Task ShouldSeedData_WhenPostSeedMasterTablesRequestIsReceivedIsAsync()
+    [Fact(DisplayName = "Return 200 when Post seedMasterTables request is received")]
+    public async Task SeedData_WhenPostSeedMasterTablesRequestIsReceivedIsAsync()
     {
         // Given
         await using var scope = testFixture.GetProvider().CreateAsyncScope();
@@ -86,8 +86,8 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
         response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
     }
 
-    [Fact(DisplayName = "Should return 200 when Post seedProfile request is received")]
-    public async Task ShouldSeedData_WhenPostSeedProfileRequestIsReceivedIsAsync()
+    [Fact(DisplayName = "Return 200 when Post seedProfile request is received")]
+    public async Task SeedData_WhenPostSeedProfileRequestIsReceivedIsAsync()
     {
         // Given
         var cancellationToken = CancellationToken.None;
@@ -127,8 +127,8 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
         profile.PortfolioGallery.Count.ShouldBe(new PortfolioCollection().GetPortfolioGallery().Count);
     }
 
-    [Fact(DisplayName = "Should cancel SeedMasterTables operation after a delay")]
-    public async Task ShouldCancelSeedMasterTablesOperation_AfterDelayAsync()
+    [Fact(DisplayName = "Cancel SeedMasterTables operation after a delay")]
+    public async Task CancelSeedMasterTablesOperation_AfterDelayAsync()
     {
         // Given
         await using var scope = testFixture.GetProvider().CreateAsyncScope();
@@ -152,8 +152,8 @@ public class AdminControllerTests(JobMagnetTestEmptyDatabaseSetupFixture testFix
         exception.Message.ShouldBe("A task was canceled.");
     }
 
-    [Fact(DisplayName = "Should cancel SeedProfile operation after a delay")]
-    public async Task ShouldCancelSeedProfileOperation_AfterDelayAsync()
+    [Fact(DisplayName = "Cancel SeedProfile operation after a delay")]
+    public async Task CancelSeedProfileOperation_AfterDelayAsync()
     {
         // Given
         await using var scope = testFixture.GetProvider().CreateAsyncScope();

@@ -4,13 +4,11 @@ using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
-using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Utils;
 using JobMagnet.Models.Portfolio;
 using JobMagnet.Models.Resume;
-using JobMagnet.Models.Testimonial;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using Microsoft.AspNetCore.JsonPatch;
@@ -20,7 +18,7 @@ using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
 
-public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
+public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 {
     private const string RequestUriController = "api/v1/portfolio";
     private const string InvalidId = "100";
@@ -28,15 +26,15 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
 
-    public PortfolioControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
+    public PortfolioControllerShould(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
         _testFixture = testFixture;
         _httpClient = _testFixture.GetClient();
         _testFixture.SetTestOutputHelper(testOutputHelper);
     }
 
-    [Fact(DisplayName = "Should create a new record and return 201 when the POST request is valid")]
-    public async Task ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync()
+    [Fact(DisplayName = "Create a new record and return 201 when the POST request is valid")]
+    public async Task ReturnCreatedAndPersistData_WhenRequestIsValidAsync()
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
@@ -75,8 +73,8 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         );
     }
 
-    [Fact(DisplayName = "Should return the record and return 200 when GET request with valid ID is provided")]
-    public async Task ShouldReturnRecord_WhenValidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return the record and return 200 when GET request with valid ID is provided")]
+    public async Task ReturnRecord_WhenValidIdIsProvidedAsync()
     {
         // Given
         var entity = await SetupEntityAsync();
@@ -93,8 +91,8 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
 
-    [Fact(DisplayName = "Should return 404 when GET request with invalid ID is provided")]
-    public async Task ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return 404 when GET request with invalid ID is provided")]
+    public async Task ReturnNotFound_WhenInvalidIdIsProvidedAsync()
     {
         // Given
         _ = await SetupEntityAsync();
@@ -107,8 +105,8 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Should delete and return 204 when DELETE request is received")]
-    public async Task ShouldDeleteRecord_WhenDeleteRequestIsReceivedAsync()
+    [Fact(DisplayName = "Delete and return 204 when DELETE request is received")]
+    public async Task DeleteRecord_WhenDeleteRequestIsReceivedAsync()
     {
         // Given
         var entity = await SetupEntityAsync();
@@ -126,8 +124,8 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         portfolioEntity.ShouldBeNull();
     }
 
-    [Fact(DisplayName = "Should return 404 when a DELETE request with invalid ID is provided")]
-    public async Task ShouldReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return 404 when a DELETE request with invalid ID is provided")]
+    public async Task ReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
         _ = await SetupEntityAsync();
@@ -140,8 +138,8 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Should return 204 when a valid PATCH request is provided")]
-    public async Task ShouldHandleAddMultipleOperationsInPatchRequestAsync()
+    [Fact(DisplayName = "Return 204 when a valid PATCH request is provided")]
+    public async Task HandleAddMultipleOperationsInPatchRequestAsync()
     {
         // Given
         const string newTitle = "Red And Blue Parrot";
@@ -164,8 +162,8 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         dbEntity.Title.ShouldBe(newTitle);
     }
 
-    [Fact(DisplayName = "Should return 204 when a valid PUT request is provided")]
-    public async Task ShouldReturnNotContent_WhenReceivedValidPutRequestAsync()
+    [Fact(DisplayName = "Return 204 when a valid PUT request is provided")]
+    public async Task ReturnNotContent_WhenReceivedValidPutRequestAsync()
     {
         // Given
         var entity = await SetupEntityAsync();
@@ -188,8 +186,8 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         dbEntity.Should().BeEquivalentTo(updatedEntity);
     }
 
-    [Fact(DisplayName = "Should return 400 when a PUT request with invalid ID is provided")]
-    public async Task ShouldReturnBadRequest_WhenPutRequestWithInvalidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return 400 when a PUT request with invalid ID is provided")]
+    public async Task ReturnBadRequest_WhenPutRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
@@ -204,8 +202,8 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
-    [Fact(DisplayName = "Should return 404 when a PUT request with invalid ID is provided")]
-    public async Task ShouldReturnNotFound_WhenPutRequestWithInvalidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return 404 when a PUT request with invalid ID is provided")]
+    public async Task ReturnNotFound_WhenPutRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
@@ -219,8 +217,8 @@ public class PortfolioControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Should return 404 when a PATCH request with invalid ID is provided")]
-    public async Task ShouldReturnNotFound_WhenPatchRequestWithInvalidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return 404 when a PATCH request with invalid ID is provided")]
+    public async Task ReturnNotFound_WhenPatchRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
         await _testFixture.ResetDatabaseAsync();

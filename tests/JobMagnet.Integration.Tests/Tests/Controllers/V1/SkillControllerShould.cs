@@ -8,7 +8,6 @@ using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Models.Skill;
 using JobMagnet.Shared.Tests.Fixtures;
-using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
 
-public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
+public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 {
     private const string RequestUriController = "api/v1/skill";
     private const string InvalidId = "100";
@@ -25,15 +24,15 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
 
-    public SkillControllerTests(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
+    public SkillControllerShould(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
         _testFixture = testFixture;
         _httpClient = _testFixture.GetClient();
         _testFixture.SetTestOutputHelper(testOutputHelper);
     }
 
-    [Fact(DisplayName = "Should create a new record and return 201 when the POST request is valid")]
-    public async Task ShouldReturnCreatedAndPersistData_WhenRequestIsValidAsync()
+    [Fact(DisplayName = "Create a new record and return 201 when the POST request is valid")]
+    public async Task ReturnCreatedAndPersistData_WhenRequestIsValidAsync()
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
@@ -67,8 +66,8 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         );
     }
 
-    [Fact(DisplayName = "Should return the record and return 200 when GET request with valid ID is provided")]
-    public async Task ShouldReturnRecord_WhenValidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return the record and return 200 when GET request with valid ID is provided")]
+    public async Task ReturnRecord_WhenValidIdIsProvidedAsync()
     {
         // Given
         var entity = await SetupEntityAsync();
@@ -85,8 +84,8 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
 
-    [Fact(DisplayName = "Should return 404 when GET request with invalid ID is provided")]
-    public async Task ShouldReturnNotFound_WhenInvalidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return 404 when GET request with invalid ID is provided")]
+    public async Task ReturnNotFound_WhenInvalidIdIsProvidedAsync()
     {
         // Given
         _ = await SetupEntityAsync();
@@ -99,8 +98,8 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Should delete and return 204 when DELETE request is received")]
-    public async Task ShouldDeleteRecord_WhenDeleteRequestIsReceivedAsync()
+    [Fact(DisplayName = "Delete and return 204 when DELETE request is received")]
+    public async Task DeleteRecord_WhenDeleteRequestIsReceivedAsync()
     {
         // Given
         var entity = await SetupEntityAsync();
@@ -120,8 +119,8 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         entityItems.ShouldBeEmpty();
     }
 
-    [Fact(DisplayName = "Should return 404 when a DELETE request with invalid ID is provided")]
-    public async Task ShouldReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
+    [Fact(DisplayName = "Return 404 when a DELETE request with invalid ID is provided")]
+    public async Task ReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
         _ = await SetupEntityAsync();
@@ -134,8 +133,8 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Should handle multiple Add operations in a PATCH request")]
-    public async Task ShouldHandleAddMultipleOperationsInPatchRequestAsync()
+    [Fact(DisplayName = "Handle multiple Add operations in a PATCH request")]
+    public async Task HandleAddMultipleOperationsInPatchRequestAsync()
     {
         // Given
         var skill = await SetupEntityAsync();
@@ -165,8 +164,8 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         skillEntity.SkillDetails.ShouldContain(x => x.IconUrl == itemAdded02.IconUrl);
     }
 
-    [Fact(DisplayName = "Should handle Remove operations in a PATCH request")]
-    public async Task ShouldHandleRemoveOperationsInPatchRequestAsync()
+    [Fact(DisplayName = "Handle Remove operations in a PATCH request")]
+    public async Task HandleRemoveOperationsInPatchRequestAsync()
     {
         // Given
         var skill = await SetupEntityAsync();
@@ -191,8 +190,8 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         skillEntity.SkillDetails.Contains(itemToRemove).ShouldBeFalse();
     }
 
-    [Fact(DisplayName = "Should handle Replace operations in a PATCH request")]
-    public async Task ShouldHandleReplaceOperationsInPatchRequestAsync()
+    [Fact(DisplayName = "Handle Replace operations in a PATCH request")]
+    public async Task HandleReplaceOperationsInPatchRequestAsync()
     {
         // Given
         var skill = await SetupEntityAsync();
@@ -223,8 +222,8 @@ public class SkillControllerTests : IClassFixture<JobMagnetTestSetupFixture>
         );
     }
 
-    [Fact(DisplayName = "Should handle multiple operations in a PATCH request")]
-    public async Task ShouldHandleMultipleOperationsInPatchRequestAsync()
+    [Fact(DisplayName = "Handle multiple operations in a PATCH request")]
+    public async Task HandleMultipleOperationsInPatchRequestAsync()
     {
         // Given
         var skill = await SetupEntityAsync();
