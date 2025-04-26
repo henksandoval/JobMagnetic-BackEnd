@@ -1,9 +1,5 @@
 using JobMagnet.Extensions;
-using JobMagnet.Extensions.ConfigSections;
 using JobMagnet.Infrastructure.Context;
-using JobMagnet.Infrastructure.Seeders;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 

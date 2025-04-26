@@ -1,14 +1,40 @@
 ﻿using JobMagnet.Extensions.Utils;
 using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Models.Commands.Profile;
+using JobMagnet.Models.Responses.Profile;
 using JobMagnet.ViewModels.Profile;
 using Mapster;
 
-// ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 namespace JobMagnet.Mappers;
 
 internal static class ProfileMapper
 {
     static ProfileMapper()
+    {
+        ConfigMapper();
+    }
+
+    internal static ProfileViewModel ToViewModel(this ProfileEntity entity)
+    {
+        return entity.Adapt<ProfileViewModel>();
+    }
+
+    internal static ProfileEntity ToEntity(ProfileCreateCommand createCommand)
+    {
+        return createCommand.Adapt<ProfileEntity>();
+    }
+
+    internal static ProfileModel ToModel(this ProfileEntity entity)
+    {
+        return entity.Adapt<ProfileModel>();
+    }
+
+    internal static void UpdateEntity(this ProfileEntity entity, ProfileUpdateCommand command)
+    {
+        command.Adapt(entity);
+    }
+
+    private static void ConfigMapper()
     {
         TypeAdapterConfig<PortfolioGalleryEntity, PortfolioViewModel>
             .NewConfig()
@@ -104,14 +130,11 @@ internal static class ProfileMapper
                 src => src.Summary != null);
     }
 
-    internal static ProfileViewModel ToModel(this ProfileEntity entity)
+    private static string GetFullName(ProfileEntity entity)
     {
-        return entity.Adapt<ProfileViewModel>();
-    }
-
-    private static string GetFullName(ProfileEntity entity) =>
-        string.Join(" ", new[] { entity.FirstName, entity.MiddleName, entity.LastName, entity.SecondLastName }
+        return string.Join(" ", new[] { entity.FirstName, entity.MiddleName, entity.LastName, entity.SecondLastName }
             .Where(x => !string.IsNullOrWhiteSpace(x)));
+    }
 
     private static string GetContactValue(ProfileEntity entity, string contactTypeName)
     {

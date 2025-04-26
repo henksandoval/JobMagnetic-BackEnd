@@ -7,7 +7,9 @@ public interface IDbContextFactory
     JobMagnetDbContext CreateDbContext();
 }
 
-public class JobMagnetDbContextFactory(DbContextOptions<JobMagnetDbContext> options, IHttpContextAccessor? httpContextAccessor)
+public class JobMagnetDbContextFactory(
+    DbContextOptions<JobMagnetDbContext> options,
+    IHttpContextAccessor? httpContextAccessor)
     : IDbContextFactory
 {
     public JobMagnetDbContext CreateDbContext()

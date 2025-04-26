@@ -8,11 +8,6 @@ public record PortfolioCollection
 {
     private readonly long _profileId;
 
-    public PortfolioCollection(long profileId = 0)
-    {
-        _profileId = profileId;
-    }
-
     private readonly IList<GalleryProperties> _values =
     [
         new("Aventuras Animales",
@@ -50,8 +45,13 @@ public record PortfolioCollection
             "Cada fotografía captura momentos únicos y comportamientos fascinantes.",
             "https://www.pexels.com/es-es/buscar/pastor%20alemán%20cachorro/",
             "https://images.pexels.com/photos/19949287/pexels-photo-19949287/free-photo-of-animal-perro-mascota-mono.jpeg?auto=compress&cs=tinysrgb&w=1200",
-            "DOG"),
+            "DOG")
     ];
+
+    public PortfolioCollection(long profileId = 0)
+    {
+        _profileId = profileId;
+    }
 
     public ImmutableList<PortfolioGalleryEntity> GetPortfolioGallery()
     {

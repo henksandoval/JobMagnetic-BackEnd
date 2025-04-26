@@ -6,11 +6,12 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
-using JobMagnet.Shared.Tests.Utils;
-using JobMagnet.Models.Portfolio;
-using JobMagnet.Models.Resume;
+using JobMagnet.Models.Commands.Portfolio;
+using JobMagnet.Models.Responses.Portfolio;
+using JobMagnet.Models.Responses.Resume;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
+using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -39,7 +40,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         // Given
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<PortfolioCreateRequest>().With(x => x.ProfileId, profileEntity.Id).Create();
+        var createRequest = _fixture.Build<PortfolioCreateCommand>().With(x => x.ProfileId, profileEntity.Id).Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -57,7 +58,8 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+        var queryRepository =
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
         var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
@@ -118,7 +120,8 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryPortfolioRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+        var queryPortfolioRepository =
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
 
         var portfolioEntity = await queryPortfolioRepository.GetByIdAsync(entity.Id);
         portfolioEntity.ShouldBeNull();
@@ -144,7 +147,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         // Given
         const string newTitle = "Red And Blue Parrot";
         var entity = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<PortfolioUpdateRequest>();
+        var patchDocument = new JsonPatchDocument<PortfolioUpdateCommand>();
         patchDocument.Replace(a => a.Title, newTitle);
 
         // When
@@ -156,7 +159,8 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+        var queryRepository =
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
         dbEntity.ShouldNotBeNull();
         dbEntity.Title.ShouldBe(newTitle);
@@ -167,7 +171,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updatedEntity = _fixture.Build<PortfolioUpdateRequest>()
+        var updatedEntity = _fixture.Build<PortfolioUpdateCommand>()
             .With(x => x.Id, entity.Id)
             .With(x => x.ProfileId, entity.ProfileId)
             .Create();
@@ -180,7 +184,8 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+        var queryRepository =
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
         dbEntity.ShouldNotBeNull();
         dbEntity.Should().BeEquivalentTo(updatedEntity);
@@ -191,7 +196,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<PortfolioUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<PortfolioUpdateCommand>().Create();
         var differentId = updatedEntity.Id + InvalidId;
 
         // When
@@ -207,7 +212,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<PortfolioUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<PortfolioUpdateCommand>().Create();
 
         // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
@@ -222,8 +227,8 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<PortfolioUpdateRequest>().Create();
-        var patchDocument = new JsonPatchDocument<PortfolioUpdateRequest>();
+        var updatedEntity = _fixture.Build<PortfolioUpdateCommand>().Create();
+        var patchDocument = new JsonPatchDocument<PortfolioUpdateCommand>();
 
         // When
         var response =

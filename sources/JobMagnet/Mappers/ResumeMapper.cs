@@ -1,5 +1,6 @@
 ﻿using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Models.Resume;
+using JobMagnet.Models.Commands.Resume;
+using JobMagnet.Models.Responses.Resume;
 using Mapster;
 
 namespace JobMagnet.Mappers;
@@ -8,7 +9,7 @@ internal static class ResumeMapper
 {
     static ResumeMapper()
     {
-        TypeAdapterConfig<ResumeUpdateRequest, ResumeEntity>.NewConfig()
+        TypeAdapterConfig<ResumeUpdateCommand, ResumeEntity>.NewConfig()
             .Ignore(destination => destination.Id);
     }
 
@@ -17,18 +18,18 @@ internal static class ResumeMapper
         return entity.Adapt<ResumeModel>();
     }
 
-    internal static ResumeEntity ToEntity(ResumeCreateRequest request)
+    internal static ResumeEntity ToEntity(ResumeCreateCommand command)
     {
-        return request.Adapt<ResumeEntity>();
+        return command.Adapt<ResumeEntity>();
     }
 
-    internal static ResumeUpdateRequest ToUpdateRequest(ResumeEntity entity)
+    internal static ResumeUpdateCommand ToUpdateRequest(ResumeEntity entity)
     {
-        return entity.Adapt<ResumeUpdateRequest>();
+        return entity.Adapt<ResumeUpdateCommand>();
     }
 
-    internal static void UpdateEntity(this ResumeEntity entity, ResumeUpdateRequest request)
+    internal static void UpdateEntity(this ResumeEntity entity, ResumeUpdateCommand command)
     {
-        request.Adapt(entity);
+        command.Adapt(entity);
     }
 }

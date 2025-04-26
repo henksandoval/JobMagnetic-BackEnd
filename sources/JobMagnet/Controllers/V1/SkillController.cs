@@ -4,7 +4,8 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Mappers;
-using JobMagnet.Models.Skill;
+using JobMagnet.Models.Commands.Skill;
+using JobMagnet.Models.Responses.Skill;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,9 +19,9 @@ public class SkillController(
 {
     [HttpPost]
     [ProducesResponseType(typeof(SkillModel), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] SkillCreateRequest createRequest)
+    public async Task<IResult> CreateAsync([FromBody] SkillCreateCommand createCommand)
     {
-        var entity = SkillMapper.ToEntity(createRequest);
+        var entity = SkillMapper.ToEntity(createCommand);
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
         var newRecord = SkillMapper.ToModel(entity);
 
@@ -63,7 +64,7 @@ public class SkillController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SkillRequest> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SkillPatchCommand> patchDocument)
     {
         _ = queryRepository.IncludeDetails();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);

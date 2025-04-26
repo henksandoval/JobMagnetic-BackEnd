@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
-using Bogus;
 using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Models.Service;
+using JobMagnet.Models.Commands.Service;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
@@ -17,7 +16,7 @@ public class ServiceGalleryItemCustomization : ICustomization
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());
 
-        fixture.Customize<ServiceGalleryItemRequest>(composer =>
+        fixture.Customize<ServiceGalleryItemCommand>(composer =>
             composer
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());

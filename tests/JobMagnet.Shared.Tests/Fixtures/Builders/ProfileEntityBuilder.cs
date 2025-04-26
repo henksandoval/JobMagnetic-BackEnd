@@ -5,12 +5,12 @@ namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
 public class ProfileEntityBuilder(IFixture fixture)
 {
+    private List<PortfolioGalleryEntity> _portfolio = [];
     private ResumeEntity _resume = null!;
-    private SkillEntity _skill = null!;
     private ServiceEntity _services = null!;
+    private SkillEntity _skill = null!;
     private SummaryEntity _summaries = null!;
     private List<TalentEntity> _talents = [];
-    private List<PortfolioGalleryEntity> _portfolio = [];
     private List<TestimonialEntity> _testimonials = [];
 
     public ProfileEntityBuilder WithResume()

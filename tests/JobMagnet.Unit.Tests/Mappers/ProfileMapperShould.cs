@@ -29,7 +29,7 @@ public class ProfileMapperShould
 
         profileExpected = profileExpected with { PersonalData = GetPersonalDataViewModel(profile) };
 
-        var result = profile.ToModel();
+        var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -50,7 +50,7 @@ public class ProfileMapperShould
 
         profileExpected = profileExpected with { About = GetAboutViewModel(profile) };
 
-        var result = profile.ToModel();
+        var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -70,14 +70,14 @@ public class ProfileMapperShould
 
         profileExpected = profileExpected with { Testimonials = GetTestimonialViewModel(profile) };
 
-        var result = profile.ToModel();
+        var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
 
         result.Testimonials!.ShouldBeEquivalentTo(profileExpected.Testimonials);
     }
-    
+
     [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Service is defined")]
     public void MapperProfileEntityToProfileViewModelWithService()
     {
@@ -90,7 +90,7 @@ public class ProfileMapperShould
 
         profileExpected = profileExpected with { Service = GetServiceViewModel(profile) };
 
-        var result = profile.ToModel();
+        var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -110,7 +110,7 @@ public class ProfileMapperShould
 
         profileExpected = profileExpected with { PortfolioGallery = GetPortfolioViewModel(profile) };
 
-        var result = profile.ToModel();
+        var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -130,7 +130,7 @@ public class ProfileMapperShould
 
         profileExpected = profileExpected with { SkillSet = GetSkillViewModel(profile) };
 
-        var result = profile.ToModel();
+        var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -151,7 +151,7 @@ public class ProfileMapperShould
             )).ToArray()
         );
     }
-    
+
     [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when SummaryViewModel is defined")]
     public void MapperProfileEntityToSummaryViewModelWithPortfolioGallery()
     {
@@ -164,7 +164,7 @@ public class ProfileMapperShould
 
         profileExpected = profileExpected with { Summary = GetSummaryViewModel(profile) };
 
-        var result = profile.ToModel();
+        var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -194,12 +194,14 @@ public class ProfileMapperShould
             entity.Resume.Summary
         );
 
-        string GetContactValue(string contactTypeName) =>
-            entity.Resume.ContactInfo
+        string GetContactValue(string contactTypeName)
+        {
+            return entity.Resume.ContactInfo
                 .FirstOrDefault(x => x.ContactType.Name == contactTypeName)
                 ?.Value ?? string.Empty;
+        }
     }
-    
+
     private static ServiceViewModel GetServiceViewModel(ProfileEntity profile)
     {
         var serviceDetails = profile.Services.GalleryItems.Select(g => new ServiceDetailsViewModel(
@@ -242,7 +244,7 @@ public class ProfileMapperShould
 
         return new SkillSetViewModel(profile.Skill.Overview!, skills);
     }
-    
+
     private static SummaryViewModel GetSummaryViewModel(ProfileEntity profile)
     {
         var education = profile.Summary.Education
@@ -269,6 +271,4 @@ public class ProfileMapperShould
             new EducationViewModel(education),
             new WorkExperienceViewModel(workExperiences));
     }
-    
-    
 }

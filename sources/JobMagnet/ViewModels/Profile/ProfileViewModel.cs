@@ -2,7 +2,7 @@
 
 public record ProfileViewModel(
     PersonalDataViewModel? PersonalData = null,
-    AboutViewModel? About =  null,
+    AboutViewModel? About = null,
     TestimonialsViewModel[]? Testimonials = null,
     SkillSetViewModel? SkillSet = null,
     TitlesViewModel? Titles = null,
@@ -10,4 +10,4 @@ public record ProfileViewModel(
     PortfolioViewModel[]? PortfolioGallery = null,
     ServiceViewModel? Service = null,
     ContactViewModel? Contact = null
-    );
+);

@@ -3,7 +3,8 @@ using JobMagnet.Controllers.Base;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Mappers;
-using JobMagnet.Models.Resume;
+using JobMagnet.Models.Commands.Resume;
+using JobMagnet.Models.Responses.Resume;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +18,9 @@ public class ResumeController(
 {
     [HttpPost]
     [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] ResumeCreateRequest createRequest)
+    public async Task<IResult> CreateAsync([FromBody] ResumeCreateCommand createCommand)
     {
-        var entity = ResumeMapper.ToEntity(createRequest);
+        var entity = ResumeMapper.ToEntity(createCommand);
         await commandRepository.CreateAsync(entity);
         var newRecord = ResumeMapper.ToModel(entity);
 
@@ -45,9 +46,9 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PutAsync(int id, ResumeUpdateRequest updateRequest)
+    public async Task<IResult> PutAsync(int id, ResumeUpdateCommand updateCommand)
     {
-        if (id != updateRequest.Id)
+        if (id != updateCommand.Id)
             return Results.BadRequest();
 
         var entity = await queryRepository.GetByIdAsync(id);
@@ -55,7 +56,7 @@ public class ResumeController(
         if (entity is null)
             return Results.NotFound();
 
-        entity.UpdateEntity(updateRequest);
+        entity.UpdateEntity(updateCommand);
 
         await commandRepository.UpdateAsync(entity);
 
@@ -81,7 +82,7 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ResumeUpdateRequest> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ResumeUpdateCommand> patchDocument)
     {
         var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 

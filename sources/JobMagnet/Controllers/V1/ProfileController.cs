@@ -1,8 +1,12 @@
 ﻿using Asp.Versioning;
 using JobMagnet.Controllers.Base;
+using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Mappers;
+using JobMagnet.Models.Commands.Profile;
 using JobMagnet.Models.Queries.Profile;
+using JobMagnet.Models.Responses.Profile;
 using JobMagnet.ViewModels.Profile;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,8 +15,57 @@ namespace JobMagnet.Controllers.V1;
 [ApiVersion("1")]
 public class ProfileController(
     ILogger<ProfileController> logger,
-    IProfileQueryRepository queryRepository) : BaseController<ProfileController>(logger)
+    IProfileQueryRepository queryRepository,
+    ICommandRepository<ProfileEntity> commandRepository) : BaseController<ProfileController>(logger)
 {
+    [HttpPost]
+    [ProducesResponseType(typeof(ProfileModel), StatusCodes.Status201Created)]
+    public async Task<IResult> CreateAsync([FromBody] ProfileCreateCommand createCommand)
+    {
+        var entity = ProfileMapper.ToEntity(createCommand);
+        await commandRepository.CreateAsync(entity);
+        var newRecord = entity.ToModel();
+
+        return Results.CreatedAtRoute(nameof(GetProfileByIdAsync), new { id = newRecord.Id }, newRecord);
+    }
+
+    [HttpGet("{id:long}", Name = nameof(GetProfileByIdAsync))]
+    [ProducesResponseType(typeof(ProfileModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> GetProfileByIdAsync(long id)
+    {
+        var entity = await queryRepository.GetByIdAsync(id);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        var responseModel = entity.ToModel();
+
+        return Results.Ok(responseModel);
+    }
+
+
+    [HttpPut("{id:long}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> PutAsync(int id, ProfileUpdateCommand updateCommand)
+    {
+        if (id != updateCommand.Id)
+            return Results.BadRequest();
+
+        var entity = await queryRepository.GetByIdAsync(id);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        entity.UpdateEntity(updateCommand);
+
+        await commandRepository.UpdateAsync(entity);
+
+        return Results.NoContent();
+    }
+
     [HttpGet]
     [ProducesResponseType(typeof(ProfileViewModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -32,7 +85,7 @@ public class ProfileController(
         if (entity is null)
             return Results.NotFound();
 
-        var responseModel = entity.ToModel();
+        var responseModel = entity.ToViewModel();
 
         return Results.Ok(responseModel);
     }

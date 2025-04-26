@@ -1,5 +1,4 @@
 ﻿using AutoFixture;
-using Bogus;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Shared.Tests.Utils;
 
@@ -64,7 +63,8 @@ public class WorkExperienceCustomization : ICustomization
         item.CompanyName = FixtureBuilder.Faker.PickRandom(CompanyName);
         item.CompanyLocation = FixtureBuilder.Faker.Address.FullAddress();
         item.StartDate = FixtureBuilder.Faker.Date.Past(20, DateTime.Now.AddYears(-5));
-        item.EndDate = TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)));
+        item.EndDate =
+            TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)));
         item.Description = FixtureBuilder.Faker.PickRandom(Description);
     }
 }

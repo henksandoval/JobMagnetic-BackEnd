@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
-using Bogus;
 using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Models.Skill;
+using JobMagnet.Models.Commands.Skill;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
@@ -15,7 +14,7 @@ public class SkillItemCustomization : ICustomization
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());
 
-        fixture.Customize<SkillItemRequest>(composer =>
+        fixture.Customize<SkillItemCommand>(composer =>
             composer
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());

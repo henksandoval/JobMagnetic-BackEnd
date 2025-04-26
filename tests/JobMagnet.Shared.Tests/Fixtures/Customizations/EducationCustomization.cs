@@ -46,7 +46,8 @@ public class EducationCustomization : ICustomization
         item.InstitutionName = FixtureBuilder.Faker.PickRandom(Universities);
         item.InstitutionLocation = FixtureBuilder.Faker.Address.FullAddress();
         item.StartDate = FixtureBuilder.Faker.Date.Past(20, DateTime.Now.AddYears(-5));
-        item.EndDate = TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)));
+        item.EndDate =
+            TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)));
         item.Description = FixtureBuilder.Faker.Lorem.Sentences();
     }
 }

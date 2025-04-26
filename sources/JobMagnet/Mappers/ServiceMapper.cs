@@ -1,14 +1,15 @@
 ﻿using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Models.Service;
+using JobMagnet.Models.Commands.Service;
+using JobMagnet.Models.Responses.Service;
 using Mapster;
 
 namespace JobMagnet.Mappers;
 
 internal static class ServiceMapper
 {
-    internal static ServiceEntity ToEntity(ServiceCreateRequest request)
+    internal static ServiceEntity ToEntity(ServiceCreateCommand command)
     {
-        return request.Adapt<ServiceEntity>();
+        return command.Adapt<ServiceEntity>();
     }
 
     internal static ServiceModel ToModel(ServiceEntity entity)
@@ -16,13 +17,13 @@ internal static class ServiceMapper
         return entity.Adapt<ServiceModel>();
     }
 
-    internal static ServiceRequest ToUpdateRequest(ServiceEntity entity)
+    internal static ServiceCommand ToUpdateRequest(ServiceEntity entity)
     {
-        return entity.Adapt<ServiceRequest>();
+        return entity.Adapt<ServiceCommand>();
     }
 
-    internal static void UpdateEntity(this ServiceEntity entity, ServiceRequest request)
+    internal static void UpdateEntity(this ServiceEntity entity, ServiceCommand command)
     {
-        request.Adapt(entity);
+        command.Adapt(entity);
     }
 }

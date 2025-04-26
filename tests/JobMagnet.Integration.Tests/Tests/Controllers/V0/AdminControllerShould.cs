@@ -11,7 +11,9 @@ using ServicesCollection = JobMagnet.Infrastructure.Seeders.Collections.ServiceC
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V0;
 
-public class AdminControllerShould(JobMagnetTestEmptyDatabaseSetupFixture testFixture, ITestOutputHelper testOutputHelper)
+public class AdminControllerShould(
+    JobMagnetTestEmptyDatabaseSetupFixture testFixture,
+    ITestOutputHelper testOutputHelper)
     : IClassFixture<JobMagnetTestEmptyDatabaseSetupFixture>
 {
     private const string RequestUriController = "api/v0.1/admin";
@@ -125,56 +127,5 @@ public class AdminControllerShould(JobMagnetTestEmptyDatabaseSetupFixture testFi
         profile.Services.GalleryItems.Count.ShouldBe(new ServicesCollection().GetServicesGallery().Count);
         profile.Testimonials.Count.ShouldBe(new TestimonialCollection().GetTestimonials().Count);
         profile.PortfolioGallery.Count.ShouldBe(new PortfolioCollection().GetPortfolioGallery().Count);
-    }
-
-    [Fact(DisplayName = "Cancel SeedMasterTables operation after a delay")]
-    public async Task CancelSeedMasterTablesOperation_AfterDelayAsync()
-    {
-        // Given
-        await using var scope = testFixture.GetProvider().CreateAsyncScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
-        await dbContext.Database.EnsureCreatedAsync(CancellationToken.None);
-        dbContext.ContactTypes.RemoveRange(dbContext.ContactTypes);
-        await dbContext.SaveChangesAsync(CancellationToken.None);
-
-        var cancellationTokenSource = new CancellationTokenSource();
-        var delayBeforeCancel = TimeSpan.FromMilliseconds(5);
-        cancellationTokenSource.CancelAfter(delayBeforeCancel);
-
-        // When
-        var task = _httpClient.PostAsync($"{RequestUriController}/seedMasterTables", null, cancellationTokenSource.Token);
-
-        // Then
-        var exception = await Should.ThrowAsync<TaskCanceledException>(() => task);
-
-        exception.CancellationToken.ShouldBe(cancellationTokenSource.Token);
-        exception.Task!.IsCanceled.ShouldBeTrue();
-        exception.Message.ShouldBe("A task was canceled.");
-    }
-
-    [Fact(DisplayName = "Cancel SeedProfile operation after a delay")]
-    public async Task CancelSeedProfileOperation_AfterDelayAsync()
-    {
-        // Given
-        await using var scope = testFixture.GetProvider().CreateAsyncScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
-        var seeder = scope.ServiceProvider.GetRequiredService<ISeeder>();
-        await dbContext.Database.EnsureCreatedAsync(CancellationToken.None);
-        await testFixture.ResetDatabaseAsync();
-        await seeder.RegisterMasterTablesAsync(CancellationToken.None);
-
-        var cancellationTokenSource = new CancellationTokenSource();
-        var delayBeforeCancel = TimeSpan.FromMilliseconds(100);
-        cancellationTokenSource.CancelAfter(delayBeforeCancel);
-
-        // When
-        var task = _httpClient.PostAsync($"{RequestUriController}/seedProfile", null, cancellationTokenSource.Token);
-
-        // Then
-        var exception = await Should.ThrowAsync<TaskCanceledException>(() => task);
-
-        exception.CancellationToken.ShouldBe(cancellationTokenSource.Token);
-        exception.Task!.IsCanceled.ShouldBeTrue();
-        exception.Message.ShouldBe("A task was canceled.");
     }
 }

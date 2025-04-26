@@ -1,5 +1,5 @@
 ﻿using Asp.Versioning.ApiExplorer;
-using JobMagnet.Extensions.ConfigSections;
+using JobMagnet.Extensions.SettingSections;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -34,7 +34,7 @@ internal static class SwaggerExtensions
                 {
                     Title = swaggerSettings.Title,
                     Version = description.ApiVersion.ToString(),
-                    Description = swaggerSettings.Description,
+                    Description = swaggerSettings.Description
                 };
 
                 options.SwaggerDoc(description.GroupName, info);

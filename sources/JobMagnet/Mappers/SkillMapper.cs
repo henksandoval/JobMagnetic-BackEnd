@@ -1,14 +1,15 @@
 ﻿using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Models.Skill;
+using JobMagnet.Models.Commands.Skill;
+using JobMagnet.Models.Responses.Skill;
 using Mapster;
 
 namespace JobMagnet.Mappers;
 
 internal static class SkillMapper
 {
-    internal static SkillEntity ToEntity(SkillCreateRequest request)
+    internal static SkillEntity ToEntity(SkillCreateCommand command)
     {
-        return request.Adapt<SkillEntity>();
+        return command.Adapt<SkillEntity>();
     }
 
     internal static SkillModel ToModel(SkillEntity entity)
@@ -16,13 +17,13 @@ internal static class SkillMapper
         return entity.Adapt<SkillModel>();
     }
 
-    internal static SkillRequest ToUpdateRequest(SkillEntity entity)
+    internal static SkillPatchCommand ToUpdateRequest(SkillEntity entity)
     {
-        return entity.Adapt<SkillRequest>();
+        return entity.Adapt<SkillPatchCommand>();
     }
 
-    internal static void UpdateEntity(this SkillEntity entity, SkillRequest request)
+    internal static void UpdateEntity(this SkillEntity entity, SkillPatchCommand patchCommand)
     {
-        request.Adapt(entity);
+        patchCommand.Adapt(entity);
     }
 }

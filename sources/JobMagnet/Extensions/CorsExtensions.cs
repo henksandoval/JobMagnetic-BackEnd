@@ -20,7 +20,6 @@ internal static class CorsExtensions
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             });
-
         });
 
         return service;

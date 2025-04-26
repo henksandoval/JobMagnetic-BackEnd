@@ -4,7 +4,8 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Mappers;
-using JobMagnet.Models.Summary;
+using JobMagnet.Models.Commands.Summary;
+using JobMagnet.Models.Responses.Summary;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,9 +19,9 @@ public class SummaryController(
 {
     [HttpPost]
     [ProducesResponseType(typeof(SummaryModel), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] SummaryCreateRequest createRequest)
+    public async Task<IResult> CreateAsync([FromBody] SummaryCreateCommand createCommand)
     {
-        var entity = SummaryMapper.ToEntity(createRequest);
+        var entity = SummaryMapper.ToEntity(createCommand);
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
         var newRecord = SummaryMapper.ToModel(entity);
 
@@ -64,7 +65,7 @@ public class SummaryController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SummaryRequest> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SummaryPatchCommand> patchDocument)
     {
         _ = queryRepository.IncludeEducation().IncludeWorkExperience();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
@@ -88,7 +89,7 @@ public class SummaryController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PatchEducationAsync(int id,
-        [FromBody] JsonPatchDocument<SummaryComplexRequest> patchDocument)
+        [FromBody] JsonPatchDocument<SummaryComplexCommand> patchDocument)
     {
         _ = queryRepository.IncludeEducation();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
@@ -112,7 +113,7 @@ public class SummaryController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PatchWorkExperienceAsync(int id,
-        [FromBody] JsonPatchDocument<SummaryComplexRequest> patchDocument)
+        [FromBody] JsonPatchDocument<SummaryComplexCommand> patchDocument)
     {
         _ = queryRepository.IncludeWorkExperience();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);

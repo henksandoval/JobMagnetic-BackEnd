@@ -1,14 +1,15 @@
 ﻿using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Models.Portfolio;
+using JobMagnet.Models.Commands.Portfolio;
+using JobMagnet.Models.Responses.Portfolio;
 using Mapster;
 
 namespace JobMagnet.Mappers;
 
 internal static class PortfolioMapper
 {
-    internal static PortfolioGalleryEntity ToEntity(PortfolioCreateRequest request)
+    internal static PortfolioGalleryEntity ToEntity(PortfolioCreateCommand command)
     {
-        return request.Adapt<PortfolioGalleryEntity>();
+        return command.Adapt<PortfolioGalleryEntity>();
     }
 
     internal static PortfolioModel ToModel(PortfolioGalleryEntity galleryEntity)
@@ -16,13 +17,13 @@ internal static class PortfolioMapper
         return galleryEntity.Adapt<PortfolioModel>();
     }
 
-    internal static PortfolioUpdateRequest ToUpdateRequest(PortfolioGalleryEntity galleryEntity)
+    internal static PortfolioUpdateCommand ToUpdateRequest(PortfolioGalleryEntity galleryEntity)
     {
-        return galleryEntity.Adapt<PortfolioUpdateRequest>();
+        return galleryEntity.Adapt<PortfolioUpdateCommand>();
     }
 
-    internal static void UpdateEntity(this PortfolioGalleryEntity galleryEntity, PortfolioUpdateRequest updateRequest)
+    internal static void UpdateEntity(this PortfolioGalleryEntity galleryEntity, PortfolioUpdateCommand updateCommand)
     {
-        updateRequest.Adapt(galleryEntity);
+        updateCommand.Adapt(galleryEntity);
     }
 }
