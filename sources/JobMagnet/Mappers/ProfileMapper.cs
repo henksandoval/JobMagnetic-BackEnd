@@ -28,6 +28,11 @@ internal static class ProfileMapper
         return entity.Adapt<ProfileModel>();
     }
 
+    internal static void UpdateEntity(this ProfileEntity entity, ProfileUpdateRequest request)
+    {
+        request.Adapt(entity);
+    }
+
     private static void ConfigMapper()
     {
         TypeAdapterConfig<PortfolioGalleryEntity, PortfolioViewModel>

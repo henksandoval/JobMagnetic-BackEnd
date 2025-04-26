@@ -43,6 +43,28 @@ public class ProfileController(
         return Results.Ok(responseModel);
     }
 
+
+    [HttpPut("{id:long}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> PutAsync(int id, ProfileUpdateRequest updateRequest)
+    {
+        if (id != updateRequest.Id)
+            return Results.BadRequest();
+
+        var entity = await queryRepository.GetByIdAsync(id);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        entity.UpdateEntity(updateRequest);
+
+        await commandRepository.UpdateAsync(entity);
+
+        return Results.NoContent();
+    }
+
     [HttpGet]
     [ProducesResponseType(typeof(ProfileViewModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
