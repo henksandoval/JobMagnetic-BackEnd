@@ -1,6 +1,6 @@
 ﻿namespace JobMagnet.Models.Commands.Summary.Education;
 
-public class EducationRequest
+public class EducationCommand
 {
     public long? Id { get; set; }
     public string Degree { get; set; }

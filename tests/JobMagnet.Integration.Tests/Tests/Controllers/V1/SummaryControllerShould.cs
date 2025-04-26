@@ -134,9 +134,9 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var summary = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
-        var itemAdded01 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
-        var itemAdded02 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
-        var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
+        var itemAdded01 = _fixture.Build<EducationCommand>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<EducationCommand>().Without(x => x.Id).Create();
+        var patchDocument = new JsonPatchDocument<SummaryComplexCommand>();
         patchDocument.Add(x => x.Education, itemAdded01);
         patchDocument.Add(x => x.Education, itemAdded02);
 
@@ -163,9 +163,9 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task HandleMultipleEducationOperationsInPatchEducationRequestAsync()
     {
         // Given
-        var itemAdded01 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
-        var itemAdded02 = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
-        var itemUpdated = _fixture.Build<EducationRequest>().Without(x => x.Id).Create();
+        var itemAdded01 = _fixture.Build<EducationCommand>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<EducationCommand>().Without(x => x.Id).Create();
+        var itemUpdated = _fixture.Build<EducationCommand>().Without(x => x.Id).Create();
 
         var entity = new SummaryEntityBuilder(_fixture).WithEducation().WithWorkExperiences().Build();
 
@@ -176,7 +176,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var indexItemToReplace = initialSummaryEntity.Education.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var indexItemToRemove = initialSummaryEntity.Education.ToList().FindIndex(item => item.Id == itemToRemove.Id);
 
-        var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
+        var patchDocument = new JsonPatchDocument<SummaryComplexCommand>();
         patchDocument.Add(x => x.Education, itemAdded01);
         patchDocument.Add(x => x.Education, itemAdded02);
         patchDocument.Replace(p => p.Education[indexItemToReplace], itemUpdated);
@@ -212,9 +212,9 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         var summary = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
         var workExperiences = summary.WorkExperiences;
-        var itemAdded01 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
-        var itemAdded02 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
-        var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
+        var itemAdded01 = _fixture.Build<WorkExperienceCommand>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<WorkExperienceCommand>().Without(x => x.Id).Create();
+        var patchDocument = new JsonPatchDocument<SummaryComplexCommand>();
         patchDocument.Add(x => x.WorkExperiences, itemAdded01);
         patchDocument.Add(x => x.WorkExperiences, itemAdded02);
 
@@ -241,9 +241,9 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task HandleMultipleWorkExperienceOperationsInPatchRequestAsync()
     {
         // Given
-        var itemAdded01 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
-        var itemAdded02 = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
-        var itemUpdated = _fixture.Build<WorkExperienceRequest>().Without(x => x.Id).Create();
+        var itemAdded01 = _fixture.Build<WorkExperienceCommand>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<WorkExperienceCommand>().Without(x => x.Id).Create();
+        var itemUpdated = _fixture.Build<WorkExperienceCommand>().Without(x => x.Id).Create();
 
         var entity = new SummaryEntityBuilder(_fixture).WithEducation().WithWorkExperiences().Build();
 
@@ -256,7 +256,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var indexItemToRemove =
             initialSummaryEntity.WorkExperiences.ToList().FindIndex(item => item.Id == itemToRemove.Id);
 
-        var patchDocument = new JsonPatchDocument<SummaryComplexRequest>();
+        var patchDocument = new JsonPatchDocument<SummaryComplexCommand>();
         patchDocument.Add(x => x.WorkExperiences, itemAdded01);
         patchDocument.Add(x => x.WorkExperiences, itemAdded02);
         patchDocument.Replace(p => p.WorkExperiences[indexItemToReplace], itemUpdated);

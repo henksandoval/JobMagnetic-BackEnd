@@ -1,6 +1,6 @@
 ﻿namespace JobMagnet.Models.Commands.Summary.WorkExperience;
 
-public class WorkExperienceRequest
+public class WorkExperienceCommand
 {
     public long? Id { get; set; }
     public string JobTitle { get; set; }
