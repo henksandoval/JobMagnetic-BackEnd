@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Http.Json;
 using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Infrastructure.Entities;
@@ -125,6 +126,61 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         // When
         var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+
+    [Fact(DisplayName = "Return 204 when a valid PUT request is provided")]
+    public async Task ReturnNotContent_WhenReceivedValidPutRequestAsync()
+    {
+        // Given
+        var entity = await SetupEntityAsync();
+        var updateRequest = _fixture.Build<ProfileUpdateRequest>()
+            .With(x => x.Id, entity.Id)
+            .Create();
+
+        // When
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updateRequest);
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
+        var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
+        dbEntity.ShouldNotBeNull();
+        dbEntity.Should().BeEquivalentTo(updateRequest, options => options.ExcludingMissingMembers());
+    }
+
+    [Fact(DisplayName = "Return 400 when a PUT request with invalid ID is provided")]
+    public async Task ReturnBadRequest_WhenPutRequestWithInvalidIdIsProvidedAsync()
+    {
+        // Given
+        await _testFixture.ResetDatabaseAsync();
+        var updatedEntity = _fixture.Build<ProfileUpdateRequest>().Create();
+        var differentId = updatedEntity.Id + InvalidId;
+
+        // When
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{differentId}", updatedEntity);
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+    }
+
+    [Fact(DisplayName = "Return 404 when a PUT request with invalid ID is provided")]
+    public async Task ReturnNotFound_WhenPutRequestWithInvalidIdIsProvidedAsync()
+    {
+        // Given
+        await _testFixture.ResetDatabaseAsync();
+        var updatedEntity = _fixture.Build<ProfileUpdateRequest>().Create();
+
+        // When
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeFalse();
