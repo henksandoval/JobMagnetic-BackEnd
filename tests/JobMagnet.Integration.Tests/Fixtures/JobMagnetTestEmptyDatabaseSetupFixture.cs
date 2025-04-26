@@ -10,10 +10,12 @@ namespace JobMagnet.Integration.Tests.Fixtures;
 public class JobMagnetTestEmptyDatabaseSetupFixture : IAsyncLifetime
 {
     private readonly MsSqlServerTestContainer _msSqlServerTestContainer = new();
+
     private readonly RespawnerOptions _respawnerOptions = new()
     {
         WithReseed = true
     };
+
     private string? _connectionString;
     private ITestOutputHelper? _testOutputHelper;
     private HostWebApplicationFactory<Program> _webApplicationFactory = null!;

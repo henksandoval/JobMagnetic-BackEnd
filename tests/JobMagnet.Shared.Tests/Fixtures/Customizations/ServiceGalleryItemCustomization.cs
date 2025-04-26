@@ -1,5 +1,4 @@
 ﻿using AutoFixture;
-using Bogus;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Models.Service;
 

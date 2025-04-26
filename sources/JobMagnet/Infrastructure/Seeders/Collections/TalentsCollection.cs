@@ -6,6 +6,8 @@ namespace JobMagnet.Infrastructure.Seeders.Collections;
 // ReSharper disable once NotAccessedPositionalProperty.Global
 public record TalentsCollection
 {
+    private readonly long _profileId;
+
     private readonly string[] _values =
     {
         "Creative",
@@ -13,8 +15,6 @@ public record TalentsCollection
         "Team Player",
         "Fast Learner"
     };
-
-    private readonly long _profileId;
 
     public TalentsCollection(long profileId = 0)
     {

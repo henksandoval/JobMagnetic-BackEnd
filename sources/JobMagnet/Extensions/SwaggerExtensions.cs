@@ -34,7 +34,7 @@ internal static class SwaggerExtensions
                 {
                     Title = swaggerSettings.Title,
                     Version = description.ApiVersion.ToString(),
-                    Description = swaggerSettings.Description,
+                    Description = swaggerSettings.Description
                 };
 
                 options.SwaggerDoc(description.GroupName, info);

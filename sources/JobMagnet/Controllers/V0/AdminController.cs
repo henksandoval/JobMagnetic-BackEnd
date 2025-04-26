@@ -41,10 +41,7 @@ public class AdminController(
     [HttpPost("seedMasterTables")]
     public async Task<IResult> SeedMasterTables(CancellationToken cancellationToken)
     {
-        if (dbContext.ContactTypes.Any())
-        {
-            throw new InvalidOperationException("Contact types are filled");
-        }
+        if (dbContext.ContactTypes.Any()) throw new InvalidOperationException("Contact types are filled");
 
         await seeder.RegisterMasterTablesAsync(cancellationToken);
         return Results.Accepted();
@@ -53,10 +50,7 @@ public class AdminController(
     [HttpPost("seedProfile")]
     public async Task<IResult> SeedProfile(CancellationToken cancellationToken)
     {
-        if (!dbContext.ContactTypes.Any())
-        {
-            throw new InvalidOperationException("Contact types are not yet implemented");
-        }
+        if (!dbContext.ContactTypes.Any()) throw new InvalidOperationException("Contact types are not yet implemented");
 
         await seeder.RegisterProfileAsync(cancellationToken);
         return Results.Accepted();

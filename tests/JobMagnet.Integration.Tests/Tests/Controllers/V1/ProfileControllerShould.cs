@@ -7,10 +7,10 @@ using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Models.Profile;
-using JobMagnet.Shared.Tests.Utils;
 using JobMagnet.Models.Queries.Profile;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
+using JobMagnet.Shared.Tests.Utils;
 using JobMagnet.ViewModels.Profile;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,14 +23,14 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 {
     private const string RequestUriController = "api/v1/profile";
     private const string InvalidId = "100";
-    private readonly IFixture _fixture = FixtureBuilder.Build();
-    private readonly HttpClient _httpClient;
-    private readonly JobMagnetTestSetupFixture _testFixture;
     private const int ContactInfoCount = 3;
     private const int TalentsCount = 8;
     private const int PortfolioCount = 3;
     private const int SummariesCount = 3;
     private const int TestimonialsCount = 12;
+    private readonly IFixture _fixture = FixtureBuilder.Build();
+    private readonly HttpClient _httpClient;
+    private readonly JobMagnetTestSetupFixture _testFixture;
 
     public ProfileControllerShould(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {

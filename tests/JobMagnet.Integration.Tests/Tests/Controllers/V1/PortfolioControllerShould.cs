@@ -6,11 +6,11 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
-using JobMagnet.Shared.Tests.Utils;
 using JobMagnet.Models.Portfolio;
 using JobMagnet.Models.Resume;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
+using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -57,7 +57,8 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+        var queryRepository =
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
         var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
@@ -118,7 +119,8 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryPortfolioRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+        var queryPortfolioRepository =
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
 
         var portfolioEntity = await queryPortfolioRepository.GetByIdAsync(entity.Id);
         portfolioEntity.ShouldBeNull();
@@ -156,7 +158,8 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+        var queryRepository =
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
         dbEntity.ShouldNotBeNull();
         dbEntity.Title.ShouldBe(newTitle);
@@ -180,7 +183,8 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+        var queryRepository =
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
         dbEntity.ShouldNotBeNull();
         dbEntity.Should().BeEquivalentTo(updatedEntity);

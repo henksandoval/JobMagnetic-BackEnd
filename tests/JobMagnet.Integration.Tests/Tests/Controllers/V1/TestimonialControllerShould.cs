@@ -69,7 +69,8 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         // Given
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<TestimonialCreateRequest>().With(x => x.ProfileId, profileEntity.Id).Create();
+        var createRequest = _fixture.Build<TestimonialCreateRequest>().With(x => x.ProfileId, profileEntity.Id)
+            .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When

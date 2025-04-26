@@ -6,6 +6,7 @@ namespace JobMagnet.Infrastructure.Seeders.Collections;
 public record ContactInfoCollection
 {
     private readonly long _resumeId;
+
     private readonly List<(string value, int contactTypeId)> _values =
     [
         ("brandon.johnson@example.com", 1),

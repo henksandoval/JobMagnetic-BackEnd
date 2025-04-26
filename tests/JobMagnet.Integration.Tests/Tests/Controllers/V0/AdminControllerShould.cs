@@ -11,7 +11,9 @@ using ServicesCollection = JobMagnet.Infrastructure.Seeders.Collections.ServiceC
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V0;
 
-public class AdminControllerShould(JobMagnetTestEmptyDatabaseSetupFixture testFixture, ITestOutputHelper testOutputHelper)
+public class AdminControllerShould(
+    JobMagnetTestEmptyDatabaseSetupFixture testFixture,
+    ITestOutputHelper testOutputHelper)
     : IClassFixture<JobMagnetTestEmptyDatabaseSetupFixture>
 {
     private const string RequestUriController = "api/v0.1/admin";

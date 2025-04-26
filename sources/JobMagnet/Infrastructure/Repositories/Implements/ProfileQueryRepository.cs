@@ -10,9 +10,9 @@ namespace JobMagnet.Infrastructure.Repositories.Implements;
 public class ProfileQueryRepository(JobMagnetDbContext dbContext)
     : Repository<ProfileEntity, long>(dbContext), IProfileQueryRepository
 {
+    private readonly List<Expression<Func<ProfileEntity, ProfileEntity>>> _projections = [];
     private IQueryable<ProfileEntity> _query = dbContext.Profiles;
     private Expression<Func<ProfileEntity, bool>> _whereCondition = x => true;
-    private readonly List<Expression<Func<ProfileEntity, ProfileEntity>>> _projections = [];
 
     public IProfileQueryRepository WithResume()
     {
@@ -28,21 +28,23 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
             Services = p.Services,
             Talents = p.Talents,
             PortfolioGallery = p.PortfolioGallery,
-            Resume = p.Resume != null && p.Resume.IsDeleted ? null : new ResumeEntity
-            {
-                Id = p.Resume!.Id,
-                Overview = p.Resume.Overview,
-                ContactInfo = p.Resume.ContactInfo.Select(c => new ContactInfoEntity
+            Resume = p.Resume != null && p.Resume.IsDeleted
+                ? null
+                : new ResumeEntity
                 {
-                    Id = c.Id,
-                    Value = c.Value,
-                    ContactType = new ContactTypeEntity
+                    Id = p.Resume!.Id,
+                    Overview = p.Resume.Overview,
+                    ContactInfo = p.Resume.ContactInfo.Select(c => new ContactInfoEntity
                     {
-                        Id = c.ContactType.Id,
-                        Name = c.ContactType.Name
-                    }
-                }).ToList(),
-            },
+                        Id = c.Id,
+                        Value = c.Value,
+                        ContactType = new ContactTypeEntity
+                        {
+                            Id = c.ContactType.Id,
+                            Name = c.ContactType.Name
+                        }
+                    }).ToList()
+                },
             Skill = p.Skill,
             Summary = p.Summary,
             Testimonials = p.Testimonials
@@ -65,20 +67,22 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
             Talents = p.Talents,
             PortfolioGallery = p.PortfolioGallery,
             Resume = p.Resume,
-            Skill = p.Skill != null && p.Skill.IsDeleted ? null : new SkillEntity
-            {
-                Id = p.Skill!.Id,
-                Overview = p.Skill.Overview,
-                SkillDetails = p.Skill.SkillDetails.Select(s => new SkillItemEntity
+            Skill = p.Skill != null && p.Skill.IsDeleted
+                ? null
+                : new SkillEntity
                 {
-                    Id = s.Id,
-                    Name = s.Name,
-                    ProficiencyLevel = s.ProficiencyLevel,
-                    Rank = s.Rank,
-                    IconUrl = s.IconUrl,
-                    Category = s.Category
-                }).ToList()
-            },
+                    Id = p.Skill!.Id,
+                    Overview = p.Skill.Overview,
+                    SkillDetails = p.Skill.SkillDetails.Select(s => new SkillItemEntity
+                    {
+                        Id = s.Id,
+                        Name = s.Name,
+                        ProficiencyLevel = s.ProficiencyLevel,
+                        Rank = s.Rank,
+                        IconUrl = s.IconUrl,
+                        Category = s.Category
+                    }).ToList()
+                },
             Summary = p.Summary,
             Testimonials = p.Testimonials
         });
@@ -106,16 +110,18 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
             SecondLastName = p.SecondLastName,
             ProfileImageUrl = p.ProfileImageUrl,
             BirthDate = p.BirthDate,
-            Services = p.Services != null && p.Services.IsDeleted ? null : new ServiceEntity
-            {
-                Id = p.Services!.Id,
-                Overview = p.Services.Overview,
-                GalleryItems = p.Services.GalleryItems.Select(g => new ServiceGalleryItemEntity
+            Services = p.Services != null && p.Services.IsDeleted
+                ? null
+                : new ServiceEntity
                 {
-                    Id = g.Id,
-                    Title = g.Title
-                }).ToList()
-            },
+                    Id = p.Services!.Id,
+                    Overview = p.Services.Overview,
+                    GalleryItems = p.Services.GalleryItems.Select(g => new ServiceGalleryItemEntity
+                    {
+                        Id = g.Id,
+                        Title = g.Title
+                    }).ToList()
+                },
             Talents = p.Talents,
             PortfolioGallery = p.PortfolioGallery,
             Resume = p.Resume,
@@ -171,17 +177,18 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
             BirthDate = p.BirthDate,
             Services = p.Services,
             Talents = p.Talents,
-            PortfolioGallery = p.PortfolioGallery.Where(portfolio => !portfolio.IsDeleted).Select(pg => new PortfolioGalleryEntity
-            {
-                Id = pg.Id,
-                Position = pg.Position,
-                Title = pg.Title,
-                Description = pg.Description,
-                UrlImage = pg.UrlImage,
-                UrlLink = pg.UrlLink,
-                UrlVideo = pg.UrlVideo,
-                Type = pg.Type
-            }).ToList(),
+            PortfolioGallery = p.PortfolioGallery.Where(portfolio => !portfolio.IsDeleted).Select(pg =>
+                new PortfolioGalleryEntity
+                {
+                    Id = pg.Id,
+                    Position = pg.Position,
+                    Title = pg.Title,
+                    Description = pg.Description,
+                    UrlImage = pg.UrlImage,
+                    UrlLink = pg.UrlLink,
+                    UrlVideo = pg.UrlVideo,
+                    Type = pg.Type
+                }).ToList(),
             Resume = p.Resume,
             Skill = p.Skill,
             Summary = p.Summary,

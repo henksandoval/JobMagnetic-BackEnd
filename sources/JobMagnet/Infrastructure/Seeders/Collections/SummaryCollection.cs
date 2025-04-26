@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using JobMagnet.Infrastructure.Entities;
+﻿using JobMagnet.Infrastructure.Entities;
 
 namespace JobMagnet.Infrastructure.Seeders.Collections;
 
@@ -7,57 +6,11 @@ namespace JobMagnet.Infrastructure.Seeders.Collections;
 public record SummaryCollection
 {
     private readonly long _summaryId;
-    private record EducationProperties(
-        string Degree,
-        string InstitutionName,
-        string InstitutionLocation,
-        DateTime StartDate,
-        DateTime? EndDate,
-        string Description
-    );
-    
-    private record WorkExperienceProperties(
-        string JobTitle,
-        string CompanyName,
-        string CompanyLocation,
-        ICollection<string> Responsibilities,
-        DateTime StartDate,
-        DateTime? EndDate,
-        string Description
-    );
 
-    private readonly IList<EducationProperties> _values =
-    [
-       new ("Bachelor in UI/UX Design",
-            "University of California, Berkeley",
-            "Berkeley, CA",
-            new DateTime(2010, 1, 1),
-            new DateTime(2014, 1, 1),
-            "Bachelor's degree in UI/UX Design with a focus on user-centered design principles."),
-        new ("Master in Graphic Design",
-            "California Institute of the Arts",
-            "Valencia, CA",
-            new DateTime(2014, 1, 1),
-            new DateTime(2016, 1, 1),
-            "Master's degree in Graphic Design with a focus on visual communication and branding."),
-      new ("PhD in Human-Computer Interaction",
-            "Stanford University",
-            "Stanford, CA",
-            new DateTime(2016, 1, 1),
-            new DateTime(2020, 1, 1),
-            "PhD in Human-Computer Interaction with a focus on user experience research and design."),
-        new ("Certificate in Web Development",
-            "Codecademy",
-            "Online",
-            new DateTime(2020, 1, 1),
-            null,
-            "Certificate in Web Development with a focus on front-end development and responsive design.")
-    ];
-    
-    
+
     private readonly IList<WorkExperienceProperties> _value =
     [
-        new ("UI/UX Designer",
+        new("UI/UX Designer",
             "Google",
             "Mountain View, CA",
             new List<string>
@@ -69,7 +22,7 @@ public record SummaryCollection
             new DateTime(2014, 1, 1),
             new DateTime(2016, 1, 1),
             "Worked as a UI/UX designer at Google, focusing on user-centered design principles."),
-        new ("Graphic Designer",
+        new("Graphic Designer",
             "Apple",
             "Cupertino, CA",
             new List<string>
@@ -81,7 +34,7 @@ public record SummaryCollection
             new DateTime(2016, 1, 1),
             new DateTime(2018, 1, 1),
             "Worked as a graphic designer at Apple, focusing on visual communication and branding."),
-        new ("Senior UI/UX Designer",
+        new("Senior UI/UX Designer",
             "Facebook",
             "Menlo Park, CA",
             new List<string>
@@ -93,9 +46,36 @@ public record SummaryCollection
             new DateTime(2018, 1, 1),
             null,
             "Worked as a senior UI/UX designer at Facebook, focusing on user experience research and design.")
-  
     ];
-    
+
+    private readonly IList<EducationProperties> _values =
+    [
+        new("Bachelor in UI/UX Design",
+            "University of California, Berkeley",
+            "Berkeley, CA",
+            new DateTime(2010, 1, 1),
+            new DateTime(2014, 1, 1),
+            "Bachelor's degree in UI/UX Design with a focus on user-centered design principles."),
+        new("Master in Graphic Design",
+            "California Institute of the Arts",
+            "Valencia, CA",
+            new DateTime(2014, 1, 1),
+            new DateTime(2016, 1, 1),
+            "Master's degree in Graphic Design with a focus on visual communication and branding."),
+        new("PhD in Human-Computer Interaction",
+            "Stanford University",
+            "Stanford, CA",
+            new DateTime(2016, 1, 1),
+            new DateTime(2020, 1, 1),
+            "PhD in Human-Computer Interaction with a focus on user experience research and design."),
+        new("Certificate in Web Development",
+            "Codecademy",
+            "Online",
+            new DateTime(2020, 1, 1),
+            null,
+            "Certificate in Web Development with a focus on front-end development and responsive design.")
+    ];
+
     public SummaryCollection(long summaryId)
     {
         _summaryId = summaryId;
@@ -119,7 +99,7 @@ public record SummaryCollection
             })
             .ToArray();
     }
-    
+
     public WorkExperienceEntity[] GetWorkExperience()
     {
         return _value
@@ -139,4 +119,23 @@ public record SummaryCollection
             })
             .ToArray();
     }
+
+    private record EducationProperties(
+        string Degree,
+        string InstitutionName,
+        string InstitutionLocation,
+        DateTime StartDate,
+        DateTime? EndDate,
+        string Description
+    );
+
+    private record WorkExperienceProperties(
+        string JobTitle,
+        string CompanyName,
+        string CompanyLocation,
+        ICollection<string> Responsibilities,
+        DateTime StartDate,
+        DateTime? EndDate,
+        string Description
+    );
 }

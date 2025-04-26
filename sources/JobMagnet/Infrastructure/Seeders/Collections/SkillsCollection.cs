@@ -3,17 +3,8 @@ using JobMagnet.Infrastructure.Entities;
 
 namespace JobMagnet.Infrastructure.Seeders.Collections;
 
-public record SkillsCollection()
+public record SkillsCollection
 {
-    private record SkillProperties(
-        string Name,
-        string IconUrl,
-        ushort ProficiencyLevel,
-        string Category,
-        long SkillId,
-        ushort Rank
-    );
-
     private readonly IList<SkillProperties> _values = new List<SkillProperties>
     {
         new("HTML", "https://cdn.simpleicons.org/html5", 6, "Software Development", 0, 8),
@@ -47,4 +38,13 @@ public record SkillsCollection()
             AddedBy = Guid.Empty
         }).ToImmutableList();
     }
+
+    private record SkillProperties(
+        string Name,
+        string IconUrl,
+        ushort ProficiencyLevel,
+        string Category,
+        long SkillId,
+        ushort Rank
+    );
 }
