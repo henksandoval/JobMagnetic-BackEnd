@@ -1,4 +1,6 @@
-﻿namespace JobMagnet.Models.Service;
+﻿using JobMagnet.Models.Service;
+
+namespace JobMagnet.Models.Base;
 
 public abstract class ServiceBase
 {

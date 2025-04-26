@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Models.Shared;
+﻿namespace JobMagnet.Models.Base;
 
 public interface IIdentifierBase<T>
 {

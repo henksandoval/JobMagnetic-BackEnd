@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Models.Summary;
+﻿namespace JobMagnet.Models.Base;
 
 public abstract class SummaryBase
 {

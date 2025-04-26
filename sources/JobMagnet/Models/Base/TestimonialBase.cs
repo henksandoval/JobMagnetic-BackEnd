@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Models.Testimonial;
+﻿namespace JobMagnet.Models.Base;
 
 public abstract class TestimonialBase
 {

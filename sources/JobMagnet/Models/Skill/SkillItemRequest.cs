@@ -1,4 +1,6 @@
-﻿namespace JobMagnet.Models.Skill;
+﻿using JobMagnet.Models.Base;
+
+namespace JobMagnet.Models.Skill;
 
 public sealed class SkillItemRequest : SkillItemBase
 {

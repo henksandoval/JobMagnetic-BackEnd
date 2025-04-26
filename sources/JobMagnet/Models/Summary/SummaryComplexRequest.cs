@@ -1,4 +1,5 @@
-﻿using JobMagnet.Models.Summary.Education;
+﻿using JobMagnet.Models.Base;
+using JobMagnet.Models.Summary.Education;
 using JobMagnet.Models.Summary.WorkExperience;
 
 namespace JobMagnet.Models.Summary;

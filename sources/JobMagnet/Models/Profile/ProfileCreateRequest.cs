@@ -1,3 +1,5 @@
-﻿namespace JobMagnet.Models.Profile;
+﻿using JobMagnet.Models.Base;
+
+namespace JobMagnet.Models.Profile;
 
 public sealed class ProfileCreateRequest : ProfileBase;

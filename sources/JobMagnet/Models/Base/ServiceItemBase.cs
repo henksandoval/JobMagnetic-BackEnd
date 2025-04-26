@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Models.Service;
+﻿namespace JobMagnet.Models.Base;
 
 public class ServiceItemBase
 {

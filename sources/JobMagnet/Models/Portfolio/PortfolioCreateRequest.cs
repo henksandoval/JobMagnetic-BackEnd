@@ -1,3 +1,5 @@
-﻿namespace JobMagnet.Models.Portfolio;
+﻿using JobMagnet.Models.Base;
+
+namespace JobMagnet.Models.Portfolio;
 
 public sealed class PortfolioCreateRequest : PortfolioBase;

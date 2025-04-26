@@ -1,4 +1,4 @@
-﻿using JobMagnet.Models.Shared;
+﻿using JobMagnet.Models.Base;
 
 namespace JobMagnet.Models.Summary;
 

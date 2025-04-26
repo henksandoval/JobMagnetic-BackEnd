@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Models.Profile;
+﻿namespace JobMagnet.Models.Base;
 
 public abstract class ProfileBase
 {

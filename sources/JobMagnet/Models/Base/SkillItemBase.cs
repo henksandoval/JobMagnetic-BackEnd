@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Models.Skill;
+﻿namespace JobMagnet.Models.Base;
 
 public class SkillItemBase
 {

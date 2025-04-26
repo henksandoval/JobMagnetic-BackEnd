@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Models.Portfolio;
+﻿namespace JobMagnet.Models.Base;
 
 public abstract class PortfolioBase
 {

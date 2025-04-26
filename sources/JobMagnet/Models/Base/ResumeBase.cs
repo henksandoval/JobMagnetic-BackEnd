@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Models.Resume;
+﻿namespace JobMagnet.Models.Base;
 
 public abstract class ResumeBase
 {

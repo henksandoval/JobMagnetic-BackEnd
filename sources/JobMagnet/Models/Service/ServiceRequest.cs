@@ -1,4 +1,6 @@
-﻿namespace JobMagnet.Models.Service;
+﻿using JobMagnet.Models.Base;
+
+namespace JobMagnet.Models.Service;
 
 public sealed class ServiceRequest : ServiceBase
 {

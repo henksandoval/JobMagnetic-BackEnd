@@ -1,4 +1,6 @@
-﻿namespace JobMagnet.Models.Skill;
+﻿using JobMagnet.Models.Skill;
+
+namespace JobMagnet.Models.Base;
 
 public abstract class SkillBase
 {
