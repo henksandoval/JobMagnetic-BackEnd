@@ -7,6 +7,7 @@ using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Models.Commands.Service;
+using JobMagnet.Models.Responses.Service;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.JsonPatch;

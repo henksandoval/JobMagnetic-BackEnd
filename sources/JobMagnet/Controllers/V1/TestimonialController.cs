@@ -4,6 +4,7 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Mappers;
 using JobMagnet.Models.Commands.Testimonial;
+using JobMagnet.Models.Responses.Testimonial;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 

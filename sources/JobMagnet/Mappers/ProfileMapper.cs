@@ -1,6 +1,7 @@
 ﻿using JobMagnet.Extensions.Utils;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Models.Commands.Profile;
+using JobMagnet.Models.Responses.Profile;
 using JobMagnet.ViewModels.Profile;
 using Mapster;
 

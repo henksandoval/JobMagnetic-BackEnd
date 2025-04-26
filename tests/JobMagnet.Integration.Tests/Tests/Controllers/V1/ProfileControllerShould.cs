@@ -8,6 +8,7 @@ using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Models.Commands.Profile;
 using JobMagnet.Models.Queries.Profile;
+using JobMagnet.Models.Responses.Profile;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Utils;

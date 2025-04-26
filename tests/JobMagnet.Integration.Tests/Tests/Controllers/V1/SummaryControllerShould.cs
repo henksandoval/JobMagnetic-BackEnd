@@ -9,6 +9,7 @@ using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Models.Commands.Summary;
 using JobMagnet.Models.Commands.Summary.Education;
 using JobMagnet.Models.Commands.Summary.WorkExperience;
+using JobMagnet.Models.Responses.Summary;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Utils;

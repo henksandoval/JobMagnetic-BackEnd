@@ -1,6 +1,6 @@
 ﻿using JobMagnet.Models.Base;
 
-namespace JobMagnet.Models.Commands.Resume;
+namespace JobMagnet.Models.Responses.Resume;
 
 public sealed class ResumeModel : ResumeBase, IIdentifierBase<int>
 {

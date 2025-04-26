@@ -1,6 +1,6 @@
 ﻿using JobMagnet.Models.Base;
 
-namespace JobMagnet.Models.Commands.Portfolio;
+namespace JobMagnet.Models.Responses.Portfolio;
 
 public sealed class PortfolioModel : PortfolioBase, IIdentifierBase<int>
 {

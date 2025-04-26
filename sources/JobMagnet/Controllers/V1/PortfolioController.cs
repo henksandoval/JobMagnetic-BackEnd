@@ -4,7 +4,8 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Mappers;
 using JobMagnet.Models.Commands.Portfolio;
-using JobMagnet.Models.Commands.Resume;
+using JobMagnet.Models.Responses.Portfolio;
+using JobMagnet.Models.Responses.Resume;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 

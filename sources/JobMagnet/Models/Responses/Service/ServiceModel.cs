@@ -1,6 +1,6 @@
 ﻿using JobMagnet.Models.Base;
 
-namespace JobMagnet.Models.Commands.Service;
+namespace JobMagnet.Models.Responses.Service;
 
 public sealed class ServiceModel : ServiceBase, IIdentifierBase<int>
 {

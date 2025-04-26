@@ -1,6 +1,6 @@
 ﻿using JobMagnet.Models.Base;
 
-namespace JobMagnet.Models.Commands.Profile;
+namespace JobMagnet.Models.Responses.Profile;
 
 public sealed class ProfileModel : ProfileBase, IIdentifierBase<long>
 {

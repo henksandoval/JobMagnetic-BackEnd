@@ -6,6 +6,7 @@ using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Mappers;
 using JobMagnet.Models.Commands.Profile;
 using JobMagnet.Models.Queries.Profile;
+using JobMagnet.Models.Responses.Profile;
 using JobMagnet.ViewModels.Profile;
 using Microsoft.AspNetCore.Mvc;
 
