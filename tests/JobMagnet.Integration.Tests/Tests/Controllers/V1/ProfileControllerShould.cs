@@ -1,8 +1,11 @@
 ﻿using System.Net;
 using AutoFixture;
+using FluentAssertions;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
+using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Integration.Tests.Fixtures;
+using JobMagnet.Models.Profile;
 using JobMagnet.Shared.Tests.Utils;
 using JobMagnet.Models.Queries.Profile;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -17,7 +20,7 @@ namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
 
 public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 {
-    private const string RequestUriController = "api/v1/Profile";
+    private const string RequestUriController = "api/v1/profile";
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
@@ -63,6 +66,36 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         responseData.Testimonials!.Length.ShouldBe(TestimonialsCount);
         responseData.SkillSet.ShouldNotBeNull();
         responseData.PortfolioGallery!.Length.ShouldBe(PortfolioCount);
+    }
+
+    [Fact(DisplayName = "Create a new record and return 201 when the POST request is valid")]
+    public async Task ReturnCreatedAndPersistData_WhenRequestIsValidAsync()
+    {
+        // Given
+        await _testFixture.ResetDatabaseAsync();
+        var createRequest = _fixture.Build<ProfileCreateRequest>().Create();
+        var httpContent = TestUtilities.SerializeRequestContent(createRequest);
+
+        // When
+        var response = await _httpClient.PostAsync(RequestUriController, httpContent);
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+
+        var responseData = await TestUtilities.DeserializeResponseAsync<ProfileModel>(response);
+        responseData.ShouldNotBeNull();
+
+        var locationHeader = response.Headers.Location!.ToString();
+        locationHeader.ShouldNotBeNull();
+        locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
+        var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
+
+        entityCreated.ShouldNotBeNull();
+        entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
     }
 
     private async Task<ProfileEntity> SetupEntityAsync()
