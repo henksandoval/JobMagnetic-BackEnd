@@ -21,6 +21,7 @@ namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
 public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 {
     private const string RequestUriController = "api/v1/profile";
+    private const string InvalidId = "100";
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
@@ -96,6 +97,38 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         entityCreated.ShouldNotBeNull();
         entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
+    }
+
+    [Fact(DisplayName = "Return the record and return 200 when GET request with valid ID is provided")]
+    public async Task ReturnRecord_WhenValidIdIsProvidedAsync()
+    {
+        // Given
+        var entity = await SetupEntityAsync();
+
+        // When
+        var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeTrue();
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        var responseData = await TestUtilities.DeserializeResponseAsync<ProfileModel>(response);
+        responseData.ShouldNotBeNull();
+        responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
+    }
+
+    [Fact(DisplayName = "Return 404 when GET request with invalid ID is provided")]
+    public async Task ReturnNotFound_WhenInvalidIdIsProvidedAsync()
+    {
+        // Given
+        _ = await SetupEntityAsync();
+
+        // When
+        var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
+
+        // Then
+        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     private async Task<ProfileEntity> SetupEntityAsync()
