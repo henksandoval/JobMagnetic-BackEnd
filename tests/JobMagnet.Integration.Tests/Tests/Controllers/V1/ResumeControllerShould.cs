@@ -69,7 +69,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         await _testFixture.ResetDatabaseAsync();
         var entity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<ResumeCreateRequest>().Create();
+        var createRequest = _fixture.Build<ResumeCreateCommand>().Create();
         createRequest.ProfileId = entity.Id;
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
@@ -132,7 +132,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updateRequest = _fixture.Build<ResumeUpdateRequest>()
+        var updateRequest = _fixture.Build<ResumeUpdateCommand>()
             .With(x => x.Id, entity.Id)
             .With(x => x.ProfileId, entity.ProfileId)
             .Create();
@@ -156,7 +156,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<ResumeUpdateCommand>().Create();
         var differentId = updatedEntity.Id + InvalidId;
 
         // When
@@ -172,7 +172,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<ResumeUpdateCommand>().Create();
 
         // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
@@ -188,7 +188,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         const string newJobTitle = "Software developer";
         var entity = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<ResumeUpdateRequest>();
+        var patchDocument = new JsonPatchDocument<ResumeUpdateCommand>();
         patchDocument.Replace(a => a.JobTitle, newJobTitle);
 
         // When
@@ -211,8 +211,8 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ResumeUpdateRequest>().Create();
-        var patchDocument = new JsonPatchDocument<ResumeUpdateRequest>();
+        var updatedEntity = _fixture.Build<ResumeUpdateCommand>().Create();
+        var patchDocument = new JsonPatchDocument<ResumeUpdateCommand>();
 
         // When
         var response =

@@ -14,7 +14,7 @@ public class SkillItemCustomization : ICustomization
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());
 
-        fixture.Customize<SkillItemRequest>(composer =>
+        fixture.Customize<SkillItemCommand>(composer =>
             composer
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());

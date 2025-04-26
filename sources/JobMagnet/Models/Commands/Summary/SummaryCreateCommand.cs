@@ -2,4 +2,4 @@
 
 namespace JobMagnet.Models.Commands.Summary;
 
-public sealed class SummaryCreateRequest : SummaryBase;
+public sealed class SummaryCreateCommand : SummaryBase;

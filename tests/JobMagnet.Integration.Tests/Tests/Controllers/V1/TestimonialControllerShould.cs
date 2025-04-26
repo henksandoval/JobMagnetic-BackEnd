@@ -69,7 +69,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         // Given
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<TestimonialCreateRequest>().With(x => x.ProfileId, profileEntity.Id)
+        var createRequest = _fixture.Build<TestimonialCreateCommand>().With(x => x.ProfileId, profileEntity.Id)
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
@@ -132,7 +132,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>()
+        var updatedEntity = _fixture.Build<TestimonialUpdateCommand>()
             .With(x => x.Id, entity.Id)
             .With(x => x.ProfileId, entity.ProfileId)
             .Create();
@@ -156,7 +156,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<TestimonialUpdateCommand>().Create();
         var differentId = updatedEntity.Id + InvalidId;
 
         // When
@@ -172,7 +172,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<TestimonialUpdateCommand>().Create();
 
         // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
@@ -188,7 +188,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         // Given
         const string newJobTitle = "Software developer";
         var entity = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<TestimonialUpdateRequest>();
+        var patchDocument = new JsonPatchDocument<TestimonialUpdateCommand>();
         patchDocument.Replace(a => a.JobTitle, newJobTitle);
 
         // When
@@ -211,8 +211,8 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<TestimonialUpdateRequest>().Create();
-        var patchDocument = new JsonPatchDocument<TestimonialUpdateRequest>();
+        var updatedEntity = _fixture.Build<TestimonialUpdateCommand>().Create();
+        var patchDocument = new JsonPatchDocument<TestimonialUpdateCommand>();
 
         // When
         var response =

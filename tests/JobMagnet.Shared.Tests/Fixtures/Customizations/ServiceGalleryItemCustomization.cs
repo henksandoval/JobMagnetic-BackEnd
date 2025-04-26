@@ -16,7 +16,7 @@ public class ServiceGalleryItemCustomization : ICustomization
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());
 
-        fixture.Customize<ServiceGalleryItemRequest>(composer =>
+        fixture.Customize<ServiceGalleryItemCommand>(composer =>
             composer
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());

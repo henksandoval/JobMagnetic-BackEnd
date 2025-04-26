@@ -2,7 +2,7 @@
 
 namespace JobMagnet.Models.Commands.Testimonial;
 
-public class TestimonialUpdateRequest : TestimonialBase, IIdentifierBase<long>
+public class TestimonialUpdateCommand : TestimonialBase, IIdentifierBase<long>
 {
     public required long Id { get; init; }
 }

@@ -18,9 +18,9 @@ public class ServiceController(
 {
     [HttpPost]
     [ProducesResponseType(typeof(ServiceModel), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] ServiceCreateRequest createRequest)
+    public async Task<IResult> CreateAsync([FromBody] ServiceCreateCommand createCommand)
     {
-        var entity = ServiceMapper.ToEntity(createRequest);
+        var entity = ServiceMapper.ToEntity(createCommand);
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
         var newRecord = ServiceMapper.ToModel(entity);
 
@@ -63,7 +63,7 @@ public class ServiceController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ServiceRequest> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ServiceCommand> patchDocument)
     {
         _ = queryRepository.IncludeGalleryItems();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);

@@ -39,7 +39,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         // Given
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<PortfolioCreateRequest>().With(x => x.ProfileId, profileEntity.Id).Create();
+        var createRequest = _fixture.Build<PortfolioCreateCommand>().With(x => x.ProfileId, profileEntity.Id).Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -146,7 +146,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         // Given
         const string newTitle = "Red And Blue Parrot";
         var entity = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<PortfolioUpdateRequest>();
+        var patchDocument = new JsonPatchDocument<PortfolioUpdateCommand>();
         patchDocument.Replace(a => a.Title, newTitle);
 
         // When
@@ -170,7 +170,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updatedEntity = _fixture.Build<PortfolioUpdateRequest>()
+        var updatedEntity = _fixture.Build<PortfolioUpdateCommand>()
             .With(x => x.Id, entity.Id)
             .With(x => x.ProfileId, entity.ProfileId)
             .Create();
@@ -195,7 +195,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<PortfolioUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<PortfolioUpdateCommand>().Create();
         var differentId = updatedEntity.Id + InvalidId;
 
         // When
@@ -211,7 +211,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<PortfolioUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<PortfolioUpdateCommand>().Create();
 
         // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
@@ -226,8 +226,8 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<PortfolioUpdateRequest>().Create();
-        var patchDocument = new JsonPatchDocument<PortfolioUpdateRequest>();
+        var updatedEntity = _fixture.Build<PortfolioUpdateCommand>().Create();
+        var patchDocument = new JsonPatchDocument<PortfolioUpdateCommand>();
 
         // When
         var response =

@@ -4,7 +4,7 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Mappers;
-using JobMagnet.Models.Profile;
+using JobMagnet.Models.Commands.Profile;
 using JobMagnet.Models.Queries.Profile;
 using JobMagnet.ViewModels.Profile;
 using Microsoft.AspNetCore.Mvc;
@@ -19,9 +19,9 @@ public class ProfileController(
 {
     [HttpPost]
     [ProducesResponseType(typeof(ProfileModel), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] ProfileCreateRequest createRequest)
+    public async Task<IResult> CreateAsync([FromBody] ProfileCreateCommand createCommand)
     {
-        var entity = ProfileMapper.ToEntity(createRequest);
+        var entity = ProfileMapper.ToEntity(createCommand);
         await commandRepository.CreateAsync(entity);
         var newRecord = entity.ToModel();
 
@@ -48,9 +48,9 @@ public class ProfileController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PutAsync(int id, ProfileUpdateRequest updateRequest)
+    public async Task<IResult> PutAsync(int id, ProfileUpdateCommand updateCommand)
     {
-        if (id != updateRequest.Id)
+        if (id != updateCommand.Id)
             return Results.BadRequest();
 
         var entity = await queryRepository.GetByIdAsync(id);
@@ -58,7 +58,7 @@ public class ProfileController(
         if (entity is null)
             return Results.NotFound();
 
-        entity.UpdateEntity(updateRequest);
+        entity.UpdateEntity(updateCommand);
 
         await commandRepository.UpdateAsync(entity);
 

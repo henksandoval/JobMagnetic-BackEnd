@@ -2,7 +2,7 @@
 
 namespace JobMagnet.Models.Commands.Summary;
 
-public sealed class SummaryRequest : SummaryBase
+public sealed class SummaryPatchCommand : SummaryBase
 {
     public long? Id { get; init; }
 }

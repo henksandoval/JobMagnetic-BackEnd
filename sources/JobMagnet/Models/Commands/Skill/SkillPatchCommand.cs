@@ -2,7 +2,7 @@
 
 namespace JobMagnet.Models.Commands.Skill;
 
-public sealed class SkillRequest : SkillBase
+public sealed class SkillPatchCommand : SkillBase
 {
     public long? Id { get; init; }
 }

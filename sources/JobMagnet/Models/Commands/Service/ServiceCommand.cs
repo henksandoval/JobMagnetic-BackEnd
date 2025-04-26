@@ -2,7 +2,7 @@
 
 namespace JobMagnet.Models.Commands.Service;
 
-public sealed class ServiceRequest : ServiceBase
+public sealed class ServiceCommand : ServiceBase
 {
     public long? Id { get; init; }
 }

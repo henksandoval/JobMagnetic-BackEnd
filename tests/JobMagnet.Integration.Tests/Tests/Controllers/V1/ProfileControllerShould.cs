@@ -6,7 +6,7 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Integration.Tests.Fixtures;
-using JobMagnet.Models.Profile;
+using JobMagnet.Models.Commands.Profile;
 using JobMagnet.Models.Queries.Profile;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
@@ -75,7 +75,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var createRequest = _fixture.Build<ProfileCreateRequest>().Create();
+        var createRequest = _fixture.Build<ProfileCreateCommand>().Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -138,7 +138,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updateRequest = _fixture.Build<ProfileUpdateRequest>()
+        var updateRequest = _fixture.Build<ProfileUpdateCommand>()
             .With(x => x.Id, entity.Id)
             .Create();
 
@@ -161,7 +161,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ProfileUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<ProfileUpdateCommand>().Create();
         var differentId = updatedEntity.Id + InvalidId;
 
         // When
@@ -177,7 +177,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ProfileUpdateRequest>().Create();
+        var updatedEntity = _fixture.Build<ProfileUpdateCommand>().Create();
 
         // When
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);

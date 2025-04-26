@@ -2,4 +2,4 @@
 
 namespace JobMagnet.Models.Commands.Service;
 
-public sealed class ServiceCreateRequest : ServiceBase;
+public sealed class ServiceCreateCommand : ServiceBase;

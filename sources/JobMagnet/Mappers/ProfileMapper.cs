@@ -1,6 +1,6 @@
 ﻿using JobMagnet.Extensions.Utils;
 using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Models.Profile;
+using JobMagnet.Models.Commands.Profile;
 using JobMagnet.ViewModels.Profile;
 using Mapster;
 
@@ -18,9 +18,9 @@ internal static class ProfileMapper
         return entity.Adapt<ProfileViewModel>();
     }
 
-    internal static ProfileEntity ToEntity(ProfileCreateRequest createRequest)
+    internal static ProfileEntity ToEntity(ProfileCreateCommand createCommand)
     {
-        return createRequest.Adapt<ProfileEntity>();
+        return createCommand.Adapt<ProfileEntity>();
     }
 
     internal static ProfileModel ToModel(this ProfileEntity entity)
@@ -28,9 +28,9 @@ internal static class ProfileMapper
         return entity.Adapt<ProfileModel>();
     }
 
-    internal static void UpdateEntity(this ProfileEntity entity, ProfileUpdateRequest request)
+    internal static void UpdateEntity(this ProfileEntity entity, ProfileUpdateCommand command)
     {
-        request.Adapt(entity);
+        command.Adapt(entity);
     }
 
     private static void ConfigMapper()

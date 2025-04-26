@@ -2,7 +2,7 @@
 
 namespace JobMagnet.Models.Commands.Service;
 
-public sealed class ServiceGalleryItemRequest : ServiceItemBase
+public sealed class ServiceGalleryItemCommand : ServiceItemBase
 {
     public long? Id { get; set; }
 }

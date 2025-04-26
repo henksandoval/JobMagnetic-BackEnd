@@ -37,7 +37,7 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<ServiceCreateRequest>().With(x => x.ProfileId, profileEntity.Id).Create();
+        var createRequest = _fixture.Build<ServiceCreateCommand>().With(x => x.ProfileId, profileEntity.Id).Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -139,9 +139,9 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var service = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<ServiceRequest>();
-        var itemAdded01 = _fixture.Create<ServiceGalleryItemRequest>();
-        var itemAdded02 = _fixture.Create<ServiceGalleryItemRequest>();
+        var patchDocument = new JsonPatchDocument<ServiceCommand>();
+        var itemAdded01 = _fixture.Create<ServiceGalleryItemCommand>();
+        var itemAdded02 = _fixture.Create<ServiceGalleryItemCommand>();
         patchDocument.Add(p => p.GalleryItems, itemAdded01);
         patchDocument.Add(p => p.GalleryItems, itemAdded02);
 
@@ -174,7 +174,7 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var service = await SetupEntityAsync();
         var itemToRemove = service.GalleryItems.ElementAt(2);
         var indexItemToRemove = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToRemove.Id);
-        var patchDocument = new JsonPatchDocument<ServiceRequest>();
+        var patchDocument = new JsonPatchDocument<ServiceCommand>();
         patchDocument.Remove(p => p.GalleryItems, indexItemToRemove);
 
         // When
@@ -198,11 +198,11 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var service = await SetupEntityAsync();
-        var itemUpdated = _fixture.Create<ServiceGalleryItemRequest>();
+        var itemUpdated = _fixture.Create<ServiceGalleryItemCommand>();
         var itemToReplace = service.GalleryItems.ElementAt(2);
         itemUpdated.Id = itemToReplace.Id;
         var indexItemToReplace = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToReplace.Id);
-        var patchDocument = new JsonPatchDocument<ServiceRequest>();
+        var patchDocument = new JsonPatchDocument<ServiceCommand>();
         patchDocument.Replace(p => p.GalleryItems[indexItemToReplace], itemUpdated);
 
         // When
@@ -229,9 +229,9 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task HandleMultipleOperationsInPatchRequestAsync()
     {
         // Given
-        var itemAdded01 = _fixture.Create<ServiceGalleryItemRequest>();
-        var itemAdded02 = _fixture.Create<ServiceGalleryItemRequest>();
-        var itemUpdated = _fixture.Create<ServiceGalleryItemRequest>();
+        var itemAdded01 = _fixture.Create<ServiceGalleryItemCommand>();
+        var itemAdded02 = _fixture.Create<ServiceGalleryItemCommand>();
+        var itemUpdated = _fixture.Create<ServiceGalleryItemCommand>();
 
         var service = await SetupEntityAsync();
         var itemToReplace = service.GalleryItems.ElementAt(2);
@@ -240,7 +240,7 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var indexItemToReplace = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var indexItemToRemove = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToRemove.Id);
 
-        var patchDocument = new JsonPatchDocument<ServiceRequest>();
+        var patchDocument = new JsonPatchDocument<ServiceCommand>();
         patchDocument.Add(p => p.GalleryItems, itemAdded01);
         patchDocument.Add(p => p.GalleryItems, itemAdded02);
         patchDocument.Replace(p => p.GalleryItems[indexItemToReplace], itemUpdated);

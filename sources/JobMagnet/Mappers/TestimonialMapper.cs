@@ -8,7 +8,7 @@ internal static class TestimonialMapper
 {
     static TestimonialMapper()
     {
-        TypeAdapterConfig<TestimonialUpdateRequest, TestimonialEntity>.NewConfig()
+        TypeAdapterConfig<TestimonialUpdateCommand, TestimonialEntity>.NewConfig()
             .Ignore(destination => destination.Id);
     }
 
@@ -17,18 +17,18 @@ internal static class TestimonialMapper
         return entity.Adapt<TestimonialModel>();
     }
 
-    internal static TestimonialEntity ToEntity(TestimonialCreateRequest request)
+    internal static TestimonialEntity ToEntity(TestimonialCreateCommand command)
     {
-        return request.Adapt<TestimonialEntity>();
+        return command.Adapt<TestimonialEntity>();
     }
 
-    internal static void UpdateEntity(this TestimonialEntity entity, TestimonialUpdateRequest request)
+    internal static void UpdateEntity(this TestimonialEntity entity, TestimonialUpdateCommand command)
     {
-        request.Adapt(entity);
+        command.Adapt(entity);
     }
 
-    internal static TestimonialUpdateRequest ToUpdateRequest(TestimonialEntity entity)
+    internal static TestimonialUpdateCommand ToUpdateRequest(TestimonialEntity entity)
     {
-        return entity.Adapt<TestimonialUpdateRequest>();
+        return entity.Adapt<TestimonialUpdateCommand>();
     }
 }

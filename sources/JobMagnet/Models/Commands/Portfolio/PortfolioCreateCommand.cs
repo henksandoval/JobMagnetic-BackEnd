@@ -2,4 +2,4 @@
 
 namespace JobMagnet.Models.Commands.Portfolio;
 
-public sealed class PortfolioCreateRequest : PortfolioBase;
+public sealed class PortfolioCreateCommand : PortfolioBase;
