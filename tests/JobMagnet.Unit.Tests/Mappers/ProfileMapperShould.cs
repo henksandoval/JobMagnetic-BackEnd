@@ -29,7 +29,7 @@ public class ProfileMapperShould
 
         profileExpected = profileExpected with { PersonalData = GetPersonalDataViewModel(profile) };
 
-        var result = profile.ToModel();
+        var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -50,7 +50,7 @@ public class ProfileMapperShould
 
         profileExpected = profileExpected with { About = GetAboutViewModel(profile) };
 
-        var result = profile.ToModel();
+        var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -70,7 +70,7 @@ public class ProfileMapperShould
 
         profileExpected = profileExpected with { Testimonials = GetTestimonialViewModel(profile) };
 
-        var result = profile.ToModel();
+        var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -90,7 +90,7 @@ public class ProfileMapperShould
 
         profileExpected = profileExpected with { Service = GetServiceViewModel(profile) };
 
-        var result = profile.ToModel();
+        var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -110,7 +110,7 @@ public class ProfileMapperShould
 
         profileExpected = profileExpected with { PortfolioGallery = GetPortfolioViewModel(profile) };
 
-        var result = profile.ToModel();
+        var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -130,7 +130,7 @@ public class ProfileMapperShould
 
         profileExpected = profileExpected with { SkillSet = GetSkillViewModel(profile) };
 
-        var result = profile.ToModel();
+        var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
@@ -164,7 +164,7 @@ public class ProfileMapperShould
 
         profileExpected = profileExpected with { Summary = GetSummaryViewModel(profile) };
 
-        var result = profile.ToModel();
+        var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();

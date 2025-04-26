@@ -1,7 +1,10 @@
 ﻿using Asp.Versioning;
 using JobMagnet.Controllers.Base;
+using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Mappers;
+using JobMagnet.Models.Profile;
 using JobMagnet.Models.Queries.Profile;
 using JobMagnet.ViewModels.Profile;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +14,35 @@ namespace JobMagnet.Controllers.V1;
 [ApiVersion("1")]
 public class ProfileController(
     ILogger<ProfileController> logger,
-    IProfileQueryRepository queryRepository) : BaseController<ProfileController>(logger)
+    IProfileQueryRepository queryRepository,
+    ICommandRepository<ProfileEntity> commandRepository) : BaseController<ProfileController>(logger)
 {
+    [HttpPost]
+    [ProducesResponseType(typeof(ProfileModel), StatusCodes.Status201Created)]
+    public async Task<IResult> CreateAsync([FromBody] ProfileCreateRequest createRequest)
+    {
+        var entity = ProfileMapper.ToEntity(createRequest);
+        await commandRepository.CreateAsync(entity);
+        var newRecord = entity.ToModel();
+
+        return Results.CreatedAtRoute(nameof(GetProfileByIdAsync), new { id = newRecord.Id }, newRecord);
+    }
+
+    [HttpGet("{id:long}", Name = nameof(GetProfileByIdAsync))]
+    [ProducesResponseType(typeof(ProfileModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> GetProfileByIdAsync(long id)
+    {
+        var entity = await queryRepository.GetByIdAsync(id);
+
+        if (entity is null)
+            return Results.NotFound();
+
+        var responseModel = entity.ToModel();
+
+        return Results.Ok(responseModel);
+    }
+
     [HttpGet]
     [ProducesResponseType(typeof(ProfileViewModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -32,7 +62,7 @@ public class ProfileController(
         if (entity is null)
             return Results.NotFound();
 
-        var responseModel = entity.ToModel();
+        var responseModel = entity.ToViewModel();
 
         return Results.Ok(responseModel);
     }

@@ -1,14 +1,34 @@
 ﻿using JobMagnet.Extensions.Utils;
 using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Models.Profile;
 using JobMagnet.ViewModels.Profile;
 using Mapster;
 
-// ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 namespace JobMagnet.Mappers;
 
 internal static class ProfileMapper
 {
     static ProfileMapper()
+    {
+        ConfigMapper();
+    }
+
+    internal static ProfileViewModel ToViewModel(this ProfileEntity entity)
+    {
+        return entity.Adapt<ProfileViewModel>();
+    }
+
+    internal static ProfileEntity ToEntity(ProfileCreateRequest createRequest)
+    {
+        return createRequest.Adapt<ProfileEntity>();
+    }
+
+    internal static ProfileModel ToModel(this ProfileEntity entity)
+    {
+        return entity.Adapt<ProfileModel>();
+    }
+
+    private static void ConfigMapper()
     {
         TypeAdapterConfig<PortfolioGalleryEntity, PortfolioViewModel>
             .NewConfig()
@@ -102,11 +122,6 @@ internal static class ProfileMapper
                 src => src.Services != null && src.Services.GalleryItems.Count > 0)
             .Map(dest => dest.Summary, src => src.Summary.Adapt<SummaryViewModel>(),
                 src => src.Summary != null);
-    }
-
-    internal static ProfileViewModel ToModel(this ProfileEntity entity)
-    {
-        return entity.Adapt<ProfileViewModel>();
     }
 
     private static string GetFullName(ProfileEntity entity) =>
