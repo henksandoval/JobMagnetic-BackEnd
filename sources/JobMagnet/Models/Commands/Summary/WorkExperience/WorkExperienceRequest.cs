@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Models.Summary.WorkExperience;
+﻿namespace JobMagnet.Models.Commands.Summary.WorkExperience;
 
 public class WorkExperienceRequest
 {

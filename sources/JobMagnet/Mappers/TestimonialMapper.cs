@@ -1,5 +1,5 @@
 ﻿using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Models.Testimonial;
+using JobMagnet.Models.Commands.Testimonial;
 using Mapster;
 
 namespace JobMagnet.Mappers;

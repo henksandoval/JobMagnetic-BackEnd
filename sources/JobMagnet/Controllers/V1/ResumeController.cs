@@ -3,7 +3,7 @@ using JobMagnet.Controllers.Base;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Mappers;
-using JobMagnet.Models.Resume;
+using JobMagnet.Models.Commands.Resume;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 

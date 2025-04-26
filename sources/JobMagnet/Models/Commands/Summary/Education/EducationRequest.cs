@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Models.Summary.Education;
+﻿namespace JobMagnet.Models.Commands.Summary.Education;
 
 public class EducationRequest
 {

@@ -1,4 +1,4 @@
-﻿using JobMagnet.Models.Skill;
+﻿using JobMagnet.Models.Commands.Skill;
 
 namespace JobMagnet.Models.Base;
 

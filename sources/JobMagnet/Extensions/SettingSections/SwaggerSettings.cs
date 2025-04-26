@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Extensions.ConfigSections;
+﻿namespace JobMagnet.Extensions.SettingSections;
 
 public class SwaggerSettings
 {

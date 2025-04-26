@@ -1,8 +1,8 @@
 ﻿using JobMagnet.Models.Base;
-using JobMagnet.Models.Summary.Education;
-using JobMagnet.Models.Summary.WorkExperience;
+using JobMagnet.Models.Commands.Summary.Education;
+using JobMagnet.Models.Commands.Summary.WorkExperience;
 
-namespace JobMagnet.Models.Summary;
+namespace JobMagnet.Models.Commands.Summary;
 
 public sealed class SummaryComplexRequest : SummaryBase
 {

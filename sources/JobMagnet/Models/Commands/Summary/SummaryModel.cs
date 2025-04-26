@@ -1,6 +1,6 @@
 ﻿using JobMagnet.Models.Base;
 
-namespace JobMagnet.Models.Summary;
+namespace JobMagnet.Models.Commands.Summary;
 
 public sealed class SummaryModel : SummaryBase, IIdentifierBase<int>
 {

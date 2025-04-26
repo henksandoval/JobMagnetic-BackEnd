@@ -1,6 +1,6 @@
 ﻿using JobMagnet.Models.Base;
 
-namespace JobMagnet.Models.Testimonial;
+namespace JobMagnet.Models.Commands.Testimonial;
 
 public sealed class TestimonialModel : TestimonialBase, IIdentifierBase<int>
 {

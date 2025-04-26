@@ -1,4 +1,4 @@
-﻿using JobMagnet.Models.Service;
+﻿using JobMagnet.Models.Commands.Service;
 
 namespace JobMagnet.Models.Base;
 

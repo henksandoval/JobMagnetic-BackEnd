@@ -1,5 +1,5 @@
 ﻿using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Models.Portfolio;
+using JobMagnet.Models.Commands.Portfolio;
 using Mapster;
 
 namespace JobMagnet.Mappers;

@@ -1,5 +1,5 @@
 ﻿using JobMagnet.Models.Base;
 
-namespace JobMagnet.Models.Portfolio;
+namespace JobMagnet.Models.Commands.Portfolio;
 
 public sealed class PortfolioCreateRequest : PortfolioBase;

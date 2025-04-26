@@ -6,7 +6,7 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
-using JobMagnet.Models.Testimonial;
+using JobMagnet.Models.Commands.Testimonial;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.JsonPatch;

@@ -1,5 +1,5 @@
 ﻿using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Models.Summary;
+using JobMagnet.Models.Commands.Summary;
 using Mapster;
 
 namespace JobMagnet.Mappers;
