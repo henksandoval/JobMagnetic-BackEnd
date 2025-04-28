@@ -2,7 +2,7 @@
 
 namespace JobMagnet.Models.Commands.Portfolio;
 
-public sealed class PortfolioCreateCommand : PortfolioBase
+public sealed class PortfolioCreateCommand
 {
     public PortfolioBase? PortfolioData { get; init; }
 }
