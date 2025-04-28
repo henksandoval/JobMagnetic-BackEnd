@@ -2,7 +2,8 @@
 
 namespace JobMagnet.Models.Responses.Portfolio;
 
-public sealed class PortfolioModel : PortfolioBase, IIdentifierBase<int>
+public sealed class PortfolioModel : PortfolioBase, IIdentifierBase<long>
 {
-    public required int Id { get; init; }
+    public required long Id { get; init; }
+    public PortfolioBase? PortfolioData { get; init; }
 }
