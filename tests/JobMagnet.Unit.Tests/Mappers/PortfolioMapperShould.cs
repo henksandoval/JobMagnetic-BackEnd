@@ -18,7 +18,7 @@ public class PortfolioMapperShould
         var entity = _fixture.Create<PortfolioGalleryEntity>();
 
         // When
-        var testimonialModel = PortfolioMapper.ToModel(entity);
+        var testimonialModel = entity.ToModel();
 
         // Then
         testimonialModel.Should().NotBeNull();

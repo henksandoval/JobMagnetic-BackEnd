@@ -19,7 +19,7 @@ internal static class PortfolioMapper
         return command.Adapt<PortfolioGalleryEntity>();
     }
 
-    internal static PortfolioModel ToModel(PortfolioGalleryEntity galleryEntity)
+    internal static PortfolioModel ToModel(this PortfolioGalleryEntity galleryEntity)
     {
         return galleryEntity.Adapt<PortfolioModel>();
     }
