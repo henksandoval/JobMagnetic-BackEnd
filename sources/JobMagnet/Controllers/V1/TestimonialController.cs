@@ -26,7 +26,7 @@ public class TestimonialController(
         if (entity is null)
             return Results.NotFound();
 
-        var responseModel = TestimonialMapper.ToModel(entity);
+        var responseModel = entity.ToModel();
 
         return Results.Ok(responseModel);
     }
@@ -35,9 +35,9 @@ public class TestimonialController(
     [ProducesResponseType(typeof(TestimonialModel), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] TestimonialCreateCommand createCommand)
     {
-        var entity = TestimonialMapper.ToEntity(createCommand);
+        var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
-        var newRecord = TestimonialMapper.ToModel(entity);
+        var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetTestimonialByIdAsync), new { id = newRecord.Id }, newRecord);
     }
@@ -89,7 +89,7 @@ public class TestimonialController(
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = TestimonialMapper.ToUpdateRequest(entity);
+        var updateRequest = entity.ToUpdateRequest();
 
         patchDocument.ApplyTo(updateRequest);
 

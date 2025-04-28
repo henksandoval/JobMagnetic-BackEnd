@@ -2,7 +2,8 @@
 
 namespace JobMagnet.Models.Responses.Testimonial;
 
-public sealed class TestimonialModel : TestimonialBase, IIdentifierBase<int>
+public sealed class TestimonialModel : IIdentifierBase<long>
 {
-    public required int Id { get; init; }
+    public required long Id { get; init; }
+    public required TestimonialBase TestimonialData { get; set; }
 }

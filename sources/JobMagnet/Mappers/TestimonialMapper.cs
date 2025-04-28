@@ -1,4 +1,5 @@
 ﻿using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Models.Base;
 using JobMagnet.Models.Commands.Testimonial;
 using JobMagnet.Models.Responses.Testimonial;
 using Mapster;
@@ -9,16 +10,30 @@ internal static class TestimonialMapper
 {
     static TestimonialMapper()
     {
-        TypeAdapterConfig<TestimonialUpdateCommand, TestimonialEntity>.NewConfig()
-            .Ignore(destination => destination.Id);
+        TypeAdapterConfig<TestimonialUpdateCommand, TestimonialEntity>
+            .NewConfig()
+            .Ignore(destination => destination.Id)
+            .Map(dest => dest, src => src.TestimonialData);
+
+        TypeAdapterConfig<TestimonialEntity, TestimonialUpdateCommand>
+            .NewConfig()
+            .Map(dest => dest.TestimonialData, src => src);
+
+        TypeAdapterConfig<TestimonialCreateCommand, TestimonialEntity>
+            .NewConfig()
+            .Map(dest => dest, src => src.TestimonialData);
+
+        TypeAdapterConfig<TestimonialEntity, TestimonialModel>
+            .NewConfig()
+            .Map(dest => dest.TestimonialData, src => src);
     }
 
-    internal static TestimonialModel ToModel(TestimonialEntity entity)
+    internal static TestimonialModel ToModel(this TestimonialEntity entity)
     {
         return entity.Adapt<TestimonialModel>();
     }
 
-    internal static TestimonialEntity ToEntity(TestimonialCreateCommand command)
+    internal static TestimonialEntity ToEntity(this TestimonialCreateCommand command)
     {
         return command.Adapt<TestimonialEntity>();
     }
@@ -28,7 +43,7 @@ internal static class TestimonialMapper
         command.Adapt(entity);
     }
 
-    internal static TestimonialUpdateCommand ToUpdateRequest(TestimonialEntity entity)
+    internal static TestimonialUpdateCommand ToUpdateRequest(this TestimonialEntity entity)
     {
         return entity.Adapt<TestimonialUpdateCommand>();
     }

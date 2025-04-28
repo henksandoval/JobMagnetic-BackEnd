@@ -6,6 +6,7 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
+using JobMagnet.Models.Base;
 using JobMagnet.Models.Commands.Testimonial;
 using JobMagnet.Models.Responses.Testimonial;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -70,7 +71,9 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         // Given
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<TestimonialCreateCommand>().With(x => x.ProfileId, profileEntity.Id)
+        var createRequest = _fixture
+            .Build<TestimonialCreateCommand>()
+            .With(x => x.TestimonialData, GetTestimonialData(profileEntity.Id))
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
@@ -93,7 +96,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
-        entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
+        entityCreated.Should().BeEquivalentTo(createRequest.TestimonialData, options => options.ExcludingMissingMembers());
     }
 
     [Fact(DisplayName = "Should delete and return 204 when DELETE request is received")]
@@ -133,13 +136,13 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updatedEntity = _fixture.Build<TestimonialUpdateCommand>()
+        var updatedCommand = _fixture.Build<TestimonialUpdateCommand>()
             .With(x => x.Id, entity.Id)
-            .With(x => x.ProfileId, entity.ProfileId)
+            .With(x => x.TestimonialData, GetTestimonialData(entity.Id))
             .Create();
 
         // When
-        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updatedEntity);
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updatedCommand);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
@@ -149,7 +152,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<TestimonialEntity, long>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
         dbEntity.ShouldNotBeNull();
-        dbEntity.Should().BeEquivalentTo(updatedEntity);
+        dbEntity.Should().BeEquivalentTo(updatedCommand.TestimonialData);
     }
 
     [Fact(DisplayName = "Return 400 when a PUT request with invalid ID is provided")]
@@ -190,7 +193,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         const string newJobTitle = "Software developer";
         var entity = await SetupEntityAsync();
         var patchDocument = new JsonPatchDocument<TestimonialUpdateCommand>();
-        patchDocument.Replace(a => a.JobTitle, newJobTitle);
+        patchDocument.Replace(a => a.TestimonialData.JobTitle, newJobTitle);
 
         // When
         var response =
@@ -251,5 +254,13 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         await commandRepository.CreateAsync(entity);
 
         return entity;
+    }
+
+    private TestimonialBase GetTestimonialData(long profileEntityId)
+    {
+        return _fixture
+            .Build<TestimonialBase>()
+            .With(x => x.ProfileId, profileEntityId)
+            .Create();
     }
 }
