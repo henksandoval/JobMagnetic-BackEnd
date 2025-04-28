@@ -43,7 +43,7 @@ internal static class TestimonialMapper
         command.Adapt(entity);
     }
 
-    internal static TestimonialUpdateCommand ToUpdateRequest(this TestimonialEntity entity)
+    internal static TestimonialUpdateCommand ToUpdateCommand(this TestimonialEntity entity)
     {
         return entity.Adapt<TestimonialUpdateCommand>();
     }

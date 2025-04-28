@@ -89,7 +89,7 @@ public class TestimonialController(
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = entity.ToUpdateRequest();
+        var updateRequest = entity.ToUpdateCommand();
 
         patchDocument.ApplyTo(updateRequest);
 

@@ -3,6 +3,7 @@ using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Mappers;
+using JobMagnet.Models.Commands.Testimonial;
 using JobMagnet.Shared.Tests.Fixtures;
 
 namespace JobMagnet.Unit.Tests.Mappers;
@@ -18,12 +19,42 @@ public class TestimonialMapperShould
         var entity = _fixture.Create<TestimonialEntity>();
 
         // When
-        var result = entity.ToModel();
+        var testimonialModel = entity.ToModel();
 
         // Then
-        result.Should().NotBeNull();
-        result.Id.Should().Be(entity.Id);
-        result.TestimonialData.Should().BeEquivalentTo(entity, options =>
+        testimonialModel.Should().NotBeNull();
+        testimonialModel.Id.Should().Be(entity.Id);
+        testimonialModel.TestimonialData.Should().BeEquivalentTo(entity, options =>
+            options.Excluding(GetExcludeEntityProperties()));
+    }
+
+    [Fact]
+    public void MapTestimonialCreateCommandToTestimonialEntityCorrectly()
+    {
+        // Given
+        var createCommand = _fixture.Create<TestimonialCreateCommand>();
+
+        // When
+        var entity = createCommand.ToEntity();
+
+        // Then
+        entity.Should().NotBeNull();
+        entity.Should().BeEquivalentTo(createCommand.TestimonialData);
+    }
+
+    [Fact]
+    public void MapTestimonialEntityToTestimonialUpdateCommandCorrectly()
+    {
+        // Given
+        var entity = _fixture.Create<TestimonialEntity>();
+
+        // When
+        var updateCommand = entity.ToUpdateCommand();
+
+        // Then
+        updateCommand.Should().NotBeNull();
+        updateCommand.Id.Should().Be(entity.Id);
+        updateCommand.TestimonialData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
     }
 
