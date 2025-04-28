@@ -7,6 +7,13 @@ namespace JobMagnet.Mappers;
 
 internal static class PortfolioMapper
 {
+    static PortfolioMapper()
+    {
+        TypeAdapterConfig<PortfolioGalleryEntity, PortfolioModel>
+            .NewConfig()
+            .Map(dest => dest.PortfolioData, src => src);
+    }
+
     internal static PortfolioGalleryEntity ToEntity(PortfolioCreateCommand command)
     {
         return command.Adapt<PortfolioGalleryEntity>();
