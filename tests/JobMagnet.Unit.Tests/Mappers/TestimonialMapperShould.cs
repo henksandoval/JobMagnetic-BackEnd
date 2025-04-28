@@ -1,0 +1,65 @@
+﻿using System.Linq.Expressions;
+using AutoFixture;
+using FluentAssertions;
+using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Mappers;
+using JobMagnet.Models.Commands.Testimonial;
+using JobMagnet.Shared.Tests.Fixtures;
+
+namespace JobMagnet.Unit.Tests.Mappers;
+
+public class TestimonialMapperShould
+{
+    private readonly IFixture _fixture = FixtureBuilder.Build();
+
+    [Fact]
+    public void MapTestimonialEntityToTestimonialModelCorrectly()
+    {
+        // Given
+        var entity = _fixture.Create<TestimonialEntity>();
+
+        // When
+        var testimonialModel = entity.ToModel();
+
+        // Then
+        testimonialModel.Should().NotBeNull();
+        testimonialModel.Id.Should().Be(entity.Id);
+        testimonialModel.TestimonialData.Should().BeEquivalentTo(entity, options =>
+            options.Excluding(GetExcludeEntityProperties()));
+    }
+
+    [Fact]
+    public void MapTestimonialCreateCommandToTestimonialEntityCorrectly()
+    {
+        // Given
+        var createCommand = _fixture.Create<TestimonialCreateCommand>();
+
+        // When
+        var entity = createCommand.ToEntity();
+
+        // Then
+        entity.Should().NotBeNull();
+        entity.Should().BeEquivalentTo(createCommand.TestimonialData);
+    }
+
+    [Fact]
+    public void MapTestimonialEntityToTestimonialUpdateCommandCorrectly()
+    {
+        // Given
+        var entity = _fixture.Create<TestimonialEntity>();
+
+        // When
+        var updateCommand = entity.ToUpdateCommand();
+
+        // Then
+        updateCommand.Should().NotBeNull();
+        updateCommand.Id.Should().Be(entity.Id);
+        updateCommand.TestimonialData.Should().BeEquivalentTo(entity, options =>
+            options.Excluding(GetExcludeEntityProperties()));
+    }
+
+    private static Expression<Func<TestimonialEntity, object>> GetExcludeEntityProperties()
+    {
+        return e => new { e.Id, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy, e.LastModifiedAt, e.LastModifiedBy };
+    }
+}

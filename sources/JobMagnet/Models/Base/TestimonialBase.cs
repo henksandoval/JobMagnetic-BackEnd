@@ -1,10 +1,10 @@
 ﻿namespace JobMagnet.Models.Base;
 
-public abstract class TestimonialBase
+public record TestimonialBase
 {
-    public required long ProfileId { get; set; }
-    public required string Name { get; set; }
-    public required string JobTitle { get; set; }
+    public long ProfileId { get; set; }
+    public string Name { get; set; }
+    public string JobTitle { get; set; }
     public string? PhotoUrl { get; set; }
-    public required string Feedback { get; set; }
+    public string Feedback { get; set; }
 }
