@@ -88,7 +88,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<ResumeModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<PortfolioModel>(response);
         responseData.ShouldNotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
