@@ -35,7 +35,7 @@ public class PortfolioMapperShould
         var createCommand = _fixture.Create<PortfolioCreateCommand>();
 
         // When
-        var entity = PortfolioMapper.ToEntity(createCommand);
+        var entity = createCommand.ToEntity();
 
         // Then
         entity.Should().NotBeNull();

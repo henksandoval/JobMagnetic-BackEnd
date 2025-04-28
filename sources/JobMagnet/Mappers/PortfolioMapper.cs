@@ -18,7 +18,7 @@ internal static class PortfolioMapper
             .Map(dest => dest, src => src.PortfolioData);
     }
 
-    internal static PortfolioGalleryEntity ToEntity(PortfolioCreateCommand command)
+    internal static PortfolioGalleryEntity ToEntity(this PortfolioCreateCommand command)
     {
         return command.Adapt<PortfolioGalleryEntity>();
     }
