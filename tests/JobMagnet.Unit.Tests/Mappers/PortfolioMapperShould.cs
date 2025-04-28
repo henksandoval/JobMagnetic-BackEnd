@@ -3,6 +3,7 @@ using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Mappers;
+using JobMagnet.Models.Commands.Portfolio;
 using JobMagnet.Shared.Tests.Fixtures;
 
 namespace JobMagnet.Unit.Tests.Mappers;
@@ -25,6 +26,20 @@ public class PortfolioMapperShould
         testimonialModel.Id.Should().Be(entity.Id);
         testimonialModel.PortfolioData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
+    }
+
+    [Fact]
+    public void MapPortfolioCreateCommandToPortfolioEntityCorrectly()
+    {
+        // Given
+        var createCommand = _fixture.Create<PortfolioCreateCommand>();
+
+        // When
+        var entity = PortfolioMapper.ToEntity(createCommand);
+
+        // Then
+        entity.Should().NotBeNull();
+        entity.Should().BeEquivalentTo(createCommand.PortfolioData);
     }
 
     private static Expression<Func<PortfolioGalleryEntity, object>> GetExcludeEntityProperties()
