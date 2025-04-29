@@ -2,7 +2,7 @@
 
 namespace JobMagnet.Models.Commands.Portfolio;
 
-public sealed class PortfolioUpdateCommand : IIdentifierBase<long>
+public sealed record PortfolioUpdateCommand : IIdentifierBase<long>
 {
     public required long Id { get; init; }
     public required PortfolioBase PortfolioData { get; init; }

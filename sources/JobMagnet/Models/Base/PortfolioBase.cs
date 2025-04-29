@@ -1,6 +1,6 @@
 ﻿namespace JobMagnet.Models.Base;
 
-public class PortfolioBase
+public record PortfolioBase
 {
     public required long ProfileId { get; set; }
     public int Position { get; set; }
