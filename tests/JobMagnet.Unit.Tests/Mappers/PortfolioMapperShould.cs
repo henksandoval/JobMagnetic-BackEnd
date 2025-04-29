@@ -42,6 +42,22 @@ public class PortfolioMapperShould
         entity.Should().BeEquivalentTo(createCommand.PortfolioData);
     }
 
+    [Fact]
+    public void MapPortfolioEntityToPortfolioUpdateCommandCorrectly()
+    {
+        // Given
+        var entity = _fixture.Create<PortfolioGalleryEntity>();
+
+        // When
+        var updateCommand = PortfolioMapper.ToUpdateRequest(entity);
+
+        // Then
+        updateCommand.Should().NotBeNull();
+        updateCommand.Id.Should().Be(entity.Id);
+        updateCommand.PortfolioData.Should().BeEquivalentTo(entity, options =>
+            options.Excluding(GetExcludeEntityProperties()));
+    }
+
     private static Expression<Func<PortfolioGalleryEntity, object>> GetExcludeEntityProperties()
     {
         return e => new { e.Id, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy, e.LastModifiedAt, e.LastModifiedBy };
