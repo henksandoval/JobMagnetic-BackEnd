@@ -4,5 +4,5 @@ namespace JobMagnet.Models.Commands.Testimonial;
 
 public sealed class TestimonialCreateCommand
 {
-    public required TestimonialBase TestimonialData { get; set; }
+    public required TestimonialBase TestimonialData { get; init; }
 }

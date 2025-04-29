@@ -13,7 +13,7 @@ public class PortfolioMapperShould
     private readonly IFixture _fixture = FixtureBuilder.Build();
 
     [Fact]
-    public void MapPorfolioEntityToPortfolioModelCorrectly()
+    public void MapPortfolioEntityToPortfolioModelCorrectly()
     {
         // Given
         var entity = _fixture.Create<PortfolioGalleryEntity>();
