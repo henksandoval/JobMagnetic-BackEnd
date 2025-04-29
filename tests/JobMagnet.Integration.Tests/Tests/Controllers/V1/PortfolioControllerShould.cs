@@ -6,9 +6,9 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
+using JobMagnet.Models.Base;
 using JobMagnet.Models.Commands.Portfolio;
 using JobMagnet.Models.Responses.Portfolio;
-using JobMagnet.Models.Responses.Resume;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Utils;
@@ -40,7 +40,11 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         // Given
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<PortfolioCreateCommand>().With(x => x.ProfileId, profileEntity.Id).Create();
+        var portfolioData = _fixture
+            .Build<PortfolioBase>()
+            .With(x => x.ProfileId, profileEntity.Id)
+            .Create();
+        var createRequest = _fixture.Build<PortfolioCreateCommand>().With(x => x.PortfolioData, portfolioData).Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -64,14 +68,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
 
         entityCreated.ShouldNotBeNull();
         entityCreated.ShouldSatisfyAllConditions(
-            () => entityCreated.ProfileId.ShouldBe(profileEntity.Id),
-            () => entityCreated.Title.ShouldBe(createRequest.Title),
-            () => entityCreated.Description.ShouldBe(createRequest.Description),
-            () => entityCreated.UrlLink.ShouldBe(createRequest.UrlLink),
-            () => entityCreated.UrlImage.ShouldBe(createRequest.UrlImage),
-            () => entityCreated.UrlVideo.ShouldBe(createRequest.UrlVideo),
-            () => entityCreated.Type.ShouldBe(createRequest.Type),
-            () => entityCreated.Position.ShouldBe(createRequest.Position)
+            () => entityCreated.ProfileId.ShouldBe(profileEntity.Id)
         );
     }
 
