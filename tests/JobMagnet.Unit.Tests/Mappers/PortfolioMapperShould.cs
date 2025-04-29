@@ -49,7 +49,7 @@ public class PortfolioMapperShould
         var entity = _fixture.Create<PortfolioGalleryEntity>();
 
         // When
-        var updateCommand = PortfolioMapper.ToUpdateRequest(entity);
+        var updateCommand = entity.ToUpdateRequest();
 
         // Then
         updateCommand.Should().NotBeNull();

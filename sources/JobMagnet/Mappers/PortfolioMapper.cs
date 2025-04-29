@@ -32,7 +32,7 @@ internal static class PortfolioMapper
         return galleryEntity.Adapt<PortfolioModel>();
     }
 
-    internal static PortfolioUpdateCommand ToUpdateRequest(PortfolioGalleryEntity galleryEntity)
+    internal static PortfolioUpdateCommand ToUpdateRequest(this PortfolioGalleryEntity galleryEntity)
     {
         return galleryEntity.Adapt<PortfolioUpdateCommand>();
     }
