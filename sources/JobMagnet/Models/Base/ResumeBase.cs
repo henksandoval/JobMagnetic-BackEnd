@@ -1,16 +1,16 @@
 ﻿namespace JobMagnet.Models.Base;
 
-public abstract class ResumeBase
+public class ResumeBase
 {
-    public required string JobTitle { get; set; }
-    public required long ProfileId { get; set; }
+    public string? JobTitle { get; set; }
+    public long ProfileId { get; set; }
     public DateOnly? BirthDate { get; set; }
-    public required string About { get; set; }
-    public required string Summary { get; set; }
-    public required string Overview { get; set; }
-    public required string ProfileImageUrl { get; set; }
-    public required string FirstName { get; set; }
-    public required string LastName { get; set; }
+    public string? About { get; set; }
+    public string? Summary { get; set; }
+    public string? Overview { get; set; }
+    public string? ProfileImageUrl { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
     public string? Title { get; set; }
     public string? Suffix { get; set; }
     public string? MiddleName { get; set; }
