@@ -16,6 +16,10 @@ internal static class PortfolioMapper
         TypeAdapterConfig<PortfolioCreateCommand, PortfolioGalleryEntity>
             .NewConfig()
             .Map(dest => dest, src => src.PortfolioData);
+
+        TypeAdapterConfig<PortfolioGalleryEntity, PortfolioUpdateCommand>
+            .NewConfig()
+            .Map(dest => dest.PortfolioData, src => src);
     }
 
     internal static PortfolioGalleryEntity ToEntity(this PortfolioCreateCommand command)
