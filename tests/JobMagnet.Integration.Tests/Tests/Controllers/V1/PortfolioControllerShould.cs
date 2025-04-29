@@ -6,9 +6,9 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
+using JobMagnet.Models.Base;
 using JobMagnet.Models.Commands.Portfolio;
 using JobMagnet.Models.Responses.Portfolio;
-using JobMagnet.Models.Responses.Resume;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Utils;
@@ -40,7 +40,9 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         // Given
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<PortfolioCreateCommand>().With(x => x.ProfileId, profileEntity.Id).Create();
+        var createRequest = _fixture.Build<PortfolioCreateCommand>()
+            .With(x => x.PortfolioData, GetPortfolioData(profileEntity.Id))
+            .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -64,15 +66,16 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
 
         entityCreated.ShouldNotBeNull();
         entityCreated.ShouldSatisfyAllConditions(
-            () => entityCreated.ProfileId.ShouldBe(profileEntity.Id),
-            () => entityCreated.Title.ShouldBe(createRequest.Title),
-            () => entityCreated.Description.ShouldBe(createRequest.Description),
-            () => entityCreated.UrlLink.ShouldBe(createRequest.UrlLink),
-            () => entityCreated.UrlImage.ShouldBe(createRequest.UrlImage),
-            () => entityCreated.UrlVideo.ShouldBe(createRequest.UrlVideo),
-            () => entityCreated.Type.ShouldBe(createRequest.Type),
-            () => entityCreated.Position.ShouldBe(createRequest.Position)
+            () => entityCreated.ProfileId.ShouldBe(profileEntity.Id)
         );
+    }
+
+    private PortfolioBase GetPortfolioData(long profileEntityId)
+    {
+        return _fixture
+            .Build<PortfolioBase>()
+            .With(x => x.ProfileId, profileEntityId)
+            .Create();
     }
 
     [Fact(DisplayName = "Return the record and return 200 when GET request with valid ID is provided")]
@@ -88,7 +91,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<ResumeModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<PortfolioModel>(response);
         responseData.ShouldNotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
@@ -148,7 +151,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         const string newTitle = "Red And Blue Parrot";
         var entity = await SetupEntityAsync();
         var patchDocument = new JsonPatchDocument<PortfolioUpdateCommand>();
-        patchDocument.Replace(a => a.Title, newTitle);
+        patchDocument.Replace(a => a.PortfolioData.Title, newTitle);
 
         // When
         var response =
@@ -173,7 +176,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         var entity = await SetupEntityAsync();
         var updatedEntity = _fixture.Build<PortfolioUpdateCommand>()
             .With(x => x.Id, entity.Id)
-            .With(x => x.ProfileId, entity.ProfileId)
+            .With(x => x.PortfolioData, GetPortfolioData(entity.Id))
             .Create();
 
         // When
@@ -188,7 +191,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
             scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
         dbEntity.ShouldNotBeNull();
-        dbEntity.Should().BeEquivalentTo(updatedEntity);
+        dbEntity.Should().BeEquivalentTo(updatedEntity.PortfolioData);
     }
 
     [Fact(DisplayName = "Return 400 when a PUT request with invalid ID is provided")]

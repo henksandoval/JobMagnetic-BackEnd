@@ -2,7 +2,8 @@
 
 namespace JobMagnet.Models.Responses.Resume;
 
-public sealed class ResumeModel : ResumeBase, IIdentifierBase<int>
+public sealed class ResumeModel : IIdentifierBase<long>
 {
-    public required int Id { get; init; }
+    public required long Id { get; init; }
+    public required ResumeBase ResumeData { get; init; }
 }

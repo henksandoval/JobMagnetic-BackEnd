@@ -6,6 +6,7 @@ using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
+using JobMagnet.Models.Base;
 using JobMagnet.Models.Commands.Resume;
 using JobMagnet.Models.Responses.Resume;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -71,7 +72,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         await _testFixture.ResetDatabaseAsync();
         var entity = await SetupProfileEntityAsync();
         var createRequest = _fixture.Build<ResumeCreateCommand>().Create();
-        createRequest.ProfileId = entity.Id;
+        createRequest.ResumeData.ProfileId = entity.Id;
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -133,9 +134,10 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var entity = await SetupEntityAsync();
+        var resumeData = _fixture.Build<ResumeBase>().With(x => x.ProfileId, entity.ProfileId).Create();
         var updateRequest = _fixture.Build<ResumeUpdateCommand>()
             .With(x => x.Id, entity.Id)
-            .With(x => x.ProfileId, entity.ProfileId)
+            .With(x => x.ResumeData, resumeData)
             .Create();
 
         // When
@@ -149,7 +151,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
         dbEntity.ShouldNotBeNull();
-        dbEntity.Should().BeEquivalentTo(updateRequest, options => options.ExcludingMissingMembers());
+        dbEntity.Should().BeEquivalentTo(updateRequest.ResumeData, options => options.ExcludingMissingMembers());
     }
 
     [Fact(DisplayName = "Return 400 when a PUT request with invalid ID is provided")]
@@ -190,7 +192,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         const string newJobTitle = "Software developer";
         var entity = await SetupEntityAsync();
         var patchDocument = new JsonPatchDocument<ResumeUpdateCommand>();
-        patchDocument.Replace(a => a.JobTitle, newJobTitle);
+        patchDocument.Replace(a => a.ResumeData.JobTitle, newJobTitle);
 
         // When
         var response =

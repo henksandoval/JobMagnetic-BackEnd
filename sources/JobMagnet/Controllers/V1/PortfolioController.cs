@@ -91,7 +91,7 @@ public class PortfolioController(
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = PortfolioMapper.ToUpdateRequest(entity);
+        var updateRequest = entity.ToUpdateRequest();
 
         patchDocument.ApplyTo(updateRequest);
 
