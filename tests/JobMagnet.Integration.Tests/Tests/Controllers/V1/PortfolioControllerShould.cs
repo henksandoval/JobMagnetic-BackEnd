@@ -40,11 +40,9 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         // Given
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var portfolioData = _fixture
-            .Build<PortfolioBase>()
-            .With(x => x.ProfileId, profileEntity.Id)
+        var createRequest = _fixture.Build<PortfolioCreateCommand>()
+            .With(x => x.PortfolioData, GetPortfolioData(profileEntity.Id))
             .Create();
-        var createRequest = _fixture.Build<PortfolioCreateCommand>().With(x => x.PortfolioData, portfolioData).Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -70,6 +68,14 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         entityCreated.ShouldSatisfyAllConditions(
             () => entityCreated.ProfileId.ShouldBe(profileEntity.Id)
         );
+    }
+
+    private PortfolioBase GetPortfolioData(long profileEntityId)
+    {
+        return _fixture
+            .Build<PortfolioBase>()
+            .With(x => x.ProfileId, profileEntityId)
+            .Create();
     }
 
     [Fact(DisplayName = "Return the record and return 200 when GET request with valid ID is provided")]
@@ -145,7 +151,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         const string newTitle = "Red And Blue Parrot";
         var entity = await SetupEntityAsync();
         var patchDocument = new JsonPatchDocument<PortfolioUpdateCommand>();
-        patchDocument.Replace(a => a.Title, newTitle);
+        patchDocument.Replace(a => a.PortfolioData.Title, newTitle);
 
         // When
         var response =
@@ -170,7 +176,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         var entity = await SetupEntityAsync();
         var updatedEntity = _fixture.Build<PortfolioUpdateCommand>()
             .With(x => x.Id, entity.Id)
-            .With(x => x.ProfileId, entity.ProfileId)
+            .With(x => x.PortfolioData, GetPortfolioData(entity.Id))
             .Create();
 
         // When
@@ -185,7 +191,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
             scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
         dbEntity.ShouldNotBeNull();
-        dbEntity.Should().BeEquivalentTo(updatedEntity);
+        dbEntity.Should().BeEquivalentTo(updatedEntity.PortfolioData);
     }
 
     [Fact(DisplayName = "Return 400 when a PUT request with invalid ID is provided")]
