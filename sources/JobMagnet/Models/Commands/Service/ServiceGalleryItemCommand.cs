@@ -4,5 +4,5 @@ namespace JobMagnet.Models.Commands.Service;
 
 public sealed class ServiceGalleryItemCommand : ServiceItemBase
 {
-    public long? Id { get; set; }
+    public long Id { get; set; }
 }

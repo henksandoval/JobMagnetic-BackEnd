@@ -2,7 +2,7 @@
 
 namespace JobMagnet.Models.Commands.Service;
 
-public sealed class ServiceCreateCommand : ServiceBase
+public sealed class ServiceCreateCommand
 {
     public ServiceBase ServiceData { get; init; }
 }

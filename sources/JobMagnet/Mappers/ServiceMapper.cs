@@ -7,6 +7,13 @@ namespace JobMagnet.Mappers;
 
 internal static class ServiceMapper
 {
+    static ServiceMapper()
+    {
+        TypeAdapterConfig<ServiceCreateCommand, ServiceEntity>
+            .NewConfig()
+            .Map(dest => dest, src => src.ServiceData);
+    }
+
     internal static ServiceEntity ToEntity(ServiceCreateCommand command)
     {
         return command.Adapt<ServiceEntity>();
