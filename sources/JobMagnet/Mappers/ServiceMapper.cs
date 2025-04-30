@@ -14,7 +14,7 @@ internal static class ServiceMapper
             .Map(dest => dest, src => src.ServiceData);
     }
 
-    internal static ServiceEntity ToEntity(ServiceCreateCommand command)
+    internal static ServiceEntity ToEntity(this ServiceCreateCommand command)
     {
         return command.Adapt<ServiceEntity>();
     }

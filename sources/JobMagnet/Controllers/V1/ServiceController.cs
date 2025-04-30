@@ -21,7 +21,7 @@ public class ServiceController(
     [ProducesResponseType(typeof(ServiceModel), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ServiceCreateCommand createCommand)
     {
-        var entity = ServiceMapper.ToEntity(createCommand);
+        var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
         var newRecord = ServiceMapper.ToModel(entity);
 

@@ -17,7 +17,7 @@ public class ServiceMapperShould
         var createCommand = _fixture.Create<ServiceCreateCommand>();
 
         // When
-        var entity = ServiceMapper.ToEntity(createCommand);
+        var entity = createCommand.ToEntity();
 
         // Then
         entity.Should().NotBeNull();
