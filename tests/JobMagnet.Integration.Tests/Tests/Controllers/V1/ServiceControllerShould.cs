@@ -6,6 +6,7 @@ using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
+using JobMagnet.Models.Base;
 using JobMagnet.Models.Commands.Service;
 using JobMagnet.Models.Responses.Service;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -38,7 +39,10 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<ServiceCreateCommand>().With(x => x.ProfileId, profileEntity.Id).Create();
+        var serviceData = _fixture.Build<ServiceBase>()
+            .With(x => x.ProfileId, profileEntity.Id)
+            .Create();
+        var createRequest = _fixture.Build<ServiceCreateCommand>().With(x => x.ServiceData, serviceData).Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -61,7 +65,7 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var entityCreated = await queryRepository.GetByIdWithIncludesAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
-        entityCreated.GalleryItems.Should().BeEquivalentTo(createRequest.GalleryItems, options => options
+        entityCreated.GalleryItems.Should().BeEquivalentTo(createRequest.ServiceData.GalleryItems, options => options
             .ExcludingMissingMembers()
             .Excluding(x => x.Id)
         );
