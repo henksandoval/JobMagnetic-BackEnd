@@ -24,7 +24,7 @@ internal static class ServiceMapper
         return entity.Adapt<ServiceModel>();
     }
 
-    internal static ServiceUpdateCommand ToUpdateRequest(ServiceEntity entity)
+    internal static ServiceUpdateCommand ToUpdateCommand(ServiceEntity entity)
     {
         return entity.Adapt<ServiceUpdateCommand>();
     }

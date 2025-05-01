@@ -72,7 +72,7 @@ public class ServiceController(
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = ServiceMapper.ToUpdateRequest(entity);
+        var updateRequest = ServiceMapper.ToUpdateCommand(entity);
 
         patchDocument.ApplyTo(updateRequest);
 

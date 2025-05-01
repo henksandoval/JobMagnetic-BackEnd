@@ -5,4 +5,5 @@ namespace JobMagnet.Models.Commands.Service;
 public sealed class ServiceUpdateCommand : ServiceBase
 {
     public long? Id { get; init; }
+    public ServiceBase ServiceData { get; init; }
 }
