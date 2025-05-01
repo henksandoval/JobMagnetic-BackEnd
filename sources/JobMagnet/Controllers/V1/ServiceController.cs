@@ -21,9 +21,9 @@ public class ServiceController(
     [ProducesResponseType(typeof(ServiceModel), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ServiceCreateCommand createCommand)
     {
-        var entity = ServiceMapper.ToEntity(createCommand);
+        var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
-        var newRecord = ServiceMapper.ToModel(entity);
+        var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetServiceByIdAsync), new { id = newRecord.Id }, newRecord);
     }
@@ -40,7 +40,7 @@ public class ServiceController(
         if (entity is null)
             return Results.NotFound();
 
-        var responseModel = ServiceMapper.ToModel(entity);
+        var responseModel = entity.ToModel();
 
         return Results.Ok(responseModel);
     }
@@ -64,7 +64,7 @@ public class ServiceController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ServiceCommand> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ServiceUpdateCommand> patchDocument)
     {
         _ = queryRepository.IncludeGalleryItems();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
@@ -72,11 +72,11 @@ public class ServiceController(
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = ServiceMapper.ToUpdateRequest(entity);
+        var updateRequest = entity.ToUpdateCommand();
 
         patchDocument.ApplyTo(updateRequest);
 
-        entity.UpdateEntity(updateRequest);
+        ServiceMapper.UpdateEntity(entity, updateRequest);
 
         await commandRepository.UpdateAsync(entity).ConfigureAwait(false);
 

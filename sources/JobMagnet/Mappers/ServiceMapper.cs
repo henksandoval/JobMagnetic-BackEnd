@@ -7,23 +7,42 @@ namespace JobMagnet.Mappers;
 
 internal static class ServiceMapper
 {
-    internal static ServiceEntity ToEntity(ServiceCreateCommand command)
+    static ServiceMapper()
+    {
+        TypeAdapterConfig<ServiceCreateCommand, ServiceEntity>
+            .NewConfig()
+            .Map(dest => dest, src => src.ServiceData);
+
+        TypeAdapterConfig<ServiceEntity, ServiceUpdateCommand>
+            .NewConfig()
+            .Map(dest => dest.ServiceData, src => src);
+
+        TypeAdapterConfig<ServiceUpdateCommand, ServiceEntity>
+            .NewConfig()
+            .Map(dest => dest, src => src.ServiceData);
+
+        TypeAdapterConfig<ServiceEntity, ServiceModel>
+            .NewConfig()
+            .Map(dest => dest.ServiceData, src => src);
+    }
+
+    internal static ServiceEntity ToEntity(this ServiceCreateCommand command)
     {
         return command.Adapt<ServiceEntity>();
     }
 
-    internal static ServiceModel ToModel(ServiceEntity entity)
+    internal static ServiceModel ToModel(this ServiceEntity entity)
     {
         return entity.Adapt<ServiceModel>();
     }
 
-    internal static ServiceCommand ToUpdateRequest(ServiceEntity entity)
+    internal static ServiceUpdateCommand ToUpdateCommand(this ServiceEntity entity)
     {
-        return entity.Adapt<ServiceCommand>();
+        return entity.Adapt<ServiceUpdateCommand>();
     }
 
-    internal static void UpdateEntity(this ServiceEntity entity, ServiceCommand command)
+    internal static void UpdateEntity(this ServiceEntity entity, ServiceUpdateCommand updateCommand)
     {
-        command.Adapt(entity);
+        updateCommand.Adapt(entity);
     }
 }

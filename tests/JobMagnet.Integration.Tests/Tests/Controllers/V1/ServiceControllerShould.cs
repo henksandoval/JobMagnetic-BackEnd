@@ -6,6 +6,7 @@ using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
+using JobMagnet.Models.Base;
 using JobMagnet.Models.Commands.Service;
 using JobMagnet.Models.Responses.Service;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -38,7 +39,10 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<ServiceCreateCommand>().With(x => x.ProfileId, profileEntity.Id).Create();
+        var serviceData = _fixture.Build<ServiceBase>()
+            .With(x => x.ProfileId, profileEntity.Id)
+            .Create();
+        var createRequest = _fixture.Build<ServiceCreateCommand>().With(x => x.ServiceData, serviceData).Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -61,7 +65,7 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var entityCreated = await queryRepository.GetByIdWithIncludesAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
-        entityCreated.GalleryItems.Should().BeEquivalentTo(createRequest.GalleryItems, options => options
+        entityCreated.GalleryItems.Should().BeEquivalentTo(createRequest.ServiceData.GalleryItems, options => options
             .ExcludingMissingMembers()
             .Excluding(x => x.Id)
         );
@@ -140,11 +144,11 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var service = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<ServiceCommand>();
+        var patchDocument = new JsonPatchDocument<ServiceUpdateCommand>();
         var itemAdded01 = _fixture.Create<ServiceGalleryItemCommand>();
         var itemAdded02 = _fixture.Create<ServiceGalleryItemCommand>();
-        patchDocument.Add(p => p.GalleryItems, itemAdded01);
-        patchDocument.Add(p => p.GalleryItems, itemAdded02);
+        patchDocument.Add(p => p.ServiceData.GalleryItems, itemAdded01);
+        patchDocument.Add(p => p.ServiceData.GalleryItems, itemAdded02);
 
         // When
         var response =
@@ -175,8 +179,8 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var service = await SetupEntityAsync();
         var itemToRemove = service.GalleryItems.ElementAt(2);
         var indexItemToRemove = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToRemove.Id);
-        var patchDocument = new JsonPatchDocument<ServiceCommand>();
-        patchDocument.Remove(p => p.GalleryItems, indexItemToRemove);
+        var patchDocument = new JsonPatchDocument<ServiceUpdateCommand>();
+        patchDocument.Remove(p => p.ServiceData.GalleryItems, indexItemToRemove);
 
         // When
         var response =
@@ -203,8 +207,8 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var itemToReplace = service.GalleryItems.ElementAt(2);
         itemUpdated.Id = itemToReplace.Id;
         var indexItemToReplace = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToReplace.Id);
-        var patchDocument = new JsonPatchDocument<ServiceCommand>();
-        patchDocument.Replace(p => p.GalleryItems[indexItemToReplace], itemUpdated);
+        var patchDocument = new JsonPatchDocument<ServiceUpdateCommand>();
+        patchDocument.Replace(p => p.ServiceData.GalleryItems[indexItemToReplace], itemUpdated);
 
         // When
         var response =
@@ -241,11 +245,11 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var indexItemToReplace = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var indexItemToRemove = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToRemove.Id);
 
-        var patchDocument = new JsonPatchDocument<ServiceCommand>();
-        patchDocument.Add(p => p.GalleryItems, itemAdded01);
-        patchDocument.Add(p => p.GalleryItems, itemAdded02);
-        patchDocument.Replace(p => p.GalleryItems[indexItemToReplace], itemUpdated);
-        patchDocument.Remove(p => p.GalleryItems, indexItemToRemove);
+        var patchDocument = new JsonPatchDocument<ServiceUpdateCommand>();
+        patchDocument.Add(p => p.ServiceData.GalleryItems, itemAdded01);
+        patchDocument.Add(p => p.ServiceData.GalleryItems, itemAdded02);
+        patchDocument.Replace(p => p.ServiceData.GalleryItems[indexItemToReplace], itemUpdated);
+        patchDocument.Remove(p => p.ServiceData.GalleryItems, indexItemToRemove);
 
         // When
         var response =
