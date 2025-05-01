@@ -24,13 +24,13 @@ internal static class ServiceMapper
         return entity.Adapt<ServiceModel>();
     }
 
-    internal static ServiceCommand ToUpdateRequest(ServiceEntity entity)
+    internal static ServiceUpdateCommand ToUpdateRequest(ServiceEntity entity)
     {
-        return entity.Adapt<ServiceCommand>();
+        return entity.Adapt<ServiceUpdateCommand>();
     }
 
-    internal static void UpdateEntity(this ServiceEntity entity, ServiceCommand command)
+    internal static void UpdateEntity(this ServiceEntity entity, ServiceUpdateCommand updateCommand)
     {
-        command.Adapt(entity);
+        updateCommand.Adapt(entity);
     }
 }
