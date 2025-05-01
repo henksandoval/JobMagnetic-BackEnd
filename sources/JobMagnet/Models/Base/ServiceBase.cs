@@ -2,7 +2,7 @@
 
 namespace JobMagnet.Models.Base;
 
-public class ServiceBase
+public record ServiceBase
 {
     public required long ProfileId { get; set; }
 
