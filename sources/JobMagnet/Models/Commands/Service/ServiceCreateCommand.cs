@@ -2,7 +2,7 @@
 
 namespace JobMagnet.Models.Commands.Service;
 
-public sealed class ServiceCreateCommand
+public sealed record ServiceCreateCommand
 {
-    public ServiceBase ServiceData { get; init; }
+    public required ServiceBase ServiceData { get; init; }
 }
