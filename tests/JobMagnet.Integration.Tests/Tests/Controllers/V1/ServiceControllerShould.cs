@@ -147,8 +147,8 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var patchDocument = new JsonPatchDocument<ServiceUpdateCommand>();
         var itemAdded01 = _fixture.Create<ServiceGalleryItemCommand>();
         var itemAdded02 = _fixture.Create<ServiceGalleryItemCommand>();
-        patchDocument.Add(p => p.GalleryItems, itemAdded01);
-        patchDocument.Add(p => p.GalleryItems, itemAdded02);
+        patchDocument.Add(p => p.ServiceData.GalleryItems, itemAdded01);
+        patchDocument.Add(p => p.ServiceData.GalleryItems, itemAdded02);
 
         // When
         var response =
@@ -180,7 +180,7 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var itemToRemove = service.GalleryItems.ElementAt(2);
         var indexItemToRemove = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToRemove.Id);
         var patchDocument = new JsonPatchDocument<ServiceUpdateCommand>();
-        patchDocument.Remove(p => p.GalleryItems, indexItemToRemove);
+        patchDocument.Remove(p => p.ServiceData.GalleryItems, indexItemToRemove);
 
         // When
         var response =
@@ -208,7 +208,7 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         itemUpdated.Id = itemToReplace.Id;
         var indexItemToReplace = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var patchDocument = new JsonPatchDocument<ServiceUpdateCommand>();
-        patchDocument.Replace(p => p.GalleryItems[indexItemToReplace], itemUpdated);
+        patchDocument.Replace(p => p.ServiceData.GalleryItems[indexItemToReplace], itemUpdated);
 
         // When
         var response =
@@ -246,10 +246,10 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var indexItemToRemove = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToRemove.Id);
 
         var patchDocument = new JsonPatchDocument<ServiceUpdateCommand>();
-        patchDocument.Add(p => p.GalleryItems, itemAdded01);
-        patchDocument.Add(p => p.GalleryItems, itemAdded02);
-        patchDocument.Replace(p => p.GalleryItems[indexItemToReplace], itemUpdated);
-        patchDocument.Remove(p => p.GalleryItems, indexItemToRemove);
+        patchDocument.Add(p => p.ServiceData.GalleryItems, itemAdded01);
+        patchDocument.Add(p => p.ServiceData.GalleryItems, itemAdded02);
+        patchDocument.Replace(p => p.ServiceData.GalleryItems[indexItemToReplace], itemUpdated);
+        patchDocument.Remove(p => p.ServiceData.GalleryItems, indexItemToRemove);
 
         // When
         var response =
