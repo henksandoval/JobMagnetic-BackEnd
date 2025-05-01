@@ -33,7 +33,7 @@ public class ServiceMapperShould
         var entity = _fixture.Create<ServiceEntity>();
 
         // When
-        var updateCommand = ServiceMapper.ToUpdateCommand(entity);
+        var updateCommand = entity.ToUpdateCommand();
 
         // Then
         updateCommand.Should().NotBeNull();
