@@ -1,8 +1,11 @@
-﻿using JobMagnet.Models.Base;
+﻿namespace JobMagnet.Models.Commands.Skill;
 
-namespace JobMagnet.Models.Commands.Skill;
-
-public sealed class SkillItemCommand : SkillItemBase
+public sealed record SkillItemCommand
 {
-    public long? Id { get; set; }
+    public long Id { get; set; }
+    public int ProficiencyLevel { get; set; }
+    public int Rank { get; set; }
+    public string? Name { get; set; }
+    public string? Category { get; set; }
+    public string? IconUrl { get; set; }
 }

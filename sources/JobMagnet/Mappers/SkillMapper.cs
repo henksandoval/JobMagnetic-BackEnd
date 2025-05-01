@@ -7,6 +7,25 @@ namespace JobMagnet.Mappers;
 
 internal static class SkillMapper
 {
+    static SkillMapper()
+    {
+        TypeAdapterConfig<SkillEntity, SkillModel>
+            .NewConfig()
+            .Map(dest => dest.SkillData, src => src);
+
+        TypeAdapterConfig<SkillCreateCommand, SkillEntity>
+            .NewConfig()
+            .Map(dest => dest, src => src.SkillData);
+
+        TypeAdapterConfig<SkillEntity, SkillUpdateCommand>
+            .NewConfig()
+            .Map(dest => dest.SkillData, src => src);
+
+        TypeAdapterConfig<SkillUpdateCommand, SkillEntity>
+            .NewConfig()
+            .Map(dest => dest, src => src.SkillData);
+    }
+
     internal static SkillEntity ToEntity(this SkillCreateCommand command)
     {
         return command.Adapt<SkillEntity>();
@@ -17,13 +36,13 @@ internal static class SkillMapper
         return entity.Adapt<SkillModel>();
     }
 
-    internal static SkillPatchCommand ToUpdateRequest(this SkillEntity entity)
+    internal static SkillUpdateCommand ToUpdateCommand(this SkillEntity entity)
     {
-        return entity.Adapt<SkillPatchCommand>();
+        return entity.Adapt<SkillUpdateCommand>();
     }
 
-    internal static void UpdateEntity(this SkillEntity entity, SkillPatchCommand patchCommand)
+    internal static void UpdateEntity(this SkillEntity entity, SkillUpdateCommand updateCommand)
     {
-        patchCommand.Adapt(entity);
+        updateCommand.Adapt(entity);
     }
 }

@@ -2,7 +2,9 @@
 
 namespace JobMagnet.Models.Responses.Skill;
 
-public sealed class SkillModel : SkillBase, IIdentifierBase<int>
+public sealed record SkillModel : IIdentifierBase<long>
 {
-    public required int Id { get; init; }
+    public required long Id { get; init; }
+
+    public required SkillBase SkillData { get; init; }
 }

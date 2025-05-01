@@ -2,8 +2,9 @@
 
 namespace JobMagnet.Models.Base;
 
-public abstract class SkillBase
+public sealed record SkillBase
 {
     public required long ProfileId { get; set; }
+    public required string? Overview { get; set; }
     public required IList<SkillItemCommand> SkillDetails { get; set; }
 }
