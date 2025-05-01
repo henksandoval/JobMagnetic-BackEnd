@@ -7,17 +7,17 @@ namespace JobMagnet.Mappers;
 
 internal static class SkillMapper
 {
-    internal static SkillEntity ToEntity(SkillCreateCommand command)
+    internal static SkillEntity ToEntity(this SkillCreateCommand command)
     {
         return command.Adapt<SkillEntity>();
     }
 
-    internal static SkillModel ToModel(SkillEntity entity)
+    internal static SkillModel ToModel(this SkillEntity entity)
     {
         return entity.Adapt<SkillModel>();
     }
 
-    internal static SkillPatchCommand ToUpdateRequest(SkillEntity entity)
+    internal static SkillPatchCommand ToUpdateRequest(this SkillEntity entity)
     {
         return entity.Adapt<SkillPatchCommand>();
     }
