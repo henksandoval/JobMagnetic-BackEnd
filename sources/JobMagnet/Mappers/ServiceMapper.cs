@@ -31,7 +31,7 @@ internal static class ServiceMapper
         return command.Adapt<ServiceEntity>();
     }
 
-    internal static ServiceModel ToModel(ServiceEntity entity)
+    internal static ServiceModel ToModel(this ServiceEntity entity)
     {
         return entity.Adapt<ServiceModel>();
     }

@@ -23,7 +23,7 @@ public class ServiceController(
     {
         var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
-        var newRecord = ServiceMapper.ToModel(entity);
+        var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetServiceByIdAsync), new { id = newRecord.Id }, newRecord);
     }
@@ -40,7 +40,7 @@ public class ServiceController(
         if (entity is null)
             return Results.NotFound();
 
-        var responseModel = ServiceMapper.ToModel(entity);
+        var responseModel = entity.ToModel();
 
         return Results.Ok(responseModel);
     }

@@ -19,7 +19,7 @@ public class ServiceMapperShould
         var entity = _fixture.Create<ServiceEntity>();
 
         // When
-        var serviceModel = ServiceMapper.ToModel(entity);
+        var serviceModel = entity.ToModel();
 
         // Then
         serviceModel.Should().NotBeNull();
