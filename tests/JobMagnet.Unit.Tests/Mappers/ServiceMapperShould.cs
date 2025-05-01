@@ -13,6 +13,23 @@ public class ServiceMapperShould
     private readonly IFixture _fixture = FixtureBuilder.Build();
 
     [Fact]
+    public void MapServiceEntityToServiceModelCorrectly()
+    {
+        // Given
+        var entity = _fixture.Create<ServiceEntity>();
+
+        // When
+        var serviceModel = ServiceMapper.ToModel(entity);
+
+        // Then
+        serviceModel.Should().NotBeNull();
+        serviceModel.Id.Should().Be(entity.Id);
+        serviceModel.ServiceData.Should().BeEquivalentTo(entity, options =>
+            options.Excluding(GetExcludeEntityProperties()));
+    }
+
+
+    [Fact]
     public void MapServiceCreateCommandToServiceEntityCorrectly()
     {
         // Given
@@ -27,7 +44,7 @@ public class ServiceMapperShould
     }
 
     [Fact]
-    public void MapTestimonialEntityToTestimonialUpdateCommandCorrectly()
+    public void MapServiceEntityToServiceUpdateCommandCorrectly()
     {
         // Given
         var entity = _fixture.Create<ServiceEntity>();

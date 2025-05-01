@@ -2,7 +2,8 @@
 
 namespace JobMagnet.Models.Responses.Service;
 
-public sealed class ServiceModel : ServiceBase, IIdentifierBase<int>
+public sealed record ServiceModel : IIdentifierBase<long>
 {
-    public required int Id { get; init; }
+    public required long Id { get; init; }
+    public required ServiceBase ServiceData { get; set; }
 }

@@ -72,11 +72,11 @@ public class ServiceController(
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = ServiceMapper.ToUpdateCommand(entity);
+        var updateRequest = entity.ToUpdateCommand();
 
         patchDocument.ApplyTo(updateRequest);
 
-        entity.UpdateEntity(updateRequest);
+        ServiceMapper.UpdateEntity(entity, updateRequest);
 
         await commandRepository.UpdateAsync(entity).ConfigureAwait(false);
 
