@@ -3,7 +3,6 @@ using JobMagnet.Infrastructure.Entities.Base;
 
 namespace JobMagnet.Infrastructure.Entities;
 
-// ReSharper disable once ClassNeverInstantiated.Global
 public class SkillItemEntity : TrackableEntity<long>
 {
     public string Name { get; set; } // Nombre de la habilidad (ej. "C#", "React")

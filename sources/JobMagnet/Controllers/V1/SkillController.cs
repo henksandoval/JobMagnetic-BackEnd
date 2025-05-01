@@ -21,9 +21,9 @@ public class SkillController(
     [ProducesResponseType(typeof(SkillModel), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] SkillCreateCommand createCommand)
     {
-        var entity = SkillMapper.ToEntity(createCommand);
+        var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
-        var newRecord = SkillMapper.ToModel(entity);
+        var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetSkillByIdAsync), new { id = newRecord.Id }, newRecord);
     }
@@ -40,7 +40,7 @@ public class SkillController(
         if (entity is null)
             return Results.NotFound();
 
-        var responseModel = SkillMapper.ToModel(entity);
+        var responseModel = entity.ToModel();
 
         return Results.Ok(responseModel);
     }
@@ -64,7 +64,7 @@ public class SkillController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SkillPatchCommand> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SkillUpdateCommand> patchDocument)
     {
         _ = queryRepository.IncludeDetails();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
@@ -72,7 +72,7 @@ public class SkillController(
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = SkillMapper.ToUpdateRequest(entity);
+        var updateRequest = entity.ToUpdateCommand();
 
         patchDocument.ApplyTo(updateRequest);
 

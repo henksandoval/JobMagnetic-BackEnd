@@ -2,7 +2,8 @@
 
 namespace JobMagnet.Models.Commands.Skill;
 
-public sealed record SkillCreateCommand
+public sealed record SkillUpdateCommand
 {
+    public required long Id { get; init; }
     public required SkillBase SkillData { get; init; }
 }
