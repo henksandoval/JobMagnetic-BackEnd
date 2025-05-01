@@ -20,6 +20,10 @@ internal static class ServiceMapper
         TypeAdapterConfig<ServiceUpdateCommand, ServiceEntity>
             .NewConfig()
             .Map(dest => dest, src => src.ServiceData);
+
+        TypeAdapterConfig<ServiceEntity, ServiceModel>
+            .NewConfig()
+            .Map(dest => dest.ServiceData, src => src);
     }
 
     internal static ServiceEntity ToEntity(this ServiceCreateCommand command)
