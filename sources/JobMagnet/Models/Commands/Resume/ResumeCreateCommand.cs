@@ -4,5 +4,5 @@ namespace JobMagnet.Models.Commands.Resume;
 
 public sealed record ResumeCreateCommand
 {
-    public required ResumeBase ResumeData { get; init; }
+    public required ResumeCommandBase ResumeQueryData { get; init; }
 }

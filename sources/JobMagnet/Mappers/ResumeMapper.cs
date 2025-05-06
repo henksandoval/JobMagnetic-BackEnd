@@ -11,11 +11,11 @@ internal static class ResumeMapper
     {
         TypeAdapterConfig<ResumeEntity, ResumeModel>
             .NewConfig()
-            .Map(dest => dest.ResumeData, src => src);
+            .Map(dest => dest.ResumeQueryData, src => src);
 
         TypeAdapterConfig<ResumeCreateCommand, ResumeEntity>
             .NewConfig()
-            .Map(dest => dest, src => src.ResumeData);
+            .Map(dest => dest, src => src.ResumeQueryData);
 
         TypeAdapterConfig<ResumeEntity, ResumeUpdateCommand>
             .NewConfig()

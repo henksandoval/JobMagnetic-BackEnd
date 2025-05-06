@@ -24,7 +24,7 @@ public class ResumeMapperShould
         // Then
         resumeModel.Should().NotBeNull();
         resumeModel.Id.Should().Be(entity.Id);
-        resumeModel.ResumeData.Should().BeEquivalentTo(entity, options =>
+        resumeModel.ResumeQueryData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
     }
 
@@ -35,11 +35,11 @@ public class ResumeMapperShould
         var createCommand = _fixture.Create<ResumeCreateCommand>();
 
         // When
-        var entity = createCommand.ToEntity();
+        var entity = ResumeMapper.ToEntity(createCommand);
 
         // Then
         entity.Should().NotBeNull();
-        entity.Should().BeEquivalentTo(createCommand.ResumeData, options =>
+        entity.Should().BeEquivalentTo(createCommand.ResumeQueryData, options =>
             options.ExcludingMissingMembers());
     }
 

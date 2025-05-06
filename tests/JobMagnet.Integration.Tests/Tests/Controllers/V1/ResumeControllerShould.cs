@@ -72,7 +72,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         await _testFixture.ResetDatabaseAsync();
         var entity = await SetupProfileEntityAsync();
         var createRequest = _fixture.Build<ResumeCreateCommand>().Create();
-        createRequest.ResumeData.ProfileId = entity.Id;
+        createRequest.ResumeQueryData.ProfileId = entity.Id;
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -134,7 +134,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var entity = await SetupEntityAsync();
-        var resumeData = _fixture.Build<ResumeBase>().With(x => x.ProfileId, entity.ProfileId).Create();
+        var resumeData = _fixture.Build<ResumeCommandBase>().With(x => x.ProfileId, entity.ProfileId).Create();
         var updateRequest = _fixture.Build<ResumeUpdateCommand>()
             .With(x => x.Id, entity.Id)
             .With(x => x.ResumeData, resumeData)

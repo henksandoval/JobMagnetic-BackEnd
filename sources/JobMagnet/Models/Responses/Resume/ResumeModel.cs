@@ -5,5 +5,5 @@ namespace JobMagnet.Models.Responses.Resume;
 public sealed record ResumeModel : IIdentifierBase<long>
 {
     public required long Id { get; init; }
-    public required ResumeBase ResumeData { get; init; }
+    public required ResumeQueryBase ResumeQueryData { get; init; }
 }
