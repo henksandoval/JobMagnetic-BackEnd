@@ -20,9 +20,9 @@ public class ResumeController(
     [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ResumeCreateCommand createCommand)
     {
-        var entity = ResumeMapper.ToEntity(createCommand);
+        var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity);
-        var newRecord = ResumeMapper.ToModel(entity);
+        var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetResumeByIdAsync), new { id = newRecord.Id }, newRecord);
     }
@@ -37,7 +37,7 @@ public class ResumeController(
         if (entity is null)
             return Results.NotFound();
 
-        var responseModel = ResumeMapper.ToModel(entity);
+        var responseModel = entity.ToModel();
 
         return Results.Ok(responseModel);
     }
@@ -89,7 +89,7 @@ public class ResumeController(
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = ResumeMapper.ToUpdateRequest(entity);
+        var updateRequest = entity.ToUpdateRequest();
 
         patchDocument.ApplyTo(updateRequest);
 
