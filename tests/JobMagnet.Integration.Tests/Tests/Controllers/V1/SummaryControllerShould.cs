@@ -41,7 +41,13 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<SummaryCreateCommand>().With(x => x.ProfileId, profileEntity.Id).Create();
+        var educationCollection = _fixture.Build<EducationCommand>().With(x => x.Id, 0).CreateMany(3).ToList();
+        var workExperienceCollection = _fixture.Build<WorkExperienceCommand>().With(x => x.Id, 0).CreateMany(3).ToList();
+        var createRequest = _fixture.Build<SummaryCreateCommand>()
+            .With(x => x.ProfileId, profileEntity.Id)
+            .With(x => x.Education, educationCollection)
+            .With(x => x.WorkExperiences, workExperienceCollection)
+            .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
