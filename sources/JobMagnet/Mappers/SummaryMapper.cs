@@ -7,6 +7,13 @@ namespace JobMagnet.Mappers;
 
 internal static class SummaryMapper
 {
+    static SummaryMapper()
+    {
+        TypeAdapterConfig<SummaryEntity, SummaryModel>
+            .NewConfig()
+            .Map(dest => dest.SummaryData, src => src);
+    }
+
     internal static SummaryEntity ToEntity(this SummaryCreateCommand command)
     {
         return command.Adapt<SummaryEntity>();
