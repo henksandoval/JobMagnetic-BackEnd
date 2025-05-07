@@ -6,6 +6,7 @@ using JobMagnet.Infrastructure.Repositories.Base.Interfaces;
 using JobMagnet.Infrastructure.Repositories.Interfaces;
 using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
+using JobMagnet.Models.Base;
 using JobMagnet.Models.Commands.Summary;
 using JobMagnet.Models.Commands.Summary.Education;
 using JobMagnet.Models.Commands.Summary.WorkExperience;
@@ -43,10 +44,14 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var profileEntity = await SetupProfileEntityAsync();
         var educationCollection = _fixture.Build<EducationCommand>().With(x => x.Id, 0).CreateMany(3).ToList();
         var workExperienceCollection = _fixture.Build<WorkExperienceCommand>().With(x => x.Id, 0).CreateMany(3).ToList();
-        var createRequest = _fixture.Build<SummaryCreateCommand>()
+        var summaryBase = _fixture.Build<SummaryBase>()
             .With(x => x.ProfileId, profileEntity.Id)
             .With(x => x.Education, educationCollection)
             .With(x => x.WorkExperiences, workExperienceCollection)
+            .Create();
+
+        var createRequest = _fixture.Build<SummaryCreateCommand>()
+            .With(x => x.SummaryData, summaryBase)
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 

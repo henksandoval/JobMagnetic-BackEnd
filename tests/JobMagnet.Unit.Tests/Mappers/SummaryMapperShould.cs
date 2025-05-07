@@ -3,6 +3,7 @@ using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Mappers;
+using JobMagnet.Models.Commands.Summary;
 using JobMagnet.Shared.Tests.Fixtures;
 
 namespace JobMagnet.Unit.Tests.Mappers;
@@ -30,7 +31,7 @@ public class SummaryMapperShould
         summaryModel.SummaryData.WorkExperiences.Should().BeEquivalentTo(entity.WorkExperiences, options =>
             options.Excluding(GetExcludeWorkExperienceEntityProperties()));
     }
-/*
+
     [Fact]
     public void MapSummaryCreateCommandToSummaryEntityCorrectly()
     {
@@ -44,7 +45,7 @@ public class SummaryMapperShould
         entity.Should().NotBeNull();
         entity.Should().BeEquivalentTo(createCommand.SummaryData);
     }
-
+/*
     [Fact]
     public void MapSummaryEntityToSummaryUpdateCommandCorrectly()
     {
