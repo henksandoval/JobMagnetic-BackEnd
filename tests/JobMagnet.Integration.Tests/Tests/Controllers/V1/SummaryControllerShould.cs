@@ -8,7 +8,6 @@ using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Models.Base;
 using JobMagnet.Models.Commands.Summary;
-using JobMagnet.Models.Commands.Summary.WorkExperience;
 using JobMagnet.Models.Responses.Summary;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
@@ -42,7 +41,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
         var educationCollection = _fixture.Build<EducationBase>().With(x => x.Id, 0).CreateMany(3).ToList();
-        var workExperienceCollection = _fixture.Build<WorkExperienceCommand>().With(x => x.Id, 0).CreateMany(3).ToList();
+        var workExperienceCollection = _fixture.Build<WorkExperienceBase>().With(x => x.Id, 0).CreateMany(3).ToList();
         var summaryBase = _fixture.Build<SummaryBase>()
             .With(x => x.ProfileId, profileEntity.Id)
             .With(x => x.Education, educationCollection)
@@ -222,8 +221,8 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         var summary = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
         var workExperiences = summary.WorkExperiences;
-        var itemAdded01 = _fixture.Build<WorkExperienceCommand>().Without(x => x.Id).Create();
-        var itemAdded02 = _fixture.Build<WorkExperienceCommand>().Without(x => x.Id).Create();
+        var itemAdded01 = _fixture.Build<WorkExperienceBase>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<WorkExperienceBase>().Without(x => x.Id).Create();
         var patchDocument = new JsonPatchDocument<SummaryComplexCommand>();
         patchDocument.Add(x => x.WorkExperiences, itemAdded01);
         patchDocument.Add(x => x.WorkExperiences, itemAdded02);
@@ -251,9 +250,9 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task HandleMultipleWorkExperienceOperationsInPatchRequestAsync()
     {
         // Given
-        var itemAdded01 = _fixture.Build<WorkExperienceCommand>().Without(x => x.Id).Create();
-        var itemAdded02 = _fixture.Build<WorkExperienceCommand>().Without(x => x.Id).Create();
-        var itemUpdated = _fixture.Build<WorkExperienceCommand>().Without(x => x.Id).Create();
+        var itemAdded01 = _fixture.Build<WorkExperienceBase>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<WorkExperienceBase>().Without(x => x.Id).Create();
+        var itemUpdated = _fixture.Build<WorkExperienceBase>().Without(x => x.Id).Create();
 
         var entity = new SummaryEntityBuilder(_fixture).WithEducation().WithWorkExperiences().Build();
 
