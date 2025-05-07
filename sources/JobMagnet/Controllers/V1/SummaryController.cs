@@ -65,7 +65,7 @@ public class SummaryController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SummaryPatchCommand> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SummaryUpdateCommand> patchDocument)
     {
         _ = queryRepository.IncludeEducation().IncludeWorkExperience();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
@@ -73,7 +73,7 @@ public class SummaryController(
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = entity.ToUpdateRequest();
+        var updateRequest = entity.ToUpdateCommand();
 
         patchDocument.ApplyTo(updateRequest);
 

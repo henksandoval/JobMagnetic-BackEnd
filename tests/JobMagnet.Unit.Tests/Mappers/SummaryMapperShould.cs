@@ -45,7 +45,7 @@ public class SummaryMapperShould
         entity.Should().NotBeNull();
         entity.Should().BeEquivalentTo(createCommand.SummaryData);
     }
-/*
+
     [Fact]
     public void MapSummaryEntityToSummaryUpdateCommandCorrectly()
     {
@@ -60,12 +60,12 @@ public class SummaryMapperShould
         updateCommand.Id.Should().Be(entity.Id);
         updateCommand.SummaryData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
-        updateCommand.SummaryData.SummaryDetails.Should().BeEquivalentTo(entity.SummaryDetails, options =>
-            options.Excluding(GetExcludeItemEntityProperties()));
+        updateCommand.SummaryData.Education.Should().BeEquivalentTo(entity.Education, options =>
+            options.Excluding(GetExcludeEducationEntityProperties()));
+        updateCommand.SummaryData.WorkExperiences.Should().BeEquivalentTo(entity.WorkExperiences, options =>
+            options.Excluding(GetExcludeWorkExperienceEntityProperties()));
     }
 
-
-*/
     private static Expression<Func<SummaryEntity, object>> GetExcludeEntityProperties()
     {
         return e => new

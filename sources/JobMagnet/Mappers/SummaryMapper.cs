@@ -29,9 +29,9 @@ internal static class SummaryMapper
         return entity.Adapt<SummaryModel>();
     }
 
-    internal static SummaryPatchCommand ToUpdateRequest(this SummaryEntity entity)
+    internal static SummaryUpdateCommand ToUpdateCommand(this SummaryEntity entity)
     {
-        return entity.Adapt<SummaryPatchCommand>();
+        return entity.Adapt<SummaryUpdateCommand>();
     }
 
     internal static SummaryComplexCommand ToUpdateComplexRequest(this SummaryEntity entity)
@@ -39,9 +39,9 @@ internal static class SummaryMapper
         return entity.Adapt<SummaryComplexCommand>();
     }
 
-    internal static void UpdateEntity(this SummaryEntity entity, SummaryPatchCommand patchCommand)
+    internal static void UpdateEntity(this SummaryEntity entity, SummaryUpdateCommand updateCommand)
     {
-        patchCommand.Adapt(entity);
+        updateCommand.Adapt(entity);
     }
 
     internal static void UpdateComplexEntity(this SummaryEntity entity, SummaryComplexCommand command)
