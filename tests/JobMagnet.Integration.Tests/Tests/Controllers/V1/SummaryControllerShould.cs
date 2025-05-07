@@ -8,7 +8,6 @@ using JobMagnet.Integration.Tests.Extensions;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Models.Base;
 using JobMagnet.Models.Commands.Summary;
-using JobMagnet.Models.Commands.Summary.Education;
 using JobMagnet.Models.Commands.Summary.WorkExperience;
 using JobMagnet.Models.Responses.Summary;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -42,7 +41,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var educationCollection = _fixture.Build<EducationCommand>().With(x => x.Id, 0).CreateMany(3).ToList();
+        var educationCollection = _fixture.Build<EducationBase>().With(x => x.Id, 0).CreateMany(3).ToList();
         var workExperienceCollection = _fixture.Build<WorkExperienceCommand>().With(x => x.Id, 0).CreateMany(3).ToList();
         var summaryBase = _fixture.Build<SummaryBase>()
             .With(x => x.ProfileId, profileEntity.Id)
@@ -145,8 +144,8 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var summary = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
-        var itemAdded01 = _fixture.Build<EducationCommand>().Without(x => x.Id).Create();
-        var itemAdded02 = _fixture.Build<EducationCommand>().Without(x => x.Id).Create();
+        var itemAdded01 = _fixture.Build<EducationBase>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<EducationBase>().Without(x => x.Id).Create();
         var patchDocument = new JsonPatchDocument<SummaryComplexCommand>();
         patchDocument.Add(x => x.Education, itemAdded01);
         patchDocument.Add(x => x.Education, itemAdded02);
@@ -174,9 +173,9 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task HandleMultipleEducationOperationsInPatchEducationRequestAsync()
     {
         // Given
-        var itemAdded01 = _fixture.Build<EducationCommand>().Without(x => x.Id).Create();
-        var itemAdded02 = _fixture.Build<EducationCommand>().Without(x => x.Id).Create();
-        var itemUpdated = _fixture.Build<EducationCommand>().Without(x => x.Id).Create();
+        var itemAdded01 = _fixture.Build<EducationBase>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<EducationBase>().Without(x => x.Id).Create();
+        var itemUpdated = _fixture.Build<EducationBase>().Without(x => x.Id).Create();
 
         var entity = new SummaryEntityBuilder(_fixture).WithEducation().WithWorkExperiences().Build();
 
