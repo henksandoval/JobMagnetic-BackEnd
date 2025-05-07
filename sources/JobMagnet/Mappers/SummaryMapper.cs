@@ -17,6 +17,14 @@ internal static class SummaryMapper
             .NewConfig()
             .Map(dest => dest, src => src.SummaryData)
             .Ignore(dest => dest.Id);
+
+        TypeAdapterConfig<SummaryUpdateCommand, SummaryEntity>
+            .NewConfig()
+            .Map(dest => dest, src => src.SummaryData);
+
+        TypeAdapterConfig<SummaryEntity, SummaryUpdateCommand>
+            .NewConfig()
+            .Map(dest => dest.SummaryData, src => src);
     }
 
     internal static SummaryEntity ToEntity(this SummaryCreateCommand command)
