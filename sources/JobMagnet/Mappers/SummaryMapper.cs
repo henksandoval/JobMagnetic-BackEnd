@@ -7,22 +7,22 @@ namespace JobMagnet.Mappers;
 
 internal static class SummaryMapper
 {
-    internal static SummaryEntity ToEntity(SummaryCreateCommand command)
+    internal static SummaryEntity ToEntity(this SummaryCreateCommand command)
     {
         return command.Adapt<SummaryEntity>();
     }
 
-    internal static SummaryModel ToModel(SummaryEntity entity)
+    internal static SummaryModel ToModel(this SummaryEntity entity)
     {
         return entity.Adapt<SummaryModel>();
     }
 
-    internal static SummaryPatchCommand ToUpdateRequest(SummaryEntity entity)
+    internal static SummaryPatchCommand ToUpdateRequest(this SummaryEntity entity)
     {
         return entity.Adapt<SummaryPatchCommand>();
     }
 
-    internal static SummaryComplexCommand ToUpdateComplexRequest(SummaryEntity entity)
+    internal static SummaryComplexCommand ToUpdateComplexRequest(this SummaryEntity entity)
     {
         return entity.Adapt<SummaryComplexCommand>();
     }

@@ -21,9 +21,9 @@ public class SummaryController(
     [ProducesResponseType(typeof(SummaryModel), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] SummaryCreateCommand createCommand)
     {
-        var entity = SummaryMapper.ToEntity(createCommand);
+        var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
-        var newRecord = SummaryMapper.ToModel(entity);
+        var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetSummaryByIdAsync), new { id = newRecord.Id }, newRecord);
     }
@@ -41,7 +41,7 @@ public class SummaryController(
         if (entity is null)
             return Results.NotFound();
 
-        var responseModel = SummaryMapper.ToModel(entity);
+        var responseModel = entity.ToModel();
 
         return Results.Ok(responseModel);
     }
@@ -73,7 +73,7 @@ public class SummaryController(
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = SummaryMapper.ToUpdateRequest(entity);
+        var updateRequest = entity.ToUpdateRequest();
 
         patchDocument.ApplyTo(updateRequest);
 
@@ -97,7 +97,7 @@ public class SummaryController(
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = SummaryMapper.ToUpdateComplexRequest(entity);
+        var updateRequest = entity.ToUpdateComplexRequest();
 
         patchDocument.ApplyTo(updateRequest);
 
@@ -121,7 +121,7 @@ public class SummaryController(
         if (entity is null)
             return Results.NotFound();
 
-        var updateRequest = SummaryMapper.ToUpdateComplexRequest(entity);
+        var updateRequest = entity.ToUpdateComplexRequest();
 
         patchDocument.ApplyTo(updateRequest);
 
