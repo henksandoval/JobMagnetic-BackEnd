@@ -1,6 +1,6 @@
 ﻿namespace JobMagnet.Models.Base;
 
-public sealed record ResumeQueryBase
+public sealed record ResumeBase
 {
     public long ProfileId { get; init; }
     public string? JobTitle { get; init; }

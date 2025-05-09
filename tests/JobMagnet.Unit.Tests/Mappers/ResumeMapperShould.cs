@@ -24,7 +24,7 @@ public class ResumeMapperShould
         // Then
         resumeModel.Should().NotBeNull();
         resumeModel.Id.Should().Be(entity.Id);
-        resumeModel.ResumeQueryData.Should().BeEquivalentTo(entity, options =>
+        resumeModel.ResumeData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
     }
 
