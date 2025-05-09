@@ -48,7 +48,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
             .With(x => x.WorkExperiences, workExperienceCollection)
             .Create();
 
-        var createRequest = _fixture.Build<SummaryCreateCommand>()
+        var createRequest = _fixture.Build<SummaryCommand>()
             .With(x => x.SummaryData, summaryBase)
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);

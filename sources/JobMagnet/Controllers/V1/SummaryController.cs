@@ -19,7 +19,7 @@ public class SummaryController(
 {
     [HttpPost]
     [ProducesResponseType(typeof(SummaryModel), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] SummaryCreateCommand createCommand)
+    public async Task<IResult> CreateAsync([FromBody] SummaryCommand createCommand)
     {
         var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
@@ -65,7 +65,7 @@ public class SummaryController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SummaryUpdateCommand> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SummaryCommand> patchDocument)
     {
         _ = queryRepository.IncludeEducation().IncludeWorkExperience();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);

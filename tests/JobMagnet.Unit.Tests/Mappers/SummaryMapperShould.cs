@@ -33,10 +33,10 @@ public class SummaryMapperShould
     }
 
     [Fact]
-    public void MapSummaryCreateCommandToSummaryEntityCorrectly()
+    public void MapSummaryCommandToSummaryEntityCorrectly()
     {
         // Given
-        var createCommand = _fixture.Create<SummaryCreateCommand>();
+        var createCommand = _fixture.Create<SummaryCommand>();
 
         // When
         var entity = createCommand.ToEntity();
@@ -57,7 +57,6 @@ public class SummaryMapperShould
 
         // Then
         updateCommand.Should().NotBeNull();
-        updateCommand.Id.Should().Be(entity.Id);
         updateCommand.SummaryData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
         updateCommand.SummaryData.Education.Should().BeEquivalentTo(entity.Education, options =>

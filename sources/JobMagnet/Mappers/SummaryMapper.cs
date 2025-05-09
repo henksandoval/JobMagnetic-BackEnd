@@ -13,21 +13,21 @@ internal static class SummaryMapper
             .NewConfig()
             .Map(dest => dest.SummaryData, src => src);
 
-        TypeAdapterConfig<SummaryCreateCommand, SummaryEntity>
+        TypeAdapterConfig<SummaryCommand, SummaryEntity>
             .NewConfig()
             .Map(dest => dest, src => src.SummaryData)
             .Ignore(dest => dest.Id);
 
-        TypeAdapterConfig<SummaryUpdateCommand, SummaryEntity>
+        TypeAdapterConfig<SummaryCommand, SummaryEntity>
             .NewConfig()
             .Map(dest => dest, src => src.SummaryData);
 
-        TypeAdapterConfig<SummaryEntity, SummaryUpdateCommand>
+        TypeAdapterConfig<SummaryEntity, SummaryCommand>
             .NewConfig()
             .Map(dest => dest.SummaryData, src => src);
     }
 
-    internal static SummaryEntity ToEntity(this SummaryCreateCommand command)
+    internal static SummaryEntity ToEntity(this SummaryCommand command)
     {
         return command.Adapt<SummaryEntity>();
     }
@@ -37,9 +37,9 @@ internal static class SummaryMapper
         return entity.Adapt<SummaryModel>();
     }
 
-    internal static SummaryUpdateCommand ToUpdateCommand(this SummaryEntity entity)
+    internal static SummaryCommand ToUpdateCommand(this SummaryEntity entity)
     {
-        return entity.Adapt<SummaryUpdateCommand>();
+        return entity.Adapt<SummaryCommand>();
     }
 
     internal static SummaryComplexCommand ToUpdateComplexRequest(this SummaryEntity entity)
@@ -47,9 +47,9 @@ internal static class SummaryMapper
         return entity.Adapt<SummaryComplexCommand>();
     }
 
-    internal static void UpdateEntity(this SummaryEntity entity, SummaryUpdateCommand updateCommand)
+    internal static void UpdateEntity(this SummaryEntity entity, SummaryCommand command)
     {
-        updateCommand.Adapt(entity);
+        command.Adapt(entity);
     }
 
     internal static void UpdateComplexEntity(this SummaryEntity entity, SummaryComplexCommand command)

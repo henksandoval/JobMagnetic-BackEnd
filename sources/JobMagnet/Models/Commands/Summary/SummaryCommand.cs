@@ -2,7 +2,7 @@
 
 namespace JobMagnet.Models.Commands.Summary;
 
-public sealed record SummaryCreateCommand
+public sealed record SummaryCommand
 {
     public required SummaryBase SummaryData { get; init; }
 }
