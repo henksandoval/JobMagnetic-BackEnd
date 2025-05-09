@@ -18,7 +18,7 @@ public class ResumeController(
 {
     [HttpPost]
     [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] ResumeCreateCommand createCommand)
+    public async Task<IResult> CreateAsync([FromBody] ResumeCommand createCommand)
     {
         var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity);
@@ -46,17 +46,14 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PutAsync(int id, ResumeUpdateCommand updateCommand)
+    public async Task<IResult> PutAsync(int id, ResumeCommand command)
     {
-        if (id != updateCommand.Id)
-            return Results.BadRequest();
-
         var entity = await queryRepository.GetByIdAsync(id);
 
         if (entity is null)
             return Results.NotFound();
 
-        entity.UpdateEntity(updateCommand);
+        entity.UpdateEntity(command);
 
         await commandRepository.UpdateAsync(entity);
 
@@ -82,7 +79,7 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ResumeUpdateCommand> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ResumeCommand> patchDocument)
     {
         var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 

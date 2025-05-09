@@ -21,9 +21,9 @@ public class PortfolioController(
     [ProducesResponseType(typeof(PortfolioModel), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] PortfolioCommand command)
     {
-        var entity = PortfolioMapper.ToEntity(command);
+        var entity = command.ToEntity();
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
-        var newRecord = PortfolioMapper.ToModel(entity);
+        var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetPortfolioByIdAsync), new { id = newRecord.Id }, newRecord);
     }
@@ -39,7 +39,7 @@ public class PortfolioController(
         if (entity is null)
             return Results.NotFound();
 
-        var responseModel = PortfolioMapper.ToModel(entity);
+        var responseModel = entity.ToModel();
 
         return Results.Ok(responseModel);
     }

@@ -13,15 +13,11 @@ internal static class ResumeMapper
             .NewConfig()
             .Map(dest => dest.ResumeQueryData, src => src);
 
-        TypeAdapterConfig<ResumeCreateCommand, ResumeEntity>
-            .NewConfig()
-            .Map(dest => dest, src => src.ResumeQueryData);
-
-        TypeAdapterConfig<ResumeEntity, ResumeUpdateCommand>
+        TypeAdapterConfig<ResumeEntity, ResumeCommand>
             .NewConfig()
             .Map(dest => dest.ResumeData, src => src);
 
-        TypeAdapterConfig<ResumeUpdateCommand, ResumeEntity>
+        TypeAdapterConfig<ResumeCommand, ResumeEntity>
             .NewConfig()
             .Map(dest => dest, src => src.ResumeData);
     }
@@ -31,17 +27,17 @@ internal static class ResumeMapper
         return entity.Adapt<ResumeModel>();
     }
 
-    internal static ResumeEntity ToEntity(this ResumeCreateCommand command)
+    internal static ResumeEntity ToEntity(this ResumeCommand command)
     {
         return command.Adapt<ResumeEntity>();
     }
 
-    internal static ResumeUpdateCommand ToUpdateRequest(this ResumeEntity entity)
+    internal static ResumeCommand ToUpdateRequest(this ResumeEntity entity)
     {
-        return entity.Adapt<ResumeUpdateCommand>();
+        return entity.Adapt<ResumeCommand>();
     }
 
-    internal static void UpdateEntity(this ResumeEntity entity, ResumeUpdateCommand command)
+    internal static void UpdateEntity(this ResumeEntity entity, ResumeCommand command)
     {
         command.Adapt(entity);
     }

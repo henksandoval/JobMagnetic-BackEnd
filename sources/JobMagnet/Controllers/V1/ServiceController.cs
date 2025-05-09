@@ -76,7 +76,7 @@ public class ServiceController(
 
         patchDocument.ApplyTo(updateRequest);
 
-        ServiceMapper.UpdateEntity(entity, updateRequest);
+        entity.UpdateEntity(updateRequest);
 
         await commandRepository.UpdateAsync(entity).ConfigureAwait(false);
 

@@ -2,8 +2,7 @@
 
 namespace JobMagnet.Models.Commands.Resume;
 
-public sealed record ResumeUpdateCommand : IIdentifierBase<long>
+public sealed record ResumeCommand
 {
-    public required long Id { get; init; }
     public required ResumeCommandBase ResumeData { get; init; }
 }
