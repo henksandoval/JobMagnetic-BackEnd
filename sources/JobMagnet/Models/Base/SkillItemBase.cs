@@ -2,10 +2,10 @@
 
 public sealed record SkillItemBase
 {
-    public long Id { get; set; }
-    public int ProficiencyLevel { get; set; }
-    public int Rank { get; set; }
-    public string? Name { get; set; }
-    public string? Category { get; set; }
-    public string? IconUrl { get; set; }
+    public long Id { get; init; }
+    public int ProficiencyLevel { get; init; }
+    public int Rank { get; init; }
+    public string? Name { get; init; }
+    public string? Category { get; init; }
+    public string? IconUrl { get; init; }
 }

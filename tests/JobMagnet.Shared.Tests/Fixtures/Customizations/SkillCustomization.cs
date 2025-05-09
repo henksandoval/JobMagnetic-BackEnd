@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using JobMagnet.Infrastructure.Entities;
+using JobMagnet.Models.Base;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
@@ -7,6 +8,16 @@ public class SkillCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
+        fixture.Customize<SkillItemBase>(composer =>
+            composer
+                .With(x => x.Id, 0)
+                .WithAutoProperties()
+        );
+
+        fixture.Customize<SkillBase>(composer =>
+            composer.WithAutoProperties()
+        );
+
         fixture.Customize<SkillEntity>(composer =>
             composer
                 .With(x => x.Id, 0)
