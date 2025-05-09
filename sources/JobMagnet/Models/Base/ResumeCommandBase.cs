@@ -1,13 +1,13 @@
 namespace JobMagnet.Models.Base;
 
-public record ResumeCommandBase
+public sealed record ResumeCommandBase
 {
-    public long ProfileId { get; set; }
-    public string? JobTitle { get; set; }
-    public string? About { get; set; }
-    public string? Summary { get; set; }
-    public string? Overview { get; set; }
-    public string? Title { get; set; }
-    public string? Suffix { get; set; }
-    public string? Address { get; set; }
+    public long ProfileId { get; init; }
+    public string? JobTitle { get; init; }
+    public string? About { get; init; }
+    public string? Summary { get; init; }
+    public string? Overview { get; init; }
+    public string? Title { get; init; }
+    public string? Suffix { get; init; }
+    public string? Address { get; init; }
 }

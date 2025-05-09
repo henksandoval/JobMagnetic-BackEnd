@@ -1,12 +1,12 @@
 ﻿namespace JobMagnet.Models.Base;
 
-public class EducationBase
+public sealed record EducationBase
 {
-    public long? Id { get; set; }
-    public string? Degree { get; set; }
-    public string? InstitutionName { get; set; }
-    public string? InstitutionLocation { get; set; }
-    public string? Description { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
+    public long? Id { get; init; }
+    public string? Degree { get; init; }
+    public string? InstitutionName { get; init; }
+    public string? InstitutionLocation { get; init; }
+    public string? Description { get; init; }
+    public DateTime StartDate { get; init; }
+    public DateTime? EndDate { get; init; }
 }

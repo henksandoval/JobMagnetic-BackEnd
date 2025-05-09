@@ -172,16 +172,15 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task HandleMultipleEducationOperationsInPatchEducationRequestAsync()
     {
         // Given
-        var itemAdded01 = _fixture.Build<EducationBase>().Without(x => x.Id).Create();
-        var itemAdded02 = _fixture.Build<EducationBase>().Without(x => x.Id).Create();
-        var itemUpdated = _fixture.Build<EducationBase>().Without(x => x.Id).Create();
-
         var entity = new SummaryEntityBuilder(_fixture).WithEducation().WithWorkExperiences().Build();
-
         var initialSummaryEntity = await SetupEntityAsync(() => entity);
         var itemToReplace = initialSummaryEntity.Education.ElementAt(3);
         var itemToRemove = initialSummaryEntity.Education.ElementAt(1);
-        itemUpdated.Id = itemToReplace.Id;
+
+        var itemAdded01 = _fixture.Build<EducationBase>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<EducationBase>().Without(x => x.Id).Create();
+        var itemUpdated = _fixture.Build<EducationBase>().With(x => x.Id, itemToReplace.Id).Create();
+
         var indexItemToReplace = initialSummaryEntity.Education.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var indexItemToRemove = initialSummaryEntity.Education.ToList().FindIndex(item => item.Id == itemToRemove.Id);
 
@@ -250,16 +249,15 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task HandleMultipleWorkExperienceOperationsInPatchRequestAsync()
     {
         // Given
-        var itemAdded01 = _fixture.Build<WorkExperienceBase>().Without(x => x.Id).Create();
-        var itemAdded02 = _fixture.Build<WorkExperienceBase>().Without(x => x.Id).Create();
-        var itemUpdated = _fixture.Build<WorkExperienceBase>().Without(x => x.Id).Create();
-
         var entity = new SummaryEntityBuilder(_fixture).WithEducation().WithWorkExperiences().Build();
-
         var initialSummaryEntity = await SetupEntityAsync(() => entity);
         var itemToReplace = initialSummaryEntity.WorkExperiences.ElementAt(3);
         var itemToRemove = initialSummaryEntity.WorkExperiences.ElementAt(1);
-        itemUpdated.Id = itemToReplace.Id;
+
+        var itemAdded01 = _fixture.Build<WorkExperienceBase>().Without(x => x.Id).Create();
+        var itemAdded02 = _fixture.Build<WorkExperienceBase>().Without(x => x.Id).Create();
+        var itemUpdated = _fixture.Build<WorkExperienceBase>().With(x => x.Id, itemToReplace.Id).Create();
+
         var indexItemToReplace =
             initialSummaryEntity.WorkExperiences.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var indexItemToRemove =

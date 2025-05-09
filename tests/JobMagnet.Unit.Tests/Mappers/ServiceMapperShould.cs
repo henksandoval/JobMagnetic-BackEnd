@@ -28,7 +28,6 @@ public class ServiceMapperShould
             options.Excluding(GetExcludeEntityProperties()));
     }
 
-
     [Fact]
     public void MapServiceCommandToServiceEntityCorrectly()
     {

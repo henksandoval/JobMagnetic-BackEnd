@@ -1,13 +1,13 @@
 ﻿namespace JobMagnet.Models.Base;
 
-public class WorkExperienceBase
+public sealed record WorkExperienceBase
 {
-    public long? Id { get; set; }
-    public string? JobTitle { get; set; }
-    public string? CompanyName { get; set; }
-    public string? CompanyLocation { get; set; }
-    public string? Description { get; set; }
-    public DateTime? StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
-    public ICollection<string> Responsibilities { get; set; } = new List<string>();
+    public long Id { get; init; }
+    public string? JobTitle { get; init; }
+    public string? CompanyName { get; init; }
+    public string? CompanyLocation { get; init; }
+    public string? Description { get; init; }
+    public DateTime? StartDate { get; init; }
+    public DateTime? EndDate { get; init; }
+    public ICollection<string> Responsibilities { get; init; } = new List<string>();
 }

@@ -203,9 +203,8 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var service = await SetupEntityAsync();
-        var itemUpdated = _fixture.Create<ServiceGalleryItemBase>();
         var itemToReplace = service.GalleryItems.ElementAt(2);
-        itemUpdated.Id = itemToReplace.Id;
+        var itemUpdated = _fixture.Build<ServiceGalleryItemBase>().With(s => s.Id, itemToReplace.Id).Create();
         var indexItemToReplace = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var patchDocument = new JsonPatchDocument<ServiceCommand>();
         patchDocument.Replace(p => p.ServiceData.GalleryItems[indexItemToReplace], itemUpdated);
@@ -234,14 +233,14 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task HandleMultipleOperationsInPatchRequestAsync()
     {
         // Given
-        var itemAdded01 = _fixture.Create<ServiceGalleryItemBase>();
-        var itemAdded02 = _fixture.Create<ServiceGalleryItemBase>();
-        var itemUpdated = _fixture.Create<ServiceGalleryItemBase>();
-
         var service = await SetupEntityAsync();
         var itemToReplace = service.GalleryItems.ElementAt(2);
         var itemToRemove = service.GalleryItems.ElementAt(0);
-        itemUpdated.Id = itemToReplace.Id;
+
+        var itemAdded01 = _fixture.Create<ServiceGalleryItemBase>();
+        var itemAdded02 = _fixture.Create<ServiceGalleryItemBase>();
+        var itemUpdated = _fixture.Build<ServiceGalleryItemBase>().With(s => s.Id, itemToReplace.Id).Create();
+
         var indexItemToReplace = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var indexItemToRemove = service.GalleryItems.ToList().FindIndex(item => item.Id == itemToRemove.Id);
 

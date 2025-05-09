@@ -71,8 +71,8 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         await _testFixture.ResetDatabaseAsync();
         var entity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<ResumeCommand>().Create();
-        createRequest.ResumeData.ProfileId = entity.Id;
+        var resumeData = _fixture.Build<ResumeCommandBase>().With(x => x.ProfileId, entity.Id).Create();
+        var createRequest = _fixture.Build<ResumeCommand>().With(x => x.ResumeData, resumeData).Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When

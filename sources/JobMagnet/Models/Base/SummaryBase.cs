@@ -1,11 +1,9 @@
 ﻿namespace JobMagnet.Models.Base;
 
-public class SummaryBase
+public sealed record SummaryBase
 {
-    public required long ProfileId { get; set; }
-    public required string? Introduction { get; set; }
-    public required IList<EducationBase> Education { get; set; } = Enumerable.Empty<EducationBase>().ToList();
-
-    public required IList<WorkExperienceBase> WorkExperiences { get; set; } =
-        Enumerable.Empty<WorkExperienceBase>().ToList();
+    public long ProfileId { get; init; }
+    public string? Introduction { get; init; }
+    public IList<EducationBase> Education { get; init; } = Enumerable.Empty<EducationBase>().ToList();
+    public IList<WorkExperienceBase> WorkExperiences { get; init; } = Enumerable.Empty<WorkExperienceBase>().ToList();
 }

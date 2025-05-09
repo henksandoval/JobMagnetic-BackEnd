@@ -1,10 +1,8 @@
-﻿using JobMagnet.Models.Commands.Skill;
-
-namespace JobMagnet.Models.Base;
+﻿namespace JobMagnet.Models.Base;
 
 public sealed record SkillBase
 {
-    public required long ProfileId { get; set; }
-    public required string? Overview { get; set; }
-    public required IList<SkillItemBase> SkillDetails { get; set; }
+    public long ProfileId { get; set; }
+    public string? Overview { get; set; }
+    public IList<SkillItemBase> SkillDetails { get; set; } = Enumerable.Empty<SkillItemBase>().ToList();
 }

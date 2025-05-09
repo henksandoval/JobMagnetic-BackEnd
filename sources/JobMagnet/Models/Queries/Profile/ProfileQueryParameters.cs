@@ -1,6 +1,6 @@
 ﻿namespace JobMagnet.Models.Queries.Profile;
 
-public class ProfileQueryParameters
+public record ProfileQueryParameters
 {
-    public string Name { get; set; }
+    public string? Name { get; init; }
 }
