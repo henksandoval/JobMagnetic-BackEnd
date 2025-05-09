@@ -2,7 +2,7 @@
 
 public sealed record ServiceBase
 {
-    public long ProfileId { get; set; }
-    public string? Overview { get; set; }
-    public IList<ServiceGalleryItemBase> GalleryItems { get; set; } = Enumerable.Empty<ServiceGalleryItemBase>().ToList();
+    public long ProfileId { get; init; }
+    public string? Overview { get; init; }
+    public IList<ServiceGalleryItemBase> GalleryItems { get; init; } = Enumerable.Empty<ServiceGalleryItemBase>().ToList();
 }

@@ -2,12 +2,12 @@
 
 public sealed record ServiceGalleryItemBase
 {
-    public long Id { get; set; }
-    public int Position { get; set; }
-    public string? Title { get; set; }
-    public string? Description { get; set; }
-    public string? UrlLink { get; set; }
-    public string? UrlImage { get; set; }
-    public string? UrlVideo { get; set; }
-    public string? Type { get; set; }
+    public long Id { get; init; }
+    public int Position { get; init; }
+    public string? Title { get; init; }
+    public string? Description { get; init; }
+    public string? UrlLink { get; init; }
+    public string? UrlImage { get; init; }
+    public string? UrlVideo { get; init; }
+    public string? Type { get; init; }
 }
