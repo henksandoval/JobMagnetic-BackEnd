@@ -1,6 +1,6 @@
 ﻿namespace JobMagnet.Models.Base;
 
-public abstract class ProfileBase
+public class ProfileBase
 {
     public string? FirstName { get; set; }
     public string? LastName { get; set; }

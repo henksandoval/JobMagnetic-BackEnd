@@ -76,7 +76,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var createRequest = _fixture.Build<ProfileCreateCommand>().Create();
+        var createRequest = _fixture.Build<ProfileCommand>().Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -139,8 +139,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updateRequest = _fixture.Build<ProfileUpdateCommand>()
-            .With(x => x.Id, entity.Id)
+        var updateRequest = _fixture.Build<ProfileCommand>()
             .Create();
 
         // When
@@ -157,31 +156,15 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         dbEntity.Should().BeEquivalentTo(updateRequest, options => options.ExcludingMissingMembers());
     }
 
-    [Fact(DisplayName = "Return 400 when a PUT request with invalid ID is provided")]
-    public async Task ReturnBadRequest_WhenPutRequestWithInvalidIdIsProvidedAsync()
-    {
-        // Given
-        await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ProfileUpdateCommand>().Create();
-        var differentId = updatedEntity.Id + InvalidId;
-
-        // When
-        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{differentId}", updatedEntity);
-
-        // Then
-        response.IsSuccessStatusCode.ShouldBeFalse();
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-    }
-
     [Fact(DisplayName = "Return 404 when a PUT request with invalid ID is provided")]
     public async Task ReturnNotFound_WhenPutRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ProfileUpdateCommand>().Create();
+        var updatedEntity = _fixture.Build<ProfileCommand>().Create();
 
         // When
-        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{InvalidId}", updatedEntity);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeFalse();
