@@ -2,10 +2,10 @@
 
 public sealed record ProfileBase
 {
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
-    public string? ProfileImageUrl { get; set; }
-    public DateOnly? BirthDate { get; set; }
-    public string? MiddleName { get; set; }
-    public string? SecondLastName { get; set; }
+    public string? FirstName { get; init; }
+    public string? LastName { get; init; }
+    public string? ProfileImageUrl { get; init; }
+    public DateOnly? BirthDate { get; init; }
+    public string? MiddleName { get; init; }
+    public string? SecondLastName { get; init; }
 }
