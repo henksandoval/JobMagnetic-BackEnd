@@ -6,5 +6,5 @@ public sealed record SkillBase
 {
     public required long ProfileId { get; set; }
     public required string? Overview { get; set; }
-    public required IList<SkillItemCommand> SkillDetails { get; set; }
+    public required IList<SkillItemBase> SkillDetails { get; set; }
 }

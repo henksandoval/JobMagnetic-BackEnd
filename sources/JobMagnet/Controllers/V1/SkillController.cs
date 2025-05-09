@@ -19,7 +19,7 @@ public class SkillController(
 {
     [HttpPost]
     [ProducesResponseType(typeof(SkillModel), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] SkillCreateCommand createCommand)
+    public async Task<IResult> CreateAsync([FromBody] SkillCommand createCommand)
     {
         var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
@@ -64,7 +64,7 @@ public class SkillController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SkillUpdateCommand> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SkillCommand> patchDocument)
     {
         _ = queryRepository.IncludeDetails();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);

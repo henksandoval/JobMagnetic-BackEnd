@@ -13,20 +13,20 @@ internal static class SkillMapper
             .NewConfig()
             .Map(dest => dest.SkillData, src => src);
 
-        TypeAdapterConfig<SkillCreateCommand, SkillEntity>
+        TypeAdapterConfig<SkillCommand, SkillEntity>
             .NewConfig()
             .Map(dest => dest, src => src.SkillData);
 
-        TypeAdapterConfig<SkillEntity, SkillUpdateCommand>
+        TypeAdapterConfig<SkillEntity, SkillCommand>
             .NewConfig()
             .Map(dest => dest.SkillData, src => src);
 
-        TypeAdapterConfig<SkillUpdateCommand, SkillEntity>
+        TypeAdapterConfig<SkillCommand, SkillEntity>
             .NewConfig()
             .Map(dest => dest, src => src.SkillData);
     }
 
-    internal static SkillEntity ToEntity(this SkillCreateCommand command)
+    internal static SkillEntity ToEntity(this SkillCommand command)
     {
         return command.Adapt<SkillEntity>();
     }
@@ -36,13 +36,13 @@ internal static class SkillMapper
         return entity.Adapt<SkillModel>();
     }
 
-    internal static SkillUpdateCommand ToUpdateCommand(this SkillEntity entity)
+    internal static SkillCommand ToUpdateCommand(this SkillEntity entity)
     {
-        return entity.Adapt<SkillUpdateCommand>();
+        return entity.Adapt<SkillCommand>();
     }
 
-    internal static void UpdateEntity(this SkillEntity entity, SkillUpdateCommand updateCommand)
+    internal static void UpdateEntity(this SkillEntity entity, SkillCommand command)
     {
-        updateCommand.Adapt(entity);
+        command.Adapt(entity);
     }
 }

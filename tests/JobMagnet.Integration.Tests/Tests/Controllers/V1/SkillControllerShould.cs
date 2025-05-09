@@ -42,7 +42,7 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var skillData = _fixture.Build<SkillBase>()
             .With(x => x.ProfileId, profileEntity.Id)
             .Create();
-        var createRequest = _fixture.Build<SkillCreateCommand>().With(x => x.SkillData, skillData).Create();
+        var createRequest = _fixture.Build<SkillCommand>().With(x => x.SkillData, skillData).Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -143,9 +143,9 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var skill = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<SkillUpdateCommand>();
-        var itemAdded01 = _fixture.Create<SkillItemCommand>();
-        var itemAdded02 = _fixture.Create<SkillItemCommand>();
+        var patchDocument = new JsonPatchDocument<SkillCommand>();
+        var itemAdded01 = _fixture.Create<SkillItemBase>();
+        var itemAdded02 = _fixture.Create<SkillItemBase>();
         patchDocument.Add(p => p.SkillData.SkillDetails, itemAdded01);
         patchDocument.Add(p => p.SkillData.SkillDetails, itemAdded02);
 
@@ -176,7 +176,7 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var skill = await SetupEntityAsync();
         var itemToRemove = skill.SkillDetails.ElementAt(2);
         var indexItemToRemove = skill.SkillDetails.ToList().FindIndex(item => item.Id == itemToRemove.Id);
-        var patchDocument = new JsonPatchDocument<SkillUpdateCommand>();
+        var patchDocument = new JsonPatchDocument<SkillCommand>();
         patchDocument.Remove(p => p.SkillData.SkillDetails, indexItemToRemove);
 
         // When
@@ -200,11 +200,11 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var skill = await SetupEntityAsync();
-        var itemUpdated = _fixture.Create<SkillItemCommand>();
+        var itemUpdated = _fixture.Create<SkillItemBase>();
         var itemToReplace = skill.SkillDetails.ElementAt(0);
         itemUpdated.Id = itemToReplace.Id;
         var indexItemToReplace = skill.SkillDetails.ToList().FindIndex(item => item.Id == itemToReplace.Id);
-        var patchDocument = new JsonPatchDocument<SkillUpdateCommand>();
+        var patchDocument = new JsonPatchDocument<SkillCommand>();
         patchDocument.Replace(p => p.SkillData.SkillDetails[indexItemToReplace], itemUpdated);
 
         // When
@@ -234,14 +234,14 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var skill = await SetupEntityAsync();
         var itemToReplace = skill.SkillDetails.ElementAt(2);
         var itemToRemove = skill.SkillDetails.ElementAt(0);
-        var itemAdded01 = _fixture.Create<SkillItemCommand>();
-        var itemAdded02 = _fixture.Create<SkillItemCommand>();
-        var itemUpdated = _fixture.Create<SkillItemCommand>();
+        var itemAdded01 = _fixture.Create<SkillItemBase>();
+        var itemAdded02 = _fixture.Create<SkillItemBase>();
+        var itemUpdated = _fixture.Create<SkillItemBase>();
         itemUpdated.Id = itemToReplace.Id;
         var indexItemToReplace = skill.SkillDetails.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var indexItemToRemove = skill.SkillDetails.ToList().FindIndex(item => item.Id == itemToRemove.Id);
 
-        var patchDocument = new JsonPatchDocument<SkillUpdateCommand>();
+        var patchDocument = new JsonPatchDocument<SkillCommand>();
         patchDocument.Add(p => p.SkillData.SkillDetails, itemAdded01);
         patchDocument.Add(p => p.SkillData.SkillDetails, itemAdded02);
         patchDocument.Replace(p => p.SkillData.SkillDetails[indexItemToReplace], itemUpdated);
