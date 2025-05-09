@@ -2,11 +2,10 @@
 
 namespace JobMagnet.Models.Commands.Summary;
 
-public sealed class SummaryComplexCommand
+public sealed record SummaryComplexCommand
 {
     public long? Id { get; init; }
-    public IList<EducationBase> Education { get; set; } = Enumerable.Empty<EducationBase>().ToList();
+    public IList<EducationBase> Education { get; init; } = Enumerable.Empty<EducationBase>().ToList();
 
-    public IList<WorkExperienceBase> WorkExperiences { get; set; } =
-        Enumerable.Empty<WorkExperienceBase>().ToList();
+    public IList<WorkExperienceBase> WorkExperiences { get; init; } = Enumerable.Empty<WorkExperienceBase>().ToList();
 }
