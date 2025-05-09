@@ -145,13 +145,13 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var summary = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
         var itemAdded01 = _fixture.Build<EducationBase>().Without(x => x.Id).Create();
         var itemAdded02 = _fixture.Build<EducationBase>().Without(x => x.Id).Create();
-        var patchDocument = new JsonPatchDocument<SummaryComplexCommand>();
-        patchDocument.Add(x => x.Education, itemAdded01);
-        patchDocument.Add(x => x.Education, itemAdded02);
+        var patchDocument = new JsonPatchDocument<SummaryCommand>();
+        patchDocument.Add(x => x.SummaryData.Education, itemAdded01);
+        patchDocument.Add(x => x.SummaryData.Education, itemAdded02);
 
         // When
         var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{summary.Id}/education",
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{summary.Id}",
                 patchDocument);
 
         // Then
@@ -184,15 +184,15 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var indexItemToReplace = initialSummaryEntity.Education.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var indexItemToRemove = initialSummaryEntity.Education.ToList().FindIndex(item => item.Id == itemToRemove.Id);
 
-        var patchDocument = new JsonPatchDocument<SummaryComplexCommand>();
-        patchDocument.Add(x => x.Education, itemAdded01);
-        patchDocument.Add(x => x.Education, itemAdded02);
-        patchDocument.Replace(p => p.Education[indexItemToReplace], itemUpdated);
-        patchDocument.Remove(p => p.Education, indexItemToRemove);
+        var patchDocument = new JsonPatchDocument<SummaryCommand>();
+        patchDocument.Add(x => x.SummaryData.Education, itemAdded01);
+        patchDocument.Add(x => x.SummaryData.Education, itemAdded02);
+        patchDocument.Replace(p => p.SummaryData.Education[indexItemToReplace], itemUpdated);
+        patchDocument.Remove(p => p.SummaryData.Education, indexItemToRemove);
 
         // When
         var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{initialSummaryEntity.Id}/education",
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{initialSummaryEntity.Id}",
                 patchDocument);
 
         // Then
@@ -222,13 +222,13 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var workExperiences = summary.WorkExperiences;
         var itemAdded01 = _fixture.Build<WorkExperienceBase>().Without(x => x.Id).Create();
         var itemAdded02 = _fixture.Build<WorkExperienceBase>().Without(x => x.Id).Create();
-        var patchDocument = new JsonPatchDocument<SummaryComplexCommand>();
-        patchDocument.Add(x => x.WorkExperiences, itemAdded01);
-        patchDocument.Add(x => x.WorkExperiences, itemAdded02);
+        var patchDocument = new JsonPatchDocument<SummaryCommand>();
+        patchDocument.Add(x => x.SummaryData.WorkExperiences, itemAdded01);
+        patchDocument.Add(x => x.SummaryData.WorkExperiences, itemAdded02);
 
         // When
         var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{summary.Id}/WorkExperience",
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{summary.Id}",
                 patchDocument);
 
         // Then
@@ -263,16 +263,16 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var indexItemToRemove =
             initialSummaryEntity.WorkExperiences.ToList().FindIndex(item => item.Id == itemToRemove.Id);
 
-        var patchDocument = new JsonPatchDocument<SummaryComplexCommand>();
-        patchDocument.Add(x => x.WorkExperiences, itemAdded01);
-        patchDocument.Add(x => x.WorkExperiences, itemAdded02);
-        patchDocument.Replace(p => p.WorkExperiences[indexItemToReplace], itemUpdated);
-        patchDocument.Remove(p => p.WorkExperiences, indexItemToRemove);
+        var patchDocument = new JsonPatchDocument<SummaryCommand>();
+        patchDocument.Add(x => x.SummaryData.WorkExperiences, itemAdded01);
+        patchDocument.Add(x => x.SummaryData.WorkExperiences, itemAdded02);
+        patchDocument.Replace(p => p.SummaryData.WorkExperiences[indexItemToReplace], itemUpdated);
+        patchDocument.Remove(p => p.SummaryData.WorkExperiences, indexItemToRemove);
 
         // // When
         var response =
             await _httpClient.PatchAsNewtonsoftJsonAsync(
-                $"{RequestUriController}/{initialSummaryEntity.Id}/WorkExperience", patchDocument);
+                $"{RequestUriController}/{initialSummaryEntity.Id}", patchDocument);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
