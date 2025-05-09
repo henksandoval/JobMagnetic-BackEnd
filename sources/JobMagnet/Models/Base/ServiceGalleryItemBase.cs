@@ -1,6 +1,6 @@
-﻿namespace JobMagnet.Models.Commands.Service;
+﻿namespace JobMagnet.Models.Base;
 
-public sealed record ServiceGalleryItemCommand
+public sealed record ServiceGalleryItemBase
 {
     public long Id { get; set; }
     public int Position { get; set; }

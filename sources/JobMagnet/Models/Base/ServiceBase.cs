@@ -7,5 +7,5 @@ public record ServiceBase
     public required long ProfileId { get; set; }
 
     public string Overview { get; set; }
-    public required IList<ServiceGalleryItemCommand> GalleryItems { get; set; }
+    public required IList<ServiceGalleryItemBase> GalleryItems { get; set; }
 }
