@@ -2,7 +2,8 @@
 
 namespace JobMagnet.Models.Responses.Profile;
 
-public sealed class ProfileModel : ProfileBase, IIdentifierBase<long>
+public sealed record ProfileModel : IIdentifierBase<long>
 {
-    public long Id { get; init; }
+    public required long Id { get; init; }
+    public required ProfileBase ProfileData { get; init; }
 }
