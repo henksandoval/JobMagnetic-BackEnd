@@ -13,20 +13,16 @@ internal static class PortfolioMapper
             .NewConfig()
             .Map(dest => dest.PortfolioData, src => src);
 
-        TypeAdapterConfig<PortfolioCreateCommand, PortfolioGalleryEntity>
+        TypeAdapterConfig<PortfolioCommand, PortfolioGalleryEntity>
             .NewConfig()
             .Map(dest => dest, src => src.PortfolioData);
 
-        TypeAdapterConfig<PortfolioGalleryEntity, PortfolioUpdateCommand>
+        TypeAdapterConfig<PortfolioGalleryEntity, PortfolioCommand>
             .NewConfig()
             .Map(dest => dest.PortfolioData, src => src);
-
-        TypeAdapterConfig<PortfolioUpdateCommand, PortfolioGalleryEntity>
-            .NewConfig()
-            .Map(dest => dest, src => src.PortfolioData);
     }
 
-    internal static PortfolioGalleryEntity ToEntity(this PortfolioCreateCommand command)
+    internal static PortfolioGalleryEntity ToEntity(this PortfolioCommand command)
     {
         return command.Adapt<PortfolioGalleryEntity>();
     }
@@ -36,12 +32,12 @@ internal static class PortfolioMapper
         return galleryEntity.Adapt<PortfolioModel>();
     }
 
-    internal static PortfolioUpdateCommand ToUpdateRequest(this PortfolioGalleryEntity galleryEntity)
+    internal static PortfolioCommand ToUpdateRequest(this PortfolioGalleryEntity galleryEntity)
     {
-        return galleryEntity.Adapt<PortfolioUpdateCommand>();
+        return galleryEntity.Adapt<PortfolioCommand>();
     }
 
-    internal static void UpdateEntity(this PortfolioGalleryEntity galleryEntity, PortfolioUpdateCommand updateCommand)
+    internal static void UpdateEntity(this PortfolioGalleryEntity galleryEntity, PortfolioCommand updateCommand)
     {
         updateCommand.Adapt(galleryEntity);
     }

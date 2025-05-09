@@ -19,9 +19,9 @@ public class PortfolioController(
 {
     [HttpPost]
     [ProducesResponseType(typeof(PortfolioModel), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] PortfolioCreateCommand createCommand)
+    public async Task<IResult> CreateAsync([FromBody] PortfolioCommand command)
     {
-        var entity = PortfolioMapper.ToEntity(createCommand);
+        var entity = PortfolioMapper.ToEntity(command);
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
         var newRecord = PortfolioMapper.ToModel(entity);
 
@@ -63,11 +63,8 @@ public class PortfolioController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PutAsync(int id, PortfolioUpdateCommand updateCommand)
+    public async Task<IResult> PutAsync(int id, PortfolioCommand updateCommand)
     {
-        if (id != updateCommand.Id)
-            return Results.BadRequest();
-
         var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
         if (entity is null)
@@ -84,7 +81,7 @@ public class PortfolioController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<PortfolioUpdateCommand> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<PortfolioCommand> patchDocument)
     {
         var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 

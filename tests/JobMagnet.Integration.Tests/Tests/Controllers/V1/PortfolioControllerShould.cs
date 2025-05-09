@@ -40,7 +40,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         // Given
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<PortfolioCreateCommand>()
+        var createRequest = _fixture.Build<PortfolioCommand>()
             .With(x => x.PortfolioData, GetPortfolioData(profileEntity.Id))
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
@@ -150,7 +150,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         // Given
         const string newTitle = "Red And Blue Parrot";
         var entity = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<PortfolioUpdateCommand>();
+        var patchDocument = new JsonPatchDocument<PortfolioCommand>();
         patchDocument.Replace(a => a.PortfolioData.Title, newTitle);
 
         // When
@@ -174,8 +174,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updatedEntity = _fixture.Build<PortfolioUpdateCommand>()
-            .With(x => x.Id, entity.Id)
+        var updatedEntity = _fixture.Build<PortfolioCommand>()
             .With(x => x.PortfolioData, GetPortfolioData(entity.Id))
             .Create();
 
@@ -194,31 +193,15 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         dbEntity.Should().BeEquivalentTo(updatedEntity.PortfolioData);
     }
 
-    [Fact(DisplayName = "Return 400 when a PUT request with invalid ID is provided")]
-    public async Task ReturnBadRequest_WhenPutRequestWithInvalidIdIsProvidedAsync()
-    {
-        // Given
-        await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<PortfolioUpdateCommand>().Create();
-        var differentId = updatedEntity.Id + InvalidId;
-
-        // When
-        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{differentId}", updatedEntity);
-
-        // Then
-        response.IsSuccessStatusCode.ShouldBeFalse();
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-    }
-
     [Fact(DisplayName = "Return 404 when a PUT request with invalid ID is provided")]
     public async Task ReturnNotFound_WhenPutRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<PortfolioUpdateCommand>().Create();
+        var updatedEntity = _fixture.Build<PortfolioCommand>().Create();
 
         // When
-        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{InvalidId}", updatedEntity);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeFalse();
@@ -230,12 +213,11 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<PortfolioUpdateCommand>().Create();
-        var patchDocument = new JsonPatchDocument<PortfolioUpdateCommand>();
+        var patchDocument = new JsonPatchDocument<PortfolioCommand>();
 
         // When
         var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{updatedEntity.Id}", patchDocument);
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{InvalidId}", patchDocument);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeFalse();
