@@ -1,18 +1,18 @@
 ﻿namespace JobMagnet.Models.Base;
 
-public record ResumeBase
+public sealed record ResumeBase
 {
-    public string? JobTitle { get; set; }
-    public long ProfileId { get; set; }
-    public DateOnly? BirthDate { get; set; }
-    public string? About { get; set; }
-    public string? Summary { get; set; }
-    public string? Overview { get; set; }
-    public string? ProfileImageUrl { get; set; }
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
-    public string? Title { get; set; }
-    public string? Suffix { get; set; }
-    public string? MiddleName { get; set; }
-    public string? SecondLastName { get; set; }
+    public long ProfileId { get; init; }
+    public string? JobTitle { get; init; }
+    public DateOnly? BirthDate { get; init; }
+    public string? About { get; init; }
+    public string? Summary { get; init; }
+    public string? Overview { get; init; }
+    public string? ProfileImageUrl { get; init; }
+    public string? FirstName { get; init; }
+    public string? LastName { get; init; }
+    public string? Title { get; init; }
+    public string? Suffix { get; init; }
+    public string? MiddleName { get; init; }
+    public string? SecondLastName { get; init; }
 }

@@ -33,7 +33,7 @@ public class TestimonialController(
 
     [HttpPost]
     [ProducesResponseType(typeof(TestimonialModel), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] TestimonialCreateCommand createCommand)
+    public async Task<IResult> CreateAsync([FromBody] TestimonialCommand createCommand)
     {
         var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
@@ -61,17 +61,14 @@ public class TestimonialController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PutAsync(int id, TestimonialUpdateCommand updateCommand)
+    public async Task<IResult> PutAsync(int id, TestimonialCommand command)
     {
-        if (id != updateCommand.Id)
-            return Results.BadRequest();
-
         var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
 
-        entity.UpdateEntity(updateCommand);
+        entity.UpdateEntity(command);
 
         await commandRepository.UpdateAsync(entity);
 
@@ -82,7 +79,7 @@ public class TestimonialController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<TestimonialUpdateCommand> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<TestimonialCommand> patchDocument)
     {
         var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 

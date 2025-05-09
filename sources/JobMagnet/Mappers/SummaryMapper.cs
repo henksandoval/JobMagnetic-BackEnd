@@ -7,32 +7,42 @@ namespace JobMagnet.Mappers;
 
 internal static class SummaryMapper
 {
-    internal static SummaryEntity ToEntity(SummaryCreateCommand command)
+    static SummaryMapper()
+    {
+        TypeAdapterConfig<SummaryEntity, SummaryModel>
+            .NewConfig()
+            .Map(dest => dest.SummaryData, src => src);
+
+        TypeAdapterConfig<SummaryCommand, SummaryEntity>
+            .NewConfig()
+            .Map(dest => dest, src => src.SummaryData)
+            .Ignore(dest => dest.Id);
+
+        TypeAdapterConfig<SummaryCommand, SummaryEntity>
+            .NewConfig()
+            .Map(dest => dest, src => src.SummaryData);
+
+        TypeAdapterConfig<SummaryEntity, SummaryCommand>
+            .NewConfig()
+            .Map(dest => dest.SummaryData, src => src);
+    }
+
+    internal static SummaryEntity ToEntity(this SummaryCommand command)
     {
         return command.Adapt<SummaryEntity>();
     }
 
-    internal static SummaryModel ToModel(SummaryEntity entity)
+    internal static SummaryModel ToModel(this SummaryEntity entity)
     {
         return entity.Adapt<SummaryModel>();
     }
 
-    internal static SummaryPatchCommand ToUpdateRequest(SummaryEntity entity)
+    internal static SummaryCommand ToUpdateCommand(this SummaryEntity entity)
     {
-        return entity.Adapt<SummaryPatchCommand>();
+        return entity.Adapt<SummaryCommand>();
     }
 
-    internal static SummaryComplexCommand ToUpdateComplexRequest(SummaryEntity entity)
-    {
-        return entity.Adapt<SummaryComplexCommand>();
-    }
-
-    internal static void UpdateEntity(this SummaryEntity entity, SummaryPatchCommand patchCommand)
-    {
-        patchCommand.Adapt(entity);
-    }
-
-    internal static void UpdateComplexEntity(this SummaryEntity entity, SummaryComplexCommand command)
+    internal static void UpdateEntity(this SummaryEntity entity, SummaryCommand command)
     {
         command.Adapt(entity);
     }

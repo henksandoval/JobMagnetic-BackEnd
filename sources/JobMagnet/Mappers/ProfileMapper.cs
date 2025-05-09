@@ -19,7 +19,7 @@ internal static class ProfileMapper
         return entity.Adapt<ProfileViewModel>();
     }
 
-    internal static ProfileEntity ToEntity(ProfileCreateCommand createCommand)
+    internal static ProfileEntity ToEntity(this ProfileCommand createCommand)
     {
         return createCommand.Adapt<ProfileEntity>();
     }
@@ -29,13 +29,21 @@ internal static class ProfileMapper
         return entity.Adapt<ProfileModel>();
     }
 
-    internal static void UpdateEntity(this ProfileEntity entity, ProfileUpdateCommand command)
+    internal static void UpdateEntity(this ProfileEntity entity, ProfileCommand command)
     {
         command.Adapt(entity);
     }
 
     private static void ConfigMapper()
     {
+        TypeAdapterConfig<ProfileEntity, ProfileCommand>
+            .NewConfig()
+            .Map(dest => dest.ProfileData, src => src);
+
+        TypeAdapterConfig<ProfileCommand, ProfileEntity>
+            .NewConfig()
+            .Map(dest => dest, src => src.ProfileData);
+
         TypeAdapterConfig<PortfolioGalleryEntity, PortfolioViewModel>
             .NewConfig()
             .Map(dest => dest.Image, src => src.UrlImage)

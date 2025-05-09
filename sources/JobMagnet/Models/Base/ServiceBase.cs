@@ -1,11 +1,8 @@
-﻿using JobMagnet.Models.Commands.Service;
+﻿namespace JobMagnet.Models.Base;
 
-namespace JobMagnet.Models.Base;
-
-public record ServiceBase
+public sealed record ServiceBase
 {
-    public required long ProfileId { get; set; }
-
-    public string Overview { get; set; }
-    public required IList<ServiceGalleryItemCommand> GalleryItems { get; set; }
+    public long ProfileId { get; init; }
+    public string? Overview { get; init; }
+    public IList<ServiceGalleryItemBase> GalleryItems { get; init; } = Enumerable.Empty<ServiceGalleryItemBase>().ToList();
 }

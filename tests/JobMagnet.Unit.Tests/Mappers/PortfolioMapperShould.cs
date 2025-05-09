@@ -32,7 +32,7 @@ public class PortfolioMapperShould
     public void MapPortfolioCreateCommandToPortfolioEntityCorrectly()
     {
         // Given
-        var createCommand = _fixture.Create<PortfolioCreateCommand>();
+        var createCommand = _fixture.Create<PortfolioCommand>();
 
         // When
         var entity = createCommand.ToEntity();
@@ -43,7 +43,7 @@ public class PortfolioMapperShould
     }
 
     [Fact]
-    public void MapPortfolioEntityToPortfolioUpdateCommandCorrectly()
+    public void MapPortfolioEntityToPortfolioCommandCorrectly()
     {
         // Given
         var entity = _fixture.Create<PortfolioGalleryEntity>();
@@ -53,7 +53,6 @@ public class PortfolioMapperShould
 
         // Then
         updateCommand.Should().NotBeNull();
-        updateCommand.Id.Should().Be(entity.Id);
         updateCommand.PortfolioData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
     }

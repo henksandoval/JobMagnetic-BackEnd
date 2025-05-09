@@ -28,12 +28,11 @@ public class ServiceMapperShould
             options.Excluding(GetExcludeEntityProperties()));
     }
 
-
     [Fact]
-    public void MapServiceCreateCommandToServiceEntityCorrectly()
+    public void MapServiceCommandToServiceEntityCorrectly()
     {
         // Given
-        var createCommand = _fixture.Create<ServiceCreateCommand>();
+        var createCommand = _fixture.Create<ServiceCommand>();
 
         // When
         var entity = createCommand.ToEntity();
@@ -54,7 +53,6 @@ public class ServiceMapperShould
 
         // Then
         updateCommand.Should().NotBeNull();
-        updateCommand.Id.Should().Be(entity.Id);
         updateCommand.ServiceData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
         updateCommand.ServiceData.GalleryItems.Should().BeEquivalentTo(entity.GalleryItems, options =>

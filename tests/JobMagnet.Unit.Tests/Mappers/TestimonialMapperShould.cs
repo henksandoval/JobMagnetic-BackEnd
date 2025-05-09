@@ -29,10 +29,10 @@ public class TestimonialMapperShould
     }
 
     [Fact]
-    public void MapTestimonialCreateCommandToTestimonialEntityCorrectly()
+    public void MapTestimonialCommandToTestimonialEntityCorrectly()
     {
         // Given
-        var createCommand = _fixture.Create<TestimonialCreateCommand>();
+        var createCommand = _fixture.Create<TestimonialCommand>();
 
         // When
         var entity = createCommand.ToEntity();
@@ -53,7 +53,6 @@ public class TestimonialMapperShould
 
         // Then
         updateCommand.Should().NotBeNull();
-        updateCommand.Id.Should().Be(entity.Id);
         updateCommand.TestimonialData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
     }

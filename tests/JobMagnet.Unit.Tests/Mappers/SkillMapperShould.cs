@@ -3,6 +3,7 @@ using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Infrastructure.Entities;
 using JobMagnet.Mappers;
+using JobMagnet.Models.Base;
 using JobMagnet.Models.Commands.Skill;
 using JobMagnet.Shared.Tests.Fixtures;
 
@@ -31,10 +32,10 @@ public class SkillMapperShould
     }
 
     [Fact]
-    public void MapSkillCreateCommandToSkillEntityCorrectly()
+    public void MapSkillCommandToSkillEntityCorrectly()
     {
         // Given
-        var createCommand = _fixture.Create<SkillCreateCommand>();
+        var createCommand = _fixture.Create<SkillCommand>();
 
         // When
         var entity = createCommand.ToEntity();
@@ -55,7 +56,6 @@ public class SkillMapperShould
 
         // Then
         updateCommand.Should().NotBeNull();
-        updateCommand.Id.Should().Be(entity.Id);
         updateCommand.SkillData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
         updateCommand.SkillData.SkillDetails.Should().BeEquivalentTo(entity.SkillDetails, options =>

@@ -72,7 +72,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
         var createRequest = _fixture
-            .Build<TestimonialCreateCommand>()
+            .Build<TestimonialCommand>()
             .With(x => x.TestimonialData, GetTestimonialData(profileEntity.Id))
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
@@ -136,8 +136,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
     {
         // Given
         var entity = await SetupEntityAsync();
-        var updatedCommand = _fixture.Build<TestimonialUpdateCommand>()
-            .With(x => x.Id, entity.Id)
+        var updatedCommand = _fixture.Build<TestimonialCommand>()
             .With(x => x.TestimonialData, GetTestimonialData(entity.Id))
             .Create();
 
@@ -155,31 +154,15 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         dbEntity.Should().BeEquivalentTo(updatedCommand.TestimonialData);
     }
 
-    [Fact(DisplayName = "Return 400 when a PUT request with invalid ID is provided")]
-    public async Task ReturnBadRequest_WhenPutRequestWithInvalidIdIsProvidedAsync()
-    {
-        // Given
-        await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<TestimonialUpdateCommand>().Create();
-        var differentId = updatedEntity.Id + InvalidId;
-
-        // When
-        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{differentId}", updatedEntity);
-
-        // Then
-        response.IsSuccessStatusCode.ShouldBeFalse();
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-    }
-
     [Fact(DisplayName = "Return 404 when a PUT request with invalid ID is provided")]
     public async Task ReturnNotFound_WhenPutRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<TestimonialUpdateCommand>().Create();
+        var updatedEntity = _fixture.Build<TestimonialCommand>().Create();
 
         // When
-        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{InvalidId}", updatedEntity);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeFalse();
@@ -192,7 +175,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         // Given
         const string newJobTitle = "Software developer";
         var entity = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<TestimonialUpdateCommand>();
+        var patchDocument = new JsonPatchDocument<TestimonialCommand>();
         patchDocument.Replace(a => a.TestimonialData.JobTitle, newJobTitle);
 
         // When
@@ -215,12 +198,11 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<TestimonialUpdateCommand>().Create();
-        var patchDocument = new JsonPatchDocument<TestimonialUpdateCommand>();
+        var patchDocument = new JsonPatchDocument<TestimonialCommand>();
 
         // When
         var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{updatedEntity.Id}", patchDocument);
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{InvalidId}", patchDocument);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeFalse();

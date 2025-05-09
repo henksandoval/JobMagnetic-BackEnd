@@ -29,10 +29,10 @@ public class ResumeMapperShould
     }
 
     [Fact]
-    public void MapResumeCreateCommandToResumeEntityCorrectly()
+    public void MapResumeCommandToResumeEntityCorrectly()
     {
         // Given
-        var createCommand = _fixture.Create<ResumeCreateCommand>();
+        var createCommand = _fixture.Create<ResumeCommand>();
 
         // When
         var entity = createCommand.ToEntity();
@@ -54,7 +54,6 @@ public class ResumeMapperShould
 
         // Then
         updateCommand.Should().NotBeNull();
-        updateCommand.Id.Should().Be(entity.Id);
         updateCommand.ResumeData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
     }

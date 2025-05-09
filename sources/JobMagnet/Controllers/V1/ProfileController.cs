@@ -20,9 +20,9 @@ public class ProfileController(
 {
     [HttpPost]
     [ProducesResponseType(typeof(ProfileModel), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] ProfileCreateCommand createCommand)
+    public async Task<IResult> CreateAsync([FromBody] ProfileCommand createCommand)
     {
-        var entity = ProfileMapper.ToEntity(createCommand);
+        var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity);
         var newRecord = entity.ToModel();
 
@@ -49,17 +49,14 @@ public class ProfileController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PutAsync(int id, ProfileUpdateCommand updateCommand)
+    public async Task<IResult> PutAsync(int id, ProfileCommand command)
     {
-        if (id != updateCommand.Id)
-            return Results.BadRequest();
-
         var entity = await queryRepository.GetByIdAsync(id);
 
         if (entity is null)
             return Results.NotFound();
 
-        entity.UpdateEntity(updateCommand);
+        entity.UpdateEntity(command);
 
         await commandRepository.UpdateAsync(entity);
 

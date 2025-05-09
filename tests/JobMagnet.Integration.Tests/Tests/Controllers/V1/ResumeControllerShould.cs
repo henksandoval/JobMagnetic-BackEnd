@@ -71,8 +71,8 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         await _testFixture.ResetDatabaseAsync();
         var entity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<ResumeCreateCommand>().Create();
-        createRequest.ResumeData.ProfileId = entity.Id;
+        var resumeData = _fixture.Build<ResumeCommandBase>().With(x => x.ProfileId, entity.Id).Create();
+        var createRequest = _fixture.Build<ResumeCommand>().With(x => x.ResumeData, resumeData).Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
         // When
@@ -134,9 +134,8 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var entity = await SetupEntityAsync();
-        var resumeData = _fixture.Build<ResumeBase>().With(x => x.ProfileId, entity.ProfileId).Create();
-        var updateRequest = _fixture.Build<ResumeUpdateCommand>()
-            .With(x => x.Id, entity.Id)
+        var resumeData = _fixture.Build<ResumeCommandBase>().With(x => x.ProfileId, entity.ProfileId).Create();
+        var updateRequest = _fixture.Build<ResumeCommand>()
             .With(x => x.ResumeData, resumeData)
             .Create();
 
@@ -154,31 +153,15 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         dbEntity.Should().BeEquivalentTo(updateRequest.ResumeData, options => options.ExcludingMissingMembers());
     }
 
-    [Fact(DisplayName = "Return 400 when a PUT request with invalid ID is provided")]
-    public async Task ReturnBadRequest_WhenPutRequestWithInvalidIdIsProvidedAsync()
-    {
-        // Given
-        await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ResumeUpdateCommand>().Create();
-        var differentId = updatedEntity.Id + InvalidId;
-
-        // When
-        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{differentId}", updatedEntity);
-
-        // Then
-        response.IsSuccessStatusCode.ShouldBeFalse();
-        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-    }
-
     [Fact(DisplayName = "Return 404 when a PUT request with invalid ID is provided")]
     public async Task ReturnNotFound_WhenPutRequestWithInvalidIdIsProvidedAsync()
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ResumeUpdateCommand>().Create();
+        var updatedEntity = _fixture.Build<ResumeCommand>().Create();
 
         // When
-        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{updatedEntity.Id}", updatedEntity);
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{InvalidId}", updatedEntity);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeFalse();
@@ -191,7 +174,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // Given
         const string newJobTitle = "Software developer";
         var entity = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<ResumeUpdateCommand>();
+        var patchDocument = new JsonPatchDocument<ResumeCommand>();
         patchDocument.Replace(a => a.ResumeData.JobTitle, newJobTitle);
 
         // When
@@ -214,12 +197,11 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<ResumeUpdateCommand>().Create();
-        var patchDocument = new JsonPatchDocument<ResumeUpdateCommand>();
+        var patchDocument = new JsonPatchDocument<ResumeCommand>();
 
         // When
         var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{updatedEntity.Id}", patchDocument);
+            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{InvalidId}", patchDocument);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeFalse();

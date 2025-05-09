@@ -9,15 +9,15 @@ internal static class ServiceMapper
 {
     static ServiceMapper()
     {
-        TypeAdapterConfig<ServiceCreateCommand, ServiceEntity>
+        TypeAdapterConfig<ServiceCommand, ServiceEntity>
             .NewConfig()
             .Map(dest => dest, src => src.ServiceData);
 
-        TypeAdapterConfig<ServiceEntity, ServiceUpdateCommand>
+        TypeAdapterConfig<ServiceEntity, ServiceCommand>
             .NewConfig()
             .Map(dest => dest.ServiceData, src => src);
 
-        TypeAdapterConfig<ServiceUpdateCommand, ServiceEntity>
+        TypeAdapterConfig<ServiceCommand, ServiceEntity>
             .NewConfig()
             .Map(dest => dest, src => src.ServiceData);
 
@@ -26,7 +26,7 @@ internal static class ServiceMapper
             .Map(dest => dest.ServiceData, src => src);
     }
 
-    internal static ServiceEntity ToEntity(this ServiceCreateCommand command)
+    internal static ServiceEntity ToEntity(this ServiceCommand command)
     {
         return command.Adapt<ServiceEntity>();
     }
@@ -36,13 +36,13 @@ internal static class ServiceMapper
         return entity.Adapt<ServiceModel>();
     }
 
-    internal static ServiceUpdateCommand ToUpdateCommand(this ServiceEntity entity)
+    internal static ServiceCommand ToUpdateCommand(this ServiceEntity entity)
     {
-        return entity.Adapt<ServiceUpdateCommand>();
+        return entity.Adapt<ServiceCommand>();
     }
 
-    internal static void UpdateEntity(this ServiceEntity entity, ServiceUpdateCommand updateCommand)
+    internal static void UpdateEntity(this ServiceEntity entity, ServiceCommand command)
     {
-        updateCommand.Adapt(entity);
+        command.Adapt(entity);
     }
 }

@@ -2,7 +2,8 @@
 
 namespace JobMagnet.Models.Responses.Summary;
 
-public sealed class SummaryModel : SummaryBase, IIdentifierBase<int>
+public sealed record SummaryModel : IIdentifierBase<long>
 {
-    public required int Id { get; init; }
+    public required long Id { get; init; }
+    public required SummaryBase SummaryData { get; init; }
 }

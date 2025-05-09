@@ -1,8 +1,8 @@
 ﻿namespace JobMagnet.Models.Base;
 
-public sealed record PortfolioBase
+public sealed record ServiceGalleryItemBase
 {
-    public long ProfileId { get; init; }
+    public long Id { get; init; }
     public int Position { get; init; }
     public string? Title { get; init; }
     public string? Description { get; init; }
