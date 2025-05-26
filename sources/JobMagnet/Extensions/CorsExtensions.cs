@@ -6,17 +6,17 @@ internal static class CorsExtensions
 {
     internal static IServiceCollection AddCorsPolicies(this IServiceCollection service, IConfiguration configuration)
     {
-        var clientSettings = configuration.GetSection("ClientSettings").Get<ClientSettings>();
+        var allowOrigins = configuration.GetSection("AllowOrigins").Get<AllowOrigins>();
 
-        if (clientSettings == null || string.IsNullOrWhiteSpace(clientSettings.Url))
-            throw new InvalidOperationException("ClientSettings:Url is not set in the configuration.");
+        if (allowOrigins == null || allowOrigins.Origins.Length == 0)
+            throw new InvalidOperationException("AllowOrigins:Origins is not set in the configuration.");
 
         service.AddCors(options =>
         {
             options.AddPolicy("DefaultCorsPolicy", policy =>
             {
                 policy
-                    .WithOrigins(clientSettings.Url)
+                    .WithOrigins(allowOrigins.Origins)
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             });

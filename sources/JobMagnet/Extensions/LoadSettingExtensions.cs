@@ -11,7 +11,7 @@ internal static class LoadSettingExtensions
 
     private static IServiceCollection AddClientSettings(this IServiceCollection service, IConfiguration configuration)
     {
-        service.AddOptionsWithValidateOnStart<ClientSettings>()
+        service.AddOptionsWithValidateOnStart<AllowOrigins>()
             .Bind(configuration.GetSection("ClientSettings"));
 
         return service;
