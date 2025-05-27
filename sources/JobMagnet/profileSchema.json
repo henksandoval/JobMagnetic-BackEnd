@@ -1,0 +1,87 @@
+{
+  "firstName": "string",
+  "lastName": "string",
+  "middleName": "string | null",
+  "secondLastName": "string | null",
+  "profileImageUrl": "string | null",
+  "birthDate": "date | null",
+  "resume": {
+    "jobTitle": "string",
+    "about": "string",
+    "summary": "string",
+    "overview": "string",
+    "title": "string | null",
+    "suffix": "string | null",
+    "address": "string | null",
+    "contactInfo": [
+      {
+        "type": "string",
+        "value": "string"
+      }
+    ]
+  },
+  "skill": {
+    "overview": "string | null",
+    "skillDetails": [
+      {
+        "name": "string",
+        "level": "string"
+      }
+    ]
+  },
+  "services": {
+    "overview": "string",
+    "galleryItems": [
+      {
+        "title": "string",
+        "description": "string",
+        "url": "string"
+      }
+    ]
+  },
+  "summary": {
+    "introduction": "string",
+    "education": [
+      {
+        "schoolName": "string",
+        "degree": "string",
+        "fieldOfStudy": "string",
+        "startDate": "date",
+        "endDate": "date | null"
+      }
+    ],
+    "workExperiences": [
+      {
+        "companyName": "string",
+        "position": "string",
+        "startDate": "date",
+        "endDate": "date | null",
+        "description": "string"
+      }
+    ]
+  },
+  "talents": [
+    {
+      "description": "string"
+    }
+  ],
+  "portfolioGallery": [
+    {
+      "position": "number",
+      "title": "string",
+      "description": "string",
+      "urlLink": "string",
+      "urlImage": "string",
+      "urlVideo": "string",
+      "type": "string"
+    }
+  ],
+  "testimonials": [
+    {
+      "name": "string",
+      "jobTitle": "string",
+      "photoUrl": "string | null",
+      "feedback": "string"
+    }
+  ]
+}
