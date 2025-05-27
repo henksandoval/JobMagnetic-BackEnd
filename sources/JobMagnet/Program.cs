@@ -13,6 +13,7 @@ builder.Services
                 null);
         })
     .AddHostDependencies()
+    .AddGemini(builder.Configuration, builder.Environment)
     .AddCorsPolicies(builder.Configuration)
     .AddHttpContextAccessor()
     .AddEndpointsApiExplorer()
