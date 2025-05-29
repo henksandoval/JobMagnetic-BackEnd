@@ -32,7 +32,7 @@ jobs:
       # required for all workflows
       security-events: write
 
-      # required to fetch internal or private CodeQL packs
+      # required to fetch public or private CodeQL packs
       packages: read
 
       # only required for workflows in private repositories

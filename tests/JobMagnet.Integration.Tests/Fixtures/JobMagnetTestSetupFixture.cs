@@ -1,6 +1,6 @@
 ﻿extern alias JobMagnetHost;
-using JobMagnet.Infrastructure.Context;
-using JobMagnet.Infrastructure.Seeders.Collections;
+using JobMagnet.Infrastructure.Persistence.Context;
+using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using JobMagnet.Integration.Tests.Factories;
 using JobMagnet.Integration.Tests.TestContainers;
 using Microsoft.Data.SqlClient;

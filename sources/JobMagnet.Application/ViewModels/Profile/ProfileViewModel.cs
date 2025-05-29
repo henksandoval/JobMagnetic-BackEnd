@@ -1,0 +1,13 @@
+﻿namespace JobMagnet.Application.ViewModels.Profile;
+
+public record ProfileViewModel(
+    PersonalDataViewModel? PersonalData = null,
+    AboutViewModel? About = null,
+    TestimonialsViewModel[]? Testimonials = null,
+    SkillSetViewModel? SkillSet = null,
+    TitlesViewModel? Titles = null,
+    SummaryViewModel? Summary = null,
+    PortfolioViewModel[]? PortfolioGallery = null,
+    ServiceViewModel? Service = null,
+    ContactViewModel? Contact = null
+);

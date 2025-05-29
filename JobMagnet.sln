@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\azure-pr.yml = .github\workflows\azure-pr.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet", "sources\JobMagnet\JobMagnet.csproj", "{B0D2AA46-BC50-4EA3-972A-5A01A6C0C686}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Host", "sources\JobMagnet.Host\JobMagnet.Host.csproj", "{B0D2AA46-BC50-4EA3-972A-5A01A6C0C686}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Unit.Tests", "tests\JobMagnet.Unit.Tests\JobMagnet.Unit.Tests.csproj", "{9796D0F5-CFCD-4C3D-A002-8FD416C4FACF}"
 EndProject
@@ -29,6 +29,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Integration.Tests", "tests\JobMagnet.Integration.Tests\JobMagnet.Integration.Tests.csproj", "{4E357F41-1734-49B7-90E8-E1087FC6201F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Shared.Tests", "tests\JobMagnet.Shared.Tests\JobMagnet.Shared.Tests.csproj", "{E67901D6-AF67-459F-B8C4-D6AD49242C3A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Domain", "sources\JobMagnet.Domain\JobMagnet.Domain.csproj", "{77E5F56A-CB15-40DA-8EC6-C43B3AD97080}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Application", "sources\JobMagnet.Application\JobMagnet.Application.csproj", "{372A5DFA-149D-4537-B905-66CB0D48BC5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Infrastructure", "sources\JobMagnet.Infrastructure\JobMagnet.Infrastructure.csproj", "{5EDE3D89-01EC-47CE-9AEF-8488945B6FD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Shared", "sources\JobMagnet.Shared\JobMagnet.Shared.csproj", "{4DE95106-55F2-4D08-B7EF-A18EE4CC3482}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,6 +60,22 @@ Global
 		{E67901D6-AF67-459F-B8C4-D6AD49242C3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E67901D6-AF67-459F-B8C4-D6AD49242C3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E67901D6-AF67-459F-B8C4-D6AD49242C3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77E5F56A-CB15-40DA-8EC6-C43B3AD97080}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77E5F56A-CB15-40DA-8EC6-C43B3AD97080}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77E5F56A-CB15-40DA-8EC6-C43B3AD97080}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77E5F56A-CB15-40DA-8EC6-C43B3AD97080}.Release|Any CPU.Build.0 = Release|Any CPU
+		{372A5DFA-149D-4537-B905-66CB0D48BC5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{372A5DFA-149D-4537-B905-66CB0D48BC5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{372A5DFA-149D-4537-B905-66CB0D48BC5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{372A5DFA-149D-4537-B905-66CB0D48BC5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EDE3D89-01EC-47CE-9AEF-8488945B6FD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EDE3D89-01EC-47CE-9AEF-8488945B6FD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EDE3D89-01EC-47CE-9AEF-8488945B6FD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EDE3D89-01EC-47CE-9AEF-8488945B6FD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DE95106-55F2-4D08-B7EF-A18EE4CC3482}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DE95106-55F2-4D08-B7EF-A18EE4CC3482}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DE95106-55F2-4D08-B7EF-A18EE4CC3482}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DE95106-55F2-4D08-B7EF-A18EE4CC3482}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +87,10 @@ Global
 		{4E357F41-1734-49B7-90E8-E1087FC6201F} = {5B955F3D-D576-4F47-A812-30666355D1F3}
 		{A3634DF4-6412-45EA-ACFC-E4DECA1D6D63} = {D2C19C3C-4C63-472D-9C4A-01764E641D52}
 		{E67901D6-AF67-459F-B8C4-D6AD49242C3A} = {5B955F3D-D576-4F47-A812-30666355D1F3}
+		{77E5F56A-CB15-40DA-8EC6-C43B3AD97080} = {4CF9134D-2530-4614-8DAC-757DD4CDB2D8}
+		{372A5DFA-149D-4537-B905-66CB0D48BC5F} = {4CF9134D-2530-4614-8DAC-757DD4CDB2D8}
+		{5EDE3D89-01EC-47CE-9AEF-8488945B6FD5} = {4CF9134D-2530-4614-8DAC-757DD4CDB2D8}
+		{4DE95106-55F2-4D08-B7EF-A18EE4CC3482} = {4CF9134D-2530-4614-8DAC-757DD4CDB2D8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {32A35D63-83C2-443E-8430-B5CBE63090F8}

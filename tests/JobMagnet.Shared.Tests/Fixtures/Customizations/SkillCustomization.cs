@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
-using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Models.Base;
+using JobMagnet.Application.Models.Base;
+using JobMagnet.Domain.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 

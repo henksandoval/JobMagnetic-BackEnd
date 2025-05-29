@@ -1,13 +1,13 @@
 ﻿using System.Net;
-using JobMagnet.Infrastructure.Context;
-using JobMagnet.Infrastructure.Repositories.Interfaces;
-using JobMagnet.Infrastructure.Seeders;
-using JobMagnet.Infrastructure.Seeders.Collections;
+using JobMagnet.Domain.Domain.Ports.Repositories;
+using JobMagnet.Infrastructure.Persistence.Context;
+using JobMagnet.Infrastructure.Persistence.Seeders;
+using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using JobMagnet.Integration.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit.Abstractions;
-using ServicesCollection = JobMagnet.Infrastructure.Seeders.Collections.ServiceCollection;
+using ServicesCollection = JobMagnet.Infrastructure.Persistence.Seeders.Collections.ServiceCollection;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V0;
 

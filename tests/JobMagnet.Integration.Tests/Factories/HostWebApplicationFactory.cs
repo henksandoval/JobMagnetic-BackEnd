@@ -1,4 +1,5 @@
-﻿using JobMagnet.Extensions;
+﻿using JobMagnet.Application.Extensions;
+using JobMagnet.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 
@@ -11,7 +12,12 @@ public class HostWebApplicationFactory<TProgram>(string? msSqlServerConnectionSt
     {
         builder.UseSetting("ConnectionStrings:DefaultConnection", msSqlServerConnectionString);
         builder.UseSetting("Logging:LogLevel:Default", "Information");
-        builder.ConfigureServices(services => { services.AddHostDependencies(); });
+        builder.ConfigureServices(services =>
+        {
+            services
+                // .AddInfrastructureDependencies()
+                .AddApplicationDependencies();
+        });
         builder.UseEnvironment("Development");
     }
 }

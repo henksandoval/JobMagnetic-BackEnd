@@ -1,10 +1,10 @@
 ﻿using AutoFixture;
-using JobMagnet.Extensions.Utils;
-using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Mappers;
+using JobMagnet.Application.Mappers;
+using JobMagnet.Application.ViewModels.Profile;
+using JobMagnet.Domain.Entities;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
-using JobMagnet.ViewModels.Profile;
+using JobMagnet.Shared.Utils;
 using Shouldly;
 
 namespace JobMagnet.Unit.Tests.Mappers;

@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
 using AutoFixture;
 using FluentAssertions;
-using JobMagnet.Infrastructure.Entities;
-using JobMagnet.Mappers;
-using JobMagnet.Models.Commands.Portfolio;
+using JobMagnet.Application.Commands.Portfolio;
+using JobMagnet.Application.Mappers;
+using JobMagnet.Domain.Entities;
 using JobMagnet.Shared.Tests.Fixtures;
 
 namespace JobMagnet.Unit.Tests.Mappers;
