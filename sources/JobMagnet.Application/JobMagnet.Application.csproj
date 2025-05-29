@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <PackageReference Include="Mapster" Version="7.4.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
 </Project>

@@ -4,8 +4,9 @@ using CSharpFunctionalExtensions;
 using GeminiDotNET;
 using GeminiDotNET.ApiModels.Enums;
 using GeminiDotNET.ClientModels;
-using JobMagnet.Domain.Domain.Services;
-using JobMagnet.Domain.Entities;
+using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
+using JobMagnet.Domain.Domain.Services.CvParser;
+using JobMagnet.Domain.Domain.Services.CvParser.Interfaces;
 using JobMagnet.Infrastructure.Settings;
 using JobMagnet.Shared.Utils;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,7 @@ public partial class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<Ge
 {
     private readonly GeminiSettings _settings = options.Value;
 
-    public async Task<Maybe<ProfileEntity>> ParseAsync(Stream cvFile)
+    public async Task<Maybe<IParsedProfile>> ParseAsync(Stream cvFile)
     {
         if (cvFile.CanSeek)
         {
@@ -30,7 +31,7 @@ public partial class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<Ge
         if (cvContent.HasValue) return await ProcessCvWithGeminiAsync(cvContent.Value);
 
         logger.LogError("CV content is empty or invalid.");
-        return Maybe<ProfileEntity>.None;
+        return Maybe<IParsedProfile>.None;
     }
 
     private async Task<Maybe<string>> ReadAndValidateCvFileAsync(Stream cvFile)
@@ -59,7 +60,7 @@ public partial class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<Ge
         return Maybe<string>.From(cvContent);
     }
 
-    private async Task<Maybe<ProfileEntity>> ProcessCvWithGeminiAsync(string cvContent)
+    private async Task<Maybe<IParsedProfile>> ProcessCvWithGeminiAsync(string cvContent)
     {
         logger.LogInformation("Sending CV content to Gemini.");
         try
@@ -67,24 +68,23 @@ public partial class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<Ge
             var geminiResponse = await CallGeminiServiceAsync(cvContent);
 
             if (geminiResponse == null || string.IsNullOrWhiteSpace(geminiResponse.Content))
-                return Maybe<ProfileEntity>.None;
+                return Maybe<IParsedProfile>.None;
 
             var jsonResponse = ParseModelResponseToJson(geminiResponse);
 
             if (jsonResponse.HasNoValue)
             {
                 logger.LogError("Failed to parse Gemini response to JSON.");
-                return Maybe<ProfileEntity>.None;
+                return Maybe<IParsedProfile>.None;
             }
 
-            var profileParsed = JsonConvert.DeserializeObject<ProfileEntity>(jsonResponse.Value);
-            return Maybe<ProfileEntity>.From(profileParsed);
-
+            var profileParsed = JsonConvert.DeserializeObject<ProfileParseDto>(jsonResponse.Value);
+            return Maybe<IParsedProfile>.From(profileParsed);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "An error occurred while interacting with Gemini API.");
-            return Maybe<ProfileEntity>.None;
+            return Maybe<IParsedProfile>.None;
         }
     }
 

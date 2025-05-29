@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using JobMagnet.Application.Services;
+﻿using JobMagnet.Application.Services;
 using JobMagnet.Domain.Entities;
 using JobMagnet.Domain.Entities.Base.Interfaces;
 using Microsoft.EntityFrameworkCore;

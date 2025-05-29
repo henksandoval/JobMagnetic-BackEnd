@@ -1,5 +1,4 @@
 ﻿using JobMagnet.Application.Extensions;
-using JobMagnet.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 

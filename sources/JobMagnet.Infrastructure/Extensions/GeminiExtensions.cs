@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Text.Json;
 using GeminiDotNET;
-using JobMagnet.Domain.Domain.Services;
+using JobMagnet.Domain.Domain.Services.CvParser;
 using JobMagnet.Infrastructure.ExternalServices.CvParsers;
 using JobMagnet.Infrastructure.Settings;
 using JobMagnet.Shared.Utils;
