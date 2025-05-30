@@ -2,7 +2,7 @@
 using JobMagnet.Domain.Entities;
 using JobMagnet.Shared.Tests.Utils;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
 
 public class ProfileCustomization : ICustomization
 {

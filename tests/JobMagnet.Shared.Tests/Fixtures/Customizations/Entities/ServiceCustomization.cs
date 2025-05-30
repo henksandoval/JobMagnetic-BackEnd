@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using JobMagnet.Domain.Entities;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
 
 public class ServiceCustomization : ICustomization
 {

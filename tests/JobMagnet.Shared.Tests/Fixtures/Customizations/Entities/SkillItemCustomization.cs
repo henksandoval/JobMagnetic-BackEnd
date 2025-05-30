@@ -2,7 +2,7 @@
 using JobMagnet.Application.Models.Base;
 using JobMagnet.Domain.Entities;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
 
 public class SkillItemCustomization : ICustomization
 {
