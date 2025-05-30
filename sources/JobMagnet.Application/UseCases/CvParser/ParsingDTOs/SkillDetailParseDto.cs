@@ -5,5 +5,5 @@ namespace JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
 public class SkillDetailParseDto : IParsedSkillDetail
 {
     public string? Name { get; set; }
-    public string? Level { get; set; }
+    public ushort? Level { get; set; }
 }

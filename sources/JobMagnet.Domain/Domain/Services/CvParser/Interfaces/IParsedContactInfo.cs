@@ -2,6 +2,6 @@ namespace JobMagnet.Domain.Domain.Services.CvParser.Interfaces;
 
 public interface IParsedContactInfo
 {
-    string? Type { get; }
+    string? ContactType { get; }
     string? Value { get; }
 }

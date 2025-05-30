@@ -2,8 +2,9 @@ namespace JobMagnet.Domain.Domain.Services.CvParser.Interfaces;
 
 public interface IParsedWorkExperience
 {
+    string JobTitle { get; }
     string? CompanyName { get; }
-    string? Position { get; }
+    string? CompanyLocation { get; }
     DateOnly? StartDate { get; }
     DateOnly? EndDate { get; }
     string? Description { get; }

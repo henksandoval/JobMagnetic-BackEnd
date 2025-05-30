@@ -1,18 +1,15 @@
 ﻿using AutoFixture;
+using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
 using JobMagnet.Domain.Entities;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations.DTO;
 
-public class TalentEntityCustomization : ICustomization
+public class TalentParseCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<TalentEntity>(composer =>
+        fixture.Customize<TalentParseDto>(composer =>
             composer
-                .With(x => x.Id, 0)
-                .With(x => x.IsDeleted, false)
-                .Without(x => x.DeletedAt)
-                .Without(x => x.DeletedBy)
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());
     }

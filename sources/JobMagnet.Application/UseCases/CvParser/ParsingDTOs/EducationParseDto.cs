@@ -5,9 +5,10 @@ namespace JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
 
 public class EducationParseDto : IParsedEducation
 {
-    public string? SchoolName { get; set; }
     public string? Degree { get; set; }
-    public string? FieldOfStudy { get; set; }
+    public string? InstitutionName { get; set; }
+    public string? InstitutionLocation { get; set; }
+    public string? Description { get; set; }
 
     [JsonConverter(typeof(FlexibleDateOnlyConverter))]
     public DateOnly? StartDate { get; set; }

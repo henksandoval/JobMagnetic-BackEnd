@@ -1,16 +1,17 @@
 ﻿using AutoFixture;
+using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
 using JobMagnet.Domain.Entities;
 using JobMagnet.Shared.Tests.Utils;
+using JobMagnet.Shared.Utils;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations.DTO;
 
-public class EducationEntityCustomization : ICustomization
+public class EducationParseCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<EducationEntity>(composer =>
+        fixture.Customize<EducationParseDto>(composer =>
             composer
-                .Without(x => x.Id)
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());
     }
@@ -20,9 +21,10 @@ public class EducationEntityCustomization : ICustomization
         item.Degree = FixtureBuilder.Faker.PickRandom(StaticCustomizations.Degrees);
         item.InstitutionName = FixtureBuilder.Faker.PickRandom(StaticCustomizations.Universities);
         item.InstitutionLocation = FixtureBuilder.Faker.Address.FullAddress();
-        item.StartDate = FixtureBuilder.Faker.Date.Past(20, DateTime.Now.AddYears(-5));
-        item.EndDate =
-            TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)));
+        item.StartDate = FixtureBuilder.Faker.Date.Past(20, DateTime.Now.AddYears(-5)).ToDateOnly();
+        item.EndDate = TestUtilities.OptionalValue(
+            FixtureBuilder.Faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5))
+        ).ToDateOnly();
         item.Description = FixtureBuilder.Faker.Lorem.Sentences();
     }
 }

@@ -135,10 +135,8 @@ public partial class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<Ge
 
     private async Task<ModelResponse?> CallGeminiServiceAsync(string cvTextContent)
     {
-        var generator = new Generator(_settings.ApiKey);
+        var generator = new Generator(_settings.ApiKey!);
         var fullPrompt = BuildPromptForGemini(cvTextContent);
-
-        logger.LogInformation("Prompt being sent to Gemini (first 200 chars): {PromptStart}", fullPrompt.Substring(0, Math.Min(fullPrompt.Length, 200)));
 
         var requestBuilder = new ApiRequestBuilder()
             .WithPrompt(fullPrompt)

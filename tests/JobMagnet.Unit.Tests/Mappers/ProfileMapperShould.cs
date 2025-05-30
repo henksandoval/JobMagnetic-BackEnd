@@ -138,20 +138,6 @@ public class ProfileMapperShould
         result.SkillSet!.ShouldBeEquivalentTo(profileExpected.SkillSet);
     }
 
-    private static PersonalDataViewModel GetPersonalDataViewModel(ProfileEntity entity)
-    {
-        return new PersonalDataViewModel(
-            $"{entity.FirstName} {entity.LastName}",
-            entity.Talents.Select(x => x.Description).ToArray(),
-            entity.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(
-                c.ContactType.Name,
-                c.Value,
-                c.ContactType.IconClass ?? string.Empty,
-                c.ContactType.IconUrl ?? string.Empty
-            )).ToArray()
-        );
-    }
-
     [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when SummaryViewModel is defined")]
     public void MapperProfileEntityToSummaryViewModelWithPortfolioGallery()
     {
@@ -170,6 +156,36 @@ public class ProfileMapperShould
         result.ShouldBeOfType<ProfileViewModel>();
 
         result.Summary.ShouldBeEquivalentTo(profileExpected.Summary);
+    }
+
+    [Fact(DisplayName = "Map ProfileParseDto to ProfileCommand when all properties are defined")]
+    public void MapperProfileParseDtoToProfileCommand()
+    {
+        var profileBuilder = new ProfileParseDtoBuilder(_fixture)
+            .WithResume()
+            .WithSkills()
+            .WithServices()
+            .WithContactInfo()
+            .WithTalents()
+            .WithPortfolio()
+            .WithSummaries()
+            .WithTestimonials();
+
+        var profile = profileBuilder.Build();
+    }
+
+    private static PersonalDataViewModel GetPersonalDataViewModel(ProfileEntity entity)
+    {
+        return new PersonalDataViewModel(
+            $"{entity.FirstName} {entity.LastName}",
+            entity.Talents.Select(x => x.Description).ToArray(),
+            entity.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(
+                c.ContactType.Name,
+                c.Value,
+                c.ContactType.IconClass ?? string.Empty,
+                c.ContactType.IconUrl ?? string.Empty
+            )).ToArray()
+        );
     }
 
     private static AboutViewModel GetAboutViewModel(ProfileEntity entity)

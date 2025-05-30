@@ -15,7 +15,7 @@
     "address": "string | null",
     "contactInfo": [
       {
-        "type": "string",
+        "contactType": "string",
         "value": "string"
       }
     ]
@@ -25,7 +25,7 @@
     "skillDetails": [
       {
         "name": "string",
-        "level": "string"
+        "level": "number (0-10)"
       }
     ]
   },
@@ -35,7 +35,10 @@
       {
         "title": "string",
         "description": "string",
-        "url": "string"
+        "urlVideo": "string | null",
+        "urlImage": "string | null",
+        "urlLink": "string | null",
+        "type": "string | null"
       }
     ]
   },
@@ -43,17 +46,19 @@
     "introduction": "string",
     "education": [
       {
-        "schoolName": "string",
+        "institutionName": "string",
+        "institutionLocation": "string | null",
         "degree": "string",
-        "fieldOfStudy": "string",
+        "description": "string | null",
         "startDate": "date",
         "endDate": "date | null"
       }
     ],
     "workExperiences": [
       {
+        "jobTitle": "string",
         "companyName": "string",
-        "position": "string",
+        "companyLocation": "string",
         "startDate": "date",
         "endDate": "date | null",
         "description": "string"
