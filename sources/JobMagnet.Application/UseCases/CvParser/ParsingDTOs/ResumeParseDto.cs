@@ -11,8 +11,8 @@ public class ResumeParseDto : IParsedResume
     public string? Title { get; set; }
     public string? Suffix { get; set; }
     public string? Address { get; set; }
-    public IEnumerable<ContactInfoParseDto> ContactInfoList { private get; set; }
+    public IEnumerable<ContactInfoParseDto> ContactInfo { get; set; }
 
-    public IReadOnlyCollection<IParsedContactInfo> ContactInfo =>
-        new List<IParsedContactInfo>(ContactInfoList).AsReadOnly();
+    IReadOnlyCollection<IParsedContactInfo> IParsedResume.ContactInfo =>
+        new List<IParsedContactInfo>(ContactInfo).AsReadOnly();
 }

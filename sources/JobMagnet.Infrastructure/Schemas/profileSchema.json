@@ -13,7 +13,7 @@
     "title": "string | null",
     "suffix": "string | null",
     "address": "string | null",
-    "contactInfoList": [
+    "contactInfo": [
       {
         "type": "string",
         "value": "string"
@@ -22,7 +22,7 @@
   },
   "skill": {
     "overview": "string | null",
-    "skillDetailList": [
+    "skillDetails": [
       {
         "name": "string",
         "level": "string"
@@ -31,7 +31,7 @@
   },
   "services": {
     "overview": "string",
-    "galleryItemList": [
+    "galleryItems": [
       {
         "title": "string",
         "description": "string",
@@ -41,7 +41,7 @@
   },
   "summary": {
     "introduction": "string",
-    "educationList": [
+    "education": [
       {
         "schoolName": "string",
         "degree": "string",
@@ -50,7 +50,7 @@
         "endDate": "date | null"
       }
     ],
-    "workExperienceList": [
+    "workExperiences": [
       {
         "companyName": "string",
         "position": "string",
@@ -60,12 +60,12 @@
       }
     ]
   },
-  "talentList": [
+  "talents": [
     {
       "description": "string"
     }
   ],
-  "portfolioGalleryList": [
+  "portfolioGallery": [
     {
       "position": "number",
       "title": "string",
@@ -76,7 +76,7 @@
       "type": "string"
     }
   ],
-  "testimonialList": [
+  "testimonials": [
     {
       "name": "string",
       "jobTitle": "string",

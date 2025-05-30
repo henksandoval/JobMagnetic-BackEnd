@@ -5,8 +5,8 @@ namespace JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
 public class SkillParseDto : IParsedSkill
 {
     public string? Overview { get; set; }
-    public IEnumerable<SkillDetailParseDto> SkillDetailList { private get; set; }
+    public IEnumerable<SkillDetailParseDto> SkillDetails { get; set; }
 
     IReadOnlyCollection<IParsedSkillDetail> IParsedSkill.SkillDetails =>
-        new List<IParsedSkillDetail>(SkillDetailList).AsReadOnly();
+        new List<IParsedSkillDetail>(SkillDetails).AsReadOnly();
 }
