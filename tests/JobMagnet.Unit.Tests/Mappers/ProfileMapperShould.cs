@@ -158,22 +158,6 @@ public class ProfileMapperShould
         result.Summary.ShouldBeEquivalentTo(profileExpected.Summary);
     }
 
-    [Fact(DisplayName = "Map ProfileParseDto to ProfileCommand when all properties are defined")]
-    public void MapperProfileParseDtoToProfileCommand()
-    {
-        var profileBuilder = new ProfileParseDtoBuilder(_fixture)
-            .WithResume()
-            .WithSkills()
-            .WithServices()
-            .WithContactInfo()
-            .WithTalents()
-            .WithPortfolio()
-            .WithSummaries()
-            .WithTestimonials();
-
-        var profile = profileBuilder.Build();
-    }
-
     private static PersonalDataViewModel GetPersonalDataViewModel(ProfileEntity entity)
     {
         return new PersonalDataViewModel(
