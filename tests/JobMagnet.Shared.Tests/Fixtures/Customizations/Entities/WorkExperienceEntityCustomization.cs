@@ -4,7 +4,7 @@ using JobMagnet.Shared.Tests.Utils;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
 
-public class WorkExperienceCustomization : ICustomization
+public class WorkExperienceEntityCustomization : ICustomization
 {
     private static readonly string[] JobTitle =
     [

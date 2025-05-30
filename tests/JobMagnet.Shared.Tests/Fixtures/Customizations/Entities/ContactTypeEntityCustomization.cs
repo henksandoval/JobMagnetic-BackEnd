@@ -3,7 +3,7 @@ using JobMagnet.Domain.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
 
-public class ContactTypeCustomization : ICustomization
+public class ContactTypeEntityCustomization : ICustomization
 {
     private static readonly List<(string Name, string IconClass)> ContactTypes = new()
     {

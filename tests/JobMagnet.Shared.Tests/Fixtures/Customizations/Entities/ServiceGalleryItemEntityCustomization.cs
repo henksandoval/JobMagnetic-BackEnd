@@ -4,7 +4,7 @@ using JobMagnet.Domain.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
 
-public class ServiceGalleryItemCustomization : ICustomization
+public class ServiceGalleryItemEntityCustomization : ICustomization
 {
     private static int _autoIncrementId = 1;
 

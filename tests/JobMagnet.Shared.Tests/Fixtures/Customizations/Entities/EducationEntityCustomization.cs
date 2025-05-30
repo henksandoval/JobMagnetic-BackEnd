@@ -4,7 +4,7 @@ using JobMagnet.Shared.Tests.Utils;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
 
-public class EducationCustomization : ICustomization
+public class EducationEntityCustomization : ICustomization
 {
     private static readonly string[] Degrees =
     [

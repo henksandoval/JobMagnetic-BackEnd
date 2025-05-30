@@ -3,7 +3,7 @@ using JobMagnet.Domain.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
 
-public class ContactInfoCustomization : ICustomization
+public class ContactInfoEntityCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {

@@ -3,33 +3,26 @@ using JobMagnet.Domain.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
 
-public class TalentCustomization : ICustomization
+public class ServiceEntityCustomization : ICustomization
 {
-    private static readonly string[] Talens =
-    [
-        "Creative",
-        "Problem Solver",
-        "Team Player",
-        "Adaptable",
-        "Detail-Oriented",
-        "Strong Communicator",
-        "Analytical"
-    ];
-
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<TalentEntity>(composer =>
+        fixture.Customize<ServiceEntity>(composer =>
             composer
                 .With(x => x.Id, 0)
                 .With(x => x.IsDeleted, false)
                 .Without(x => x.DeletedAt)
                 .Without(x => x.DeletedBy)
+                .With(x => x.Profile, fixture.Create<ProfileEntity>())
+                .With(x => x.ProfileId, 0)
                 .Do(ApplyCommonProperties)
-                .OmitAutoProperties());
+                .OmitAutoProperties()
+        );
     }
 
     private static void ApplyCommonProperties(dynamic item)
     {
-        item.Description = FixtureBuilder.Faker.PickRandom(Talens);
+        item.Overview = FixtureBuilder.Faker.Lorem.Paragraph();
+        item.GalleryItems = FixtureBuilder.Build().CreateMany<ServiceGalleryItemEntity>().ToList();
     }
 }

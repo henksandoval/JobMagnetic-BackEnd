@@ -4,7 +4,7 @@ using JobMagnet.Domain.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
 
-public class SkillCustomization : ICustomization
+public class SkillEntityCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {

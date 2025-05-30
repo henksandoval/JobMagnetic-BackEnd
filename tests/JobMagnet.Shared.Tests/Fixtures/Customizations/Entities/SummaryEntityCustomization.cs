@@ -3,18 +3,17 @@ using JobMagnet.Domain.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
 
-public class ServiceCustomization : ICustomization
+public class SummaryEntityCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<ServiceEntity>(composer =>
+        fixture.Customize<SummaryEntity>(composer =>
             composer
                 .With(x => x.Id, 0)
+                .With(x => x.ProfileId, 0)
                 .With(x => x.IsDeleted, false)
                 .Without(x => x.DeletedAt)
                 .Without(x => x.DeletedBy)
-                .With(x => x.Profile, fixture.Create<ProfileEntity>())
-                .With(x => x.ProfileId, 0)
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties()
         );
@@ -22,7 +21,9 @@ public class ServiceCustomization : ICustomization
 
     private static void ApplyCommonProperties(dynamic item)
     {
-        item.Overview = FixtureBuilder.Faker.Lorem.Paragraph();
-        item.GalleryItems = FixtureBuilder.Build().CreateMany<ServiceGalleryItemEntity>().ToList();
+        item.Profile = FixtureBuilder.Build().Create<ProfileEntity>();
+        item.Introduction = FixtureBuilder.Faker.Lorem.Paragraph();
+        item.Education = FixtureBuilder.Build().CreateMany<EducationEntity>().ToList();
+        item.WorkExperiences = FixtureBuilder.Build().CreateMany<WorkExperienceEntity>().ToList();
     }
 }

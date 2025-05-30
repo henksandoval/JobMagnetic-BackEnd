@@ -12,7 +12,7 @@ public static class FixtureBuilder
     {
         var fixture = new Fixture();
         fixture
-            .RegisterCustomizations()
+            .RegisterEntityCustomizations()
             .Register(() => DateOnly.FromDateTime(Faker.Date.Past(30)));
 
         fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => fixture.Behaviors.Remove(b));
@@ -21,23 +21,23 @@ public static class FixtureBuilder
         return fixture;
     }
 
-    private static Fixture RegisterCustomizations(this Fixture fixture)
+    private static Fixture RegisterEntityCustomizations(this Fixture fixture)
     {
         fixture
-            .Customize(new ContactTypeCustomization())
-            .Customize(new SummaryCustomization())
-            .Customize(new SkillItemCustomization())
-            .Customize(new ServiceGalleryItemCustomization())
-            .Customize(new EducationCustomization())
-            .Customize(new WorkExperienceCustomization())
-            .Customize(new TalentCustomization())
-            .Customize(new ProfileCustomization())
-            .Customize(new ServiceCustomization())
-            .Customize(new PortfolioCustomization())
-            .Customize(new SkillCustomization())
-            .Customize(new TestimonialCustomization())
-            .Customize(new ResumeCustomization())
-            .Customize(new ContactInfoCustomization());
+            .Customize(new ContactTypeEntityCustomization())
+            .Customize(new SummaryEntityCustomization())
+            .Customize(new SkillItemEntityCustomization())
+            .Customize(new ServiceGalleryItemEntityCustomization())
+            .Customize(new EducationEntityCustomization())
+            .Customize(new WorkExperienceEntityCustomization())
+            .Customize(new TalentEntityCustomization())
+            .Customize(new ProfileEntityCustomization())
+            .Customize(new ServiceEntityCustomization())
+            .Customize(new PortfolioEntityCustomization())
+            .Customize(new SkillEntityCustomization())
+            .Customize(new TestimonialEntityCustomization())
+            .Customize(new ResumeEntityCustomization())
+            .Customize(new ContactInfoEntityCustomization());
 
         return fixture;
     }
