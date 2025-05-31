@@ -5,7 +5,7 @@ namespace JobMagnet.Shared.Utils;
 
 public static class StringExtensions
 {
-    private static readonly Regex JsonBlockRegex = new (
+    private static readonly Regex JsonBlockRegex = new(
         @"```json\s*([\s\S]*?)\s*```",
         RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled,
         TimeSpan.FromMilliseconds(150)
@@ -32,9 +32,7 @@ public static class StringExtensions
         ArgumentNullException.ThrowIfNull(inputText);
 
         if (string.IsNullOrWhiteSpace(inputText))
-        {
             throw new ArgumentException("Input text cannot be empty or whitespace.", nameof(inputText));
-        }
 
         string extractedContent;
         try
@@ -42,13 +40,9 @@ public static class StringExtensions
             var match = JsonBlockRegex.Match(inputText);
 
             if (match is { Success: true, Groups.Count: > 1 })
-            {
                 extractedContent = match.Groups[1].Value;
-            }
             else
-            {
                 throw new FormatException("Markdown text does not contain a recognizable JSON code block.");
-            }
         }
         catch (RegexMatchTimeoutException ex)
         {
@@ -56,9 +50,7 @@ public static class StringExtensions
         }
 
         if (!IsJsonValid(extractedContent))
-        {
             throw new JsonException("The content extracted from the Markdown block is not valid JSON.");
-        }
 
         return extractedContent;
     }

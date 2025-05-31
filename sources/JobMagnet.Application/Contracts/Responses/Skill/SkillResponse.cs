@@ -4,7 +4,6 @@ namespace JobMagnet.Application.Contracts.Responses.Skill;
 
 public sealed record SkillResponse : IIdentifierBase<long>
 {
-    public required long Id { get; init; }
-
     public required SkillBase SkillData { get; init; }
+    public required long Id { get; init; }
 }

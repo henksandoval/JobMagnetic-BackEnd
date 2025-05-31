@@ -20,10 +20,7 @@ public class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<GeminiCvPa
 
     public async Task<Maybe<ProfileRaw>> ParseAsync(Stream cvFile)
     {
-        if (cvFile.CanSeek)
-        {
-            cvFile.Seek(0, SeekOrigin.Begin);
-        }
+        if (cvFile.CanSeek) cvFile.Seek(0, SeekOrigin.Begin);
 
         var cvContent = await ReadAndValidateCvFileAsync(cvFile);
 
@@ -99,59 +96,59 @@ public class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<GeminiCvPa
         }
         catch (FormatException ex)
         {
-            logger.LogWarning(ex, "JSON block not found by Regex. Attempting manual cleanup. Original content snippet: {Snippet}", originalContent.GetSnippet());
+            logger.LogWarning(ex,
+                "JSON block not found by Regex. Attempting manual cleanup. Original content snippet: {Snippet}",
+                originalContent.GetSnippet());
             return AttemptManualCleanup(originalContent);
         }
         catch (JsonException ex)
         {
-            logger.LogWarning(ex, "Content extracted by Regex was not valid JSON. Original content snippet: {Snippet}", originalContent.GetSnippet());
+            logger.LogWarning(ex, "Content extracted by Regex was not valid JSON. Original content snippet: {Snippet}",
+                originalContent.GetSnippet());
             return AttemptManualCleanup(originalContent);
         }
         catch (TimeoutException ex)
         {
-            logger.LogError(ex, "Timeout during JSON extraction. Original content snippet: {Snippet}", originalContent.GetSnippet());
+            logger.LogError(ex, "Timeout during JSON extraction. Original content snippet: {Snippet}",
+                originalContent.GetSnippet());
             return Maybe<string>.None;
         }
         catch (ArgumentException ex)
         {
-            logger.LogError(ex, "Invalid input for JSON extraction. Original content snippet: {Snippet}", originalContent.GetSnippet());
+            logger.LogError(ex, "Invalid input for JSON extraction. Original content snippet: {Snippet}",
+                originalContent.GetSnippet());
             return Maybe<string>.None;
         }
     }
 
     private Maybe<string> AttemptManualCleanup(string? contentToClean)
     {
-        if (string.IsNullOrWhiteSpace(contentToClean))
-        {
-            return Maybe<string>.None;
-        }
+        if (string.IsNullOrWhiteSpace(contentToClean)) return Maybe<string>.None;
 
         var jsonOutput = contentToClean;
 
         if (jsonOutput.StartsWith("```") && jsonOutput.EndsWith("```"))
-        {
             jsonOutput = jsonOutput.StartsWith("```json", StringComparison.OrdinalIgnoreCase)
                 ? jsonOutput.Substring("```json".Length, jsonOutput.Length - "```json".Length - "```".Length).Trim()
                 : jsonOutput.Substring(3, jsonOutput.Length - 6).Trim();
-        }
 
         if (jsonOutput.StartsWith("json", StringComparison.OrdinalIgnoreCase))
         {
             var tempJson = jsonOutput["json".Length..].TrimStart();
-            if (tempJson.StartsWith("{") || tempJson.StartsWith("[")) {
-                jsonOutput = tempJson;
-            }
+            if (tempJson.StartsWith("{") || tempJson.StartsWith("[")) jsonOutput = tempJson;
         }
 
         jsonOutput = jsonOutput.Trim();
 
         if (jsonOutput.IsJsonValid())
         {
-            logger.LogInformation("Manual JSON cleanup and validation successful. Snippet: {Snippet}", jsonOutput.GetSnippet());
+            logger.LogInformation("Manual JSON cleanup and validation successful. Snippet: {Snippet}",
+                jsonOutput.GetSnippet());
             return Maybe<string>.From(jsonOutput);
         }
 
-        logger.LogError("Content after manual cleanup is not valid JSON. Final snippet: {Snippet}", jsonOutput.GetSnippet());
+        logger.LogError("Content after manual cleanup is not valid JSON. Final snippet: {Snippet}",
+            jsonOutput.GetSnippet());
         return Maybe<string>.None;
     }
 
@@ -180,7 +177,7 @@ public class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<GeminiCvPa
 
         var requestBuilder = new ApiRequestBuilder()
             .WithPrompt(fullPrompt)
-            .WithDefaultGenerationConfig(temperature: 0.5f, maxOutputTokens: 2048);
+            .WithDefaultGenerationConfig(0.5f, 2048);
 
         var request = requestBuilder.Build();
 

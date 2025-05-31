@@ -4,7 +4,7 @@ using JobMagnet.Shared.Tests.Utils;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.DTO;
 
-public class ProfileParseCustomization: ICustomization
+public class ProfileParseCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {

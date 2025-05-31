@@ -21,10 +21,7 @@ internal static class GeminiExtensions
             .AddSingleton<IValidateOptions<GeminiSettings>, GeminiSettingValidation>()
             .AddOptions<GeminiSettings>()
             .Bind(configuration.GetSection(GeminiSettings.SectionName))
-            .Configure(settings =>
-            {
-                settings.FlattenedProfileSchema = LoadAndFlattenProfileSchema();
-            })
+            .Configure(settings => { settings.FlattenedProfileSchema = LoadAndFlattenProfileSchema(); })
             .ValidateOnStart();
 
         services.AddSingleton<IRawCvParser, GeminiCvParser>();
@@ -39,10 +36,7 @@ internal static class GeminiExtensions
         const string resourceName = "JobMagnet.Infrastructure.Schemas.profileSchema.json";
 
         using var stream = assembly.GetManifestResourceStream(resourceName);
-        if (stream == null)
-        {
-            throw new FileNotFoundException($"Embedded resource '{resourceName}' not found.");
-        }
+        if (stream == null) throw new FileNotFoundException($"Embedded resource '{resourceName}' not found.");
 
         using var reader = new StreamReader(stream);
         var indentedJsonSchema = reader.ReadToEnd();
@@ -63,15 +57,11 @@ public class GeminiSettingValidation(IConfiguration config) : IValidateOptions<G
     public ValidateOptionsResult Validate(string? name, GeminiSettings settings)
     {
         if (string.IsNullOrWhiteSpace(settings.ApiKey))
-        {
             return ValidateOptionsResult.Fail(
                 "Gemini API Key is not configured. Ensure 'Gemini:ApiKey' or 'GeminiApiKey' is set in configuration.");
-        }
 
         if (!Validator.CanBeValidApiKey(settings.ApiKey))
-        {
             return ValidateOptionsResult.Fail("Gemini API Key from configuration is invalid.");
-        }
 
         return settings.FlattenedProfileSchema!.IsJsonValid()
             ? ValidateOptionsResult.Success

@@ -65,8 +65,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
-        entityCreated.ShouldSatisfyAllConditions(
-            () => entityCreated.ProfileId.ShouldBe(profileEntity.Id)
+        entityCreated.ShouldSatisfyAllConditions(() => entityCreated.ProfileId.ShouldBe(profileEntity.Id)
         );
     }
 

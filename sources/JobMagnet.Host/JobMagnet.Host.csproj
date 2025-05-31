@@ -20,8 +20,8 @@
 
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0"/>
-        <PackageReference Include="CSharpFunctionalExtensions" Version="3.6.0" />
-        <PackageReference Include="Gemini.NET" Version="3.4.5.1" />
+        <PackageReference Include="CSharpFunctionalExtensions" Version="3.6.0"/>
+        <PackageReference Include="Gemini.NET" Version="3.4.5.1"/>
         <PackageReference Include="Mapster" Version="7.4.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.3"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3"/>
@@ -38,8 +38,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\JobMagnet.Infrastructure\JobMagnet.Infrastructure.csproj" />
-      <ProjectReference Include="..\JobMagnet.Application\JobMagnet.Application.csproj" />
+        <ProjectReference Include="..\JobMagnet.Infrastructure\JobMagnet.Infrastructure.csproj"/>
+        <ProjectReference Include="..\JobMagnet.Application\JobMagnet.Application.csproj"/>
     </ItemGroup>
 
 </Project>

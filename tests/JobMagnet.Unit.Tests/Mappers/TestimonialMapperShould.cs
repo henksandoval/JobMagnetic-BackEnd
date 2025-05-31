@@ -59,6 +59,10 @@ public class TestimonialMapperShould
 
     private static Expression<Func<TestimonialEntity, object>> GetExcludeEntityProperties()
     {
-        return e => new { e.Id, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy, e.LastModifiedAt, e.LastModifiedBy };
+        return e => new
+        {
+            e.Id, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy, e.LastModifiedAt,
+            e.LastModifiedBy
+        };
     }
 }

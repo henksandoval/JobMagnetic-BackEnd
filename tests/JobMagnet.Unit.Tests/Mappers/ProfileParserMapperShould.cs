@@ -22,7 +22,5 @@ public class ProfileParserMapperShould
             .WithTestimonials();
 
         var profile = profileBuilder.Build();
-
-
     }
 }

@@ -61,7 +61,11 @@ public class ServiceMapperShould
 
     private static Expression<Func<ServiceEntity, object>> GetExcludeEntityProperties()
     {
-        return e => new { e.Id, e.IsDeleted, e.Profile, e.GalleryItems, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy, e.LastModifiedAt, e.LastModifiedBy };
+        return e => new
+        {
+            e.Id, e.IsDeleted, e.Profile, e.GalleryItems, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy,
+            e.LastModifiedAt, e.LastModifiedBy
+        };
     }
 
     private static Expression<Func<ServiceGalleryItemEntity, object>> GetExcludeGalleryEntityProperties()

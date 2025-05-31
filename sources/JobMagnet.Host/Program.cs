@@ -1,9 +1,9 @@
 using JobMagnet.Application.Extensions;
 using JobMagnet.Application.Services;
 using JobMagnet.Host.Extensions;
+using JobMagnet.Host.Services;
 using JobMagnet.Infrastructure.Extensions;
 using JobMagnet.Infrastructure.Persistence.Context;
-using JobMagnet.Host.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

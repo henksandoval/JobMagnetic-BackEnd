@@ -69,17 +69,26 @@ public class SummaryMapperShould
     {
         return e => new
         {
-            e.Id, e.Education, e.WorkExperiences, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy, e.LastModifiedAt, e.LastModifiedBy
+            e.Id, e.Education, e.WorkExperiences, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt,
+            e.DeletedBy, e.LastModifiedAt, e.LastModifiedBy
         };
     }
 
     private static Expression<Func<EducationEntity, object>> GetExcludeEducationEntityProperties()
     {
-        return e => new { e.Id, e.Summary, e.SummaryId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy, e.IsDeleted, e.DeletedAt, e.DeletedBy };
+        return e => new
+        {
+            e.Id, e.Summary, e.SummaryId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy, e.IsDeleted,
+            e.DeletedAt, e.DeletedBy
+        };
     }
 
     private static Expression<Func<WorkExperienceEntity, object>> GetExcludeWorkExperienceEntityProperties()
     {
-        return e => new { e.Id, e.Summary, e.SummaryId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy, e.IsDeleted, e.DeletedAt, e.DeletedBy };
+        return e => new
+        {
+            e.Id, e.Summary, e.SummaryId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy, e.IsDeleted,
+            e.DeletedAt, e.DeletedBy
+        };
     }
 }

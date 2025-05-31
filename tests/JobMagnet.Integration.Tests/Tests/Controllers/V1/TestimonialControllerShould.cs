@@ -96,7 +96,8 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
-        entityCreated.Should().BeEquivalentTo(createRequest.TestimonialData, options => options.ExcludingMissingMembers());
+        entityCreated.Should()
+            .BeEquivalentTo(createRequest.TestimonialData, options => options.ExcludingMissingMembers());
     }
 
     [Fact(DisplayName = "Should delete and return 204 when DELETE request is received")]

@@ -65,7 +65,8 @@ public class SkillMapperShould
     {
         return e => new
         {
-            e.Id, e.SkillDetails, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy, e.LastModifiedAt, e.LastModifiedBy
+            e.Id, e.SkillDetails, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy,
+            e.LastModifiedAt, e.LastModifiedBy
         };
     }
 

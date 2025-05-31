@@ -89,17 +89,6 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
         return this;
     }
 
-    public IProfileQueryRepository IncludeSummaries()
-    {
-        _query = _query
-            .Include(p => p.Summary)
-            .ThenInclude(p => p.Education);
-        _query = _query
-            .Include(p => p.Summary)
-            .ThenInclude(p => p.WorkExperiences);
-        return this;
-    }
-
     public IProfileQueryRepository WithServices()
     {
         _projections.Add(p => new ProfileEntity
@@ -241,5 +230,16 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
         return await finalQuery
             .FirstOrDefaultAsync(_whereCondition)
             .ConfigureAwait(false);
+    }
+
+    public IProfileQueryRepository IncludeSummaries()
+    {
+        _query = _query
+            .Include(p => p.Summary)
+            .ThenInclude(p => p.Education);
+        _query = _query
+            .Include(p => p.Summary)
+            .ThenInclude(p => p.WorkExperiences);
+        return this;
     }
 }

@@ -10,15 +10,16 @@ public interface ICvParserHandler
     Task ParseAsync(CvParserCommand command);
 }
 
-public class CvParserHandler(IRawCvParser cvParser, ICommandRepository<ProfileEntity> commandRepository) : ICvParserHandler
+public class CvParserHandler(IRawCvParser cvParser, ICommandRepository<ProfileEntity> commandRepository)
+    : ICvParserHandler
 {
     public async Task ParseAsync(CvParserCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        var response = await cvParser.ParseAsync(command.Stream);
+        var rawProfile = await cvParser.ParseAsync(command.Stream);
 
-        if (response.HasValue)
+        if (rawProfile.HasValue)
         {
         }
     }

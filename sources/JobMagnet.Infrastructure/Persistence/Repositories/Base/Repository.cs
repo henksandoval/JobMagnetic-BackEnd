@@ -29,29 +29,6 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
         return false;
     }
 
-    public async Task<IDbContextTransaction> BeginTransactionAsync()
-    {
-        _isTransactional = true;
-        return await dbContext.Database.BeginTransactionAsync().ConfigureAwait(false);
-    }
-
-    public async Task CommitAsync(IDbContextTransaction transaction)
-    {
-        try
-        {
-            if (_isTransactional) await transaction.CommitAsync().ConfigureAwait(false);
-        }
-        catch
-        {
-            await transaction.RollbackAsync().ConfigureAwait(false);
-            throw;
-        }
-        finally
-        {
-            await transaction.DisposeAsync().ConfigureAwait(false);
-        }
-    }
-
     public async Task<bool?> HardDeleteAsync(TEntity entity)
     {
         _dbSet.Remove(entity);
@@ -90,5 +67,28 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
     public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return await _dbSet.AnyAsync(predicate).ConfigureAwait(false);
+    }
+
+    public async Task<IDbContextTransaction> BeginTransactionAsync()
+    {
+        _isTransactional = true;
+        return await dbContext.Database.BeginTransactionAsync().ConfigureAwait(false);
+    }
+
+    public async Task CommitAsync(IDbContextTransaction transaction)
+    {
+        try
+        {
+            if (_isTransactional) await transaction.CommitAsync().ConfigureAwait(false);
+        }
+        catch
+        {
+            await transaction.RollbackAsync().ConfigureAwait(false);
+            throw;
+        }
+        finally
+        {
+            await transaction.DisposeAsync().ConfigureAwait(false);
+        }
     }
 }

@@ -1,5 +1,5 @@
-using JobMagnet.Application.Contracts.Commands.Profile;
 using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
+using JobMagnet.Application.UseCases.CvParser.RawDTOs;
 using Mapster;
 
 namespace JobMagnet.Application.UseCases.CvParser.Mappers;
@@ -11,14 +11,14 @@ public static class ProfileMapper
         ConfigMapper();
     }
 
-    public static ProfileCommand ToCommand(this ProfileParseDto profileParse)
+    public static ProfileParseDto ToCommand(this ProfileRaw profileRaw)
     {
-        return profileParse.Adapt<ProfileCommand>();
+        return profileRaw.Adapt<ProfileParseDto>();
     }
 
     private static void ConfigMapper()
     {
-        TypeAdapterConfig<ProfileParseDto, ProfileCommand>
+        TypeAdapterConfig<ProfileRaw, ProfileParseDto>
             .NewConfig();
     }
 }
