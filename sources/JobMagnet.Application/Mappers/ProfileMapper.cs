@@ -1,6 +1,5 @@
 ﻿using JobMagnet.Application.Contracts.Commands.Profile;
 using JobMagnet.Application.Contracts.Responses.Profile;
-using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
 using JobMagnet.Domain.Core.Entities;
 using Mapster;
 
@@ -21,11 +20,6 @@ public static class ProfileMapper
     public static ProfileModel ToModel(this ProfileEntity entity)
     {
         return entity.Adapt<ProfileModel>();
-    }
-
-    public static ProfileCommand ToCommand(this ProfileParseDto profileParse)
-    {
-        return profileParse.Adapt<ProfileCommand>();
     }
 
     public static void UpdateEntity(this ProfileEntity entity, ProfileCommand command)
