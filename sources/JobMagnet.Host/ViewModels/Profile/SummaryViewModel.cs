@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Application.ViewModels.Profile;
+﻿namespace JobMagnet.Host.ViewModels.Profile;
 
 public record SummaryViewModel(
     string Introduction,

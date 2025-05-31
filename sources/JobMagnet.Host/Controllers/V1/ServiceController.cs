@@ -1,7 +1,7 @@
 ﻿using Asp.Versioning;
-using JobMagnet.Application.Commands.Service;
+using JobMagnet.Application.Contracts.Commands.Service;
+using JobMagnet.Application.Contracts.Responses.Service;
 using JobMagnet.Application.Mappers;
-using JobMagnet.Application.Models.Responses.Service;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;

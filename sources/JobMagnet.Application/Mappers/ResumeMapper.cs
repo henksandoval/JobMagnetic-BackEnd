@@ -1,5 +1,5 @@
-﻿using JobMagnet.Application.Commands.Resume;
-using JobMagnet.Application.Models.Responses.Resume;
+﻿using JobMagnet.Application.Contracts.Commands.Resume;
+using JobMagnet.Application.Contracts.Responses.Resume;
 using JobMagnet.Domain.Core.Entities;
 using Mapster;
 

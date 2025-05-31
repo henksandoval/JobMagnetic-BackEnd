@@ -1,5 +1,5 @@
-﻿using JobMagnet.Application.Commands.Testimonial;
-using JobMagnet.Application.Models.Responses.Testimonial;
+﻿using JobMagnet.Application.Contracts.Commands.Testimonial;
+using JobMagnet.Application.Contracts.Responses.Testimonial;
 using JobMagnet.Domain.Core.Entities;
 using Mapster;
 

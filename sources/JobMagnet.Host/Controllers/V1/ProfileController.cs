@@ -1,14 +1,14 @@
 ﻿using Asp.Versioning;
-using JobMagnet.Application.Commands.Profile;
+using JobMagnet.Application.Contracts.Commands.Profile;
+using JobMagnet.Application.Contracts.Queries.Profile;
+using JobMagnet.Application.Contracts.Responses.Profile;
 using JobMagnet.Application.Mappers;
-using JobMagnet.Application.Models.Responses.Profile;
-using JobMagnet.Application.Queries.Profile;
-using JobMagnet.Application.ViewModels.Profile;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Host.Controllers.Base;
 using JobMagnet.Host.Mappers;
+using JobMagnet.Host.ViewModels.Profile;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Host.Controllers.V1;

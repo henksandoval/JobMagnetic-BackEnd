@@ -1,5 +1,5 @@
-﻿using JobMagnet.Application.ViewModels.Profile;
-using JobMagnet.Domain.Core.Entities;
+﻿using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Host.ViewModels.Profile;
 using JobMagnet.Shared.Utils;
 using Mapster;
 

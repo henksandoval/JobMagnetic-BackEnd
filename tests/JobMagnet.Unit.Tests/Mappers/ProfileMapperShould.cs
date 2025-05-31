@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
-using JobMagnet.Application.ViewModels.Profile;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Host.Mappers;
+using JobMagnet.Host.ViewModels.Profile;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Utils;

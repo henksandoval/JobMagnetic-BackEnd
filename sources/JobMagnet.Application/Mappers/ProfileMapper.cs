@@ -1,5 +1,5 @@
-﻿using JobMagnet.Application.Commands.Profile;
-using JobMagnet.Application.Models.Responses.Profile;
+﻿using JobMagnet.Application.Contracts.Commands.Profile;
+using JobMagnet.Application.Contracts.Responses.Profile;
 using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
 using JobMagnet.Domain.Core.Entities;
 using Mapster;

@@ -1,9 +1,9 @@
 using System.Net;
 using AutoFixture;
 using FluentAssertions;
-using JobMagnet.Application.Commands.Skill;
-using JobMagnet.Application.Models.Base;
-using JobMagnet.Application.Models.Responses.Skill;
+using JobMagnet.Application.Contracts.Commands.Skill;
+using JobMagnet.Application.Contracts.Responses.Base;
+using JobMagnet.Application.Contracts.Responses.Skill;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;

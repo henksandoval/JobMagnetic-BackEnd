@@ -1,8 +1,8 @@
 ﻿using Asp.Versioning;
-using JobMagnet.Application.Commands.Portfolio;
+using JobMagnet.Application.Contracts.Commands.Portfolio;
+using JobMagnet.Application.Contracts.Responses.Portfolio;
+using JobMagnet.Application.Contracts.Responses.Resume;
 using JobMagnet.Application.Mappers;
-using JobMagnet.Application.Models.Responses.Portfolio;
-using JobMagnet.Application.Models.Responses.Resume;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Host.Controllers.Base;

@@ -1,5 +1,5 @@
-﻿using JobMagnet.Application.Commands.Portfolio;
-using JobMagnet.Application.Models.Responses.Portfolio;
+﻿using JobMagnet.Application.Contracts.Commands.Portfolio;
+using JobMagnet.Application.Contracts.Responses.Portfolio;
 using JobMagnet.Domain.Core.Entities;
 using Mapster;
 

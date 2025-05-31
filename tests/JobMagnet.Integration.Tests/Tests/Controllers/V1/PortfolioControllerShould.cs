@@ -2,9 +2,9 @@
 using System.Net.Http.Json;
 using AutoFixture;
 using FluentAssertions;
-using JobMagnet.Application.Commands.Portfolio;
-using JobMagnet.Application.Models.Base;
-using JobMagnet.Application.Models.Responses.Portfolio;
+using JobMagnet.Application.Contracts.Commands.Portfolio;
+using JobMagnet.Application.Contracts.Responses.Base;
+using JobMagnet.Application.Contracts.Responses.Portfolio;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Integration.Tests.Extensions;

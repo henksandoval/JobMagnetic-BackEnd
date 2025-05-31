@@ -2,13 +2,13 @@
 using System.Net.Http.Json;
 using AutoFixture;
 using FluentAssertions;
-using JobMagnet.Application.Commands.Profile;
-using JobMagnet.Application.Models.Responses.Profile;
-using JobMagnet.Application.Queries.Profile;
-using JobMagnet.Application.ViewModels.Profile;
+using JobMagnet.Application.Contracts.Commands.Profile;
+using JobMagnet.Application.Contracts.Queries.Profile;
+using JobMagnet.Application.Contracts.Responses.Profile;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
+using JobMagnet.Host.ViewModels.Profile;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
