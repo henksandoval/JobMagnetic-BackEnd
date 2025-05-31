@@ -1,7 +1,7 @@
-using JobMagnet.Domain.Domain.Ports.Repositories.Base;
-using JobMagnet.Domain.Entities;
+using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Ports.Repositories.Base;
 
-namespace JobMagnet.Domain.Domain.Ports.Repositories;
+namespace JobMagnet.Domain.Ports.Repositories;
 
 public interface ISkillQueryRepository : IQueryRepository<SkillEntity, long>
 {

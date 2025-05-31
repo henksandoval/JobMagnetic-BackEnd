@@ -1,6 +1,6 @@
 ﻿using JobMagnet.Application.Commands.Service;
 using JobMagnet.Application.Models.Responses.Service;
-using JobMagnet.Domain.Entities;
+using JobMagnet.Domain.Core.Entities;
 using Mapster;
 
 namespace JobMagnet.Application.Mappers;

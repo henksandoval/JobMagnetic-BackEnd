@@ -2,7 +2,7 @@
 using JobMagnet.Application.Models.Responses.Profile;
 using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
 using JobMagnet.Application.ViewModels.Profile;
-using JobMagnet.Domain.Entities;
+using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Shared.Utils;
 using Mapster;
 

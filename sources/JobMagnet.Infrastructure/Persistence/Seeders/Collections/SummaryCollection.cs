@@ -1,4 +1,4 @@
-﻿using JobMagnet.Domain.Entities;
+﻿using JobMagnet.Domain.Core.Entities;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 

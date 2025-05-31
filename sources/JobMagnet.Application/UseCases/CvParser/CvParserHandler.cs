@@ -1,9 +1,9 @@
 using JobMagnet.Application.Mappers;
 using JobMagnet.Application.UseCases.CvParser.Commands;
 using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
-using JobMagnet.Domain.Domain.Ports.Repositories.Base;
-using JobMagnet.Domain.Domain.Services.CvParser;
-using JobMagnet.Domain.Entities;
+using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Core.Services.CvParser;
+using JobMagnet.Domain.Ports.Repositories.Base;
 
 namespace JobMagnet.Application.UseCases.CvParser;
 

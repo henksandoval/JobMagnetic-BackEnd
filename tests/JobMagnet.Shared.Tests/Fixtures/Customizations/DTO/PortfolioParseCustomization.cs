@@ -1,6 +1,5 @@
 ﻿using AutoFixture;
 using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
-using JobMagnet.Domain.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.DTO;
 

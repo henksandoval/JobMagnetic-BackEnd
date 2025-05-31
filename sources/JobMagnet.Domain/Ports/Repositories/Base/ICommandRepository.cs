@@ -1,4 +1,4 @@
-﻿namespace JobMagnet.Domain.Domain.Ports.Repositories.Base;
+﻿namespace JobMagnet.Domain.Ports.Repositories.Base;
 
 public interface ICommandRepository<in TEntity> where TEntity : class
 {

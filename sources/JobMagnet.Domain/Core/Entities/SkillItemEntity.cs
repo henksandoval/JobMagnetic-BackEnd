@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using JobMagnet.Domain.Entities.Base;
+using JobMagnet.Domain.Core.Entities.Base;
 
-namespace JobMagnet.Domain.Entities;
+namespace JobMagnet.Domain.Core.Entities;
 
 public class SkillItemEntity : TrackableEntity<long>
 {

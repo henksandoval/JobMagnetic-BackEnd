@@ -2,6 +2,8 @@ using System.Globalization;
 using Newtonsoft.Json;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
+namespace JobMagnet.Application.Settings;
+
 public class FlexibleDateOnlyConverter : JsonConverter<DateOnly?>
 {
     private const string Format_YYYY_MM_DD = "yyyy-MM-dd";

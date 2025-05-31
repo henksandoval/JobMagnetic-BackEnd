@@ -1,4 +1,4 @@
-﻿using JobMagnet.Domain.Entities;
+﻿using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using ServiceCollection = JobMagnet.Infrastructure.Persistence.Seeders.Collections.ServiceCollection;

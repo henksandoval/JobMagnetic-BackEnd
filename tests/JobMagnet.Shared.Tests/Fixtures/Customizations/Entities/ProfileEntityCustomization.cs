@@ -1,5 +1,5 @@
 ﻿using AutoFixture;
-using JobMagnet.Domain.Entities;
+using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Shared.Tests.Utils;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;

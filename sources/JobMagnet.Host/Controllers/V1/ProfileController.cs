@@ -4,9 +4,9 @@ using JobMagnet.Application.Mappers;
 using JobMagnet.Application.Models.Responses.Profile;
 using JobMagnet.Application.Queries.Profile;
 using JobMagnet.Application.ViewModels.Profile;
-using JobMagnet.Domain.Domain.Ports.Repositories;
-using JobMagnet.Domain.Domain.Ports.Repositories.Base;
-using JobMagnet.Domain.Entities;
+using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Ports.Repositories;
+using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Host.Controllers.Base;
 using Microsoft.AspNetCore.Mvc;
 

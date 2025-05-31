@@ -2,7 +2,6 @@ using System.Net.Mime;
 using Asp.Versioning;
 using JobMagnet.Application.UseCases.CvParser;
 using JobMagnet.Application.UseCases.CvParser.Commands;
-using JobMagnet.Domain.Domain.Services.CvParser;
 using JobMagnet.Host.Controllers.Base;
 using Microsoft.AspNetCore.Mvc;
 

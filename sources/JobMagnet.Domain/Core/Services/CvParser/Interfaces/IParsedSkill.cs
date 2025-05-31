@@ -1,4 +1,4 @@
-namespace JobMagnet.Domain.Domain.Services.CvParser.Interfaces;
+namespace JobMagnet.Domain.Core.Services.CvParser.Interfaces;
 
 public interface IParsedSkill
 {

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace JobMagnet.Domain.Domain.Ports.Repositories.Base;
+namespace JobMagnet.Domain.Ports.Repositories.Base;
 
 public interface IQueryRepository<TEntity, in TKey> where TEntity : class
 {

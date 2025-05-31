@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using JobMagnet.Domain.Domain.Ports.Repositories.Base;
+using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;

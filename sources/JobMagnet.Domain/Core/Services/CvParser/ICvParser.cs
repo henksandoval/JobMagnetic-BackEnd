@@ -1,7 +1,7 @@
 using CSharpFunctionalExtensions;
-using JobMagnet.Domain.Domain.Services.CvParser.Interfaces;
+using JobMagnet.Domain.Core.Services.CvParser.Interfaces;
 
-namespace JobMagnet.Domain.Domain.Services.CvParser;
+namespace JobMagnet.Domain.Core.Services.CvParser;
 
 public interface ICvParser
 {

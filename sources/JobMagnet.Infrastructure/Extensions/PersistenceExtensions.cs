@@ -1,6 +1,6 @@
-using JobMagnet.Domain.Domain.Ports.Repositories;
-using JobMagnet.Domain.Domain.Ports.Repositories.Base;
-using JobMagnet.Domain.Entities;
+using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Ports.Repositories;
+using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Repositories;
 using JobMagnet.Infrastructure.Persistence.Repositories.Base;

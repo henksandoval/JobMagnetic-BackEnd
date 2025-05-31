@@ -1,4 +1,5 @@
-using JobMagnet.Domain.Domain.Services.CvParser.Interfaces;
+using JobMagnet.Application.Settings;
+using JobMagnet.Domain.Core.Services.CvParser.Interfaces;
 using Newtonsoft.Json;
 
 namespace JobMagnet.Application.UseCases.CvParser.ParsingDTOs;

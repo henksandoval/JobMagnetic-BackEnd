@@ -1,4 +1,4 @@
-using JobMagnet.Domain.Domain.Services.CvParser.Interfaces;
+using JobMagnet.Domain.Core.Services.CvParser.Interfaces;
 
 namespace JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
 

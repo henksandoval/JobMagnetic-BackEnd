@@ -1,6 +1,6 @@
 ﻿using JobMagnet.Application.Services;
-using JobMagnet.Domain.Entities;
-using JobMagnet.Domain.Entities.Base.Interfaces;
+using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Core.Entities.Base.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobMagnet.Infrastructure.Persistence.Context;

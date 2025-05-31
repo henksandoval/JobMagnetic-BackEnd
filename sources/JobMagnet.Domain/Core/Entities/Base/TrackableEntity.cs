@@ -1,6 +1,6 @@
-using JobMagnet.Domain.Entities.Base.Interfaces;
+using JobMagnet.Domain.Core.Entities.Base.Interfaces;
 
-namespace JobMagnet.Domain.Entities.Base;
+namespace JobMagnet.Domain.Core.Entities.Base;
 
 public abstract class TrackableEntity<TId> : ITrackableEntity<TId>
 {

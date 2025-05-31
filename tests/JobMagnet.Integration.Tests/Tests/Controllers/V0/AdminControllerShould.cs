@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using JobMagnet.Domain.Domain.Ports.Repositories;
+using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
