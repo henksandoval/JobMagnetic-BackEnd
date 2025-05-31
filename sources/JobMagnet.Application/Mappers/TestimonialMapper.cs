@@ -22,14 +22,14 @@ public static class TestimonialMapper
             .NewConfig()
             .Map(dest => dest, src => src.TestimonialData);
 
-        TypeAdapterConfig<TestimonialEntity, TestimonialModel>
+        TypeAdapterConfig<TestimonialEntity, TestimonialResponse>
             .NewConfig()
             .Map(dest => dest.TestimonialData, src => src);
     }
 
-    public static TestimonialModel ToModel(this TestimonialEntity entity)
+    public static TestimonialResponse ToModel(this TestimonialEntity entity)
     {
-        return entity.Adapt<TestimonialModel>();
+        return entity.Adapt<TestimonialResponse>();
     }
 
     public static TestimonialEntity ToEntity(this TestimonialCommand command)

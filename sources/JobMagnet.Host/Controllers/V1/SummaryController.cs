@@ -18,7 +18,7 @@ public class SummaryController(
     ICommandRepository<SummaryEntity> commandRepository) : BaseController<SummaryController>(logger)
 {
     [HttpPost]
-    [ProducesResponseType(typeof(SummaryModel), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(SummaryResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] SummaryCommand createCommand)
     {
         var entity = createCommand.ToEntity();
@@ -29,7 +29,7 @@ public class SummaryController(
     }
 
     [HttpGet("{id:long}", Name = nameof(GetSummaryByIdAsync))]
-    [ProducesResponseType(typeof(SummaryModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SummaryResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetSummaryByIdAsync(long id)
     {

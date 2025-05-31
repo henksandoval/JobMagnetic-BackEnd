@@ -17,7 +17,7 @@ public class ResumeController(
     ICommandRepository<ResumeEntity> commandRepository) : BaseController<ResumeController>(logger)
 {
     [HttpPost]
-    [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ResumeResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ResumeCommand createCommand)
     {
         var entity = createCommand.ToEntity();
@@ -28,7 +28,7 @@ public class ResumeController(
     }
 
     [HttpGet("{id:long}", Name = nameof(GetResumeByIdAsync))]
-    [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResumeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetResumeByIdAsync(long id)
     {

@@ -46,7 +46,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<TestimonialModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<TestimonialResponse>(response);
         responseData.ShouldNotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
@@ -84,7 +84,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<TestimonialModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<TestimonialResponse>(response);
         responseData.ShouldNotBeNull();
 
         var locationHeader = response.Headers.Location!.ToString();

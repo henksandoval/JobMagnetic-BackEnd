@@ -18,7 +18,7 @@ public class ServiceController(
     ICommandRepository<ServiceEntity> commandRepository) : BaseController<ServiceController>(logger)
 {
     [HttpPost]
-    [ProducesResponseType(typeof(ServiceModel), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ServiceCommand createCommand)
     {
         var entity = createCommand.ToEntity();
@@ -29,7 +29,7 @@ public class ServiceController(
     }
 
     [HttpGet("{id:long}", Name = nameof(GetServiceByIdAsync))]
-    [ProducesResponseType(typeof(ServiceModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetServiceByIdAsync(long id)
     {

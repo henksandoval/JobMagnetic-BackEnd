@@ -20,7 +20,7 @@ public class ProfileController(
     ICommandRepository<ProfileEntity> commandRepository) : BaseController<ProfileController>(logger)
 {
     [HttpPost]
-    [ProducesResponseType(typeof(ProfileModel), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProfileResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ProfileCommand createCommand)
     {
         var entity = createCommand.ToEntity();
@@ -31,7 +31,7 @@ public class ProfileController(
     }
 
     [HttpGet("{id:long}", Name = nameof(GetProfileByIdAsync))]
-    [ProducesResponseType(typeof(ProfileModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProfileResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetProfileByIdAsync(long id)
     {

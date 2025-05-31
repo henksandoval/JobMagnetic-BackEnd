@@ -86,7 +86,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<ProfileModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<ProfileResponse>(response);
         responseData.ShouldNotBeNull();
 
         var locationHeader = response.Headers.Location!.ToString();
@@ -114,7 +114,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<ProfileModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<ProfileResponse>(response);
         responseData.ShouldNotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }

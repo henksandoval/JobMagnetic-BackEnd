@@ -9,7 +9,7 @@ public static class SkillMapper
 {
     static SkillMapper()
     {
-        TypeAdapterConfig<SkillEntity, SkillModel>
+        TypeAdapterConfig<SkillEntity, SkillResponse>
             .NewConfig()
             .Map(dest => dest.SkillData, src => src);
 
@@ -31,9 +31,9 @@ public static class SkillMapper
         return command.Adapt<SkillEntity>();
     }
 
-    public static SkillModel ToModel(this SkillEntity entity)
+    public static SkillResponse ToModel(this SkillEntity entity)
     {
-        return entity.Adapt<SkillModel>();
+        return entity.Adapt<SkillResponse>();
     }
 
     public static SkillCommand ToUpdateCommand(this SkillEntity entity)

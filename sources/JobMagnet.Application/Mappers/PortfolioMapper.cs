@@ -9,7 +9,7 @@ public static class PortfolioMapper
 {
     static PortfolioMapper()
     {
-        TypeAdapterConfig<PortfolioGalleryEntity, PortfolioModel>
+        TypeAdapterConfig<PortfolioGalleryEntity, PortfolioResponse>
             .NewConfig()
             .Map(dest => dest.PortfolioData, src => src);
 
@@ -27,9 +27,9 @@ public static class PortfolioMapper
         return command.Adapt<PortfolioGalleryEntity>();
     }
 
-    public static PortfolioModel ToModel(this PortfolioGalleryEntity galleryEntity)
+    public static PortfolioResponse ToModel(this PortfolioGalleryEntity galleryEntity)
     {
-        return galleryEntity.Adapt<PortfolioModel>();
+        return galleryEntity.Adapt<PortfolioResponse>();
     }
 
     public static PortfolioCommand ToUpdateRequest(this PortfolioGalleryEntity galleryEntity)

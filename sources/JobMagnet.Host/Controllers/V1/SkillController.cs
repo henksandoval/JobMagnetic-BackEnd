@@ -18,7 +18,7 @@ public class SkillController(
     ICommandRepository<SkillEntity> commandRepository) : BaseController<SkillController>(logger)
 {
     [HttpPost]
-    [ProducesResponseType(typeof(SkillModel), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(SkillResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] SkillCommand createCommand)
     {
         var entity = createCommand.ToEntity();
@@ -29,7 +29,7 @@ public class SkillController(
     }
 
     [HttpGet("{id:long}", Name = nameof(GetSkillByIdAsync))]
-    [ProducesResponseType(typeof(SkillModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SkillResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetSkillByIdAsync(long id)
     {

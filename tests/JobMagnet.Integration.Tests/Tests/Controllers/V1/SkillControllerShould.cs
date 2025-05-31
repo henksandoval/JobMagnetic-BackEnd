@@ -52,7 +52,7 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<SkillModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<SkillResponse>(response);
         responseData.ShouldNotBeNull();
 
         var locationHeader = response.Headers.Location!.ToString();
@@ -84,7 +84,7 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<SkillModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<SkillResponse>(response);
         responseData.ShouldNotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }

@@ -17,7 +17,7 @@ public class TestimonialController(
     ICommandRepository<TestimonialEntity> commandRepository) : BaseController<TestimonialController>(logger)
 {
     [HttpGet("{id:long}", Name = nameof(GetTestimonialByIdAsync))]
-    [ProducesResponseType(typeof(TestimonialModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TestimonialResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetTestimonialByIdAsync(long id)
     {
@@ -32,7 +32,7 @@ public class TestimonialController(
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(TestimonialModel), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(TestimonialResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] TestimonialCommand createCommand)
     {
         var entity = createCommand.ToEntity();

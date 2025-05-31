@@ -52,7 +52,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<PortfolioModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<PortfolioResponse>(response);
         responseData.ShouldNotBeNull();
 
         var locationHeader = response.Headers.Location!.ToString();
@@ -91,7 +91,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<PortfolioModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<PortfolioResponse>(response);
         responseData.ShouldNotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }

@@ -9,7 +9,7 @@ public static class SummaryMapper
 {
     static SummaryMapper()
     {
-        TypeAdapterConfig<SummaryEntity, SummaryModel>
+        TypeAdapterConfig<SummaryEntity, SummaryResponse>
             .NewConfig()
             .Map(dest => dest.SummaryData, src => src);
 
@@ -32,9 +32,9 @@ public static class SummaryMapper
         return command.Adapt<SummaryEntity>();
     }
 
-    public static SummaryModel ToModel(this SummaryEntity entity)
+    public static SummaryResponse ToModel(this SummaryEntity entity)
     {
-        return entity.Adapt<SummaryModel>();
+        return entity.Adapt<SummaryResponse>();
     }
 
     public static SummaryCommand ToUpdateCommand(this SummaryEntity entity)

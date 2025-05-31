@@ -60,7 +60,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<SummaryModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<SummaryResponse>(response);
         responseData.ShouldNotBeNull();
 
         var locationHeader = response.Headers.Location!.ToString();
@@ -87,7 +87,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<SummaryModel>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<SummaryResponse>(response);
         responseData.ShouldNotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }

@@ -21,7 +21,7 @@ public static class ServiceMapper
             .NewConfig()
             .Map(dest => dest, src => src.ServiceData);
 
-        TypeAdapterConfig<ServiceEntity, ServiceModel>
+        TypeAdapterConfig<ServiceEntity, ServiceResponse>
             .NewConfig()
             .Map(dest => dest.ServiceData, src => src);
     }
@@ -31,9 +31,9 @@ public static class ServiceMapper
         return command.Adapt<ServiceEntity>();
     }
 
-    public static ServiceModel ToModel(this ServiceEntity entity)
+    public static ServiceResponse ToModel(this ServiceEntity entity)
     {
-        return entity.Adapt<ServiceModel>();
+        return entity.Adapt<ServiceResponse>();
     }
 
     public static ServiceCommand ToUpdateCommand(this ServiceEntity entity)

@@ -18,7 +18,7 @@ public class PortfolioController(
     ICommandRepository<PortfolioGalleryEntity> commandRepository) : BaseController<PortfolioController>(logger)
 {
     [HttpPost]
-    [ProducesResponseType(typeof(PortfolioModel), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(PortfolioResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] PortfolioCommand command)
     {
         var entity = command.ToEntity();
@@ -29,7 +29,7 @@ public class PortfolioController(
     }
 
     [HttpGet("{id:long}", Name = nameof(GetPortfolioByIdAsync))]
-    [ProducesResponseType(typeof(ResumeModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResumeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetPortfolioByIdAsync(long id)
     {

@@ -17,9 +17,9 @@ public static class ProfileMapper
         return createCommand.Adapt<ProfileEntity>();
     }
 
-    public static ProfileModel ToModel(this ProfileEntity entity)
+    public static ProfileResponse ToModel(this ProfileEntity entity)
     {
-        return entity.Adapt<ProfileModel>();
+        return entity.Adapt<ProfileResponse>();
     }
 
     public static void UpdateEntity(this ProfileEntity entity, ProfileCommand command)
