@@ -1,14 +1,14 @@
 ﻿using AutoFixture;
-using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
+using JobMagnet.Application.UseCases.CvParser.RawDTOs;
 using JobMagnet.Shared.Tests.Utils;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations.DTO;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Raws;
 
 public class ResumeParseCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<ResumeParseDto>(composer =>
+        fixture.Customize<ResumeRaw>(composer =>
             composer
                 .Without(x => x.ContactInfo)
                 .Do(ApplyCommonProperties)

@@ -1,13 +1,13 @@
 ﻿using AutoFixture;
-using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
+using JobMagnet.Application.UseCases.CvParser.RawDTOs;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations.DTO;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Raws;
 
 public class ServiceParseCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<ServiceParseDto>(composer =>
+        fixture.Customize<ServiceRaw>(composer =>
             composer
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties()
@@ -17,6 +17,6 @@ public class ServiceParseCustomization : ICustomization
     private static void ApplyCommonProperties(dynamic item)
     {
         item.Overview = FixtureBuilder.Faker.Lorem.Paragraph();
-        item.GalleryItems = FixtureBuilder.Build().CreateMany<GalleryItemParseDto>().ToList();
+        item.GalleryItems = FixtureBuilder.Build().CreateMany<GalleryItemRaw>().ToList();
     }
 }

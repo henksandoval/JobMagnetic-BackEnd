@@ -1,13 +1,13 @@
 ﻿using AutoFixture;
-using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
+using JobMagnet.Application.UseCases.CvParser.RawDTOs;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations.DTO;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Raws;
 
 public class SkillDetailParseCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<SkillDetailParseDto>(composer =>
+        fixture.Customize<SkillDetailRaw>(composer =>
             composer
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());
@@ -16,6 +16,6 @@ public class SkillDetailParseCustomization : ICustomization
     private static void ApplyCommonProperties(dynamic item)
     {
         item.Name = FixtureBuilder.Faker.Company.CompanyName();
-        item.Level = FixtureBuilder.Faker.Random.UShort(1, 10);
+        item.Level = FixtureBuilder.Faker.Random.UShort(1, 10).ToString();
     }
 }

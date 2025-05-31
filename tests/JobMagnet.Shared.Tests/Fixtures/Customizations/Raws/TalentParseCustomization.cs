@@ -1,13 +1,13 @@
 ﻿using AutoFixture;
-using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
+using JobMagnet.Application.UseCases.CvParser.RawDTOs;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations.DTO;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Raws;
 
 public class TalentParseCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<TalentParseDto>(composer =>
+        fixture.Customize<TalentRaw>(composer =>
             composer
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());

@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
-using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
+using JobMagnet.Application.UseCases.CvParser.RawDTOs;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations.DTO;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Raws;
 
 public class PortfolioParseCustomization : ICustomization
 {
@@ -9,7 +9,7 @@ public class PortfolioParseCustomization : ICustomization
 
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<PortfolioGalleryParseDto>(composer =>
+        fixture.Customize<PortfolioGalleryRaw>(composer =>
             composer
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties()

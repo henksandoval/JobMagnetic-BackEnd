@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using Bogus;
-using JobMagnet.Shared.Tests.Fixtures.Customizations.DTO;
 using JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
+using JobMagnet.Shared.Tests.Fixtures.Customizations.Raws;
 
 namespace JobMagnet.Shared.Tests.Fixtures;
 
