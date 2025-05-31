@@ -1,8 +1,6 @@
-using JobMagnet.Application.Mappers;
 using JobMagnet.Application.UseCases.CvParser.Commands;
-using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
+using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Core.Services.CvParser;
 using JobMagnet.Domain.Ports.Repositories.Base;
 
 namespace JobMagnet.Application.UseCases.CvParser;
@@ -12,7 +10,7 @@ public interface ICvParserHandler
     Task ParseAsync(CvParserCommand command);
 }
 
-public class CvParserHandler(ICvParser cvParser, ICommandRepository<ProfileEntity> commandRepository) : ICvParserHandler
+public class CvParserHandler(IRawCvParser cvParser, ICommandRepository<ProfileEntity> commandRepository) : ICvParserHandler
 {
     public async Task ParseAsync(CvParserCommand command)
     {
@@ -22,8 +20,6 @@ public class CvParserHandler(ICvParser cvParser, ICommandRepository<ProfileEntit
 
         if (response.HasValue)
         {
-            var parsedProfile = response.Value as ProfileParseDto;
-            var profileCommand = parsedProfile!.ToCommand();
         }
     }
 }

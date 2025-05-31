@@ -1,12 +1,11 @@
 using System.Text;
-using System.Text.RegularExpressions;
 using CSharpFunctionalExtensions;
 using GeminiDotNET;
 using GeminiDotNET.ApiModels.Enums;
 using GeminiDotNET.ClientModels;
-using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
-using JobMagnet.Domain.Core.Services.CvParser;
-using JobMagnet.Domain.Core.Services.CvParser.Interfaces;
+using JobMagnet.Application.UseCases.CvParser.Ports;
+using JobMagnet.Application.UseCases.CvParser.RawDTOs;
+using JobMagnet.Infrastructure.ExternalServices.CvParsers.Exceptions;
 using JobMagnet.Infrastructure.Settings;
 using JobMagnet.Shared.Utils;
 using Microsoft.Extensions.Logging;
@@ -15,11 +14,11 @@ using Newtonsoft.Json;
 
 namespace JobMagnet.Infrastructure.ExternalServices.CvParsers;
 
-public partial class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<GeminiCvParser> logger) : ICvParser
+public class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<GeminiCvParser> logger) : IRawCvParser
 {
     private readonly GeminiSettings _settings = options.Value;
 
-    public async Task<Maybe<IParsedProfile>> ParseAsync(Stream cvFile)
+    public async Task<Maybe<ProfileRaw>> ParseAsync(Stream cvFile)
     {
         if (cvFile.CanSeek)
         {
@@ -31,7 +30,7 @@ public partial class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<Ge
         if (cvContent.HasValue) return await ProcessCvWithGeminiAsync(cvContent.Value);
 
         logger.LogError("CV content is empty or invalid.");
-        return Maybe<IParsedProfile>.None;
+        return Maybe<ProfileRaw>.None;
     }
 
     private async Task<Maybe<string>> ReadAndValidateCvFileAsync(Stream cvFile)
@@ -60,7 +59,7 @@ public partial class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<Ge
         return Maybe<string>.From(cvContent);
     }
 
-    private async Task<Maybe<IParsedProfile>> ProcessCvWithGeminiAsync(string cvContent)
+    private async Task<Maybe<ProfileRaw>> ProcessCvWithGeminiAsync(string cvContent)
     {
         logger.LogInformation("Sending CV content to Gemini.");
         try
@@ -68,50 +67,91 @@ public partial class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<Ge
             var geminiResponse = await CallGeminiServiceAsync(cvContent);
 
             if (geminiResponse == null || string.IsNullOrWhiteSpace(geminiResponse.Content))
-                return Maybe<IParsedProfile>.None;
+                return Maybe<ProfileRaw>.None;
 
             var jsonResponse = ParseModelResponseToJson(geminiResponse);
 
             if (jsonResponse.HasNoValue)
             {
                 logger.LogError("Failed to parse Gemini response to JSON.");
-                return Maybe<IParsedProfile>.None;
+                return Maybe<ProfileRaw>.None;
             }
 
-            var profileParsed = JsonConvert.DeserializeObject<ProfileParseDto>(jsonResponse.Value);
-            return Maybe<IParsedProfile>.From(profileParsed);
+            var profileParsed = JsonConvert.DeserializeObject<ProfileRaw>(jsonResponse.Value);
+            return Maybe<ProfileRaw>.From(profileParsed);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occurred while interacting with Gemini API.");
-            return Maybe<IParsedProfile>.None;
+            const string? errorMessage = "An error occurred while interacting with Gemini API.";
+            logger.LogError(ex, errorMessage);
+            throw new CvParserException(errorMessage, ex);
         }
     }
 
     private Maybe<string> ParseModelResponseToJson(ModelResponse modelResponse)
     {
-        var jsonToParse = modelResponse.Content;
+        var originalContent = modelResponse.Content;
 
-        jsonToParse = CleanJsonFormat().Replace(jsonToParse!, "$1");
-
-        if (jsonToParse.IsJsonValid())
-            return Maybe<string>.From(jsonToParse);
-
-        if (jsonToParse!.StartsWith("```") && jsonToParse.EndsWith("```"))
+        try
         {
-            jsonToParse = jsonToParse.Substring(3, jsonToParse.Length - 6).Trim();
+            var extractedJson = originalContent.ExtractJsonFromMarkdown();
+            return Maybe<string>.From(extractedJson);
+        }
+        catch (FormatException ex)
+        {
+            logger.LogWarning(ex, "JSON block not found by Regex. Attempting manual cleanup. Original content snippet: {Snippet}", originalContent.GetSnippet());
+            return AttemptManualCleanup(originalContent);
+        }
+        catch (JsonException ex)
+        {
+            logger.LogWarning(ex, "Content extracted by Regex was not valid JSON. Original content snippet: {Snippet}", originalContent.GetSnippet());
+            return AttemptManualCleanup(originalContent);
+        }
+        catch (TimeoutException ex)
+        {
+            logger.LogError(ex, "Timeout during JSON extraction. Original content snippet: {Snippet}", originalContent.GetSnippet());
+            return Maybe<string>.None;
+        }
+        catch (ArgumentException ex)
+        {
+            logger.LogError(ex, "Invalid input for JSON extraction. Original content snippet: {Snippet}", originalContent.GetSnippet());
+            return Maybe<string>.None;
+        }
+    }
+
+    private Maybe<string> AttemptManualCleanup(string? contentToClean)
+    {
+        if (string.IsNullOrWhiteSpace(contentToClean))
+        {
+            return Maybe<string>.None;
         }
 
-        if (jsonToParse.StartsWith("json", StringComparison.OrdinalIgnoreCase))
+        var jsonOutput = contentToClean;
+
+        if (jsonOutput.StartsWith("```") && jsonOutput.EndsWith("```"))
         {
-            jsonToParse = jsonToParse[4..].TrimStart();
+            jsonOutput = jsonOutput.StartsWith("```json", StringComparison.OrdinalIgnoreCase)
+                ? jsonOutput.Substring("```json".Length, jsonOutput.Length - "```json".Length - "```".Length).Trim()
+                : jsonOutput.Substring(3, jsonOutput.Length - 6).Trim();
         }
 
-        jsonToParse = jsonToParse.Trim();
+        if (jsonOutput.StartsWith("json", StringComparison.OrdinalIgnoreCase))
+        {
+            var tempJson = jsonOutput["json".Length..].TrimStart();
+            if (tempJson.StartsWith("{") || tempJson.StartsWith("[")) {
+                jsonOutput = tempJson;
+            }
+        }
 
-        if (jsonToParse.IsJsonValid()) return Maybe<string>.From(jsonToParse);
+        jsonOutput = jsonOutput.Trim();
 
-        logger.LogError("Content after extraction does not appear to be a valid JSON object or array. Content: {Content}", jsonToParse);
+        if (jsonOutput.IsJsonValid())
+        {
+            logger.LogInformation("Manual JSON cleanup and validation successful. Snippet: {Snippet}", jsonOutput.GetSnippet());
+            return Maybe<string>.From(jsonOutput);
+        }
+
+        logger.LogError("Content after manual cleanup is not valid JSON. Final snippet: {Snippet}", jsonOutput.GetSnippet());
         return Maybe<string>.None;
     }
 
@@ -147,7 +187,4 @@ public partial class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<Ge
         var response = await generator.GenerateContentAsync(request, ModelVersion.Gemini_20_Flash);
         return response;
     }
-
-    [GeneratedRegex(@"```json\s*([\s\S]*?)\s*```", RegexOptions.IgnoreCase | RegexOptions.Singleline, "en-US")]
-    private static partial Regex CleanJsonFormat();
 }

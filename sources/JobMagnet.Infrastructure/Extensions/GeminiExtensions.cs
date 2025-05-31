@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Text.Json;
 using GeminiDotNET;
-using JobMagnet.Domain.Core.Services.CvParser;
+using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Infrastructure.ExternalServices.CvParsers;
 using JobMagnet.Infrastructure.Settings;
 using JobMagnet.Shared.Utils;
@@ -27,7 +27,7 @@ internal static class GeminiExtensions
             })
             .ValidateOnStart();
 
-        services.AddSingleton<ICvParser, GeminiCvParser>();
+        services.AddSingleton<IRawCvParser, GeminiCvParser>();
 
 
         return services;
