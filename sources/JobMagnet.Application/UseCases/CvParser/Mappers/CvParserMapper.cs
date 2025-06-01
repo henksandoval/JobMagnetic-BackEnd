@@ -1,5 +1,5 @@
-using JobMagnet.Application.UseCases.CvParser.RawDTOs;
-using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
+using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
+using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using Mapster;
 
 namespace JobMagnet.Application.UseCases.CvParser.Mappers;

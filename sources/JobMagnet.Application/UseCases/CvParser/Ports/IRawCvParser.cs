@@ -1,5 +1,5 @@
 using CSharpFunctionalExtensions;
-using JobMagnet.Application.UseCases.CvParser.RawDTOs;
+using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 
 namespace JobMagnet.Application.UseCases.CvParser.Ports;
 

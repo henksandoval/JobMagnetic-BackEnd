@@ -1,5 +1,5 @@
 ﻿using AutoFixture;
-using JobMagnet.Application.UseCases.CvParser.RawDTOs;
+using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Raws;
 

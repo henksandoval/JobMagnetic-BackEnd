@@ -1,7 +1,7 @@
 using AutoFixture;
 using FluentAssertions;
+using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
-using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 
