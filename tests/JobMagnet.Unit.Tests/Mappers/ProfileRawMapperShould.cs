@@ -10,7 +10,6 @@ namespace JobMagnet.Unit.Tests.Mappers;
 public class ProfileRawMapperShould
 {
     private readonly IFixture _fixture = FixtureBuilder.Build();
-    private readonly CvParserProfileMapper _mapper = new ();
 
     [Fact(DisplayName = "Map ProfileRaw to ProfileParseDto with direct string properties")]
     public void MapDirectStringPropertiesCorrectly()
