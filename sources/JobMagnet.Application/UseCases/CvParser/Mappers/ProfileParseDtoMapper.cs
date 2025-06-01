@@ -33,40 +33,42 @@ public static class ProfileParseDtoMapper
                 Name = src.ContactType ?? string.Empty
             });
 
-        TypeAdapterConfig<SkillParseDto, SkillEntity>.NewConfig()
-            .Map(dest => dest.Overview, src => src.Overview);
+        TypeAdapterConfig<SkillParseDto, SkillEntity>.NewConfig();
 
         TypeAdapterConfig<SkillDetailParseDto, SkillItemEntity>.NewConfig()
-            .Map(dest => dest.Name, src => src.Name ?? string.Empty)
-            .Map(dest => dest.ProficiencyLevel, src => src.Level ?? 0);
+            .Map(dest => dest.ProficiencyLevel, src => src.Level);
 
         TypeAdapterConfig<ServiceParseDto, ServiceEntity>.NewConfig()
-            .Map(dest => dest.Overview, src => src.Overview ?? string.Empty);
+            .Map(dest => dest.Overview, src => src.Overview);
 
         TypeAdapterConfig<GalleryItemParseDto, ServiceGalleryItemEntity>
             .NewConfig();
 
-        TypeAdapterConfig<SummaryParseDto, SummaryEntity>.NewConfig()
-            .Map(dest => dest.Introduction, src => src.Introduction);
+        TypeAdapterConfig<SummaryParseDto, SummaryEntity>.NewConfig();
 
         TypeAdapterConfig<EducationParseDto, EducationEntity>.NewConfig()
-            .Map(dest => dest.StartDate,
-                src => src.StartDate.HasValue ? src.StartDate.Value.ToDateTime(TimeOnly.MinValue) : default)
-            .Map(dest => dest.EndDate,
-                src => src.EndDate.HasValue ? (DateTime?)src.EndDate.Value.ToDateTime(TimeOnly.MinValue) : null);
+            .Map(dest => dest.StartDate, src => ToDateTimeOrDefault(src.StartDate))
+            .Map(dest => dest.EndDate, src => ToNullableDateTime(src.EndDate));
 
         TypeAdapterConfig<WorkExperienceParseDto, WorkExperienceEntity>.NewConfig()
-            .Map(dest => dest.StartDate,
-                src => src.StartDate.HasValue ? src.StartDate.Value.ToDateTime(TimeOnly.MinValue) : default)
-            .Map(dest => dest.EndDate,
-                src => src.EndDate.HasValue ? (DateTime?)src.EndDate.Value.ToDateTime(TimeOnly.MinValue) : null);
+            .Map(dest => dest.StartDate, src => ToDateTimeOrDefault(src.StartDate))
+            .Map(dest => dest.EndDate, src => ToNullableDateTime(src.EndDate));
 
-        TypeAdapterConfig<TalentParseDto, TalentEntity>.NewConfig()
-            .Map(dest => dest.Description, src => src.Description ?? string.Empty);
+        TypeAdapterConfig<TalentParseDto, TalentEntity>.NewConfig();
 
         TypeAdapterConfig<PortfolioGalleryParseDto, PortfolioGalleryEntity>.NewConfig();
 
         TypeAdapterConfig<TestimonialParseDto, TestimonialEntity>.NewConfig();
+    }
+
+    private static DateTime ToDateTimeOrDefault(DateOnly? date)
+    {
+        return date?.ToDateTime(TimeOnly.MinValue) ?? default;
+    }
+
+    private static DateTime? ToNullableDateTime(DateOnly? date)
+    {
+        return date?.ToDateTime(TimeOnly.MinValue) ?? null;
     }
 
     private static List<TalentEntity> MapTalents(ProfileParseDto src)

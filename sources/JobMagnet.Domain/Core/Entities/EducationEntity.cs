@@ -9,7 +9,7 @@ public class EducationEntity : SoftDeletableEntity<long>
     public string Degree { get; set; } // Grado obtenido (ej. "Bachelor's in Computer Science")
     public string InstitutionName { get; set; }
     public string InstitutionLocation { get; set; }
-    public DateTime StartDate { get; set; }
+    public DateTime StartDate { get; set; } //TODO: Cambiar a DateOnly
     public DateTime? EndDate { get; set; } // `null` si sigue estudiando
     public string Description { get; set; } // Detalles adicionales
 
