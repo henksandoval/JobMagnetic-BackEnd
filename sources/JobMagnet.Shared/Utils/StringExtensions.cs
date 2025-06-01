@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -59,5 +60,58 @@ public static class StringExtensions
     {
         if (string.IsNullOrEmpty(content)) return string.Empty;
         return content.Length <= maxLength ? content : content[..maxLength] + "... (truncated)";
+    }
+
+    /// <summary>
+    /// Parses a string to a <see cref="DateOnly"/>.
+    /// Returns null if the input string is null, empty, or whitespace.
+    /// Throws a <see cref="FormatException"/> if the string is not empty but cannot be parsed into a known date format.
+    /// </summary>
+    /// <param name="dateString">The date string to parse.</param>
+    /// <returns>A <see cref="DateOnly"/> if parsing is successful and input is not empty/whitespace, otherwise null.
+    /// </returns>
+    /// <exception cref="FormatException">Thrown if the dateString is not empty/whitespace and not in a recognized format.</exception>
+    public static DateOnly? ParseToDateOnly(this string? dateString)
+    {
+        if (string.IsNullOrWhiteSpace(dateString))
+        {
+            return null;
+        }
+
+        string[] fullDateFormats =
+        [
+            "yyyy-MM-dd",
+            "M/dd/yyyy", "MM/dd/yyyy", "M/d/yyyy", "MM/d/yyyy",
+            "dd/MM/yyyy", "d/MM/yyyy", "dd/M/yyyy", "d/M/yyyy"
+        ];
+
+        string[] partialDateFormats =
+        [
+            "yyyy-MM",
+            "MM/yyyy",
+            "yyyy"
+        ];
+
+        if (TryParseExact(dateString, fullDateFormats, out var parsedDate))
+        {
+            return parsedDate;
+        }
+
+        if (DateTime.TryParseExact(dateString, partialDateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None,
+                out var fullDateTime))
+        {
+            return DateOnly.FromDateTime(fullDateTime);
+        }
+
+        throw new FormatException("The provided date string is not in a recognized format.");
+    }
+
+    private static bool TryParseExact(string dateString, string[] fullDateFormats, out DateOnly parsedDate)
+    {
+        return DateOnly.TryParseExact(dateString, fullDateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None,
+                   out parsedDate) ||
+               DateOnly.TryParseExact(dateString, "MMMM d, yyyy", CultureInfo.GetCultureInfo("en-US"),
+                   DateTimeStyles.None,
+                   out parsedDate);
     }
 }

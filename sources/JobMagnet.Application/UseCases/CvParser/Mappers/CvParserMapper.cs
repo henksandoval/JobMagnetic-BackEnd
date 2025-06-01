@@ -1,5 +1,6 @@
 using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
+using JobMagnet.Shared.Utils;
 using Mapster;
 
 namespace JobMagnet.Application.UseCases.CvParser.Mappers;
@@ -20,7 +21,7 @@ public static class CvParserMapper
     {
         TypeAdapterConfig<ProfileRaw, ProfileParseDto>
             .NewConfig()
-            .Map(dest => dest.BirthDate, src => FlexibleDateParserUtil.ParseFlexibleDate(src.BirthDate))
+            .Map(dest => dest.BirthDate, src => src.BirthDate.ParseToDateOnly())
             .Map(dest => dest.Talents, src => MapTalents(src.Talents))
             .Map(dest => dest.PortfolioGallery, src => MapPortfolioGallery(src.PortfolioGallery))
             .Map(dest => dest.Testimonials, src => MapTestimonial(src.Testimonials));
@@ -48,13 +49,13 @@ public static class CvParserMapper
 
         TypeAdapterConfig<EducationRaw, EducationParseDto>
             .NewConfig()
-            .Map(dest => dest.StartDate, src => FlexibleDateParserUtil.ParseFlexibleDate(src.StartDate))
-            .Map(dest => dest.EndDate, src => FlexibleDateParserUtil.ParseFlexibleDate(src.EndDate));
+            .Map(dest => dest.StartDate, src => src.StartDate.ParseToDateOnly())
+            .Map(dest => dest.EndDate, src => src.EndDate.ParseToDateOnly());
 
         TypeAdapterConfig<WorkExperienceRaw, WorkExperienceParseDto>
             .NewConfig()
-            .Map(dest => dest.StartDate, src => FlexibleDateParserUtil.ParseFlexibleDate(src.StartDate))
-            .Map(dest => dest.EndDate, src => FlexibleDateParserUtil.ParseFlexibleDate(src.EndDate));
+            .Map(dest => dest.StartDate, src => src.StartDate.ParseToDateOnly())
+            .Map(dest => dest.EndDate, src => src.EndDate.ParseToDateOnly());
     }
 
     private static List<WorkExperienceParseDto> MapWorkExperience(IEnumerable<WorkExperienceRaw>? srcWorkExperiences) =>
