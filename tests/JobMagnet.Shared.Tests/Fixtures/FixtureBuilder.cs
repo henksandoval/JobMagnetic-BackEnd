@@ -47,19 +47,19 @@ public static class FixtureBuilder
     private static Fixture RegisterParseDtoCustomizations(this Fixture fixture)
     {
         fixture
-            .Customize(new ProfileParseCustomization())
-            .Customize(new SummaryParseCustomization())
-            .Customize(new SkillParseCustomization())
-            .Customize(new SkillDetailParseCustomization())
-            .Customize(new ServiceGalleryItemParseCustomization())
-            .Customize(new EducationParseCustomization())
-            .Customize(new WorkExperienceParseCustomization())
-            .Customize(new TalentParseCustomization())
-            .Customize(new ServiceParseCustomization())
-            .Customize(new PortfolioParseCustomization())
-            .Customize(new TestimonialParseCustomization())
-            .Customize(new ResumeParseCustomization())
-            .Customize(new ContactInfoParseCustomization());
+            .Customize(new ProfileRawCustomization())
+            .Customize(new SummaryRawCustomization())
+            .Customize(new SkillRawCustomization())
+            .Customize(new SkillDetailRawCustomization())
+            .Customize(new ServiceGalleryRawCustomization())
+            .Customize(new EducationRawCustomization())
+            .Customize(new WorkExperienceRawCustomization())
+            .Customize(new TalentRawCustomization())
+            .Customize(new ServiceRawCustomization())
+            .Customize(new PortfolioRawCustomization())
+            .Customize(new TestimonialRawCustomization())
+            .Customize(new ResumeRawCustomization())
+            .Customize(new ContactInfoRawCustomization());
 
         return fixture;
     }

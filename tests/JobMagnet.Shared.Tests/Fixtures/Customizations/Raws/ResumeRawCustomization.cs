@@ -4,7 +4,7 @@ using JobMagnet.Shared.Tests.Utils;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Raws;
 
-public class ResumeParseCustomization : ICustomization
+public class ResumeRawCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {

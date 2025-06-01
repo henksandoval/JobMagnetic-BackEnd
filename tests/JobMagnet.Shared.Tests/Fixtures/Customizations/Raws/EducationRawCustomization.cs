@@ -5,7 +5,7 @@ using JobMagnet.Shared.Utils;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Raws;
 
-public class EducationParseCustomization : ICustomization
+public class EducationRawCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {

@@ -3,7 +3,7 @@ using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Raws;
 
-public class PortfolioParseCustomization : ICustomization
+public class PortfolioRawCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
