@@ -1,4 +1,6 @@
+using JobMagnet.Application.Exceptions;
 using JobMagnet.Application.UseCases.CvParser.Commands;
+using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
@@ -19,8 +21,11 @@ public class CvParserHandler(IRawCvParser cvParser, ICommandRepository<ProfileEn
 
         var rawProfile = await cvParser.ParseAsync(command.Stream);
 
-        if (rawProfile.HasValue)
+        if (rawProfile.HasNoValue)
         {
+            throw new JobMagnetApplicationException("Failed to parse the CV. The raw profile is empty.");
         }
+
+        var parsedProfile = rawProfile.Value.ToProfileParseDto();
     }
 }
