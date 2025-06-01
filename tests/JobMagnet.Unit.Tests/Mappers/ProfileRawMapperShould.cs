@@ -65,8 +65,9 @@ public class ProfileRawMapperShould
         result.Should().BeEquivalentTo(expectedParseDto, options => options.Including(p => p.BirthDate));
     }
 
+
     [Theory(DisplayName = "Map invalid or missing BirthDate string to null DateOnly")]
-    [InlineData("invalid-date")]
+    [InlineData("          ")]
     [InlineData("")]
     [InlineData(null)]
     public void MapInvalidOrMissingBirthDateToNull(string? rawDateString)
@@ -81,6 +82,21 @@ public class ProfileRawMapperShould
 
         // Then
         result.BirthDate.Should().BeNull();
+    }
+
+    [Fact(DisplayName = "Throw a exception when BirthDate is invalid")]
+    public void ThrowWhenBirthDateIsInvalid()
+    {
+        // Given
+        var profileRaw = new ProfileRawBuilder(_fixture)
+            .WithBirthDate("invalid-date-string")
+            .Build();
+
+        // When
+        var act = () => profileRaw.ToProfileParseDto();
+
+        // Then
+        act.Should().Throw<FormatException>();
     }
 
     [Fact(DisplayName = "Map ResumeRaw to ResumeParseDto")]
