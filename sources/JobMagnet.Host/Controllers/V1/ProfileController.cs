@@ -1,8 +1,11 @@
-﻿using Asp.Versioning;
+﻿using System.Net.Mime;
+using Asp.Versioning;
 using JobMagnet.Application.Contracts.Commands.Profile;
 using JobMagnet.Application.Contracts.Queries.Profile;
 using JobMagnet.Application.Contracts.Responses.Profile;
 using JobMagnet.Application.Mappers;
+using JobMagnet.Application.UseCases.CvParser;
+using JobMagnet.Application.UseCases.CvParser.Commands;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
@@ -15,6 +18,7 @@ namespace JobMagnet.Host.Controllers.V1;
 
 [ApiVersion("1")]
 public class ProfileController(
+    ICvParserHandler cvParser,
     ILogger<ProfileController> logger,
     IProfileQueryRepository queryRepository,
     ICommandRepository<ProfileEntity> commandRepository) : BaseController<ProfileController>(logger)
@@ -28,6 +32,20 @@ public class ProfileController(
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetProfileByIdAsync), new { id = newRecord.Id }, newRecord);
+    }
+
+    [HttpPost]
+    [Route("create-from-cv")]
+    [Consumes(MediaTypeNames.Multipart.FormData)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IResult> CreateAsync(IFormFile cvFile)
+    {
+        var command = new CvParserCommand(cvFile.OpenReadStream(), cvFile.FileName, cvFile.ContentType);
+        await cvParser.ParseAsync(command).ConfigureAwait(false);
+        return Results.Ok();
     }
 
     [HttpGet("{id:long}", Name = nameof(GetProfileByIdAsync))]
