@@ -1,6 +1,6 @@
 namespace JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 
-public class ProfileRaw
+public sealed record ProfileRaw
 {
     public string? FirstName { get; set; }
     public string? LastName { get; set; }

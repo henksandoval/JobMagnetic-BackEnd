@@ -9,17 +9,12 @@ public class TestimonialParseCustomization : ICustomization
     public void Customize(IFixture fixture)
     {
         fixture.Customize<TestimonialRaw>(composer =>
-            composer
-                .Do(ApplyCommonProperties)
-                .OmitAutoProperties()
+            composer.FromFactory(() => new TestimonialRaw(
+                FixtureBuilder.Faker.Name.FullName(),
+                FixtureBuilder.Faker.Name.JobTitle(),
+                FixtureBuilder.Faker.Lorem.Paragraph(),
+                TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Image.PicsumUrl())
+            ))
         );
-    }
-
-    private static void ApplyCommonProperties(dynamic item)
-    {
-        item.Name = FixtureBuilder.Faker.Name.FullName();
-        item.JobTitle = FixtureBuilder.Faker.Name.JobTitle();
-        item.Feedback = FixtureBuilder.Faker.Lorem.Paragraph();
-        item.PhotoUrl = TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Image.PicsumUrl());
     }
 }

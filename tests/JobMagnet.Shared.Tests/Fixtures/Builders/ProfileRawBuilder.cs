@@ -19,6 +19,13 @@ public class ProfileRawBuilder(IFixture fixture)
         return this;
     }
 
+    public ProfileRawBuilder WithContactInfo(int count = 5)
+    {
+        var contactInfo = fixture.CreateMany<ContactInfoRaw>(count).ToList();
+        _instance.Resume = _instance.Resume! with { ContactInfo = contactInfo };
+        return this;
+    }
+
     public ProfileRawBuilder WithSkills()
     {
         _instance.Skill = fixture.Create<SkillRaw>();
@@ -28,13 +35,6 @@ public class ProfileRawBuilder(IFixture fixture)
     public ProfileRawBuilder WithServices()
     {
         _instance.Services = fixture.Create<ServiceRaw>();
-        return this;
-    }
-
-    public ProfileRawBuilder WithContactInfo(int count = 5)
-    {
-        _instance.Resume ??= new ResumeRaw();
-        _instance.Resume!.ContactInfo = fixture.CreateMany<ContactInfoRaw>(count).ToList();
         return this;
     }
 
@@ -50,9 +50,25 @@ public class ProfileRawBuilder(IFixture fixture)
         return this;
     }
 
-    public ProfileRawBuilder WithSummaries(int count = 5)
+    public ProfileRawBuilder WithSummaries()
     {
         _instance.Summary = fixture.Create<SummaryRaw>();
+        return this;
+    }
+
+    public ProfileRawBuilder WithEducation(int count = 5)
+    {
+        var educationList = fixture.CreateMany<EducationRaw>(count).ToList();
+        _instance.Summary ??= new SummaryRaw("", [], []);
+        _instance.Summary = _instance.Summary with { Education = educationList };
+        return this;
+    }
+
+    public ProfileRawBuilder WithWorkExperience(int count = 5)
+    {
+        var workExperienceList = fixture.CreateMany<WorkExperienceRaw>(count).ToList();
+        _instance.Summary ??= new SummaryRaw("", [], []);
+        _instance.Summary = _instance.Summary with { WorkExperiences = workExperienceList };
         return this;
     }
 

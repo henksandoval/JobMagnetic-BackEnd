@@ -7,14 +7,13 @@ public class ContactInfoParseCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<ContactInfoRaw>(composer => composer
-            .Do(ApplyCommonProperties)
-            .OmitAutoProperties());
-    }
-
-    private static void ApplyCommonProperties(dynamic item)
-    {
-        item.Value = FixtureBuilder.Faker.Phone.PhoneNumber();
-        item.ContactType = FixtureBuilder.Faker.PickRandom(StaticCustomizations.ContactTypes).Name;
+        fixture.Customize<ContactInfoRaw>(composer =>
+            composer.FromFactory(() =>
+                new ContactInfoRaw(
+                    FixtureBuilder.Faker.PickRandom(StaticCustomizations.ContactTypes).Name,
+                    FixtureBuilder.Faker.Phone.PhoneNumber()
+                )
+            )
+        );
     }
 }

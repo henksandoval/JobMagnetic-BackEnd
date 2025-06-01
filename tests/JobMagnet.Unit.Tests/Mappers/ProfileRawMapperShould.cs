@@ -1,6 +1,7 @@
 using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
+using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
@@ -207,6 +208,8 @@ public class ProfileRawMapperShould
         // Given
         var profileRaw = new ProfileRawBuilder(_fixture)
             .WithSummaries()
+            .WithEducation()
+            .WithWorkExperience()
             .Build();
 
         // When
@@ -274,7 +277,6 @@ public class ProfileRawMapperShould
         var expectedPortfolio = profileRaw.PortfolioGallery
             .Select(gallery => new PortfolioGalleryParseDto
             {
-                Position = gallery.Position,
                 Title = gallery.Title,
                 Description = gallery.Description,
                 UrlLink = gallery.UrlLink,

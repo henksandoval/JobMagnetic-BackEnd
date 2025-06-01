@@ -8,13 +8,9 @@ public class TalentParseCustomization : ICustomization
     public void Customize(IFixture fixture)
     {
         fixture.Customize<TalentRaw>(composer =>
-            composer
-                .Do(ApplyCommonProperties)
-                .OmitAutoProperties());
-    }
-
-    private static void ApplyCommonProperties(dynamic item)
-    {
-        item.Description = FixtureBuilder.Faker.PickRandom(StaticCustomizations.Talents);
+            composer.FromFactory(() => new TalentRaw(
+                FixtureBuilder.Faker.PickRandom(StaticCustomizations.Talents)
+            ))
+        );
     }
 }

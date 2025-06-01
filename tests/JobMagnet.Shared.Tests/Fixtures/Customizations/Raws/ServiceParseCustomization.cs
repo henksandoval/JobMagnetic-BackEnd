@@ -8,15 +8,10 @@ public class ServiceParseCustomization : ICustomization
     public void Customize(IFixture fixture)
     {
         fixture.Customize<ServiceRaw>(composer =>
-            composer
-                .Do(ApplyCommonProperties)
-                .OmitAutoProperties()
+            composer.FromFactory(() => new ServiceRaw(
+                FixtureBuilder.Faker.Lorem.Paragraph(),
+                FixtureBuilder.Build().CreateMany<GalleryItemRaw>().ToList()
+            ))
         );
-    }
-
-    private static void ApplyCommonProperties(dynamic item)
-    {
-        item.Overview = FixtureBuilder.Faker.Lorem.Paragraph();
-        item.GalleryItems = FixtureBuilder.Build().CreateMany<GalleryItemRaw>().ToList();
     }
 }

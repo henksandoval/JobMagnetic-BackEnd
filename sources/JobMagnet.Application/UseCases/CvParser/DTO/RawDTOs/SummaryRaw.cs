@@ -1,8 +1,6 @@
 namespace JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 
-public class SummaryRaw
-{
-    public string? Introduction { get; set; }
-    public IEnumerable<EducationRaw>? Education { get; set; }
-    public IEnumerable<WorkExperienceRaw>? WorkExperiences { get; set; }
-}
+public sealed record SummaryRaw(
+    string? Introduction,
+    ICollection<EducationRaw>? Education,
+    ICollection<WorkExperienceRaw>? WorkExperiences);

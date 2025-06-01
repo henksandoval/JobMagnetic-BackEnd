@@ -8,14 +8,12 @@ public class SkillDetailParseCustomization : ICustomization
     public void Customize(IFixture fixture)
     {
         fixture.Customize<SkillDetailRaw>(composer =>
-            composer
-                .Do(ApplyCommonProperties)
-                .OmitAutoProperties());
-    }
-
-    private static void ApplyCommonProperties(dynamic item)
-    {
-        item.Name = FixtureBuilder.Faker.Company.CompanyName();
-        item.Level = FixtureBuilder.Faker.Random.UShort(1, 10).ToString();
+            composer.FromFactory(() =>
+                new SkillDetailRaw(
+                    FixtureBuilder.Faker.Company.CompanyName(),
+                    FixtureBuilder.Faker.Random.UShort(1, 10).ToString()
+                )
+            )
+        );
     }
 }

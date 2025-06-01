@@ -17,12 +17,12 @@ public class ProfileParseCustomization : ICustomization
                 .With(x => x.MiddleName, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.FirstName()))
                 .With(x => x.SecondLastName, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.LastName()))
                 .Without(x => x.Resume)
-                .Without(x => x.Talents)
-                .Without(x => x.PortfolioGallery)
                 .Without(x => x.Summary)
                 .Without(x => x.Services)
                 .Without(x => x.Skill)
-                .Without(x => x.Testimonials)
+                .With(x => x.Talents, () => [])
+                .With(x => x.PortfolioGallery, () => [])
+                .With(x => x.Testimonials, () => [])
         );
     }
 }

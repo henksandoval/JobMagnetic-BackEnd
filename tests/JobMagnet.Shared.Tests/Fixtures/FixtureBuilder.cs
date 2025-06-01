@@ -49,6 +49,7 @@ public static class FixtureBuilder
         fixture
             .Customize(new ProfileParseCustomization())
             .Customize(new SummaryParseCustomization())
+            .Customize(new SkillParseCustomization())
             .Customize(new SkillDetailParseCustomization())
             .Customize(new ServiceGalleryItemParseCustomization())
             .Customize(new EducationParseCustomization())
@@ -56,7 +57,6 @@ public static class FixtureBuilder
             .Customize(new TalentParseCustomization())
             .Customize(new ServiceParseCustomization())
             .Customize(new PortfolioParseCustomization())
-            .Customize(new SkillParseCustomization())
             .Customize(new TestimonialParseCustomization())
             .Customize(new ResumeParseCustomization())
             .Customize(new ContactInfoParseCustomization());

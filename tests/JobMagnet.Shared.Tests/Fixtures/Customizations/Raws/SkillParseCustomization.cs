@@ -7,16 +7,11 @@ public class SkillParseCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<SkillRaw>(composer =>
-            composer
-                .Do(ApplyCommonProperties)
-                .OmitAutoProperties()
+        fixture.Register<SkillRaw>(() =>
+            new(
+                FixtureBuilder.Faker.Lorem.Sentence(),
+                []
+            )
         );
-    }
-
-    private static void ApplyCommonProperties(dynamic item)
-    {
-        item.Overview = FixtureBuilder.Faker.Lorem.Sentence();
-        item.SkillDetails = FixtureBuilder.Build().CreateMany<SkillDetailRaw>().ToList();
     }
 }
