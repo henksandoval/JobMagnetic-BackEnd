@@ -147,8 +147,8 @@ public class ProfileRawMapperShould
         var expectedSkillDto = new SkillParseDto
         {
             Overview = profileRaw.Skill!.Overview,
-            SkillDetails = profileRaw.Skill.SkillDetails
-                .Select(sdRaw => new SkillDetailParseDto { Name = sdRaw.Name, Level = Convert.ToUInt16(sdRaw.Level) })
+            SkillDetails = profileRaw.Skill.SkillDetails!
+                .Select(skill => new SkillDetailParseDto { Name = skill.Name, Level = Convert.ToUInt16(skill.Level) })
                 .ToList()
         };
         result.Skill.Should().BeEquivalentTo(expectedSkillDto);
@@ -186,7 +186,6 @@ public class ProfileRawMapperShould
     }
 
     [Fact(DisplayName = "Map SummaryRaw (Introduction, Education, WorkExperience) to SummaryParseDto")]
-    [Trait("GherkinScenario", "Mapeo de SummaryRaw a SummaryParseDto")]
     public void MapFromRaw_ShouldMapSummaryRawCorrectly()
     {
         // Given
@@ -239,7 +238,7 @@ public class ProfileRawMapperShould
 
         // Then
         var expectedTalents = profileRaw.Talents
-            .Select(tRaw => new TalentParseDto { Description = tRaw.Description })
+            .Select(talent => new TalentParseDto { Description = talent.Description })
             .ToList();
         result.Talents.Should().BeEquivalentTo(expectedTalents);
     }
@@ -257,15 +256,15 @@ public class ProfileRawMapperShould
 
         // Then
         var expectedPortfolio = profileRaw.PortfolioGallery
-            .Select(pRaw => new PortfolioGalleryParseDto
+            .Select(gallery => new PortfolioGalleryParseDto
             {
-                Position = pRaw.Position,
-                Title = pRaw.Title,
-                Description = pRaw.Description,
-                UrlLink = pRaw.UrlLink,
-                UrlImage = pRaw.UrlImage,
-                UrlVideo = pRaw.UrlVideo,
-                Type = pRaw.Type
+                Position = gallery.Position,
+                Title = gallery.Title,
+                Description = gallery.Description,
+                UrlLink = gallery.UrlLink,
+                UrlImage = gallery.UrlImage,
+                UrlVideo = gallery.UrlVideo,
+                Type = gallery.Type
             }).ToList();
         result.PortfolioGallery.Should().BeEquivalentTo(expectedPortfolio);
     }
@@ -282,13 +281,13 @@ public class ProfileRawMapperShould
         var result = profileRaw.ToProfileParseDto();
 
         // Then
-        var expectedTestimonials = profileRaw.Testimonials
-            .Select(tRaw => new TestimonialParseDto
+        var expectedTestimonials = profileRaw.Testimonials!
+            .Select(testimonial => new TestimonialParseDto
             {
-                Name = tRaw.Name,
-                JobTitle = tRaw.JobTitle,
-                PhotoUrl = tRaw.PhotoUrl,
-                Feedback = tRaw.Feedback
+                Name = testimonial.Name,
+                JobTitle = testimonial.JobTitle,
+                PhotoUrl = testimonial.PhotoUrl,
+                Feedback = testimonial.Feedback
             }).ToList();
         result.Testimonials.Should().BeEquivalentTo(expectedTestimonials);
     }
