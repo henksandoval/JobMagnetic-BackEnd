@@ -27,5 +27,6 @@ public class CvParserHandler(IRawCvParser cvParser, ICommandRepository<ProfileEn
         }
 
         var parsedProfile = rawProfile.Value.ToProfileParseDto();
+        var profileEntity = parsedProfile.ToProfileEntity();
     }
 }
