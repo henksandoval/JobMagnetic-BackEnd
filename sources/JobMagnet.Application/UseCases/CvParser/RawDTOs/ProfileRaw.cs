@@ -16,5 +16,5 @@ public class ProfileRaw
 
     public List<TalentRaw> Talents { get; set; }
     public List<PortfolioGalleryRaw> PortfolioGallery { get; set; }
-    public List<TestimonialRaw> Testimonials { get; set; }
+    public List<TestimonialRaw>? Testimonials { get; set; }
 }

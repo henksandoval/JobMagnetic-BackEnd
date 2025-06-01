@@ -20,10 +20,6 @@ public static class SkillMapper
         TypeAdapterConfig<SkillEntity, SkillCommand>
             .NewConfig()
             .Map(dest => dest.SkillData, src => src);
-
-        TypeAdapterConfig<SkillCommand, SkillEntity>
-            .NewConfig()
-            .Map(dest => dest, src => src.SkillData);
     }
 
     public static SkillEntity ToEntity(this SkillCommand command)

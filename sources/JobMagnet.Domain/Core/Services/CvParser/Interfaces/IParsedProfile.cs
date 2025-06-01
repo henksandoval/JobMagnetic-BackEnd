@@ -9,7 +9,7 @@ public interface IParsedProfile
     string? MiddleName { get; }
     string? SecondLastName { get; }
 
-    IParsedResume? Resume { get; }
+    // IParsedResume? Resume { get; }
     IParsedSkill? Skill { get; }
     IParsedService? Services { get; }
     IParsedSummary? Summary { get; }

@@ -1,9 +1,7 @@
-using System.Globalization;
 using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Application.UseCases.CvParser.ParsingDTOs;
-using JobMagnet.Application.UseCases.CvParser.RawDTOs;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 
@@ -21,7 +19,7 @@ public class ProfileRawMapperShould
         var profileRaw = new ProfileRawBuilder(_fixture).Build();
 
         // When
-        var result = _mapper.MapFromRaw(profileRaw);
+        var result = profileRaw.ToProfileParseDto();
 
         // Then
         var expectedParseDto = new ProfileParseDto
@@ -59,7 +57,7 @@ public class ProfileRawMapperShould
             .Build();
 
         // When
-        var result = _mapper.MapFromRaw(profileRaw);
+        var result = profileRaw.ToProfileParseDto();
 
         // Then
         var expectedDate = new DateOnly(year, month, day);
@@ -80,7 +78,7 @@ public class ProfileRawMapperShould
             .Build();
 
         // When
-        var result = _mapper.MapFromRaw(profileRaw);
+        var result = profileRaw.ToProfileParseDto();
 
         // Then
         result.BirthDate.Should().BeNull();
@@ -96,7 +94,7 @@ public class ProfileRawMapperShould
             .Build();
 
         // When
-        var result = _mapper.MapFromRaw(profileRaw);
+        var result = profileRaw.ToProfileParseDto();
 
         // Then
         result.Resume.Should().NotBeNull();
@@ -127,7 +125,7 @@ public class ProfileRawMapperShould
             .Build();
 
         // When
-        var result = _mapper.MapFromRaw(profileRaw);
+        var result = profileRaw.ToProfileParseDto();
 
         // Then
         result.Resume.Should().NotBeNull();
@@ -143,7 +141,7 @@ public class ProfileRawMapperShould
             .Build();
 
         // When
-        var result = _mapper.MapFromRaw(profileRaw);
+        var result = profileRaw.ToProfileParseDto();
 
         // Then
         result.Skill.Should().NotBeNull();
@@ -166,15 +164,23 @@ public class ProfileRawMapperShould
             .Build();
 
         // When
-        var result = _mapper.MapFromRaw(profileRaw);
+        var result = profileRaw.ToProfileParseDto();
 
         // Then
         result.Services.Should().NotBeNull();
         var expectedServiceDto = new ServiceParseDto
         {
             Overview = profileRaw.Services!.Overview,
-            GalleryItems = profileRaw.Services.GalleryItems
-                .Select(giRaw => new GalleryItemParseDto { Title = giRaw.Title, Description = giRaw.Description, UrlLink = giRaw.UrlLink })
+            GalleryItems = profileRaw.Services.GalleryItems!
+                .Select(x => new GalleryItemParseDto
+                {
+                    Title = x.Title,
+                    Type = x.Type,
+                    Description = x.Description,
+                    UrlImage = x.UrlImage,
+                    UrlVideo = x.UrlVideo,
+                    UrlLink = x.UrlLink
+                })
                 .ToList()
         };
         result.Services.Should().BeEquivalentTo(expectedServiceDto);
@@ -190,25 +196,27 @@ public class ProfileRawMapperShould
             .Build();
 
         // When
-        var result = _mapper.MapFromRaw(profileRaw);
+        var result = profileRaw.ToProfileParseDto();
 
         // Then
         result.Summary.Should().NotBeNull();
         var expectedSummaryDto = new SummaryParseDto
         {
             Introduction = profileRaw.Summary!.Introduction,
-            Education = profileRaw.Summary.Education
+            Education = profileRaw.Summary.Education!
                 .Select(education => new EducationParseDto
                 {
                     InstitutionName = education.InstitutionName,
                     InstitutionLocation = education.InstitutionLocation,
                     Degree = education.Degree,
+                    Description = education.Description,
                     StartDate = DateOnly.Parse(education.StartDate!),
                     EndDate = string.IsNullOrEmpty(education.EndDate) ? null : DateOnly.Parse(education.EndDate!),
                 }).ToList(),
-            WorkExperiences = profileRaw.Summary.WorkExperiences
+            WorkExperiences = profileRaw.Summary.WorkExperiences!
                 .Select(work => new WorkExperienceParseDto
                 {
+                    JobTitle = work.JobTitle,
                     CompanyName = work.CompanyName,
                     CompanyLocation = work.CompanyLocation,
                     Description = work.Description,
@@ -228,7 +236,7 @@ public class ProfileRawMapperShould
             .Build();
 
         // When
-        var result = _mapper.MapFromRaw(profileRaw);
+        var result = profileRaw.ToProfileParseDto();
 
         // Then
         var expectedTalents = profileRaw.Talents
@@ -246,7 +254,7 @@ public class ProfileRawMapperShould
             .Build();
 
         // When
-        var result = _mapper.MapFromRaw(profileRaw);
+        var result = profileRaw.ToProfileParseDto();
 
         // Then
         var expectedPortfolio = profileRaw.PortfolioGallery
@@ -272,7 +280,7 @@ public class ProfileRawMapperShould
             .Build();
 
         // When
-        var result = _mapper.MapFromRaw(profileRaw);
+        var result = profileRaw.ToProfileParseDto();
 
         // Then
         var expectedTestimonials = profileRaw.Testimonials
@@ -284,26 +292,5 @@ public class ProfileRawMapperShould
                 Feedback = tRaw.Feedback
             }).ToList();
         result.Testimonials.Should().BeEquivalentTo(expectedTestimonials);
-    }
-
-    [Fact(DisplayName = "Map null ProfileRaw to non-null ProfileParseDto with empty/null properties")]
-    public void MapFromRaw_WhenProfileRawIsNull_ReturnsEmptyInitializedDto()
-    {
-        // Given
-        ProfileRaw? profileRaw = null;
-
-        // When
-        var result = _mapper.MapFromRaw(profileRaw);
-
-        // Then
-        result.Should().NotBeNull();
-        var expectedEmptyDto = new ProfileParseDto
-        {
-            Talents = [],
-            PortfolioGallery = [],
-            Testimonials = []
-        };
-
-        result.Should().BeEquivalentTo(expectedEmptyDto);
     }
 }

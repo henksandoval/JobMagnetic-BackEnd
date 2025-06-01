@@ -18,7 +18,6 @@ public class ProfileParseDto : IParsedProfile
     public string? MiddleName { get; set; }
     public string? SecondLastName { get; set; }
 
-    IParsedResume? IParsedProfile.Resume => Resume;
     IParsedSkill? IParsedProfile.Skill => Skill;
     IParsedService? IParsedProfile.Services => Services;
     IParsedSummary? IParsedProfile.Summary => Summary;
