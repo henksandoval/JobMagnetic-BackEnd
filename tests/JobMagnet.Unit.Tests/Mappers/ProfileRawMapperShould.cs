@@ -186,7 +186,7 @@ public class ProfileRawMapperShould
     }
 
     [Fact(DisplayName = "Map SummaryRaw (Introduction, Education, WorkExperience) to SummaryParseDto")]
-    public void MapFromRaw_ShouldMapSummaryRawCorrectly()
+    public void MapSummaryRawCorrectly()
     {
         // Given
         var profileRaw = new ProfileRawBuilder(_fixture)
