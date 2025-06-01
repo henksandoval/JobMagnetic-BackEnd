@@ -38,11 +38,9 @@ public static class ProfileParseDtoMapper
         TypeAdapterConfig<SkillDetailParseDto, SkillItemEntity>.NewConfig()
             .Map(dest => dest.ProficiencyLevel, src => src.Level);
 
-        TypeAdapterConfig<ServiceParseDto, ServiceEntity>.NewConfig()
-            .Map(dest => dest.Overview, src => src.Overview);
+        TypeAdapterConfig<ServiceParseDto, ServiceEntity>.NewConfig();
 
-        TypeAdapterConfig<GalleryItemParseDto, ServiceGalleryItemEntity>
-            .NewConfig();
+        TypeAdapterConfig<GalleryItemParseDto, ServiceGalleryItemEntity>.NewConfig();
 
         TypeAdapterConfig<SummaryParseDto, SummaryEntity>.NewConfig();
 
