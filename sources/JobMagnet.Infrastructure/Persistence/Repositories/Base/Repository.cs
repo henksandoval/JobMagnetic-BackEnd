@@ -11,22 +11,22 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
 {
     private readonly DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
 
-    public async Task CreateAsync(TEntity entity)
+    public async Task CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        await _dbSet.AddAsync(entity).ConfigureAwait(false);
-        await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        await _dbSet.AddAsync(entity, cancellationToken).ConfigureAwait(false);
+        await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<bool> UpdateAsync(TEntity entity)
+    public async Task<bool> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         _dbSet.Update(entity);
-        return await dbContext.SaveChangesAsync().ConfigureAwait(false) > 0;
+        return await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false) > 0;
     }
 
-    public async Task<bool?> HardDeleteAsync(TEntity entity)
+    public async Task<bool?> HardDeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         _dbSet.Remove(entity);
-        return await dbContext.SaveChangesAsync().ConfigureAwait(false) > 0;
+        return await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false) > 0;
     }
 
     public async Task<TEntity?> GetByIdAsync(TKey id)
