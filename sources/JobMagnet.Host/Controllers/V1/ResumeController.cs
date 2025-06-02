@@ -18,11 +18,11 @@ public class ResumeController(
 {
     [HttpPost]
     [ProducesResponseType(typeof(ResumeResponse), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] ResumeCommand createCommand)
+    public async Task<IResult> CreateAsync([FromBody] ResumeCommand createCommand, CancellationToken cancellationToken)
     {
         var entity = createCommand.ToEntity();
-        await commandRepository.CreateAsync(entity);
-        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
+        await commandRepository.CreateAsync(entity, cancellationToken);
+        await commandRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetResumeByIdAsync), new { id = newRecord.Id }, newRecord);
@@ -47,7 +47,7 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PutAsync(int id, ResumeCommand command)
+    public async Task<IResult> PutAsync(int id, ResumeCommand command, CancellationToken cancellationToken)
     {
         var entity = await queryRepository.GetByIdAsync(id);
 
@@ -58,7 +58,7 @@ public class ResumeController(
 
         await commandRepository
             .Update(entity)
-            .SaveChangesAsync()
+            .SaveChangesAsync(cancellationToken)
             .ConfigureAwait(false);
 
         return Results.NoContent();
@@ -67,7 +67,7 @@ public class ResumeController(
     [HttpDelete("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> DeleteAsync(int id)
+    public async Task<IResult> DeleteAsync(int id, CancellationToken cancellationToken)
     {
         var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
@@ -76,7 +76,7 @@ public class ResumeController(
 
         await commandRepository
             .HardDelete(entity)
-            .SaveChangesAsync()
+            .SaveChangesAsync(cancellationToken)
             .ConfigureAwait(false);
 
         return Results.NoContent();
@@ -86,7 +86,7 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ResumeCommand> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ResumeCommand> patchDocument, CancellationToken cancellationToken)
     {
         var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
@@ -101,7 +101,7 @@ public class ResumeController(
 
         await commandRepository
             .Update(entity)
-            .SaveChangesAsync()
+            .SaveChangesAsync(cancellationToken)
             .ConfigureAwait(false);
 
         return Results.NoContent();

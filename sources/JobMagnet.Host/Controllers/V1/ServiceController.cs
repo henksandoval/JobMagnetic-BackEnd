@@ -19,11 +19,11 @@ public class ServiceController(
 {
     [HttpPost]
     [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] ServiceCommand createCommand)
+    public async Task<IResult> CreateAsync([FromBody] ServiceCommand createCommand, CancellationToken cancellationToken)
     {
         var entity = createCommand.ToEntity();
-        await commandRepository.CreateAsync(entity).ConfigureAwait(false);
-        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
+        await commandRepository.CreateAsync(entity, cancellationToken).ConfigureAwait(false);
+        await commandRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetServiceByIdAsync), new { id = newRecord.Id }, newRecord);
@@ -49,7 +49,7 @@ public class ServiceController(
     [HttpDelete("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> DeleteAsync(int id)
+    public async Task<IResult> DeleteAsync(int id, CancellationToken cancellationToken)
     {
         var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
@@ -58,7 +58,7 @@ public class ServiceController(
 
         await commandRepository
             .HardDelete(entity)
-            .SaveChangesAsync()
+            .SaveChangesAsync(cancellationToken)
             .ConfigureAwait(false);
 
         return Results.NoContent();
@@ -68,7 +68,7 @@ public class ServiceController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ServiceCommand> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ServiceCommand> patchDocument, CancellationToken cancellationToken)
     {
         _ = queryRepository.IncludeGalleryItems();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
@@ -84,7 +84,7 @@ public class ServiceController(
 
         await commandRepository
             .Update(entity)
-            .SaveChangesAsync()
+            .SaveChangesAsync(cancellationToken)
             .ConfigureAwait(false);
 
         return Results.NoContent();

@@ -19,11 +19,11 @@ public class SummaryController(
 {
     [HttpPost]
     [ProducesResponseType(typeof(SummaryResponse), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] SummaryCommand createCommand)
+    public async Task<IResult> CreateAsync([FromBody] SummaryCommand createCommand, CancellationToken cancellationToken)
     {
         var entity = createCommand.ToEntity();
-        await commandRepository.CreateAsync(entity).ConfigureAwait(false);
-        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
+        await commandRepository.CreateAsync(entity, cancellationToken).ConfigureAwait(false);
+        await commandRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetSummaryByIdAsync), new { id = newRecord.Id }, newRecord);
@@ -50,7 +50,7 @@ public class SummaryController(
     [HttpDelete("{id:long}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> DeleteAsync(int id)
+    public async Task<IResult> DeleteAsync(int id, CancellationToken cancellationToken)
     {
         var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
@@ -59,7 +59,7 @@ public class SummaryController(
 
         await commandRepository
             .HardDelete(entity)
-            .SaveChangesAsync()
+            .SaveChangesAsync(cancellationToken)
             .ConfigureAwait(false);
 
         return Results.NoContent();
@@ -69,7 +69,7 @@ public class SummaryController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SummaryCommand> patchDocument)
+    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SummaryCommand> patchDocument, CancellationToken cancellationToken)
     {
         _ = queryRepository.IncludeEducation().IncludeWorkExperience();
         var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
@@ -85,7 +85,7 @@ public class SummaryController(
 
         await commandRepository
             .Update(entity)
-            .SaveChangesAsync()
+            .SaveChangesAsync(cancellationToken)
             .ConfigureAwait(false);
 
         return Results.NoContent();

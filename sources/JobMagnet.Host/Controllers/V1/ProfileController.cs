@@ -25,11 +25,11 @@ public class ProfileController(
 {
     [HttpPost]
     [ProducesResponseType(typeof(ProfileResponse), StatusCodes.Status201Created)]
-    public async Task<IResult> CreateAsync([FromBody] ProfileCommand createCommand)
+    public async Task<IResult> CreateAsync([FromBody] ProfileCommand createCommand, CancellationToken cancellationToken)
     {
         var entity = createCommand.ToEntity();
-        await commandRepository.CreateAsync(entity);
-        await commandRepository.SaveChangesAsync();
+        await commandRepository.CreateAsync(entity, cancellationToken);
+        await commandRepository.SaveChangesAsync(cancellationToken);
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetProfileByIdAsync), new { id = newRecord.Id }, newRecord);
@@ -42,10 +42,10 @@ public class ProfileController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IResult> CreateAsync(IFormFile cvFile)
+    public async Task<IResult> CreateAsync(IFormFile cvFile, CancellationToken cancellationToken)
     {
         var command = new CvParserCommand(cvFile.OpenReadStream(), cvFile.FileName, cvFile.ContentType);
-        await cvParser.ParseAsync(command).ConfigureAwait(false);
+        await cvParser.ParseAsync(command, cancellationToken).ConfigureAwait(false);
         return Results.Ok();
     }
 
@@ -69,7 +69,7 @@ public class ProfileController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PutAsync(int id, ProfileCommand command)
+    public async Task<IResult> PutAsync(int id, ProfileCommand command, CancellationToken cancellationToken)
     {
         var entity = await queryRepository.GetByIdAsync(id);
 
@@ -80,7 +80,7 @@ public class ProfileController(
 
         await commandRepository
             .Update(entity)
-            .SaveChangesAsync()
+            .SaveChangesAsync(cancellationToken)
             .ConfigureAwait(false);
 
         return Results.NoContent();
