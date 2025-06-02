@@ -17,5 +17,5 @@ public class ResumeEntity : SoftDeletableEntity<long>
     [ForeignKey(nameof(Profile))] public long ProfileId { get; set; }
 
     public virtual ProfileEntity Profile { get; set; }
-    public virtual ICollection<ContactInfoEntity> ContactInfo { get; set; }
+    public virtual ICollection<ContactInfoEntity>? ContactInfo { get; set; }
 }

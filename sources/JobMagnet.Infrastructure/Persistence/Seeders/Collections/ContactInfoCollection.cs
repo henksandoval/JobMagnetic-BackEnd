@@ -25,7 +25,7 @@ public record ContactInfoCollection
         _resumeId = resumeId;
     }
 
-    public ImmutableList<ContactInfoEntity> GetContactInfoCollection()
+    public ImmutableList<ContactInfoEntity>? GetContactInfoCollection()
     {
         return _values.Select(x => CreateContactInfoEntity(x.value, x.contactTypeId)).ToImmutableList();
     }
