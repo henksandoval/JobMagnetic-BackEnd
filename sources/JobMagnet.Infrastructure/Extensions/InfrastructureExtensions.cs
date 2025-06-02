@@ -1,3 +1,5 @@
+using JobMagnet.Application.UseCases.CvParser.Ports;
+using JobMagnet.Infrastructure.ExternalServices.CvParsers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +11,7 @@ public static class InfrastructureExtensions
         IConfiguration configuration)
     {
         return services
+            .AddTransient<IRawCvParser, GeminiCvParser>()
             .AddPersistence()
             .AddGemini(configuration);
     }

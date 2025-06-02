@@ -6,6 +6,7 @@ using GeminiDotNET.ClientModels;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Infrastructure.ExternalServices.CvParsers.Exceptions;
+using JobMagnet.Infrastructure.ExternalServices.Gemini;
 using JobMagnet.Infrastructure.Settings;
 using JobMagnet.Shared.Utils;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,7 @@ using Newtonsoft.Json;
 
 namespace JobMagnet.Infrastructure.ExternalServices.CvParsers;
 
-public class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<GeminiCvParser> logger) : IRawCvParser
+public class GeminiCvParser(IGeminiClient geminiClient, IOptions<GeminiSettings> options, ILogger<GeminiCvParser> logger) : IRawCvParser
 {
     private readonly GeminiSettings _settings = options.Value;
 
@@ -172,7 +173,6 @@ public class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<GeminiCvPa
 
     private async Task<ModelResponse?> CallGeminiServiceAsync(string cvTextContent)
     {
-        var generator = new Generator(_settings.ApiKey!);
         var fullPrompt = BuildPromptForGemini(cvTextContent);
 
         var requestBuilder = new ApiRequestBuilder()
@@ -180,8 +180,7 @@ public class GeminiCvParser(IOptions<GeminiSettings> options, ILogger<GeminiCvPa
             .WithDefaultGenerationConfig(0.5f, 2048);
 
         var request = requestBuilder.Build();
-
-        var response = await generator.GenerateContentAsync(request, ModelVersion.Gemini_20_Flash);
-        return response;
+        var response = await geminiClient.GenerateContentAsync(request, ModelVersion.Gemini_20_Flash);
+        return response.Value;
     }
 }

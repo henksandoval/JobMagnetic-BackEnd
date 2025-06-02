@@ -3,6 +3,7 @@ using System.Text.Json;
 using GeminiDotNET;
 using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Infrastructure.ExternalServices.CvParsers;
+using JobMagnet.Infrastructure.ExternalServices.Gemini;
 using JobMagnet.Infrastructure.Settings;
 using JobMagnet.Shared.Utils;
 using Microsoft.Extensions.Configuration;
@@ -24,8 +25,8 @@ internal static class GeminiExtensions
             .Configure(settings => { settings.FlattenedProfileSchema = LoadAndFlattenProfileSchema(); })
             .ValidateOnStart();
 
-        services.AddSingleton<IRawCvParser, GeminiCvParser>();
-
+        services
+            .AddSingleton<IGeminiClient, GeminiClient>();
 
         return services;
     }

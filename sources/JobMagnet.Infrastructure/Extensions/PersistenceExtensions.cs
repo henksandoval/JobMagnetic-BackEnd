@@ -25,6 +25,7 @@ internal static class PersistenceExtensions
     {
         return services
             .AddTransient<IQueryRepository<ResumeEntity, long>, Repository<ResumeEntity, long>>()
+            .AddTransient<IQueryRepository<ContactTypeEntity, long>, Repository<ContactTypeEntity, long>>()
             .AddTransient<IQueryRepository<TestimonialEntity, long>, Repository<TestimonialEntity, long>>()
             .AddTransient<IQueryRepository<PortfolioGalleryEntity, long>,
                 Repository<PortfolioGalleryEntity, long>>()

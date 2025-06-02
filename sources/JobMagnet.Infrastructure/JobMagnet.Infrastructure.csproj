@@ -31,4 +31,8 @@
         <EmbeddedResource Include="Schemas\profileSchema.json"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services\" />
+    </ItemGroup>
+
 </Project>
