@@ -217,6 +217,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
 
         var entity = _fixture.Create<TestimonialEntity>();
         await commandRepository.CreateAsync(entity);
+        await commandRepository.SaveChangesAsync();
 
         return entity;
     }
@@ -235,6 +236,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
 
         var entity = _fixture.Create<ProfileEntity>();
         await commandRepository.CreateAsync(entity);
+        await commandRepository.SaveChangesAsync();
 
         return entity;
     }

@@ -286,6 +286,7 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         var entity = _fixture.Create<ProfileEntity>();
         await commandRepository.CreateAsync(entity);
+        await commandRepository.SaveChangesAsync();
 
         return entity;
     }
@@ -297,6 +298,7 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         var entity = _fixture.Create<ServiceEntity>();
         await commandRepository.CreateAsync(entity);
+        await commandRepository.SaveChangesAsync();
 
         return entity;
     }

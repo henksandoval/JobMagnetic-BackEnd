@@ -37,6 +37,7 @@ public class TestimonialController(
     {
         var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
+        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetTestimonialByIdAsync), new { id = newRecord.Id }, newRecord);
@@ -52,7 +53,8 @@ public class TestimonialController(
         if (entity is null)
             return Results.NotFound();
 
-        _ = await commandRepository.HardDeleteAsync(entity).ConfigureAwait(false);
+        commandRepository.HardDelete(entity);
+        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
 
         return Results.NoContent();
     }
@@ -70,7 +72,8 @@ public class TestimonialController(
 
         entity.UpdateEntity(command);
 
-        await commandRepository.UpdateAsync(entity);
+        commandRepository.Update(entity);
+        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
 
         return Results.NoContent();
     }
@@ -92,7 +95,8 @@ public class TestimonialController(
 
         entity.UpdateEntity(updateRequest);
 
-        await commandRepository.UpdateAsync(entity).ConfigureAwait(false);
+        commandRepository.Update(entity);
+        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
 
         return Results.NoContent();
     }

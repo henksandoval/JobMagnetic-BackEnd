@@ -14,19 +14,21 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
     public async Task CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         await _dbSet.AddAsync(entity, cancellationToken).ConfigureAwait(false);
-        await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<bool> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public void Update(TEntity entity)
     {
         _dbSet.Update(entity);
-        return await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false) > 0;
     }
 
-    public async Task<bool?> HardDeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public void HardDelete(TEntity entity)
     {
         _dbSet.Remove(entity);
-        return await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false) > 0;
+    }
+
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<TEntity?> GetByIdAsync(TKey id)

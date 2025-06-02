@@ -216,6 +216,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         var entity = _fixture.Create<ProfileEntity>();
         await commandRepository.CreateAsync(entity);
+        await commandRepository.SaveChangesAsync();
 
         return entity;
     }
@@ -233,6 +234,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         var entity = _fixture.Create<ResumeEntity>();
         await commandRepository.CreateAsync(entity);
+        await commandRepository.SaveChangesAsync();
 
         return entity;
     }

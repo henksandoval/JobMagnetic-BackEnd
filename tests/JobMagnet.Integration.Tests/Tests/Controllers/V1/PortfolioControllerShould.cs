@@ -231,6 +231,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
 
         var entity = new ProfileEntityBuilder(_fixture).WithPortfolio().Build();
         await commandRepository.CreateAsync(entity);
+        await commandRepository.SaveChangesAsync();
 
         return entity;
     }
@@ -248,6 +249,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
 
         var entity = _fixture.Create<PortfolioGalleryEntity>();
         await commandRepository.CreateAsync(entity);
+        await commandRepository.SaveChangesAsync();
 
         return entity;
     }

@@ -285,6 +285,7 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         var entity = _fixture.Create<ProfileEntity>();
         await commandRepository.CreateAsync(entity);
+        await commandRepository.SaveChangesAsync();
 
         return entity;
     }
@@ -296,6 +297,7 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         var entity = _fixture.Create<SkillEntity>();
         await commandRepository.CreateAsync(entity);
+        await commandRepository.SaveChangesAsync();
 
         return entity;
     }

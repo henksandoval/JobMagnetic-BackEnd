@@ -2,12 +2,9 @@ using JobMagnet.Domain.Core.Entities;
 
 namespace JobMagnet.Domain.Ports.Repositories.Base;
 
-public interface IUnitOfWork : IAsyncDisposable
+public interface IUnitOfWork
 {
-    Task BeginTransactionAsync(CancellationToken cancellationToken = default);
-    Task CommitTransactionAsync(CancellationToken cancellationToken = default);
-    Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task ExecuteOperationInTransactionAsync(Func<Task> operation, CancellationToken cancellationToken = default);
 
     ICommandRepository<ProfileEntity> ProfileRepository { get; }
     ICommandRepository<ResumeEntity> ResumeRepository { get; }

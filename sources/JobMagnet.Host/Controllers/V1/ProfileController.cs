@@ -29,6 +29,7 @@ public class ProfileController(
     {
         var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity);
+        await commandRepository.SaveChangesAsync();
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetProfileByIdAsync), new { id = newRecord.Id }, newRecord);
@@ -77,7 +78,8 @@ public class ProfileController(
 
         entity.UpdateEntity(command);
 
-        await commandRepository.UpdateAsync(entity);
+        commandRepository.Update(entity);
+        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
 
         return Results.NoContent();
     }

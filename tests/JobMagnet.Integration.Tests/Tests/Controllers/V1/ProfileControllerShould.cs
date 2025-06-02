@@ -223,6 +223,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
             .Build();
 
         await commandRepository.CreateAsync(entity);
+        await commandRepository.SaveChangesAsync();
 
         return entity;
     }

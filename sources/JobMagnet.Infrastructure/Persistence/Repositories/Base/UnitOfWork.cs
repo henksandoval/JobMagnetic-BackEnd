@@ -1,7 +1,7 @@
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Infrastructure.Persistence.Context;
-using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace JobMagnet.Infrastructure.Persistence.Repositories.Base;
@@ -9,7 +9,7 @@ namespace JobMagnet.Infrastructure.Persistence.Repositories.Base;
 public class UnitOfWork(JobMagnetDbContext dbContext, ILogger<UnitOfWork> logger) : IUnitOfWork
 {
     private readonly JobMagnetDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-    private IDbContextTransaction? _currentTransaction;
+    private readonly ILogger<UnitOfWork> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     private ICommandRepository<ProfileEntity>? _profileRepository;
     private ICommandRepository<ResumeEntity>? _resumeRepository;
@@ -37,58 +37,32 @@ public class UnitOfWork(JobMagnetDbContext dbContext, ILogger<UnitOfWork> logger
     public ICommandRepository<TestimonialEntity> TestimonialRepository =>
         _testimonialRepository ??= new Repository<TestimonialEntity, long>(_dbContext);
 
-    public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
+    public async Task ExecuteOperationInTransactionAsync(Func<Task> operation, CancellationToken cancellationToken = default)
     {
-        if (_currentTransaction != null)
-        {
-            return;
-        }
-        _currentTransaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-    }
+        var strategy = _dbContext.Database.CreateExecutionStrategy();
 
-    public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
-    {
-        try
+        await strategy.ExecuteAsync(async () =>
         {
-            if (_currentTransaction == null)
-                throw new InvalidOperationException("Transaction has not been started.");
+            await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+            _logger.LogInformation("Transaction started with ID: {TransactionId}", transaction.TransactionId);
 
-            await SaveChangesAsync(cancellationToken);
-            await _currentTransaction.CommitAsync(cancellationToken);
-        }
-        catch
-        {
-            await RollbackTransactionAsync(cancellationToken);
-            throw;
-        }
-    }
-
-    public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            if (_currentTransaction != null)
+            try
             {
-                await _currentTransaction.RollbackAsync(cancellationToken);
+                await operation();
+
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                _logger.LogInformation("Changes saved successfully within transaction {TransactionId}.", transaction.TransactionId);
+
+                await transaction.CommitAsync(cancellationToken);
+                _logger.LogInformation("Transaction {TransactionId} committed successfully.", transaction.TransactionId);
             }
-        }
-        catch
-        {
-            logger.LogCritical("There was an error while rolling back the transaction.");
-        }
-    }
-
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        return await _dbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_currentTransaction != null)
-        {
-            await _currentTransaction.DisposeAsync();
-            _currentTransaction = null;
-        }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred during transactional operation for transaction {TransactionId}. Rolling back.", transaction.TransactionId);
+                await transaction.RollbackAsync(cancellationToken);
+                _logger.LogInformation("Transaction {TransactionId} rolled back.", transaction.TransactionId);
+                throw;
+            }
+        });
     }
 }

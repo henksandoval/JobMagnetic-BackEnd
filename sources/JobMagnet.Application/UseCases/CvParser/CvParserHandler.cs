@@ -45,25 +45,15 @@ public class CvParserHandler(
 
     private async Task PersistProfileAsync(ProfileEntity profileEntity, CancellationToken cancellationToken)
     {
-        try
+        await _unitOfWork.ExecuteOperationInTransactionAsync(async () =>
         {
-            await _unitOfWork.BeginTransactionAsync(cancellationToken);
-
-            SetAuditingFields(profileEntity);
-
             if (profileEntity.Resume?.ContactInfo is { Count: > 0 })
             {
-                await ResolveContactTypesAsync(profileEntity.Resume.ContactInfo, cancellationToken);
+                await ResolveContactTypesAsync(profileEntity.Resume.ContactInfo, cancellationToken).ConfigureAwait(false);
             }
 
-            await _unitOfWork.ProfileRepository.CreateAsync(profileEntity, cancellationToken);
-            await _unitOfWork.CommitTransactionAsync(cancellationToken);
-        }
-        catch (Exception)
-        {
-            await _unitOfWork.RollbackTransactionAsync(cancellationToken);
-            throw;
-        }
+            await _unitOfWork.ProfileRepository.CreateAsync(profileEntity, cancellationToken).ConfigureAwait(false);
+        }, cancellationToken);
     }
 
     private void SetAuditingFields(ProfileEntity profile)
@@ -90,7 +80,10 @@ public class CvParserHandler(
             .FindAsync(type => contactTypesFromDto.Contains(type.Name), cancellationToken)
             .ConfigureAwait(false);
 
-        var existingContactTypeNamesDictionary = existingContactTypes.ToDictionary(type => type.Name, name => name);
+        var existingContactTypeNamesDictionary = existingContactTypes.ToDictionary(
+            contactType => contactType.Name,
+            contactType => contactType,
+            StringComparer.OrdinalIgnoreCase);
 
         foreach (var info in contactInfo)
         {

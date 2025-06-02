@@ -23,6 +23,7 @@ public class ServiceController(
     {
         var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity).ConfigureAwait(false);
+        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetServiceByIdAsync), new { id = newRecord.Id }, newRecord);
@@ -55,7 +56,8 @@ public class ServiceController(
         if (entity is null)
             return Results.NotFound();
 
-        _ = await commandRepository.HardDeleteAsync(entity).ConfigureAwait(false);
+        commandRepository.HardDelete(entity);
+        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
 
         return Results.NoContent();
     }
@@ -78,7 +80,8 @@ public class ServiceController(
 
         entity.UpdateEntity(updateRequest);
 
-        await commandRepository.UpdateAsync(entity).ConfigureAwait(false);
+        commandRepository.Update(entity);
+        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
 
         return Results.NoContent();
     }

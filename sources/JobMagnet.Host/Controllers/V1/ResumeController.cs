@@ -22,6 +22,7 @@ public class ResumeController(
     {
         var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity);
+        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetResumeByIdAsync), new { id = newRecord.Id }, newRecord);
@@ -55,7 +56,8 @@ public class ResumeController(
 
         entity.UpdateEntity(command);
 
-        await commandRepository.UpdateAsync(entity);
+        commandRepository.Update(entity);
+        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
 
         return Results.NoContent();
     }
@@ -70,7 +72,8 @@ public class ResumeController(
         if (entity is null)
             return Results.NotFound();
 
-        _ = await commandRepository.HardDeleteAsync(entity).ConfigureAwait(false);
+        commandRepository.HardDelete(entity);
+        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
 
         return Results.NoContent();
     }
@@ -92,7 +95,8 @@ public class ResumeController(
 
         entity.UpdateEntity(updateRequest);
 
-        await commandRepository.UpdateAsync(entity).ConfigureAwait(false);
+        commandRepository.Update(entity);
+        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
 
         return Results.NoContent();
     }
