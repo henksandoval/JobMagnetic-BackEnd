@@ -24,7 +24,10 @@ public static class ProfileParseDtoMapper
             .Map(dest => dest.Testimonials, src => MapTestimonials(src))
             .Map(dest => dest.PortfolioGallery, src => MapPortfolio(src));
 
-        TypeAdapterConfig<ResumeParseDto, ResumeEntity>.NewConfig();
+        TypeAdapterConfig<ResumeParseDto, ResumeEntity>
+            .NewConfig()
+            .Map(dest => dest.About, src => src.About ?? string.Empty)
+            .Map(dest => dest.Overview, src => src.Overview ?? string.Empty);
 
         TypeAdapterConfig<ContactInfoParseDto, ContactInfoEntity>.NewConfig()
             .Map(dest => dest.ContactType, src => new ContactTypeEntity
@@ -36,21 +39,34 @@ public static class ProfileParseDtoMapper
         TypeAdapterConfig<SkillParseDto, SkillEntity>.NewConfig();
 
         TypeAdapterConfig<SkillDetailParseDto, SkillItemEntity>.NewConfig()
-            .Map(dest => dest.ProficiencyLevel, src => src.Level);
+            .Map(dest => dest.ProficiencyLevel, src => src.Level)
+            .Map(dest => dest.IconUrl, src => string.Empty)
+            .Map(dest => dest.Category, src => string.Empty)
+            .Map(dest => dest.Rank, src => 0);
 
-        TypeAdapterConfig<ServiceParseDto, ServiceEntity>.NewConfig();
+        TypeAdapterConfig<ServiceParseDto, ServiceEntity>
+            .NewConfig()
+            .Map(dest => dest.Overview, src => src.Overview ?? string.Empty);
 
         TypeAdapterConfig<GalleryItemParseDto, ServiceGalleryItemEntity>.NewConfig();
 
-        TypeAdapterConfig<SummaryParseDto, SummaryEntity>.NewConfig();
+        TypeAdapterConfig<SummaryParseDto, SummaryEntity>
+            .NewConfig()
+            .Map(dest => dest.Introduction, src => src.Introduction ?? string.Empty);
 
         TypeAdapterConfig<EducationParseDto, EducationEntity>.NewConfig()
             .Map(dest => dest.StartDate, src => ToDateTimeOrDefault(src.StartDate))
-            .Map(dest => dest.EndDate, src => ToNullableDateTime(src.EndDate));
+            .Map(dest => dest.EndDate, src => ToNullableDateTime(src.EndDate))
+            .Map(dest => dest.Description, src => src.Description ?? string.Empty)
+            .Map(dest => dest.InstitutionName, src => src.InstitutionName ?? string.Empty)
+            .Map(dest => dest.InstitutionLocation, src => src.InstitutionLocation ?? string.Empty);
 
         TypeAdapterConfig<WorkExperienceParseDto, WorkExperienceEntity>.NewConfig()
             .Map(dest => dest.StartDate, src => ToDateTimeOrDefault(src.StartDate))
-            .Map(dest => dest.EndDate, src => ToNullableDateTime(src.EndDate));
+            .Map(dest => dest.EndDate, src => ToNullableDateTime(src.EndDate))
+            .Map(dest => dest.Description, src => src.Description ?? string.Empty)
+            .Map(dest => dest.CompanyName, src => src.CompanyName ?? string.Empty)
+            .Map(dest => dest.CompanyLocation, src => src.CompanyLocation ?? string.Empty);
 
         TypeAdapterConfig<TalentParseDto, TalentEntity>.NewConfig();
 
