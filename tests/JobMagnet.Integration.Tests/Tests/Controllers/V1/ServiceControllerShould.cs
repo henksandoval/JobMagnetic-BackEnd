@@ -120,7 +120,7 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var queryItemsRepository =
             scope.ServiceProvider.GetRequiredService<IQueryRepository<ServiceGalleryItemEntity, long>>();
         var serviceEntity = await queryServiceRepository.GetByIdAsync(entity.Id);
-        var entityItems = await queryItemsRepository.FindAsync(x => x.ServiceId == entity.Id);
+        var entityItems = await queryItemsRepository.FindAsync(x => x.ServiceId == entity.Id, CancellationToken.None);
         serviceEntity.ShouldBeNull();
         entityItems.ShouldBeEmpty();
     }

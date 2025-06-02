@@ -40,9 +40,9 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
         return await _dbSet.ToListAsync().ConfigureAwait(false);
     }
 
-    public async Task<IReadOnlyCollection<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+    public async Task<IReadOnlyCollection<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
     {
-        return await _dbSet.Where(predicate).ToListAsync().ConfigureAwait(false);
+        return await _dbSet.Where(predicate).ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
