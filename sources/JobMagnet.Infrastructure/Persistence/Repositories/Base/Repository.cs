@@ -16,14 +16,16 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
         await _dbSet.AddAsync(entity, cancellationToken).ConfigureAwait(false);
     }
 
-    public void Update(TEntity entity)
+    public ICommandRepository<TEntity> Update(TEntity entity)
     {
         _dbSet.Update(entity);
+        return this;
     }
 
-    public void HardDelete(TEntity entity)
+    public ICommandRepository<TEntity> HardDelete(TEntity entity)
     {
         _dbSet.Remove(entity);
+        return this;
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

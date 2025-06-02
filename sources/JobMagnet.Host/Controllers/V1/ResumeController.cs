@@ -56,8 +56,10 @@ public class ResumeController(
 
         entity.UpdateEntity(command);
 
-        commandRepository.Update(entity);
-        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
+        await commandRepository
+            .Update(entity)
+            .SaveChangesAsync()
+            .ConfigureAwait(false);
 
         return Results.NoContent();
     }
@@ -95,8 +97,10 @@ public class ResumeController(
 
         entity.UpdateEntity(updateRequest);
 
-        commandRepository.Update(entity);
-        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
+        await commandRepository
+            .Update(entity)
+            .SaveChangesAsync()
+            .ConfigureAwait(false);
 
         return Results.NoContent();
     }

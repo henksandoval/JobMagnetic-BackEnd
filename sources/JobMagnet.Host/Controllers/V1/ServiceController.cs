@@ -80,8 +80,10 @@ public class ServiceController(
 
         entity.UpdateEntity(updateRequest);
 
-        commandRepository.Update(entity);
-        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
+        await commandRepository
+            .Update(entity)
+            .SaveChangesAsync()
+            .ConfigureAwait(false);
 
         return Results.NoContent();
     }
