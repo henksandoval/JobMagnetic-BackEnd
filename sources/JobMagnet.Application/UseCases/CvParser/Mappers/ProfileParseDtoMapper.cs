@@ -27,7 +27,8 @@ public static class ProfileParseDtoMapper
         TypeAdapterConfig<ResumeParseDto, ResumeEntity>
             .NewConfig()
             .Map(dest => dest.About, src => src.About ?? string.Empty)
-            .Map(dest => dest.Overview, src => src.Overview ?? string.Empty);
+            .Map(dest => dest.Overview, src => src.Overview ?? string.Empty)
+            .Map(dest => dest.Summary, src => src.Summary ?? string.Empty);
 
         TypeAdapterConfig<ContactInfoParseDto, ContactInfoEntity>.NewConfig()
             .Map(dest => dest.ContactType, src => new ContactTypeEntity
