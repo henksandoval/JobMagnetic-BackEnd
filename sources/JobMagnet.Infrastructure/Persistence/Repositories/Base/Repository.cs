@@ -2,7 +2,6 @@
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace JobMagnet.Infrastructure.Persistence.Repositories.Base;
 
@@ -11,31 +10,23 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
     where TEntity : class
 {
     private readonly DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
-    private bool _isTransactional;
 
     public async Task CreateAsync(TEntity entity)
     {
         await _dbSet.AddAsync(entity).ConfigureAwait(false);
-        if (!_isTransactional)
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        await dbContext.SaveChangesAsync().ConfigureAwait(false);
     }
 
     public async Task<bool> UpdateAsync(TEntity entity)
     {
         _dbSet.Update(entity);
-        if (!_isTransactional)
-            return await dbContext.SaveChangesAsync().ConfigureAwait(false) > 0;
-
-        return false;
+        return await dbContext.SaveChangesAsync().ConfigureAwait(false) > 0;
     }
 
     public async Task<bool?> HardDeleteAsync(TEntity entity)
     {
         _dbSet.Remove(entity);
-        if (!_isTransactional)
-            return await dbContext.SaveChangesAsync().ConfigureAwait(false) > 0;
-
-        return false;
+        return await dbContext.SaveChangesAsync().ConfigureAwait(false) > 0;
     }
 
     public async Task<TEntity?> GetByIdAsync(TKey id)
@@ -67,28 +58,5 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
     public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return await _dbSet.AnyAsync(predicate).ConfigureAwait(false);
-    }
-
-    public async Task<IDbContextTransaction> BeginTransactionAsync()
-    {
-        _isTransactional = true;
-        return await dbContext.Database.BeginTransactionAsync().ConfigureAwait(false);
-    }
-
-    public async Task CommitAsync(IDbContextTransaction transaction)
-    {
-        try
-        {
-            if (_isTransactional) await transaction.CommitAsync().ConfigureAwait(false);
-        }
-        catch
-        {
-            await transaction.RollbackAsync().ConfigureAwait(false);
-            throw;
-        }
-        finally
-        {
-            await transaction.DisposeAsync().ConfigureAwait(false);
-        }
     }
 }
