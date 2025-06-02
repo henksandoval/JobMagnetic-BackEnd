@@ -45,8 +45,8 @@ public class ProfileController(
     public async Task<IResult> CreateAsync(IFormFile cvFile, CancellationToken cancellationToken)
     {
         var command = new CvParserCommand(cvFile.OpenReadStream(), cvFile.FileName, cvFile.ContentType);
-        await cvParser.ParseAsync(command, cancellationToken).ConfigureAwait(false);
-        return Results.Ok();
+        var userEmail = await cvParser.ParseAsync(command, cancellationToken).ConfigureAwait(false);
+        return Results.Ok(userEmail);
     }
 
     [HttpGet("{id:long}", Name = nameof(GetProfileByIdAsync))]

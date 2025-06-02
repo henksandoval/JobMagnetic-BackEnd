@@ -9,7 +9,7 @@ namespace JobMagnet.Application.UseCases.CvParser;
 
 public interface ICvParserHandler
 {
-    Task ParseAsync(CvParserCommand command, CancellationToken cancellationToken = default);
+    Task<string> ParseAsync(CvParserCommand command, CancellationToken cancellationToken = default);
 }
 
 public class CvParserHandler(
@@ -22,11 +22,13 @@ public class CvParserHandler(
     private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     private readonly IQueryRepository<ContactTypeEntity, long> _contactTypeQueryRepository = contactTypeQueryRepository ?? throw new ArgumentNullException(nameof(contactTypeQueryRepository));
 
-    public async Task ParseAsync(CvParserCommand command, CancellationToken cancellationToken = default)
+    public async Task<string> ParseAsync(CvParserCommand command, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(command);
         var profileEntity = await ParseCvToProfileEntity(command);
         await PersistProfileAsync(profileEntity, cancellationToken);
+        var userEmail = GetUserEmail(profileEntity);
+        return userEmail;
     }
 
     private async Task<ProfileEntity> ParseCvToProfileEntity(CvParserCommand command)
@@ -54,6 +56,15 @@ public class CvParserHandler(
 
             await _unitOfWork.ProfileRepository.CreateAsync(profileEntity, cancellationToken).ConfigureAwait(false);
         }, cancellationToken);
+    }
+
+    private static string GetUserEmail(ProfileEntity profileEntity)
+    {
+        var userEmail = profileEntity.Resume?.ContactInfo?
+                            .FirstOrDefault(x => x.ContactType.Name.Equals("Email", StringComparison.OrdinalIgnoreCase))?
+                            .Value
+                        ?? string.Empty;
+        return userEmail;
     }
 
     private void SetAuditingFields(ProfileEntity profile)
