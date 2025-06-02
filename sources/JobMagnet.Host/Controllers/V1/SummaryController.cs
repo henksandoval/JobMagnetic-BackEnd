@@ -57,8 +57,10 @@ public class SummaryController(
         if (entity is null)
             return Results.NotFound();
 
-        commandRepository.HardDelete(entity);
-        await commandRepository.SaveChangesAsync().ConfigureAwait(false);
+        await commandRepository
+            .HardDelete(entity)
+            .SaveChangesAsync()
+            .ConfigureAwait(false);
 
         return Results.NoContent();
     }
