@@ -11,12 +11,17 @@ public interface IProfileIdentifierNameGenerator
 
 public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
 {
+    private static readonly char[] Delimiters = [' ', '-', '_'];
+
     public string GenerateIdentifierName(ProfileEntity profileEntity)
     {
         ArgumentNullException.ThrowIfNull(profileEntity, nameof(profileEntity));
 
         var rawFirstName = profileEntity.FirstName ?? string.Empty;
         var rawLastName = profileEntity.LastName ?? string.Empty;
+
+        rawFirstName = rawFirstName.Split(Delimiters)[0];
+        rawLastName = rawLastName.Split(Delimiters)[0];
 
         var uniqueSuffix = Guid.NewGuid().ToString("N")[..6];
         var maxBaseLength = 20 - (uniqueSuffix.Length + 1);

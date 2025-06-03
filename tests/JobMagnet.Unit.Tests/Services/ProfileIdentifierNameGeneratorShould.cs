@@ -90,7 +90,7 @@ public partial class ProfileIdentifierNameGeneratorShould
 
         // Then
         identifierName.Length.Should().BeLessThanOrEqualTo(20);
-        namePart.Should().HaveLength(20 - 6 - 1); // 20 total - 6 for suffix - 1 for dash
+        namePart.Should().HaveLength(20 - 6 - 1);
         namePart.Should().Be("constantinopo");
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
         namePart.Should().NotContain("--").And.NotStartWith("-").And.NotEndWith("-");
@@ -163,13 +163,14 @@ public partial class ProfileIdentifierNameGeneratorShould
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
     }
 
-    [Fact]
-    public void GenerateIdentifierGivenNameContainingMultipleSpacesAndUnderscores()
+    [Theory]
+    [InlineData("Ana-Sofia", "Gutierrez_Vega", "ana-gutierrez")]
+    public void GenerateIdentifierGivenNameContainingMultipleSpacesAndUnderscores(string firstName, string lastName, string expectedNamePart)
     {
         // Given
         var profile = new ProfileEntityBuilder(_fixture)
-            .WithName("Ana_Sofia")
-            .WithLastName("De La   Vega")
+            .WithName(firstName)
+            .WithLastName(lastName)
             .Build();
 
         // When
@@ -178,8 +179,7 @@ public partial class ProfileIdentifierNameGeneratorShould
 
         // Then
         identifierName.Length.Should().BeLessThanOrEqualTo(20);
-        namePart.Should().Be("ana-vega");
-        "ana-vega".Should().StartWith(namePart);
+        namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
     }
 
@@ -210,20 +210,14 @@ public partial class ProfileIdentifierNameGeneratorShould
             return (string.Empty, string.Empty);
         }
 
-        var match = RemoveSpecialCharacters().Match(identifier);
+        var match = MyRegex01().Match(identifier);
         if (match is { Success: true, Groups.Count: 3 })
         {
             return (match.Groups[1].Value, match.Groups[2].Value);
         }
 
-        // Casos especiales (ej. "id-sufijo" o solo sufijo si el nombre se vacía o es muy corto)
-        // Si el identificador es "id-xxxxxx"
-        if (identifier.StartsWith("id-") && identifier.Length == "id-".Length + 6)
-        {
-            return ("id", identifier.Substring(3));
-        }
         // Si el identificador es solo el sufijo (porque maxNamePartLength < 1)
-        if (identifier.Length <= 6 && Regex.IsMatch(identifier, @"^[a-z0-9]+$"))
+        if (identifier.Length <= 6 && MyRegex02().IsMatch(identifier))
         {
             return (string.Empty, identifier);
         }
@@ -233,11 +227,14 @@ public partial class ProfileIdentifierNameGeneratorShould
         // podría necesitar una aserción directa sobre el string completo.
         var lastDash = identifier.LastIndexOf('-');
         if (lastDash > 0 && identifier.Length - 1 - lastDash == 6) // heurística
-            return (identifier.Substring(0, lastDash), identifier.Substring(lastDash + 1));
+            return (identifier[..lastDash], identifier[(lastDash + 1)..]);
 
         return (identifier, string.Empty); // No se pudo determinar un sufijo claro de 6 dígitos
     }
 
     [GeneratedRegex(@"^(.*)-([a-z0-9]{6})$")]
-    private static partial Regex RemoveSpecialCharacters();
+    private static partial Regex MyRegex01();
+
+    [GeneratedRegex(@"^[a-z0-9]+$")]
+    private static partial Regex MyRegex02();
 }
