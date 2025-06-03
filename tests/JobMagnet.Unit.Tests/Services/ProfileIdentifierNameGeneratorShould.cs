@@ -1,15 +1,16 @@
 using System.Text.RegularExpressions;
 using AutoFixture;
 using FluentAssertions;
-using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 
-namespace JobMagnet.Unit.Tests.Entities;
+namespace JobMagnet.Unit.Tests.Services;
 
-public partial class PublicProfileIdentifierShould
+public partial class ProfileIdentifierNameGeneratorShould
 {
     private readonly IFixture _fixture = FixtureBuilder.Build();
+    private readonly ProfileIdentifierNameGenerator _subject = new ();
 
     [Fact]
     public void GenerateCorrectIdentifierGivenNormalFirstAndLastName()
@@ -21,14 +22,14 @@ public partial class PublicProfileIdentifierShould
             .Build();
 
         // When
-        var publicProfile = new PublicProfileIdentifierEntity(profile);
-        var (namePart, suffix) = ExtractIdentifierParts(publicProfile.Identifier);
+        var identifierName = _subject.GenerateIdentifierName(profile);
+        var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        publicProfile.Identifier.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Length.Should().BeLessThanOrEqualTo(20);
         namePart.Should().Be("juan-sosa");
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
-        publicProfile.Identifier.Should().MatchRegex("^[a-z0-9-]+$");
+        identifierName.Should().MatchRegex("^[a-z0-9-]+$");
         namePart.Should().NotContain("--").And.NotStartWith("-").And.NotEndWith("-");
     }
 
@@ -42,15 +43,15 @@ public partial class PublicProfileIdentifierShould
             .Build();
 
         // When
-        var publicProfile = new PublicProfileIdentifierEntity(profile);
-        var (namePart, suffix) = ExtractIdentifierParts(publicProfile.Identifier);
+        var identifierName = _subject.GenerateIdentifierName(profile);
+        var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        publicProfile.Identifier.Should().NotBeNullOrEmpty();
-        publicProfile.Identifier.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Should().NotBeNullOrEmpty();
+        identifierName.Length.Should().BeLessThanOrEqualTo(20);
         namePart.Should().Be("maria-niguez");
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
-        publicProfile.Identifier.Should().MatchRegex("^[a-z0-9-]+$");
+        identifierName.Should().MatchRegex("^[a-z0-9-]+$");
     }
 
     [Fact]
@@ -63,15 +64,15 @@ public partial class PublicProfileIdentifierShould
             .Build();
 
         // When
-        var publicProfile = new PublicProfileIdentifierEntity(profile);
-        var (namePart, suffix) = ExtractIdentifierParts(publicProfile.Identifier);
+        var identifierName = _subject.GenerateIdentifierName(profile);
+        var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        publicProfile.Identifier.Should().NotBeNullOrEmpty();
-        publicProfile.Identifier.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Should().NotBeNullOrEmpty();
+        identifierName.Length.Should().BeLessThanOrEqualTo(20);
         namePart.Should().Be("jose-lopez");
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
-        publicProfile.Identifier.Should().MatchRegex("^[a-z0-9-]+$");
+        identifierName.Should().MatchRegex("^[a-z0-9-]+$");
     }
 
     [Fact]
@@ -84,11 +85,11 @@ public partial class PublicProfileIdentifierShould
             .Build();
 
         // When
-        var publicProfile = new PublicProfileIdentifierEntity(profile);
-        var (namePart, suffix) = ExtractIdentifierParts(publicProfile.Identifier);
+        var identifierName = _subject.GenerateIdentifierName(profile);
+        var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        publicProfile.Identifier.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Length.Should().BeLessThanOrEqualTo(20);
         namePart.Should().HaveLength(20 - 6 - 1); // 20 total - 6 for suffix - 1 for dash
         namePart.Should().Be("constantinopo");
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
@@ -108,11 +109,11 @@ public partial class PublicProfileIdentifierShould
         profile.LastName = lastName;
 
         // When
-        var publicProfile = new PublicProfileIdentifierEntity(profile);
-        var (namePart, suffix) = ExtractIdentifierParts(publicProfile.Identifier);
+        var identifierName = _subject.GenerateIdentifierName(profile);
+        var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        publicProfile.Identifier.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Length.Should().BeLessThanOrEqualTo(20);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
     }
@@ -131,11 +132,11 @@ public partial class PublicProfileIdentifierShould
         profile.LastName = lastName;
 
         // When
-        var publicProfile = new PublicProfileIdentifierEntity(profile);
-        var (namePart, suffix) = ExtractIdentifierParts(publicProfile.Identifier);
+        var identifierName = _subject.GenerateIdentifierName(profile);
+        var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        publicProfile.Identifier.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Length.Should().BeLessThanOrEqualTo(20);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
     }
@@ -153,11 +154,11 @@ public partial class PublicProfileIdentifierShould
         profile.LastName = lastName;
 
         // When
-        var publicProfile = new PublicProfileIdentifierEntity(profile);
-        var (namePart, suffix) = ExtractIdentifierParts(publicProfile.Identifier);
+        var identifierName = _subject.GenerateIdentifierName(profile);
+        var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        publicProfile.Identifier.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Length.Should().BeLessThanOrEqualTo(20);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
     }
@@ -172,11 +173,11 @@ public partial class PublicProfileIdentifierShould
             .Build();
 
         // When
-        var publicProfile = new PublicProfileIdentifierEntity(profile);
-        var (namePart, suffix) = ExtractIdentifierParts(publicProfile.Identifier);
+        var identifierName = _subject.GenerateIdentifierName(profile);
+        var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        publicProfile.Identifier.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Length.Should().BeLessThanOrEqualTo(20);
         namePart.Should().Be("ana-vega");
         "ana-vega".Should().StartWith(namePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
@@ -192,14 +193,14 @@ public partial class PublicProfileIdentifierShould
             .Build();
 
         // When
-        var publicProfile = new PublicProfileIdentifierEntity(profile);
-        var (namePart, suffix) = ExtractIdentifierParts(publicProfile.Identifier);
+        var identifierName = _subject.GenerateIdentifierName(profile);
+        var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        publicProfile.Identifier.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Length.Should().BeLessThanOrEqualTo(20);
         namePart.Should().Be("profile");
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
-        publicProfile.Identifier.Should().StartWith("profile-");
+        identifierName.Should().StartWith("profile-");
     }
 
     private static (string NamePart, string Suffix) ExtractIdentifierParts(string identifier)

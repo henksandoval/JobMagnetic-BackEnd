@@ -5,6 +5,7 @@ using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Domain.Ports.Repositories.Base;
+using JobMagnet.Domain.Services;
 
 namespace JobMagnet.Application.UseCases.CvParser;
 
@@ -16,6 +17,7 @@ public interface ICvParserHandler
 public class CvParserHandler(
     IRawCvParser cvParser,
     IUnitOfWork unitOfWork,
+    IProfileIdentifierNameGenerator identifierNameGenerator,
     IQueryRepository<ContactTypeEntity, long> contactTypeQueryRepository)
     : ICvParserHandler
 {
@@ -59,7 +61,7 @@ public class CvParserHandler(
                 .CreateAsync(profileEntity, cancellationToken)
                 .ConfigureAwait(false);
 
-            var publicIdentifierEntity = new PublicProfileIdentifierEntity(profileEntity);
+            var publicIdentifierEntity = new PublicProfileIdentifierEntity(profileEntity, identifierNameGenerator);
 
             await _unitOfWork.PublicProfileIdentifierRepository
                 .CreateAsync(publicIdentifierEntity, cancellationToken)
