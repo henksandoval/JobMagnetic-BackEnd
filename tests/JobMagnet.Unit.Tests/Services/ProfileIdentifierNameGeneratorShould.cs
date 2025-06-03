@@ -194,14 +194,14 @@ public partial class ProfileIdentifierNameGeneratorShould
             return (string.Empty, string.Empty);
         }
 
-        var match = MyRegex01().Match(identifier);
+        var match = PatternWithSixCharAlphanumericSuffixRegex().Match(identifier);
         if (match is { Success: true, Groups.Count: 3 })
         {
             return (match.Groups[1].Value, match.Groups[2].Value);
         }
 
         // Si el identificador es solo el sufijo (porque maxNamePartLength < 1)
-        if (identifier.Length <= 6 && MyRegex02().IsMatch(identifier))
+        if (identifier.Length <= 6 && LowercaseAlphanumericStringRegex().IsMatch(identifier))
         {
             return (string.Empty, identifier);
         }
@@ -216,9 +216,9 @@ public partial class ProfileIdentifierNameGeneratorShould
         return (identifier, string.Empty); // No se pudo determinar un sufijo claro de 6 dígitos
     }
 
-    [GeneratedRegex(@"^(.*)-([a-z0-9]{6})$")]
-    private static partial Regex MyRegex01();
+    [GeneratedRegex("^(.*)-([a-z0-9]{6})$")]
+    private static partial Regex PatternWithSixCharAlphanumericSuffixRegex();
 
-    [GeneratedRegex(@"^[a-z0-9]+$")]
-    private static partial Regex MyRegex02();
+    [GeneratedRegex("^[a-z0-9]+$")]
+    private static partial Regex LowercaseAlphanumericStringRegex();
 }

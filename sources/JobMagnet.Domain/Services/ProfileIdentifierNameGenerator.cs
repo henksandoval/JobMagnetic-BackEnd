@@ -30,9 +30,6 @@ public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
 
         var selectedNamePart = TruncateAndTrim(combinedName, maxBaseLength);
 
-        if (!string.IsNullOrEmpty(selectedNamePart)) return $"{selectedNamePart}-{uniqueSuffix}";
-
-        selectedNamePart = "profile";
         return $"{selectedNamePart}-{uniqueSuffix}";
     }
 
@@ -72,8 +69,8 @@ public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
         var result = input.ToLowerInvariant();
         result = Regex.Replace(result, @"[\s_]+", "-");
         result = RemoveDiacritics(result);
-        result = Regex.Replace(result, @"[^a-z0-9-]", "");
-        result = Regex.Replace(result, @"-+", "-");
+        result = Regex.Replace(result, "[^a-z0-9-]", "");
+        result = Regex.Replace(result, "-+", "-");
         result = result.Trim('-');
         return result;
     }
@@ -82,13 +79,12 @@ public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
     {
         var normalizedString = text.Normalize(NormalizationForm.FormD);
         var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
-        for (var i = 0; i < normalizedString.Length; i++)
+        foreach (var character in normalizedString)
         {
-            var c = normalizedString[i];
-            var unicodeCategory = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c);
+            var unicodeCategory = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(character);
             if (unicodeCategory != System.Globalization.UnicodeCategory.NonSpacingMark)
             {
-                stringBuilder.Append(c);
+                stringBuilder.Append(character);
             }
         }
 
@@ -98,6 +94,7 @@ public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
     private static string GetFirstSignificantWord(string? word)
     {
         if (string.IsNullOrWhiteSpace(word)) return string.Empty;
+
         return word.Split(Delimiters)
                    .FirstOrDefault(text => !string.IsNullOrEmpty(text) && text.Length > 2)
                ?? string.Empty;
