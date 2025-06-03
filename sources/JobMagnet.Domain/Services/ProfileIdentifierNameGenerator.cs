@@ -21,11 +21,6 @@ public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
         var uniqueSuffix = Guid.NewGuid().ToString("N")[..6];
         var maxBaseLength = 20 - (uniqueSuffix.Length + 1);
 
-        if (maxBaseLength < 1)
-        {
-            return uniqueSuffix[..Math.Min(uniqueSuffix.Length, 20)];
-        }
-
         var selectedNamePart = SelectNamePartSmartly(rawFirstName, rawLastName, maxBaseLength);
 
         if (!string.IsNullOrEmpty(selectedNamePart)) return $"{selectedNamePart}-{uniqueSuffix}";
