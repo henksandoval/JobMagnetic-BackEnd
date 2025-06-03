@@ -83,27 +83,52 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntity Build()
     {
-        IPostprocessComposer<ProfileEntity> composer = fixture.Build<ProfileEntity>();
+        var profile = fixture.Create<ProfileEntity>();
 
         if (_firstName is not null)
         {
-            composer = composer.With(p => p.FirstName, _firstName);
+            profile.FirstName = _firstName;
         }
 
         if (_lastName is not null)
         {
-            composer = composer.With(p => p.LastName, _lastName);
+            profile.LastName = _lastName;
         }
 
-        var profile = composer.Create();
+        if (_resume is not null)
+        {
+            profile.Resume = _resume;
+        }
 
-        profile.Resume = _resume;
-        profile.Talents = _talents;
-        profile.Services = _services;
-        profile.PortfolioGallery = _portfolio;
-        profile.Summary = _summaries;
-        profile.Skill = _skill;
-        profile.Testimonials = _testimonials;
+        if (_services is not null)
+        {
+            profile.Services = _services;
+        }
+
+        if (_summaries is not null)
+        {
+            profile.Summary = _summaries;
+        }
+
+        if (_skill is not null)
+        {
+            profile.Skill = _skill;
+        }
+
+        if (_testimonials.Count > 0)
+        {
+            profile.Testimonials = _testimonials;
+        }
+
+        if (_portfolio.Count > 0)
+        {
+            profile.PortfolioGallery = _portfolio;
+        }
+
+        if (_talents.Count > 0)
+        {
+            profile.Talents = _talents;
+        }
 
         return profile;
     }
