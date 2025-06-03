@@ -9,7 +9,7 @@ public interface IProfileIdentifierNameGenerator
     string GenerateIdentifierName(ProfileEntity profileEntity);
 }
 
-public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
+public partial class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
 {
     private static readonly char[] Delimiters = [' ', '-', '_'];
 
@@ -23,17 +23,17 @@ public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
         rawFirstName = CleanStringForUrl(rawFirstName);
         rawLastName = CleanStringForUrl(rawLastName);
 
-        var combinedName = CombinedName(rawFirstName, rawLastName);
+        var initialSlug = GenerateSlug(rawFirstName, rawLastName);
 
         var uniqueSuffix = Guid.NewGuid().ToString("N")[..6];
-        var maxBaseLength = 20 - (uniqueSuffix.Length + 1);
+        var maxBaseLength = PublicProfileIdentifierEntity.MaxNameLength - (uniqueSuffix.Length + 1);
 
-        var selectedNamePart = TruncateAndTrim(combinedName, maxBaseLength);
+        var selectedNamePart = TruncateAndTrim(initialSlug, maxBaseLength);
 
         return $"{selectedNamePart}-{uniqueSuffix}";
     }
 
-    private static string CombinedName(string rawFirstName, string rawLastName)
+    private static string GenerateSlug(string rawFirstName, string rawLastName)
     {
         var firstNameHasValue = !string.IsNullOrEmpty(rawFirstName);
         var lastNameHasValue = !string.IsNullOrEmpty(rawLastName);
@@ -67,10 +67,10 @@ public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
         }
 
         var result = input.ToLowerInvariant();
-        result = Regex.Replace(result, @"[\s_]+", "-");
+        result = ConsecutiveWhitespaceOrUnderscoresRegex().Replace(result, "-");
         result = RemoveDiacritics(result);
-        result = Regex.Replace(result, "[^a-z0-9-]", "");
-        result = Regex.Replace(result, "-+", "-");
+        result = FindInvalidUrlSlugCharactersRegex().Replace(result, "");
+        result = MultipleDashRegex().Replace(result, "-");
         result = result.Trim('-');
         return result;
     }
@@ -99,4 +99,11 @@ public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
                    .FirstOrDefault(text => !string.IsNullOrEmpty(text) && text.Length > 2)
                ?? string.Empty;
     }
+
+    [GeneratedRegex(@"[\s_]+")]
+    private static partial Regex ConsecutiveWhitespaceOrUnderscoresRegex();
+    [GeneratedRegex("[^a-z0-9-]")]
+    private static partial Regex FindInvalidUrlSlugCharactersRegex();
+    [GeneratedRegex("-+")]
+    private static partial Regex MultipleDashRegex();
 }

@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using AutoFixture;
 using FluentAssertions;
+using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
@@ -29,7 +30,7 @@ public partial class ProfileIdentifierNameGeneratorShould
         var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        identifierName.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
         identifierName.Should().MatchRegex("^[a-z0-9-]+$");
@@ -51,7 +52,7 @@ public partial class ProfileIdentifierNameGeneratorShould
 
         // Then
         identifierName.Should().NotBeNullOrEmpty();
-        identifierName.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
         namePart.Should().Be("maria-niguez");
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
         identifierName.Should().MatchRegex("^[a-z0-9-]+$");
@@ -72,7 +73,7 @@ public partial class ProfileIdentifierNameGeneratorShould
 
         // Then
         identifierName.Should().NotBeNullOrEmpty();
-        identifierName.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
         namePart.Should().Be("jose-lopez");
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
         identifierName.Should().MatchRegex("^[a-z0-9-]+$");
@@ -95,7 +96,7 @@ public partial class ProfileIdentifierNameGeneratorShould
         var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        identifierName.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
     }
@@ -118,7 +119,7 @@ public partial class ProfileIdentifierNameGeneratorShould
         var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        identifierName.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
     }
@@ -140,7 +141,7 @@ public partial class ProfileIdentifierNameGeneratorShould
         var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        identifierName.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
     }
@@ -162,7 +163,7 @@ public partial class ProfileIdentifierNameGeneratorShould
         var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        identifierName.Length.Should().BeLessThanOrEqualTo(20);
+        identifierName.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
     }

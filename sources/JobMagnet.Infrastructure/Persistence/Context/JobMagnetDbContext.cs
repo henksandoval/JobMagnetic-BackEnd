@@ -54,7 +54,7 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
             entity
                 .Property(publicProfile => publicProfile.Identifier)
                 .IsRequired()
-                .HasMaxLength(20);
+                .HasMaxLength(PublicProfileIdentifierEntity.MaxNameLength);
 
             entity
                 .Property(publicProfile => publicProfile.Type)
