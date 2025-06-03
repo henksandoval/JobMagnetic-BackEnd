@@ -10,6 +10,7 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
 {
     public DbSet<ContactTypeEntity> ContactTypes { get; set; }
     public DbSet<ProfileEntity> Profiles { get; set; }
+    public DbSet<PublicProfileIdentifierEntity> PublicProfileIdentifier { get; set; }
     public DbSet<EducationEntity> Educations { get; set; }
     public DbSet<PortfolioGalleryEntity> PortfolioGalleries { get; set; }
     public DbSet<TalentEntity> Talents { get; set; }
@@ -25,8 +26,13 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ProfileEntity>(entity =>
+        {
+            entity
+                .ToTable("Profiles")
+                .HasKey(profile => profile.Id);
+        });
         modelBuilder.Entity<ContactTypeEntity>().ToTable("ContactTypes");
-        modelBuilder.Entity<ProfileEntity>().ToTable("Profiles");
         modelBuilder.Entity<EducationEntity>().ToTable("Educations");
         modelBuilder.Entity<PortfolioGalleryEntity>().ToTable("PorfolioGalleryItems");
         modelBuilder.Entity<TalentEntity>().ToTable("Talents");
@@ -39,6 +45,41 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
         modelBuilder.Entity<SummaryEntity>().ToTable("Summaries");
         modelBuilder.Entity<TestimonialEntity>().ToTable("Testimonials");
         modelBuilder.Entity<WorkExperienceEntity>().ToTable("WorkExperiences");
+
+        modelBuilder.Entity<PublicProfileIdentifierEntity>(entity =>
+        {
+            entity.ToTable("PublicProfileIdentifiers")
+                .HasKey(publicProfile => publicProfile.Id);
+
+            entity
+                .Property(publicProfile => publicProfile.Identifier)
+                .IsRequired()
+                .HasMaxLength(20);
+
+            entity
+                .Property(publicProfile => publicProfile.Type)
+                .IsRequired();
+
+            entity
+                .Property(publicProfile => publicProfile.ProfileId)
+                .IsRequired();
+
+            entity
+                .HasIndex(publicProfile => publicProfile.Identifier)
+                .HasDatabaseName("IX_PublicProfileIdentifier_Identifier")
+                .IsUnique();
+
+            entity.HasIndex(publicProfile => publicProfile.ProfileId)
+                .HasDatabaseName("IX_PublicProfileIdentifier_ProfileId")
+                .IsUnique(false);
+
+            entity
+                .HasOne(publicProfile => publicProfile.ProfileEntity)
+                .WithMany(profile => profile.PublicProfileIdentifiers)
+                .HasForeignKey(publicProfile => publicProfile.ProfileId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+        });
     }
 
     public override int SaveChanges()

@@ -216,7 +216,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
             .WithContactInfo(ContactInfoCount)
             .WithTalents(TalentsCount)
             .WithPortfolio(PortfolioCount)
-            .WithSummaries(SummariesCount)
+            .WithSummaries()
             .WithServices()
             .WithSkills()
             .WithTestimonials(TestimonialsCount)

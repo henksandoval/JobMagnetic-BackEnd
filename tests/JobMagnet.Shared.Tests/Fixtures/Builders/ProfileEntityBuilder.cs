@@ -1,15 +1,18 @@
 ﻿using AutoFixture;
+using AutoFixture.Dsl;
 using JobMagnet.Domain.Core.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
 public class ProfileEntityBuilder(IFixture fixture)
 {
-    private List<PortfolioGalleryEntity> _portfolio = [];
+    private string? _firstName;
+    private string? _lastName;
     private ResumeEntity _resume = null!;
     private ServiceEntity _services = null!;
     private SkillEntity _skill = null!;
     private SummaryEntity _summaries = null!;
+    private List<PortfolioGalleryEntity> _portfolio = [];
     private List<TalentEntity> _talents = [];
     private List<TestimonialEntity> _testimonials = [];
 
@@ -33,6 +36,11 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithContactInfo(int count = 5)
     {
+        if (_resume == null)
+        {
+            throw new InvalidOperationException("Cannot add contact info without a resume. Call WithResume() first.");
+        }
+
         _resume.ContactInfo = fixture.CreateMany<ContactInfoEntity>(count).ToList();
         return this;
     }
@@ -49,7 +57,7 @@ public class ProfileEntityBuilder(IFixture fixture)
         return this;
     }
 
-    public ProfileEntityBuilder WithSummaries(int count = 5)
+    public ProfileEntityBuilder WithSummaries()
     {
         _summaries = fixture.Create<SummaryEntity>();
         return this;
@@ -61,9 +69,33 @@ public class ProfileEntityBuilder(IFixture fixture)
         return this;
     }
 
+    public ProfileEntityBuilder WithName(string? firstName)
+    {
+        _firstName = firstName;
+        return this;
+    }
+
+    public ProfileEntityBuilder WithLastName(string? lastName)
+    {
+        _lastName = lastName;
+        return this;
+    }
+
     public ProfileEntity Build()
     {
-        var profile = fixture.Create<ProfileEntity>();
+        IPostprocessComposer<ProfileEntity> composer = fixture.Build<ProfileEntity>();
+
+        if (_firstName is not null)
+        {
+            composer = composer.With(p => p.FirstName, _firstName);
+        }
+
+        if (_lastName is not null)
+        {
+            composer = composer.With(p => p.LastName, _lastName);
+        }
+
+        var profile = composer.Create();
 
         profile.Resume = _resume;
         profile.Talents = _talents;

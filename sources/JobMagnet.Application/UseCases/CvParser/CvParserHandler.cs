@@ -3,6 +3,7 @@ using JobMagnet.Application.UseCases.CvParser.Commands;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Domain.Ports.Repositories.Base;
 
 namespace JobMagnet.Application.UseCases.CvParser;
@@ -54,7 +55,15 @@ public class CvParserHandler(
                 await ResolveContactTypesAsync(profileEntity.Resume.ContactInfo, cancellationToken).ConfigureAwait(false);
             }
 
-            await _unitOfWork.ProfileRepository.CreateAsync(profileEntity, cancellationToken).ConfigureAwait(false);
+            await _unitOfWork.ProfileRepository
+                .CreateAsync(profileEntity, cancellationToken)
+                .ConfigureAwait(false);
+
+            var publicIdentifierEntity = new PublicProfileIdentifierEntity(profileEntity);
+
+            await _unitOfWork.PublicProfileIdentifierRepository
+                .CreateAsync(publicIdentifierEntity, cancellationToken)
+                .ConfigureAwait(false);
         }, cancellationToken);
     }
 

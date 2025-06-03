@@ -92,6 +92,32 @@ namespace JobMagnet.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PublicProfileIdentifiers",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Identifier = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    ProfileId = table.Column<long>(type: "bigint", nullable: false),
+                    ViewCount = table.Column<long>(type: "bigint", nullable: false),
+                    AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PublicProfileIdentifiers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PublicProfileIdentifiers_Profiles_ProfileId",
+                        column: x => x.ProfileId,
+                        principalTable: "Profiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Resumes",
                 columns: table => new
                 {
@@ -440,6 +466,17 @@ namespace JobMagnet.Infrastructure.Migrations
                 column: "ProfileId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PublicProfileIdentifier_Identifier",
+                table: "PublicProfileIdentifiers",
+                column: "Identifier",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PublicProfileIdentifier_ProfileId",
+                table: "PublicProfileIdentifiers",
+                column: "ProfileId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Resumes_ProfileId",
                 table: "Resumes",
                 column: "ProfileId",
@@ -500,6 +537,9 @@ namespace JobMagnet.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "PorfolioGalleryItems");
+
+            migrationBuilder.DropTable(
+                name: "PublicProfileIdentifiers");
 
             migrationBuilder.DropTable(
                 name: "ServiceGalleryItems");

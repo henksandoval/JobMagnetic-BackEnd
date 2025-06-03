@@ -7,6 +7,7 @@ public interface IUnitOfWork
     Task ExecuteOperationInTransactionAsync(Func<Task> operation, CancellationToken cancellationToken = default);
 
     ICommandRepository<ProfileEntity> ProfileRepository { get; }
+    ICommandRepository<PublicProfileIdentifierEntity> PublicProfileIdentifierRepository { get; }
     ICommandRepository<ResumeEntity> ResumeRepository { get; }
     ICommandRepository<SkillEntity> SkillRepository { get; }
     ICommandRepository<ServiceEntity> ServiceRepository { get; }

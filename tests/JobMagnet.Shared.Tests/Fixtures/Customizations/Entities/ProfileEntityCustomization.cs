@@ -27,6 +27,7 @@ public class ProfileEntityCustomization : ICustomization
                 .Without(x => x.Services)
                 .Without(x => x.Skill)
                 .Without(x => x.Testimonials)
+                .Without(x => x.PublicProfileIdentifiers)
         );
     }
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobMagnet.Infrastructure.Migrations
 {
     [DbContext(typeof(JobMagnetDbContext))]
-    [Migration("20250602193239_InitialDb")]
+    [Migration("20250603074218_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -294,6 +294,52 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Profiles", (string)null);
+                });
+
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.PublicProfileIdentifierEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("AddedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Identifier")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("ProfileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<long>("ViewCount")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Identifier")
+                        .IsUnique()
+                        .HasDatabaseName("IX_PublicProfileIdentifier_Identifier");
+
+                    b.HasIndex("ProfileId")
+                        .HasDatabaseName("IX_PublicProfileIdentifier_ProfileId");
+
+                    b.ToTable("PublicProfileIdentifiers", (string)null);
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ResumeEntity", b =>
@@ -800,6 +846,17 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Navigation("Profile");
                 });
 
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.PublicProfileIdentifierEntity", b =>
+                {
+                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", "ProfileEntity")
+                        .WithMany("PublicProfileIdentifiers")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ProfileEntity");
+                });
+
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ResumeEntity", b =>
                 {
                     b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", "Profile")
@@ -907,6 +964,8 @@ namespace JobMagnet.Infrastructure.Migrations
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ProfileEntity", b =>
                 {
                     b.Navigation("PortfolioGallery");
+
+                    b.Navigation("PublicProfileIdentifiers");
 
                     b.Navigation("Resume");
 

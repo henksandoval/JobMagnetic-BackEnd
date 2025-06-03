@@ -12,6 +12,7 @@ public class UnitOfWork(JobMagnetDbContext dbContext, ILogger<UnitOfWork> logger
     private readonly ILogger<UnitOfWork> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     private ICommandRepository<ProfileEntity>? _profileRepository;
+    private ICommandRepository<PublicProfileIdentifierEntity>? _publicProfileIdentifierRepository;
     private ICommandRepository<ResumeEntity>? _resumeRepository;
     private ICommandRepository<SkillEntity>? _skillRepository;
     private ICommandRepository<ServiceEntity>? _serviceRepository;
@@ -22,6 +23,9 @@ public class UnitOfWork(JobMagnetDbContext dbContext, ILogger<UnitOfWork> logger
 
     public ICommandRepository<ProfileEntity> ProfileRepository =>
         _profileRepository ??= new Repository<ProfileEntity, long>(_dbContext);
+
+    public ICommandRepository<PublicProfileIdentifierEntity> PublicProfileIdentifierRepository =>
+        _publicProfileIdentifierRepository ??= new Repository<PublicProfileIdentifierEntity, long>(_dbContext);
     public ICommandRepository<ResumeEntity> ResumeRepository =>
         _resumeRepository ??= new Repository<ResumeEntity, long>(_dbContext);
     public ICommandRepository<SkillEntity> SkillRepository =>

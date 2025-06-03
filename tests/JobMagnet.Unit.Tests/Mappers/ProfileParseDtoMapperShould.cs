@@ -10,7 +10,7 @@ public class ProfileParseDtoMapperShould
     [Fact(DisplayName = "Map ProfileParseDto to ProfileEntity - Basic Info")]
     public void MapProfileParseDtoToProfileEntity_BasicInfo()
     {
-        // Arrange
+        // Given
         var dto = new ProfileParseDto
         {
             FirstName = "Peter",
@@ -21,10 +21,10 @@ public class ProfileParseDtoMapperShould
             SecondLastName = "Lost"
         };
 
-        // Act
+        // When
         var entity = dto.ToProfileEntity();
 
-        // Assert
+        // Then
         entity.ShouldNotBeNull();
         entity.FirstName.ShouldBe(dto.FirstName);
         entity.LastName.ShouldBe(dto.LastName);
@@ -37,15 +37,15 @@ public class ProfileParseDtoMapperShould
     [Fact(DisplayName = "Map ProfileParseDto to ProfileEntity - With Resume")]
     public void MapProfileParseDtoToProfileEntity_WithResume()
     {
-        // Arrange
+        // Given
         var dto = CreateFullProfileParseDto();
         dto.Skill = null;
         dto.Services = null;
 
-        // Act
+        // When
         var entity = dto.ToProfileEntity();
 
-        // Assert
+        // Then
         var expectedResume = new ResumeEntity
         {
             Id = 0,
@@ -74,13 +74,13 @@ public class ProfileParseDtoMapperShould
     [Fact(DisplayName = "Map ProfileParseDto to ProfileEntity - With Skills")]
     public void MapProfileParseDtoToProfileEntity_WithSkills()
     {
-        // Arrange
+        // Given
         var dto = CreateFullProfileParseDto();
 
-        // Act
+        // When
         var entity = dto.ToProfileEntity();
 
-        // Assert
+        // Then
         entity.ShouldNotBeNull();
         entity.Skill.ShouldNotBeNull();
         entity.Skill.Overview.ShouldBe(dto.Skill.Overview);
@@ -97,13 +97,13 @@ public class ProfileParseDtoMapperShould
     [Fact(DisplayName = "Map ProfileParseDto to ProfileEntity - With Services")]
     public void MapProfileParseDtoToProfileEntity_WithServices()
     {
-        // Arrange
+        // Given
         var dto = CreateFullProfileParseDto();
 
-        // Act
+        // When
         var entity = dto.ToProfileEntity();
 
-        // Assert
+        // Then
         entity.ShouldNotBeNull();
         entity.Services.ShouldNotBeNull();
         entity.Services.Overview.ShouldBe(dto.Services.Overview);
@@ -119,13 +119,13 @@ public class ProfileParseDtoMapperShould
     [Fact(DisplayName = "Map ProfileParseDto to ProfileEntity - With Summary (Education & WorkExperience)")]
     public void MapProfileParseDtoToProfileEntity_WithSummary()
     {
-        // Arrange
+        // Given
         var dto = CreateFullProfileParseDto();
 
-        // Act
+        // When
         var entity = dto.ToProfileEntity();
 
-        // Assert
+        // Then
         entity.ShouldNotBeNull();
         entity.Summary.ShouldNotBeNull();
         entity.Summary.Introduction.ShouldBe(dto.Summary.Introduction);
@@ -161,13 +161,13 @@ public class ProfileParseDtoMapperShould
     [Fact(DisplayName = "Map ProfileParseDto to ProfileEntity - With Talents")]
     public void MapProfileParseDtoToProfileEntity_WithTalents()
     {
-        // Arrange
+        // Given
         var dto = CreateFullProfileParseDto();
 
-        // Act
+        // When
         var entity = dto.ToProfileEntity();
 
-        // Assert
+        // Then
         entity.ShouldNotBeNull();
         entity.Talents.ShouldNotBeNull();
         entity.Talents.Count.ShouldBe(dto.Talents.Count);
@@ -177,13 +177,13 @@ public class ProfileParseDtoMapperShould
     [Fact(DisplayName = "Map ProfileParseDto to ProfileEntity - With PortfolioGallery")]
     public void MapProfileParseDtoToProfileEntity_WithPortfolioGallery()
     {
-        // Arrange
+        // Given
         var dto = CreateFullProfileParseDto();
 
-        // Act
+        // When
         var entity = dto.ToProfileEntity();
 
-        // Assert
+        // Then
         entity.ShouldNotBeNull();
         entity.PortfolioGallery.ShouldNotBeNull();
         entity.PortfolioGallery.Count.ShouldBe(dto.PortfolioGallery.Count);
@@ -193,13 +193,13 @@ public class ProfileParseDtoMapperShould
     [Fact(DisplayName = "Map ProfileParseDto to ProfileEntity - With Testimonials")]
     public void MapProfileParseDtoToProfileEntity_WithTestimonials()
     {
-        // Arrange
+        // Given
         var dto = CreateFullProfileParseDto();
 
-        // Act
+        // When
         var entity = dto.ToProfileEntity();
 
-        // Assert
+        // Then
         entity.ShouldNotBeNull();
         entity.Testimonials.ShouldNotBeNull();
         entity.Testimonials.Count.ShouldBe(dto.Testimonials.Count);
@@ -213,7 +213,7 @@ public class ProfileParseDtoMapperShould
     [Fact(DisplayName = "Map ProfileParseDto to ProfileEntity - Handles Null DTO Properties Gracefully")]
     public void MapProfileParseDtoToProfileEntity_HandlesNulls()
     {
-        // Arrange
+        // Given
         var dto = new ProfileParseDto
         {
             FirstName = "OnlyFirstName",
@@ -227,10 +227,10 @@ public class ProfileParseDtoMapperShould
             }
         };
 
-        // Act
+        // When
         var entity = dto.ToProfileEntity();
 
-        // Assert
+        // Then
         entity.ShouldNotBeNull();
         entity.FirstName.ShouldBe("OnlyFirstName");
         entity.LastName.ShouldBeNull();
@@ -256,7 +256,7 @@ public class ProfileParseDtoMapperShould
     [Fact(DisplayName = "Map ProfileParseDto with empty collections to ProfileEntity with empty collections")]
     public void MapProfileParseDto_EmptyCollections_ToProfileEntity_EmptyCollections()
     {
-        // Arrange
+        // Given
         var dto = new ProfileParseDto
         {
             FirstName = "Test",
@@ -273,10 +273,10 @@ public class ProfileParseDtoMapperShould
             }
         };
 
-        // Act
+        // When
         var entity = dto.ToProfileEntity();
 
-        // Assert
+        // Then
         entity.ShouldNotBeNull();
         entity.Talents.ShouldBeEmpty();
         entity.PortfolioGallery.ShouldBeEmpty();
