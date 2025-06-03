@@ -12,13 +12,16 @@ public partial class ProfileIdentifierNameGeneratorShould
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly ProfileIdentifierNameGenerator _subject = new ();
 
-    [Fact]
-    public void GenerateCorrectIdentifierGivenNormalFirstAndLastName()
+    [Theory]
+    [InlineData("Juan", "Aceituno", "juan-aceituno")]
+    [InlineData("Ernesto", "Sosa", "ernesto-sosa")]
+    [InlineData("Ana", "Armas", "ana-armas")]
+    public void GenerateCorrectIdentifierGivenNormalFirstAndLastName(string firstName, string? lastName, string expectedNamePart)
     {
         // Given
         var profile = new ProfileEntityBuilder(_fixture)
-            .WithName("Juan")
-            .WithLastName("Sosa")
+            .WithName(firstName)
+            .WithLastName(lastName)
             .Build();
 
         // When
@@ -27,7 +30,7 @@ public partial class ProfileIdentifierNameGeneratorShould
 
         // Then
         identifierName.Length.Should().BeLessThanOrEqualTo(20);
-        namePart.Should().Be("juan-sosa");
+        namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
         identifierName.Should().MatchRegex("^[a-z0-9-]+$");
         namePart.Should().NotContain("--").And.NotStartWith("-").And.NotEndWith("-");
@@ -73,27 +76,6 @@ public partial class ProfileIdentifierNameGeneratorShould
         namePart.Should().Be("jose-lopez");
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
         identifierName.Should().MatchRegex("^[a-z0-9-]+$");
-    }
-
-    [Fact]
-    public void GenerateCorrectIdentifierGivenLongNameAndLastName()
-    {
-        // Given
-        var profile = new ProfileEntityBuilder(_fixture)
-            .WithName("Alexanderson")
-            .WithLastName("Constantinopolus")
-            .Build();
-
-        // When
-        var identifierName = _subject.GenerateIdentifierName(profile);
-        var (namePart, suffix) = ExtractIdentifierParts(identifierName);
-
-        // Then
-        identifierName.Length.Should().BeLessThanOrEqualTo(20);
-        namePart.Should().HaveLength(20 - 6 - 1);
-        namePart.Should().Be("constantinopo");
-        suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
-        namePart.Should().NotContain("--").And.NotStartWith("-").And.NotEndWith("-");
     }
 
     [Theory]
@@ -166,6 +148,7 @@ public partial class ProfileIdentifierNameGeneratorShould
     [Theory]
     [InlineData("Ana-Sofia", "Gutierrez_Vega", "ana-gutierrez")]
     [InlineData("Ana-Sofia", "De La   Vega", "ana-vega")]
+    [InlineData("ana-sofia", "de-la-vega", "ana-vega")]
     public void GenerateIdentifierGivenNameContainingMultipleSpacesAndUnderscores(string firstName, string lastName, string expectedNamePart)
     {
         // Given

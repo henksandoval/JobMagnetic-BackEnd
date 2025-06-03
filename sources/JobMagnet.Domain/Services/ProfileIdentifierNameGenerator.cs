@@ -23,71 +23,34 @@ public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
         rawFirstName = rawFirstName.Split(Delimiters).FirstOrDefault(txt => txt != string.Empty && txt.Length > 2) ?? string.Empty;
         rawLastName = rawLastName.Split(Delimiters).FirstOrDefault(txt => txt != string.Empty && txt.Length > 2) ?? string.Empty;
 
+        rawFirstName = CleanStringForUrl(rawFirstName);
+        rawLastName = CleanStringForUrl(rawLastName);
+
+        var combinedName = CombinedName(rawFirstName, rawLastName);
+
         var uniqueSuffix = Guid.NewGuid().ToString("N")[..6];
         var maxBaseLength = 20 - (uniqueSuffix.Length + 1);
 
-        var selectedNamePart = SelectNamePartSmartly(rawFirstName, rawLastName, maxBaseLength);
+        var selectedNamePart = TruncateAndTrim(combinedName, maxBaseLength);
 
         if (!string.IsNullOrEmpty(selectedNamePart)) return $"{selectedNamePart}-{uniqueSuffix}";
 
         selectedNamePart = "profile";
-        if (selectedNamePart.Length > maxBaseLength)
-        {
-            selectedNamePart = selectedNamePart[..maxBaseLength];
-        }
-
         return $"{selectedNamePart}-{uniqueSuffix}";
     }
 
-    private static string SelectNamePartSmartly(string firstName, string lastName, int maxLength)
+    private static string CombinedName(string rawFirstName, string rawLastName)
     {
-        var fNameClean = CleanStringForUrl(firstName);
-        var lNameClean = CleanStringForUrl(lastName);
+        var firstNameHasValue = !string.IsNullOrEmpty(rawFirstName);
+        var lastNameHasValue = !string.IsNullOrEmpty(rawLastName);
 
-        // Caso: "Alexanderson Constantinopolus" -> "constantinopu" (TODO)
-        if (fNameClean == "alexanderson" && lNameClean == "constantinopolus")
+        return (firstNameHasValue, lastNameHasValue) switch
         {
-            return TruncateAndTrim(lNameClean, maxLength);
-        }
-
-        // Caso: "José María López-Ñíguez" -> "jose-lopez" (TODO)
-        if (fNameClean == "jose-maria" && lNameClean == "lopez-niguez")
-        {
-            var firstWordFirstName = fNameClean.Split('-').FirstOrDefault() ?? "";
-            var firstWordLastName = lNameClean.Split('-').FirstOrDefault() ?? "";
-            var combined = CleanStringForUrl($"{firstWordFirstName}-{firstWordLastName}");
-            return TruncateAndTrim(combined, maxLength);
-        }
-
-        // Caso: "Ana_Sofia De La Vega" -> "ana-vega" (TODO)
-        if (fNameClean == "ana-sofia" && lNameClean == "de-la-vega")
-        {
-            var firstWordFirstName = fNameClean.Split('-').FirstOrDefault() ?? "";
-            var lastWordLastName = lNameClean.Split('-').LastOrDefault() ?? "";
-            var combined = CleanStringForUrl($"{firstWordFirstName}-{lastWordLastName}");
-            return TruncateAndTrim(combined, maxLength);
-        }
-
-        // Lógica general si no hay casos especiales de los TODOs
-        string combinedName;
-        if (!string.IsNullOrEmpty(fNameClean) && !string.IsNullOrEmpty(lNameClean))
-        {
-            combinedName = $"{fNameClean}-{lNameClean}";
-        }
-        else if (!string.IsNullOrEmpty(fNameClean))
-        {
-            combinedName = fNameClean;
-        }
-        else if (!string.IsNullOrEmpty(lNameClean))
-        {
-            combinedName = lNameClean;
-        }
-        else
-        {
-            return string.Empty; // Se usará "profile" o "id" más adelante
-        }
-
-        return TruncateAndTrim(combinedName, maxLength);
+            (true, true) => $"{rawFirstName}-{rawLastName}",
+            (true, false) => rawFirstName,
+            (false, true) => rawLastName,
+            (false, false) => "profile"
+        };
     }
 
     private static string TruncateAndTrim(string input, int maxLength)
@@ -102,7 +65,6 @@ public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
         return input.TrimEnd('-');
     }
 
-    // CleanStringForUrl y RemoveDiacritics permanecen igual que en tu implementación
     private static string CleanStringForUrl(string input)
     {
         if (string.IsNullOrWhiteSpace(input))
