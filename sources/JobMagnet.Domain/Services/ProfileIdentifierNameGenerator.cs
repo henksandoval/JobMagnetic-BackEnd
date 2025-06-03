@@ -20,8 +20,8 @@ public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
         var rawFirstName = profileEntity.FirstName ?? string.Empty;
         var rawLastName = profileEntity.LastName ?? string.Empty;
 
-        rawFirstName = rawFirstName.Split(Delimiters)[0];
-        rawLastName = rawLastName.Split(Delimiters)[0];
+        rawFirstName = rawFirstName.Split(Delimiters).FirstOrDefault(txt => txt != string.Empty && txt.Length > 2) ?? string.Empty;
+        rawLastName = rawLastName.Split(Delimiters).FirstOrDefault(txt => txt != string.Empty && txt.Length > 2) ?? string.Empty;
 
         var uniqueSuffix = Guid.NewGuid().ToString("N")[..6];
         var maxBaseLength = 20 - (uniqueSuffix.Length + 1);

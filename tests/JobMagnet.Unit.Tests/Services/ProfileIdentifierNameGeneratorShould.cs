@@ -165,6 +165,7 @@ public partial class ProfileIdentifierNameGeneratorShould
 
     [Theory]
     [InlineData("Ana-Sofia", "Gutierrez_Vega", "ana-gutierrez")]
+    [InlineData("Ana-Sofia", "De La   Vega", "ana-vega")]
     public void GenerateIdentifierGivenNameContainingMultipleSpacesAndUnderscores(string firstName, string lastName, string expectedNamePart)
     {
         // Given
