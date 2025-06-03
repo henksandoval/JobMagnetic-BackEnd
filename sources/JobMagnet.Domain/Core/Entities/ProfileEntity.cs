@@ -22,4 +22,11 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public virtual ICollection<TestimonialEntity> Testimonials { get; set; } = new HashSet<TestimonialEntity>();
     public virtual ICollection<PublicProfileIdentifierEntity> PublicProfileIdentifiers { get; set; } =
         new HashSet<PublicProfileIdentifierEntity>();
+
+    public void AddPublicProfileIdentifier(PublicProfileIdentifierEntity publicIdentifierEntity)
+    {
+        ArgumentNullException.ThrowIfNull(publicIdentifierEntity);
+
+        PublicProfileIdentifiers.Add(publicIdentifierEntity);
+    }
 }

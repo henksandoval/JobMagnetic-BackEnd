@@ -2,6 +2,7 @@ using JobMagnet.Application.Exceptions;
 using JobMagnet.Application.UseCases.CvParser.Commands;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Application.UseCases.CvParser.Ports;
+using JobMagnet.Application.UseCases.CvParser.Responses;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Domain.Ports.Repositories.Base;
@@ -11,13 +12,13 @@ namespace JobMagnet.Application.UseCases.CvParser;
 
 public interface ICvParserHandler
 {
-    Task<string> ParseAsync(CvParserCommand command, CancellationToken cancellationToken = default);
+    Task<CreateProfileResponse> ParseAsync(CvParserCommand command, CancellationToken cancellationToken = default);
 }
 
 public class CvParserHandler(
     IRawCvParser cvParser,
     IUnitOfWork unitOfWork,
-    IProfileIdentifierNameGenerator identifierNameGenerator,
+    IProfileSlugGenerator slugGenerator,
     IQueryRepository<ContactTypeEntity, long> contactTypeQueryRepository)
     : ICvParserHandler
 {
@@ -25,13 +26,14 @@ public class CvParserHandler(
     private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     private readonly IQueryRepository<ContactTypeEntity, long> _contactTypeQueryRepository = contactTypeQueryRepository ?? throw new ArgumentNullException(nameof(contactTypeQueryRepository));
 
-    public async Task<string> ParseAsync(CvParserCommand command, CancellationToken cancellationToken = default)
+    public async Task<CreateProfileResponse> ParseAsync(CvParserCommand command, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(command);
         var profileEntity = await ParseCvToProfileEntity(command);
         await PersistProfileAsync(profileEntity, cancellationToken);
         var userEmail = GetUserEmail(profileEntity);
-        return userEmail;
+        var profileUrl = GetProfileSlugUrl(profileEntity);
+        return new CreateProfileResponse(userEmail, profileUrl);
     }
 
     private async Task<ProfileEntity> ParseCvToProfileEntity(CvParserCommand command)
@@ -61,11 +63,13 @@ public class CvParserHandler(
                 .CreateAsync(profileEntity, cancellationToken)
                 .ConfigureAwait(false);
 
-            var publicIdentifierEntity = new PublicProfileIdentifierEntity(profileEntity, identifierNameGenerator);
+            var publicIdentifierEntity = new PublicProfileIdentifierEntity(profileEntity, slugGenerator);
 
             await _unitOfWork.PublicProfileIdentifierRepository
                 .CreateAsync(publicIdentifierEntity, cancellationToken)
                 .ConfigureAwait(false);
+
+            profileEntity.AddPublicProfileIdentifier(publicIdentifierEntity);
         }, cancellationToken);
     }
 
@@ -76,6 +80,11 @@ public class CvParserHandler(
                             .Value
                         ?? string.Empty;
         return userEmail;
+    }
+
+    private static string GetProfileSlugUrl(ProfileEntity profileEntity)
+    {
+        return profileEntity.PublicProfileIdentifiers!.SingleOrDefault(x => x.Type == LinkType.Primary)!.ProfileSlugUrl;
     }
 
     private void SetAuditingFields(ProfileEntity profile)

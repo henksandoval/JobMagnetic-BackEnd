@@ -52,7 +52,7 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
                 .HasKey(publicProfile => publicProfile.Id);
 
             entity
-                .Property(publicProfile => publicProfile.Identifier)
+                .Property(publicProfile => publicProfile.ProfileSlugUrl)
                 .IsRequired()
                 .HasMaxLength(PublicProfileIdentifierEntity.MaxNameLength);
 
@@ -65,7 +65,7 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
                 .IsRequired();
 
             entity
-                .HasIndex(publicProfile => publicProfile.Identifier)
+                .HasIndex(publicProfile => publicProfile.ProfileSlugUrl)
                 .HasDatabaseName("IX_PublicProfileIdentifier_Identifier")
                 .IsUnique();
 

@@ -8,6 +8,7 @@ using FluentAssertions;
 using JobMagnet.Application.Contracts.Commands.Profile;
 using JobMagnet.Application.Contracts.Queries.Profile;
 using JobMagnet.Application.Contracts.Responses.Profile;
+using JobMagnet.Application.UseCases.CvParser.Responses;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
@@ -198,6 +199,12 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // Then
         response.EnsureSuccessStatusCode();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var responseData = await response.Content.ReadFromJsonAsync<CreateProfileResponse>();
+        responseData.ShouldNotBeNull();
+        responseData.UserEmail.ShouldNotBeNullOrEmpty();
+        responseData.ProfileUrl.ShouldNotBeNullOrEmpty();
+        responseData.UserEmail.Should().Be("laura.gomez.dev@example.net");
+        responseData.ProfileUrl.Should().StartWith("laura-gomez-");
     }
 
     private async Task<ProfileEntity> SetupEntityAsync()

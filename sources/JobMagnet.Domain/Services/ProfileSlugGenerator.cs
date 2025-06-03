@@ -4,12 +4,12 @@ using JobMagnet.Domain.Core.Entities;
 
 namespace JobMagnet.Domain.Services;
 
-public interface IProfileIdentifierNameGenerator
+public interface IProfileSlugGenerator
 {
-    string GenerateIdentifierName(ProfileEntity profileEntity);
+    string GenerateProfileSlug(ProfileEntity profileEntity);
 }
 
-public partial class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
+public partial class ProfileSlugGenerator : IProfileSlugGenerator
 {
     private static readonly char[] Delimiters = [' ', '-', '_'];
 
@@ -20,7 +20,7 @@ public partial class ProfileIdentifierNameGenerator : IProfileIdentifierNameGene
     [GeneratedRegex("-+")]
     private static partial Regex MultipleDashRegex();
 
-    public string GenerateIdentifierName(ProfileEntity profileEntity)
+    public string GenerateProfileSlug(ProfileEntity profileEntity)
     {
         ArgumentNullException.ThrowIfNull(profileEntity, nameof(profileEntity));
 
@@ -50,7 +50,7 @@ public partial class ProfileIdentifierNameGenerator : IProfileIdentifierNameGene
             (true, true) => $"{rawFirstName}-{rawLastName}",
             (true, false) => rawFirstName,
             (false, true) => rawLastName,
-            (false, false) => PublicProfileIdentifierEntity.DefaultIdentifierName
+            (false, false) => PublicProfileIdentifierEntity.DefaultSlug
         };
     }
 

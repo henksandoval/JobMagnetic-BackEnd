@@ -9,7 +9,7 @@ public static class DomainExtensions
     {
         ArgumentNullException.ThrowIfNull(services, nameof(services));
 
-        services.AddScoped<IProfileIdentifierNameGenerator, ProfileIdentifierNameGenerator>();
+        services.AddScoped<IProfileSlugGenerator, ProfileSlugGenerator>();
 
         return services;
     }
