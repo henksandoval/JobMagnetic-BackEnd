@@ -306,7 +306,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
-        var entity = _fixture.Create<ProfileEntity>();
+        var entity = new ProfileEntityBuilder(_fixture).Build();
         await commandRepository.CreateAsync(entity);
         await commandRepository.SaveChangesAsync();
 
