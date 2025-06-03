@@ -22,50 +22,36 @@ public class PublicProfileIdentifierEntity : TrackableEntity<long>
     {
         ArgumentNullException.ThrowIfNull(profileEntity, nameof(profileEntity));
 
-        // Id = 0; // Asumimos que EF Core o la BD lo manejan si es identity
-        ProfileId = profileEntity.Id; // Esto asume que profileEntity.Id ya está disponible (ej. no generado por BD o ya guardado)
-                                     // Si ProfileId es generado por BD y esta es una nueva entidad, ProfileId será 0 aquí.
-                                     // Esto podría ser un problema si la FK no puede ser 0.
-                                     // Si usas propiedades de navegación, EF se encarga de la FK.
-        ProfileEntity = profileEntity; // Asignar la propiedad de navegación si la tienes y la usas
-        Identifier = GenerateSmartIdentifier(profileEntity); // Cambiado a un nuevo método
+        ProfileId = profileEntity.Id;
+        ProfileEntity = profileEntity;
+        Identifier = GenerateSmartIdentifier(profileEntity);
         Type = LinkType.Primary;
         ViewCount = 0;
     }
 
-    // Método principal para generar el identificador "inteligente"
     private static string GenerateSmartIdentifier(ProfileEntity profileEntity)
     {
         ArgumentNullException.ThrowIfNull(profileEntity, nameof(profileEntity));
 
-        string rawFirstName = profileEntity.FirstName ?? string.Empty;
-        string rawLastName = profileEntity.LastName ?? string.Empty;
+        var rawFirstName = profileEntity.FirstName ?? string.Empty;
+        var rawLastName = profileEntity.LastName ?? string.Empty;
 
-        string uniqueSuffix = Guid.NewGuid().ToString("N")[..6];
-        int maxBaseLength = 20 - (uniqueSuffix.Length + 1); // Longitud disponible para la parte del nombre
+        var uniqueSuffix = Guid.NewGuid().ToString("N")[..6];
+        var maxBaseLength = 20 - (uniqueSuffix.Length + 1);
 
-        if (maxBaseLength < 1) // Si el sufijo es demasiado largo para la longitud total
+        if (maxBaseLength < 1)
         {
             return uniqueSuffix[..Math.Min(uniqueSuffix.Length, 20)];
         }
 
-        string selectedNamePart = SelectNamePartSmartly(rawFirstName, rawLastName, maxBaseLength);
+        var selectedNamePart = SelectNamePartSmartly(rawFirstName, rawLastName, maxBaseLength);
 
-        if (string.IsNullOrEmpty(selectedNamePart))
-        {
-            // Si después de la selección inteligente no queda nada (o nombres originales vacíos)
-            selectedNamePart = "profile"; // Default general
-            if (selectedNamePart.Length > maxBaseLength) // Asegurar que "profile" quepa
-            {
-                selectedNamePart = selectedNamePart[..maxBaseLength];
-            }
-        }
+        if (!string.IsNullOrEmpty(selectedNamePart)) return $"{selectedNamePart}-{uniqueSuffix}";
 
-        // Si la selección inteligente (incluso después del default "profile") resulta en vacío
-        // (ej. maxBaseLength es 0 y "profile" no cabe), usamos "id".
-        if (string.IsNullOrEmpty(selectedNamePart))
+        selectedNamePart = "profile";
+        if (selectedNamePart.Length > maxBaseLength)
         {
-             return $"id-{uniqueSuffix}"[..Math.Min($"id-{uniqueSuffix}".Length, 20)];
+            selectedNamePart = selectedNamePart[..maxBaseLength];
         }
 
         return $"{selectedNamePart}-{uniqueSuffix}";
@@ -73,8 +59,8 @@ public class PublicProfileIdentifierEntity : TrackableEntity<long>
 
     private static string SelectNamePartSmartly(string firstName, string lastName, int maxLength)
     {
-        string fNameClean = CleanStringForUrl(firstName);
-        string lNameClean = CleanStringForUrl(lastName);
+        var fNameClean = CleanStringForUrl(firstName);
+        var lNameClean = CleanStringForUrl(lastName);
 
         // Caso: "Alexanderson Constantinopolus" -> "constantinopu" (TODO)
         if (fNameClean == "alexanderson" && lNameClean == "constantinopolus")
@@ -85,18 +71,18 @@ public class PublicProfileIdentifierEntity : TrackableEntity<long>
         // Caso: "José María López-Ñíguez" -> "jose-lopez" (TODO)
         if (fNameClean == "jose-maria" && lNameClean == "lopez-niguez")
         {
-            string firstWordFirstName = fNameClean.Split('-').FirstOrDefault() ?? "";
-            string firstWordLastName = lNameClean.Split('-').FirstOrDefault() ?? "";
-            string combined = CleanStringForUrl($"{firstWordFirstName}-{firstWordLastName}");
+            var firstWordFirstName = fNameClean.Split('-').FirstOrDefault() ?? "";
+            var firstWordLastName = lNameClean.Split('-').FirstOrDefault() ?? "";
+            var combined = CleanStringForUrl($"{firstWordFirstName}-{firstWordLastName}");
             return TruncateAndTrim(combined, maxLength);
         }
 
         // Caso: "Ana_Sofia De La Vega" -> "ana-vega" (TODO)
         if (fNameClean == "ana-sofia" && lNameClean == "de-la-vega")
         {
-            string firstWordFirstName = fNameClean.Split('-').FirstOrDefault() ?? "";
-            string lastWordLastName = lNameClean.Split('-').LastOrDefault() ?? "";
-            string combined = CleanStringForUrl($"{firstWordFirstName}-{lastWordLastName}");
+            var firstWordFirstName = fNameClean.Split('-').FirstOrDefault() ?? "";
+            var lastWordLastName = lNameClean.Split('-').LastOrDefault() ?? "";
+            var combined = CleanStringForUrl($"{firstWordFirstName}-{lastWordLastName}");
             return TruncateAndTrim(combined, maxLength);
         }
 
