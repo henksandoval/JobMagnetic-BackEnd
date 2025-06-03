@@ -13,6 +13,12 @@ public partial class ProfileIdentifierNameGeneratorShould
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly ProfileIdentifierNameGenerator _subject = new ();
 
+    [GeneratedRegex("^(.*)-([a-z0-9]{6})$")]
+    private static partial Regex PatternWithSixCharAlphanumericSuffixRegex();
+
+    [GeneratedRegex("^[a-z0-9]+$")]
+    private static partial Regex LowercaseAlphanumericStringRegex();
+
     [Theory]
     [InlineData("Juan", "Aceituno", "juan-aceituno")]
     [InlineData("Ernesto", "Sosa", "ernesto-sosa")]
@@ -30,10 +36,9 @@ public partial class ProfileIdentifierNameGeneratorShould
         var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        identifierName.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
+        AssertValidIdentifier(identifierName);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
-        identifierName.Should().MatchRegex("^[a-z0-9-]+$");
         namePart.Should().NotContain("--").And.NotStartWith("-").And.NotEndWith("-");
     }
 
@@ -51,11 +56,9 @@ public partial class ProfileIdentifierNameGeneratorShould
         var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        identifierName.Should().NotBeNullOrEmpty();
-        identifierName.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
+        AssertValidIdentifier(identifierName);
         namePart.Should().Be("maria-niguez");
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
-        identifierName.Should().MatchRegex("^[a-z0-9-]+$");
     }
 
     [Fact]
@@ -72,11 +75,9 @@ public partial class ProfileIdentifierNameGeneratorShould
         var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        identifierName.Should().NotBeNullOrEmpty();
-        identifierName.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
+        AssertValidIdentifier(identifierName);
         namePart.Should().Be("jose-lopez");
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
-        identifierName.Should().MatchRegex("^[a-z0-9-]+$");
     }
 
     [Theory]
@@ -96,7 +97,7 @@ public partial class ProfileIdentifierNameGeneratorShould
         var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        identifierName.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
+        AssertValidIdentifier(identifierName);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
     }
@@ -119,15 +120,15 @@ public partial class ProfileIdentifierNameGeneratorShould
         var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        identifierName.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
+        AssertValidIdentifier(identifierName);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
     }
 
     [Theory]
-    [InlineData(null, null, "profile")]
-    [InlineData("", "", "profile")]
-    [InlineData("  ", "  ", "profile")]
+    [InlineData(null, null, PublicProfileIdentifierEntity.DefaultIdentifierName)]
+    [InlineData("", "", PublicProfileIdentifierEntity.DefaultIdentifierName)]
+    [InlineData("  ", "  ", PublicProfileIdentifierEntity.DefaultIdentifierName)]
     public void GenerateCorrectIdentifierGivenDefaultNamePartGivenNullOrEmptyNames(string? firstName, string? lastName, string expectedNamePart)
     {
         // Given
@@ -141,7 +142,7 @@ public partial class ProfileIdentifierNameGeneratorShould
         var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        identifierName.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
+        AssertValidIdentifier(identifierName);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
     }
@@ -163,7 +164,7 @@ public partial class ProfileIdentifierNameGeneratorShould
         var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        identifierName.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
+        AssertValidIdentifier(identifierName);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
     }
@@ -182,10 +183,17 @@ public partial class ProfileIdentifierNameGeneratorShould
         var (namePart, suffix) = ExtractIdentifierParts(identifierName);
 
         // Then
-        identifierName.Length.Should().BeLessThanOrEqualTo(20);
-        namePart.Should().Be("profile");
+        AssertValidIdentifier(identifierName);
+        namePart.Should().Be(PublicProfileIdentifierEntity.DefaultIdentifierName);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
-        identifierName.Should().StartWith("profile-");
+    }
+
+    private static void AssertValidIdentifier(string identifier)
+    {
+        identifier.Should().NotBeNullOrEmpty();
+        identifier.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
+        identifier.Should().MatchRegex("^[a-z0-9-]+$");
+        identifier.Should().NotContain("--").And.NotStartWith("-").And.NotEndWith("-");
     }
 
     private static (string NamePart, string Suffix) ExtractIdentifierParts(string identifier)
@@ -201,25 +209,15 @@ public partial class ProfileIdentifierNameGeneratorShould
             return (match.Groups[1].Value, match.Groups[2].Value);
         }
 
-        // Si el identificador es solo el sufijo (porque maxNamePartLength < 1)
         if (identifier.Length <= 6 && LowercaseAlphanumericStringRegex().IsMatch(identifier))
         {
             return (string.Empty, identifier);
         }
 
-        // Fallback si no se puede parsear claramente, aunque los tests deberían cubrir patrones esperados
-        // Para los tests, es mejor ser específico. Si un test espera un formato que no encaja aquí,
-        // podría necesitar una aserción directa sobre el string completo.
         var lastDash = identifier.LastIndexOf('-');
-        if (lastDash > 0 && identifier.Length - 1 - lastDash == 6) // heurística
+        if (lastDash > 0 && identifier.Length - 1 - lastDash == 6)
             return (identifier[..lastDash], identifier[(lastDash + 1)..]);
 
-        return (identifier, string.Empty); // No se pudo determinar un sufijo claro de 6 dígitos
+        return (identifier, string.Empty);
     }
-
-    [GeneratedRegex("^(.*)-([a-z0-9]{6})$")]
-    private static partial Regex PatternWithSixCharAlphanumericSuffixRegex();
-
-    [GeneratedRegex("^[a-z0-9]+$")]
-    private static partial Regex LowercaseAlphanumericStringRegex();
 }

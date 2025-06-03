@@ -13,6 +13,13 @@ public partial class ProfileIdentifierNameGenerator : IProfileIdentifierNameGene
 {
     private static readonly char[] Delimiters = [' ', '-', '_'];
 
+    [GeneratedRegex(@"[\s_]+")]
+    private static partial Regex ConsecutiveWhitespaceOrUnderscoresRegex();
+    [GeneratedRegex("[^a-z0-9-]")]
+    private static partial Regex FindInvalidUrlSlugCharactersRegex();
+    [GeneratedRegex("-+")]
+    private static partial Regex MultipleDashRegex();
+
     public string GenerateIdentifierName(ProfileEntity profileEntity)
     {
         ArgumentNullException.ThrowIfNull(profileEntity, nameof(profileEntity));
@@ -43,7 +50,7 @@ public partial class ProfileIdentifierNameGenerator : IProfileIdentifierNameGene
             (true, true) => $"{rawFirstName}-{rawLastName}",
             (true, false) => rawFirstName,
             (false, true) => rawLastName,
-            (false, false) => "profile"
+            (false, false) => PublicProfileIdentifierEntity.DefaultIdentifierName
         };
     }
 
@@ -99,11 +106,4 @@ public partial class ProfileIdentifierNameGenerator : IProfileIdentifierNameGene
                    .FirstOrDefault(text => !string.IsNullOrEmpty(text) && text.Length > 2)
                ?? string.Empty;
     }
-
-    [GeneratedRegex(@"[\s_]+")]
-    private static partial Regex ConsecutiveWhitespaceOrUnderscoresRegex();
-    [GeneratedRegex("[^a-z0-9-]")]
-    private static partial Regex FindInvalidUrlSlugCharactersRegex();
-    [GeneratedRegex("-+")]
-    private static partial Regex MultipleDashRegex();
 }

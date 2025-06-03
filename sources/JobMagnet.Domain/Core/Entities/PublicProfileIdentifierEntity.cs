@@ -8,6 +8,7 @@ namespace JobMagnet.Domain.Core.Entities;
 public class PublicProfileIdentifierEntity : TrackableEntity<long>
 {
     public const int MaxNameLength = 25;
+    public const string DefaultIdentifierName = "profile";
 
     public string Identifier { get; private set; } = null!;
     public LinkType Type { get; private set; }
