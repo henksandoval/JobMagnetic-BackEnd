@@ -123,6 +123,23 @@ The solution is organized into the following key projects, located under the `so
     dotnet build JobMagnet.sln
     ```
 
+6.  **(Optional) Populate the database with sample data:**
+    *   To fill the database with sample data, send `POST` requests to the `AdminController` endpoints. You can use `curl` as shown below, or tools like Postman or the [Swagger UI](https://localhost:7109/swagger/index.html).
+
+        Execute the following `curl` commands:
+        ```bash
+        # To seed master tables
+        curl -X POST 'https://localhost:7109/api/v0.1/admin/seedmastertables' \
+          -H 'accept: */*' \
+          -d ''
+
+        # To seed sample profiles
+        curl -X POST 'https://localhost:7109/api/v0.1/admin/seedprofile' \
+          -H 'accept: */*' \
+          -d ''
+        ```
+    *   These requests will trigger the seeding logic defined within the `JobMagnet.Host` project. The Swagger UI is typically available at `/swagger` if your project is configured for it.
+
 ### Running the Application
 
 1.  **Navigate to the Host project directory:**
