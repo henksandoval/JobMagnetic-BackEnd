@@ -92,15 +92,20 @@ public class ProfileController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetProfileAsync([FromQuery] ProfileQueryParameters queryParameters)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(queryParameters.ProfileSlug);
+
+        var isDefaultData = queryParameters.ProfileSlug.Equals("john", StringComparison.InvariantCultureIgnoreCase);
         var publicProfile = await publicProfileRepository
             .FirstOrDefaultAsync(x => x.ProfileSlugUrl == queryParameters.ProfileSlug)
             .ConfigureAwait(false);
 
-        if (publicProfile is null)
+        if (publicProfile is null && !isDefaultData)
             return Results.NotFound();
 
+        var profileId = publicProfile?.ProfileId ?? 1;
+
         var entity = await queryRepository
-            .WhereCondition(x => x.Id == publicProfile.ProfileId)
+            .WhereCondition(x => x.Id == profileId)
             .WithResume()
             .WithSkills()
             .WithTalents()
