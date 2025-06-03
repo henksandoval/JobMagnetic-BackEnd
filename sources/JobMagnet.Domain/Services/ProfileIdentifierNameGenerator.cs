@@ -17,11 +17,8 @@ public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
     {
         ArgumentNullException.ThrowIfNull(profileEntity, nameof(profileEntity));
 
-        var rawFirstName = profileEntity.FirstName ?? string.Empty;
-        var rawLastName = profileEntity.LastName ?? string.Empty;
-
-        rawFirstName = rawFirstName.Split(Delimiters).FirstOrDefault(txt => txt != string.Empty && txt.Length > 2) ?? string.Empty;
-        rawLastName = rawLastName.Split(Delimiters).FirstOrDefault(txt => txt != string.Empty && txt.Length > 2) ?? string.Empty;
+        var rawFirstName = GetFirstSignificantWord(profileEntity.FirstName);
+        var rawLastName = GetFirstSignificantWord(profileEntity.LastName);
 
         rawFirstName = CleanStringForUrl(rawFirstName);
         rawLastName = CleanStringForUrl(rawLastName);
@@ -96,5 +93,13 @@ public class ProfileIdentifierNameGenerator : IProfileIdentifierNameGenerator
         }
 
         return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+    }
+
+    private static string GetFirstSignificantWord(string? word)
+    {
+        if (string.IsNullOrWhiteSpace(word)) return string.Empty;
+        return word.Split(Delimiters)
+                   .FirstOrDefault(text => !string.IsNullOrEmpty(text) && text.Length > 2)
+               ?? string.Empty;
     }
 }
