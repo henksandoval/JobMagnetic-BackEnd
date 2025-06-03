@@ -2,5 +2,5 @@
 
 public record ProfileQueryParameters
 {
-    public string? Name { get; init; }
+    public string? ProfileSlug { get; init; }
 }

@@ -12,6 +12,7 @@ using JobMagnet.Application.UseCases.CvParser.Responses;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
+using JobMagnet.Domain.Services;
 using JobMagnet.Host.ViewModels.Profile;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -20,6 +21,7 @@ using JobMagnet.Shared.Tests.Fixtures.Customizations;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Shouldly;
 using Xunit.Abstractions;
 
@@ -32,7 +34,6 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     private const int ContactInfoCount = 3;
     private const int TalentsCount = 8;
     private const int PortfolioCount = 3;
-    private const int SummariesCount = 3;
     private const int TestimonialsCount = 12;
 
     private readonly IFixture _fixture = FixtureBuilder.Build();
@@ -51,9 +52,10 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var entity = await SetupEntityAsync();
+        var publicProfile = await SetupPublicProfileAsync(entity);
         var queryParameters = new Dictionary<string, string?>
         {
-            { nameof(ProfileQueryParameters.Name), entity.FirstName }
+            { nameof(ProfileQueryParameters.ProfileSlug), publicProfile.ProfileSlugUrl }
         };
 
         var requestUrl = QueryHelpers.AddQueryString(RequestUriController, queryParameters!);
@@ -233,5 +235,23 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         await commandRepository.SaveChangesAsync();
 
         return entity;
+    }
+
+    private async Task<PublicProfileIdentifierEntity> SetupPublicProfileAsync(ProfileEntity profile)
+    {
+        var slugGenerator = new Mock<IProfileSlugGenerator>();
+        slugGenerator
+            .Setup(sg => sg.GenerateProfileSlug(It.IsAny<ProfileEntity>()))
+            .Returns("alexander-gonzalez-6ca66d");
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<PublicProfileIdentifierEntity>>();
+        var publicProfile = new PublicProfileIdentifierEntity(profile, slugGenerator.Object)
+        {
+            ProfileEntity = null!
+        };
+        await commandRepository.CreateAsync(publicProfile);
+        await commandRepository.SaveChangesAsync();
+        return publicProfile;
     }
 }

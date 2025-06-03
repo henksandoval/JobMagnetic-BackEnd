@@ -21,6 +21,7 @@ public class ProfileController(
     ICvParserHandler cvParser,
     ILogger<ProfileController> logger,
     IProfileQueryRepository queryRepository,
+    IQueryRepository<PublicProfileIdentifierEntity, long> publicProfileRepository,
     ICommandRepository<ProfileEntity> commandRepository) : BaseController<ProfileController>(logger)
 {
     [HttpPost]
@@ -91,8 +92,15 @@ public class ProfileController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetProfileAsync([FromQuery] ProfileQueryParameters queryParameters)
     {
+        var publicProfile = await publicProfileRepository
+            .FirstOrDefaultAsync(x => x.ProfileSlugUrl == queryParameters.ProfileSlug)
+            .ConfigureAwait(false);
+
+        if (publicProfile is null)
+            return Results.NotFound();
+
         var entity = await queryRepository
-            .WhereCondition(x => x.FirstName == queryParameters.Name)
+            .WhereCondition(x => x.Id == publicProfile.ProfileId)
             .WithResume()
             .WithSkills()
             .WithTalents()

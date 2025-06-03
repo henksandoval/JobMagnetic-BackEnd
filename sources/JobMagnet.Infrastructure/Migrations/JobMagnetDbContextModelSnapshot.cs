@@ -307,11 +307,6 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Property<Guid>("AddedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Identifier")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
                     b.Property<DateTime?>("LastModifiedAt")
                         .HasColumnType("datetime2");
 
@@ -321,6 +316,11 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Property<long>("ProfileId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("ProfileSlugUrl")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -329,12 +329,12 @@ namespace JobMagnet.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Identifier")
-                        .IsUnique()
-                        .HasDatabaseName("IX_PublicProfileIdentifier_Identifier");
-
                     b.HasIndex("ProfileId")
                         .HasDatabaseName("IX_PublicProfileIdentifier_ProfileId");
+
+                    b.HasIndex("ProfileSlugUrl")
+                        .IsUnique()
+                        .HasDatabaseName("IX_PublicProfileIdentifier_Identifier");
 
                     b.ToTable("PublicProfileIdentifiers", (string)null);
                 });

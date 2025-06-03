@@ -15,7 +15,7 @@ public class PublicProfileIdentifierEntity : TrackableEntity<long>
     public long ProfileId { get; private set; }
     public long ViewCount { get; private set; }
 
-    public virtual ProfileEntity ProfileEntity { get; private set; } = null!;
+    public virtual ProfileEntity ProfileEntity { get; init; } = null!;
 
     public PublicProfileIdentifierEntity() { }
 

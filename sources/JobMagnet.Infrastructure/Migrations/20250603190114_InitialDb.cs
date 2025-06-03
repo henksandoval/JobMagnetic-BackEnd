@@ -97,7 +97,7 @@ namespace JobMagnet.Infrastructure.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Identifier = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    ProfileSlugUrl = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     ProfileId = table.Column<long>(type: "bigint", nullable: false),
                     ViewCount = table.Column<long>(type: "bigint", nullable: false),
@@ -468,7 +468,7 @@ namespace JobMagnet.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_PublicProfileIdentifier_Identifier",
                 table: "PublicProfileIdentifiers",
-                column: "Identifier",
+                column: "ProfileSlugUrl",
                 unique: true);
 
             migrationBuilder.CreateIndex(
