@@ -34,6 +34,9 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
                 {
                     Id = p.Resume!.Id,
                     Overview = p.Resume.Overview,
+                    JobTitle = p.Resume.JobTitle,
+                    Address = p.Resume.Address,
+                    Summary = p.Resume.Summary,
                     ContactInfo = p.Resume.ContactInfo.Select(c => new ContactInfoEntity
                     {
                         Id = c.Id,
