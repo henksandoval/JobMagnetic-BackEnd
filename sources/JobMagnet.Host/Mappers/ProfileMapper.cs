@@ -96,11 +96,18 @@ public static class ProfileMapper
 
     private static WorkExperienceViewModel WorkExperienceViewModelMap(SummaryEntity src)
     {
-        var workExperienceList = src.WorkExperiences?.Select(w => new PositionViewModel(
-                w.JobTitle,
-                w.StartDate.ToString("yyyy-MM-dd"),
-                w.CompanyLocation,
-                w.Description))
+        var workExperienceList = src.WorkExperiences?.Select(work =>
+            {
+                var responsibilities = work.Responsibilities?
+                    .Select(r => r.Description)
+                    .ToArray() ?? [];
+                return new PositionViewModel(
+                    work.JobTitle,
+                    work.StartDate.ToString("yyyy-MM-dd"),
+                    work.CompanyLocation,
+                    work.Description,
+                    responsibilities);
+            })
             .ToArray() ?? [];
         return new WorkExperienceViewModel(workExperienceList);
     }

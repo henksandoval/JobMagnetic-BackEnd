@@ -4,5 +4,6 @@ public record PositionViewModel(
     string Specialist,
     string StartDate,
     string Location,
-    string Description
+    string Description,
+    string[] Responsibilities
 );
