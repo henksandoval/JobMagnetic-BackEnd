@@ -8,4 +8,5 @@ public class WorkExperienceParseDto
     public DateOnly? StartDate { get; set; }
     public DateOnly? EndDate { get; set; }
     public string? Description { get; set; }
+    public ICollection<ResponsibilityParseDto>? Responsibilities { get; set; }
 }

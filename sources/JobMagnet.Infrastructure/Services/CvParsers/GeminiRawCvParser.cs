@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace JobMagnet.Infrastructure.ExternalServices.CvParsers;
+namespace JobMagnet.Infrastructure.Services.CvParsers;
 
 public class GeminiCvParser(IGeminiClient geminiClient, IOptions<GeminiSettings> options, ILogger<GeminiCvParser> logger) : IRawCvParser
 {
@@ -171,9 +171,15 @@ public class GeminiCvParser(IGeminiClient geminiClient, IOptions<GeminiSettings>
         promptBuilder.AppendLine("Extract from text to JSON.");
         promptBuilder.AppendLine("Output only the requested JSON; no extra text.");
         promptBuilder.AppendLine("Infer ALL possible information from the 'CV Text' for EVERY field in the 'Target JSON Structure'.");
-        promptBuilder.AppendLine("(Skills): Infer skills for the 'skills' array from WorkExperience, Education, and Courses sections.");
-        promptBuilder.AppendLine("Try set a number `level` (0-10) 10 is expert if the CV proporciona alguna indicación (ej: 'avanzado' podría ser 8, 'experto' 10, 'básico' 3). Si no hay indicación clara, asigna un `level` por defecto de `5`.");
-        promptBuilder.AppendLine("Generate a compelling text for the 'Resume.Overview' field, including a summary of key skills, based on the 'CV Text' in the same CV Text language.");
+        promptBuilder.AppendLine("Talents Instructions:");
+        promptBuilder.AppendLine("  - From the entire 'CV Text' (including summary, experience, projects, and personal descriptions), identify key professional roles, identities, and core personal attributes or soft skills that define the candidate.");
+        promptBuilder.AppendLine("  - Examples of what to look for: 'Developer', 'Photographer', 'Designer', 'Freelancer', 'Creative', 'Problem Solver', 'Team Player', 'Fast Learner', 'Leader', 'Communicator', 'Innovator'.");
+        promptBuilder.AppendLine("  - Aim for a concise list of the most prominent and relevant talents, written in the same language as the 'CV Text'.");
+        promptBuilder.AppendLine("Skills Instructions:");
+        promptBuilder.AppendLine("  - Infer skills for the 'skills' array from the WorkExperience, Education, and Courses sections of the 'CV Text'.");
+        promptBuilder.AppendLine("  - For each skill, assign a numeric `level` (scale 0-10, where 10 is expert) if the CV provides any indication (e.g., 'advanced' could be 8, 'expert' 10, 'basic' 3).");
+        promptBuilder.AppendLine("  - If no clear indication of skill level is found, assign a default `level` of `5`.");
+        promptBuilder.AppendLine("Generate a compelling text for the 'Resume.Overview' field. This text should include a summary of key skills and be based on the 'CV Text', written in the same language as the 'CV Text'.");
         promptBuilder.AppendLine("Dates: use YYYY-MM or YYYY for partials. If current, endDate is null.");
         promptBuilder.AppendLine("\nCV Text:");
         promptBuilder.AppendLine("```text");

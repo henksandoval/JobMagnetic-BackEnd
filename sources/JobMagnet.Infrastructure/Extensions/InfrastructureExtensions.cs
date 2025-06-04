@@ -1,5 +1,6 @@
 using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Infrastructure.ExternalServices.CvParsers;
+using JobMagnet.Infrastructure.Services.CvParsers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
