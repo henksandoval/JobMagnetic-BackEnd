@@ -7,5 +7,5 @@ namespace JobMagnet.Infrastructure.ExternalServices.Gemini;
 
 public interface IGeminiClient
 {
-    Task<Maybe<ModelResponse>> GenerateContentAsync(ApiRequest request, ModelVersion modelVersion);
+    Task<Maybe<ModelResponse>> GenerateContentAsync(ApiRequest request, ModelVersion modelVersion = ModelVersion.Gemini_20_Flash);
 }

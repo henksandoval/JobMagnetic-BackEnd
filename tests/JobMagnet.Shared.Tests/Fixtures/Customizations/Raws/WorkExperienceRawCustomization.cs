@@ -18,7 +18,8 @@ public class WorkExperienceRawCustomization : ICustomization
                 TestUtilities
                     .OptionalValue<DateTime?>(FixtureBuilder.Faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)), 75)
                     ?.ToShortDateString() ?? string.Empty,
-                FixtureBuilder.Faker.PickRandom(StaticCustomizations.Descriptions)
+                FixtureBuilder.Faker.PickRandom(StaticCustomizations.Descriptions),
+                []
             )
         );
     }

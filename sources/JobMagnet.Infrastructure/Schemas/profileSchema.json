@@ -61,7 +61,12 @@
         "companyLocation": "string",
         "startDate": "date",
         "endDate": "date | null",
-        "description": "string"
+        "description": "string",
+        "responsibilities": [
+          {
+            "description": "string"
+          }
+        ]
       }
     ]
   },

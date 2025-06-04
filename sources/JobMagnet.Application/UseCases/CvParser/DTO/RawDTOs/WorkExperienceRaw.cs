@@ -6,4 +6,5 @@ public sealed record WorkExperienceRaw(
     string? CompanyLocation,
     string? StartDate,
     string? EndDate,
-    string? Description);
+    string? Description,
+    ICollection<ResponsibilityRaw>? Responsibilities);

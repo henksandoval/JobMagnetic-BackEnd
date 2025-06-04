@@ -1,7 +1,6 @@
 using System.Text;
 using CSharpFunctionalExtensions;
 using GeminiDotNET;
-using GeminiDotNET.ApiModels.Enums;
 using GeminiDotNET.ClientModels;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Ports;
@@ -153,11 +152,28 @@ public class GeminiCvParser(IGeminiClient geminiClient, IOptions<GeminiSettings>
         return Maybe<string>.None;
     }
 
+    private async Task<ModelResponse?> CallGeminiServiceAsync(string cvTextContent)
+    {
+        var fullPrompt = BuildPromptForGemini(cvTextContent);
+
+        var requestBuilder = new ApiRequestBuilder()
+            .WithPrompt(fullPrompt)
+            .WithDefaultGenerationConfig(0.5f, 8000);
+
+        var request = requestBuilder.Build();
+        var response = await geminiClient.GenerateContentAsync(request);
+        return response.Value;
+    }
+
     private string BuildPromptForGemini(string cvTextContent)
     {
         var promptBuilder = new StringBuilder();
         promptBuilder.AppendLine("Extract from text to JSON.");
         promptBuilder.AppendLine("Output only the requested JSON; no extra text.");
+        promptBuilder.AppendLine("Infer ALL possible information from the 'CV Text' for EVERY field in the 'Target JSON Structure'.");
+        promptBuilder.AppendLine("(Skills): Infer skills for the 'skills' array from WorkExperience, Education, and Courses sections.");
+        promptBuilder.AppendLine("Try set a number `level` (0-10) 10 is expert if the CV proporciona alguna indicación (ej: 'avanzado' podría ser 8, 'experto' 10, 'básico' 3). Si no hay indicación clara, asigna un `level` por defecto de `5`.");
+        promptBuilder.AppendLine("Generate a compelling text for the 'Resume.Overview' field, including a summary of key skills, based on the 'CV Text' in the same CV Text language.");
         promptBuilder.AppendLine("Dates: use YYYY-MM or YYYY for partials. If current, endDate is null.");
         promptBuilder.AppendLine("\nCV Text:");
         promptBuilder.AppendLine("```text");
@@ -169,18 +185,5 @@ public class GeminiCvParser(IGeminiClient geminiClient, IOptions<GeminiSettings>
         promptBuilder.AppendLine("```");
         promptBuilder.AppendLine("\nExtracted JSON:");
         return promptBuilder.ToString();
-    }
-
-    private async Task<ModelResponse?> CallGeminiServiceAsync(string cvTextContent)
-    {
-        var fullPrompt = BuildPromptForGemini(cvTextContent);
-
-        var requestBuilder = new ApiRequestBuilder()
-            .WithPrompt(fullPrompt)
-            .WithDefaultGenerationConfig(0.5f, 2048);
-
-        var request = requestBuilder.Build();
-        var response = await geminiClient.GenerateContentAsync(request, ModelVersion.Gemini_20_Flash);
-        return response.Value;
     }
 }
