@@ -142,7 +142,7 @@ public class ProfileMapperShould
     public void MapperProfileEntityToSummaryViewModelWithPortfolioGallery()
     {
         var profileBuilder = new ProfileEntityBuilder(_fixture)
-            .WithSummaries();
+            .WithSummary();
 
         var profile = profileBuilder.Build();
 
