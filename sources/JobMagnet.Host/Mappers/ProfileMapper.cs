@@ -73,17 +73,7 @@ public static class ProfileMapper
                 ),
                 src => src.Education != null && src.Education.Count > 0)
             .Map(dest => dest.WorkExperience,
-                src => new WorkExperienceViewModel(src.WorkExperiences.Select(w => new PositionViewModel(
-                        w.JobTitle,
-                        w.StartDate.ToString("yyyy-MM-dd"),
-                        w.CompanyLocation,
-                        string.Join(",", w.Responsibilities),
-                        string.Join(",", w.Responsibilities),
-                        string.Join(",", w.Responsibilities),
-                        w.Description))
-                    .ToArray()
-                ),
-                src => src.WorkExperiences != null && src.WorkExperiences.Count > 0);
+                src => WorkExperienceViewModelMap(src));
 
         TypeAdapterConfig<ProfileEntity, ProfileViewModel>
             .NewConfig()
@@ -104,19 +94,33 @@ public static class ProfileMapper
                 src => src.Summary != null);
     }
 
+    private static WorkExperienceViewModel WorkExperienceViewModelMap(SummaryEntity src)
+    {
+        var workExperienceList = src.WorkExperiences?.Select(w => new PositionViewModel(
+                w.JobTitle,
+                w.StartDate.ToString("yyyy-MM-dd"),
+                w.CompanyLocation,
+                w.Description))
+            .ToArray() ?? [];
+        return new WorkExperienceViewModel(workExperienceList);
+    }
+
     private static PersonalDataViewModel PersonalDataViewModelMap(ProfileEntity src)
     {
-        var personalData = new PersonalDataViewModel(
+        var socialNetworks = src.Resume?.ContactInfo?.Select(c => new SocialNetworksViewModel(
+                c.ContactType.Name,
+                c.Value,
+                c.ContactType.IconClass ?? string.Empty,
+                c.ContactType.IconUrl ?? string.Empty))
+            .ToArray() ?? [];
+
+        var professions = src.Talents?.Select(t => t.Description).ToArray() ?? [];
+
+        return new PersonalDataViewModel(
             GetFullName(src),
-            src.Talents.Select(t => t.Description).ToArray(),
-            src.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(
-                    c.ContactType.Name,
-                    c.Value,
-                    c.ContactType.IconClass ?? string.Empty,
-                    c.ContactType.IconUrl ?? string.Empty))
-                .ToArray()
+            professions,
+            socialNetworks
         );
-        return personalData;
     }
 
     private static string GetFullName(ProfileEntity entity)

@@ -12,9 +12,9 @@ public class WorkExperienceEntity : SoftDeletableEntity<long>
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public string Description { get; set; }
-    public ICollection<string> Responsibilities { get; set; } = new List<string>();
 
     [ForeignKey(nameof(Summary))] public long SummaryId { get; set; }
 
     public virtual SummaryEntity Summary { get; set; }
+    public virtual ICollection<WorkResponsibilityEntity> Responsibilities { get; set; } = new List<WorkResponsibilityEntity>();
 }

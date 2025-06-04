@@ -23,6 +23,7 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
     public DbSet<SummaryEntity> Summaries { get; set; }
     public DbSet<TestimonialEntity> Testimonials { get; set; }
     public DbSet<WorkExperienceEntity> WorkExperiences { get; set; }
+    public DbSet<WorkResponsibilityEntity> WorkResponsibilities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -79,6 +80,24 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
                 .HasForeignKey(publicProfile => publicProfile.ProfileId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<WorkResponsibilityEntity>(entity =>
+        {
+            entity.ToTable("WorkResponsibilities")
+                .HasKey(workResponsibility => workResponsibility.Id);
+
+            entity
+                .Property(workResponsibility => workResponsibility.Description)
+                .IsRequired()
+                .HasMaxLength(WorkResponsibilityEntity.MaxDescriptionLength);
+
+            entity
+                .HasOne(workResponsibility => workResponsibility.WorkExperience)
+                .WithMany(workExperience => workExperience.Responsibilities)
+                .HasForeignKey(workResponsibility => workResponsibility.WorkExperienceId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 

@@ -785,10 +785,6 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Property<Guid?>("LastModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.PrimitiveCollection<string>("Responsibilities")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -800,6 +796,50 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.HasIndex("SummaryId");
 
                     b.ToTable("WorkExperiences", (string)null);
+                });
+
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.WorkResponsibilityEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("AddedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("WorkExperienceId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkExperienceId");
+
+                    b.ToTable("WorkResponsibilities", (string)null);
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfoEntity", b =>
@@ -953,6 +993,17 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Navigation("Summary");
                 });
 
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.WorkResponsibilityEntity", b =>
+                {
+                    b.HasOne("JobMagnet.Domain.Core.Entities.WorkExperienceEntity", "WorkExperience")
+                        .WithMany("Responsibilities")
+                        .HasForeignKey("WorkExperienceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WorkExperience");
+                });
+
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactTypeEntity", b =>
                 {
                     b.Navigation("ContactDetails");
@@ -997,6 +1048,11 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Navigation("Education");
 
                     b.Navigation("WorkExperiences");
+                });
+
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.WorkExperienceEntity", b =>
+                {
+                    b.Navigation("Responsibilities");
                 });
 #pragma warning restore 612, 618
         }

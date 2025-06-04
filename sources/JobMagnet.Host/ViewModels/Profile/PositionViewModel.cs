@@ -2,10 +2,7 @@
 
 public record PositionViewModel(
     string Specialist,
-    string Startdate,
+    string StartDate,
     string Location,
-    string CommunicationDesignLeadership,
-    string TeamLeadership,
-    string DesignQualityAssurance,
-    string ExpertiseArea
+    string Description
 );

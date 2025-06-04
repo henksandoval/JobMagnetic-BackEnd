@@ -111,7 +111,13 @@ public record SummaryCollection
                 CompanyLocation = x.CompanyLocation,
                 StartDate = x.StartDate,
                 EndDate = x.EndDate,
-                Responsibilities = x.Responsibilities?.ToList() ?? [],
+                Responsibilities = x.Responsibilities
+                    .Select(description => new WorkResponsibilityEntity(0, description)
+                    {
+                        AddedAt = DateTime.UtcNow,
+                        AddedBy = Guid.Empty
+                    })
+                    .ToList(),
                 SummaryId = _summaryId,
                 Description = x.Description,
                 AddedAt = DateTime.UtcNow,

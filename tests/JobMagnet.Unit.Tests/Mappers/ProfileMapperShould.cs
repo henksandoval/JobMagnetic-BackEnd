@@ -260,9 +260,6 @@ public class ProfileMapperShould
                 w.JobTitle,
                 w.StartDate.ToString("yyyy-MM-dd"),
                 w.CompanyLocation,
-                string.Join(", ", w.Responsibilities),
-                string.Join(", ", w.Responsibilities),
-                string.Join(", ", w.Responsibilities),
                 w.Description))
             .ToArray();
 

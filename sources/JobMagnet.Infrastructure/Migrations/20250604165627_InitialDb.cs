@@ -424,7 +424,6 @@ namespace JobMagnet.Infrastructure.Migrations
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Responsibilities = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SummaryId = table.Column<long>(type: "bigint", nullable: false),
                     AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -441,6 +440,33 @@ namespace JobMagnet.Infrastructure.Migrations
                         name: "FK_WorkExperiences_Summaries_SummaryId",
                         column: x => x.SummaryId,
                         principalTable: "Summaries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkResponsibilities",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WorkExperienceId = table.Column<long>(type: "bigint", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkResponsibilities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WorkResponsibilities_WorkExperiences_WorkExperienceId",
+                        column: x => x.WorkExperienceId,
+                        principalTable: "WorkExperiences",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -524,6 +550,11 @@ namespace JobMagnet.Infrastructure.Migrations
                 name: "IX_WorkExperiences_SummaryId",
                 table: "WorkExperiences",
                 column: "SummaryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkResponsibilities_WorkExperienceId",
+                table: "WorkResponsibilities",
+                column: "WorkExperienceId");
         }
 
         /// <inheritdoc />
@@ -554,7 +585,7 @@ namespace JobMagnet.Infrastructure.Migrations
                 name: "Testimonials");
 
             migrationBuilder.DropTable(
-                name: "WorkExperiences");
+                name: "WorkResponsibilities");
 
             migrationBuilder.DropTable(
                 name: "ContactTypes");
@@ -567,6 +598,9 @@ namespace JobMagnet.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Skills");
+
+            migrationBuilder.DropTable(
+                name: "WorkExperiences");
 
             migrationBuilder.DropTable(
                 name: "Summaries");
