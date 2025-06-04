@@ -94,18 +94,15 @@ public class ProfileController(
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queryParameters.ProfileSlug);
 
-        var isDefaultData = queryParameters.ProfileSlug.Equals("john", StringComparison.InvariantCultureIgnoreCase);
         var publicProfile = await publicProfileRepository
             .FirstOrDefaultAsync(x => x.ProfileSlugUrl == queryParameters.ProfileSlug)
             .ConfigureAwait(false);
 
-        if (publicProfile is null && !isDefaultData)
+        if (publicProfile is null)
             return Results.NotFound();
 
-        var profileId = publicProfile?.ProfileId ?? 1;
-
         var entity = await queryRepository
-            .WhereCondition(x => x.Id == profileId)
+            .WhereCondition(x => x.Id == publicProfile.ProfileId)
             .WithResume()
             .WithSkills()
             .WithTalents()

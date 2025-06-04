@@ -1,4 +1,5 @@
 ﻿using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Services;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using ServiceCollection = JobMagnet.Infrastructure.Persistence.Seeders.Collections.ServiceCollection;
@@ -54,6 +55,9 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
             AddedAt = DateTime.Now,
             AddedBy = Guid.Empty
         };
+
+        var publicProfile = new PublicProfileIdentifierEntity(profileEntity, "john-doe-44d5c7");
+        profileEntity.PublicProfileIdentifiers.Add(publicProfile);
 
         await context.Profiles.AddAsync(profileEntity);
         return profileEntity;

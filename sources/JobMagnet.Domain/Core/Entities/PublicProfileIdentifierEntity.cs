@@ -15,7 +15,7 @@ public class PublicProfileIdentifierEntity : TrackableEntity<long>
     public long ProfileId { get; private set; }
     public long ViewCount { get; private set; }
 
-    public virtual ProfileEntity ProfileEntity { get; init; } = null!;
+    public ProfileEntity ProfileEntity { get; init; } = null!;
 
     public PublicProfileIdentifierEntity() { }
 
@@ -28,6 +28,19 @@ public class PublicProfileIdentifierEntity : TrackableEntity<long>
         ProfileId = profileEntity.Id;
         ProfileEntity = profileEntity;
         ProfileSlugUrl = slugGenerator.GenerateProfileSlug(profileEntity);
+        Type = LinkType.Primary;
+        ViewCount = 0;
+    }
+
+    [SetsRequiredMembers]
+    public PublicProfileIdentifierEntity(ProfileEntity profileEntity, string slug)
+    {
+        ArgumentNullException.ThrowIfNull(profileEntity, nameof(profileEntity));
+        ArgumentNullException.ThrowIfNull(slug, nameof(slug));
+
+        ProfileId = profileEntity.Id;
+        ProfileEntity = profileEntity;
+        ProfileSlugUrl = slug;
         Type = LinkType.Primary;
         ViewCount = 0;
     }
