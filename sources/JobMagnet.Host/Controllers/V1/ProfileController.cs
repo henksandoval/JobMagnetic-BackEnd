@@ -110,7 +110,7 @@ public class ProfileController(
             .WithSkills()
             .WithTalents()
             .WithPortfolioGallery()
-            .WithSummaries()
+            .WithSummary()
             .WithServices()
             .WithTestimonials()
             .BuildFirstOrDefaultAsync();
