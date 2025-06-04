@@ -109,7 +109,12 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
                     GalleryItems = p.Services.GalleryItems.Select(g => new ServiceGalleryItemEntity
                     {
                         Id = g.Id,
-                        Title = g.Title
+                        Title = g.Title,
+                        Description = g.Description,
+                        UrlImage = g.UrlImage,
+                        UrlLink = g.UrlLink,
+                        UrlVideo = g.UrlVideo,
+                        Type = g.Type
                     }).ToList()
                 },
             Talents = p.Talents,
@@ -214,7 +219,8 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
                 Id = t.Id,
                 Name = t.Name,
                 JobTitle = t.JobTitle,
-                Feedback = t.Feedback
+                Feedback = t.Feedback,
+                PhotoUrl = t.PhotoUrl
             }).ToList()
         });
         return this;

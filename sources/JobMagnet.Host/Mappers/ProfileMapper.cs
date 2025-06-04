@@ -28,6 +28,7 @@ public static class ProfileMapper
         TypeAdapterConfig<ServiceGalleryItemEntity, ServiceDetailsViewModel>
             .NewConfig()
             .Map(dest => dest.BackgroundUrl, src => src.UrlImage)
+            .Map(dest => dest.Description, src => src.Description)
             .Map(dest => dest.Name, src => src.Title);
 
         TypeAdapterConfig<TestimonialEntity, TestimonialsViewModel>
