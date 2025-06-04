@@ -87,17 +87,7 @@ public static class ProfileMapper
 
         TypeAdapterConfig<ProfileEntity, ProfileViewModel>
             .NewConfig()
-            .Map(dest => dest.PersonalData,
-                src => new PersonalDataViewModel(
-                    GetFullName(src),
-                    src.Talents.Select(t => t.Description).ToArray(),
-                    src.Resume!.ContactInfo.Select(c => new SocialNetworksViewModel(
-                            c.ContactType.Name,
-                            c.Value,
-                            c.ContactType.IconClass ?? string.Empty,
-                            c.ContactType.IconUrl ?? string.Empty))
-                        .ToArray()),
-                src => src.Resume != null && src.Resume.ContactInfo.Any() && src.Talents.Any())
+            .Map(dest => dest.PersonalData, src => PersonalDataViewModelMap(src))
             .Map(dest => dest.About, src => src.Adapt<AboutViewModel>(),
                 src => src.Resume != null && src.BirthDate != null)
             .Map(dest => dest.Testimonials,
@@ -112,6 +102,21 @@ public static class ProfileMapper
                 src => src.Services != null && src.Services.GalleryItems.Count > 0)
             .Map(dest => dest.Summary, src => src.Summary.Adapt<SummaryViewModel>(),
                 src => src.Summary != null);
+    }
+
+    private static PersonalDataViewModel PersonalDataViewModelMap(ProfileEntity src)
+    {
+        var personalData = new PersonalDataViewModel(
+            GetFullName(src),
+            src.Talents.Select(t => t.Description).ToArray(),
+            src.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(
+                    c.ContactType.Name,
+                    c.Value,
+                    c.ContactType.IconClass ?? string.Empty,
+                    c.ContactType.IconUrl ?? string.Empty))
+                .ToArray()
+        );
+        return personalData;
     }
 
     private static string GetFullName(ProfileEntity entity)
