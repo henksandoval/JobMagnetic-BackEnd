@@ -34,9 +34,11 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     private const int ContactInfoCount = 3;
     private const int TalentsCount = 8;
     private const int PortfolioCount = 3;
-    private const int TestimonialsCount = 12;
+    private const int TestimonialsCount = 6;
     private const int EducationCount = 4;
     private const int WorkExperienceCount = 2;
+    private const int SkillDetailsCount = 12;
+    private const int ServiceDetailsCount = 3;
 
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly HttpClient _httpClient;
@@ -74,8 +76,10 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         responseData.ShouldBeAssignableTo<ProfileViewModel>();
 
         responseData.About.ShouldNotBeNull();
+        responseData.Service.ShouldNotBeNull();
+        responseData.Service.ServiceDetails.Length.ShouldBe(ServiceDetailsCount);
         responseData.SkillSet.ShouldNotBeNull();
-        responseData.SkillSet.SkillDetails.Length.ShouldBeGreaterThan(0);
+        responseData.SkillSet.SkillDetails.Length.ShouldBe(SkillDetailsCount);
         responseData.Summary.ShouldNotBeNull();
         responseData.Summary.Education.AcademicBackground.Length.ShouldBe(EducationCount);
         responseData.Summary.WorkExperience.Position.Length.ShouldBe(WorkExperienceCount);
@@ -236,6 +240,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
             .WithWorkExperience(WorkExperienceCount)
             .WithServices()
             .WithSkills()
+            .WithSkillDetails(SkillDetailsCount)
             .WithTestimonials(TestimonialsCount)
             .Build();
 

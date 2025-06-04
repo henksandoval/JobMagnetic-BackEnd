@@ -22,18 +22,6 @@ public class ProfileEntityBuilder(IFixture fixture)
         return this;
     }
 
-    public ProfileEntityBuilder WithSkills()
-    {
-        _skill = fixture.Create<SkillEntity>();
-        return this;
-    }
-
-    public ProfileEntityBuilder WithServices()
-    {
-        _services = fixture.Create<ServiceEntity>();
-        return this;
-    }
-
     public ProfileEntityBuilder WithContactInfo(int count = 5)
     {
         if (_resume == null)
@@ -42,6 +30,29 @@ public class ProfileEntityBuilder(IFixture fixture)
         }
 
         _resume.ContactInfo = fixture.CreateMany<ContactInfoEntity>(count).ToList();
+        return this;
+    }
+
+    public ProfileEntityBuilder WithSkills()
+    {
+        _skill = fixture.Create<SkillEntity>();
+        return this;
+    }
+
+    public ProfileEntityBuilder WithSkillDetails(int count = 5)
+    {
+        if (_skill == null)
+        {
+            throw new InvalidOperationException("Cannot add contact info without a summary. Call WithSkills() first.");
+        }
+
+        _skill.SkillDetails = fixture.CreateMany<SkillItemEntity>(count).ToList();
+        return this;
+    }
+
+    public ProfileEntityBuilder WithServices()
+    {
+        _services = fixture.Create<ServiceEntity>();
         return this;
     }
 
