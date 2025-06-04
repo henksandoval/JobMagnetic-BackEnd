@@ -76,6 +76,9 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         responseData.About.ShouldNotBeNull();
         responseData.SkillSet.ShouldNotBeNull();
         responseData.SkillSet.SkillDetails.Length.ShouldBeGreaterThan(0);
+        responseData.Summary.ShouldNotBeNull();
+        responseData.Summary.Education.AcademicBackground.Length.ShouldBe(EducationCount);
+        responseData.Summary.WorkExperience.Position.Length.ShouldBe(WorkExperienceCount);
         responseData.PersonalData.ShouldNotBeNull();
         responseData.PersonalData.SocialNetworks.Length.ShouldBe(ContactInfoCount);
         responseData.Testimonials!.Length.ShouldBe(TestimonialsCount);
