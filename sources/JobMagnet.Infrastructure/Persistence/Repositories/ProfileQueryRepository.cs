@@ -41,7 +41,9 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
                         ContactType = new ContactTypeEntity
                         {
                             Id = c.ContactType.Id,
-                            Name = c.ContactType.Name
+                            Name = c.ContactType.Name,
+                            IconUrl = c.ContactType.IconUrl,
+                            IconClass = c.ContactType.IconClass
                         }
                     }).ToList()
                 },
