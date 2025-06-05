@@ -69,17 +69,8 @@ public static class ProfileMapper
 
         TypeAdapterConfig<SummaryEntity, SummaryViewModel>
             .NewConfig()
-            .Map(dest => dest.Education,
-                src => new EducationViewModel(src.Education.Select(e => new AcademicBackgroundViewModel(
-                        e.Degree,
-                        e.StartDate.ToString("yyyy-MM-dd"),
-                        e.InstitutionName,
-                        e.Description
-                    )).ToArray()
-                ),
-                src => src.Education != null && src.Education.Count > 0)
-            .Map(dest => dest.WorkExperience,
-                src => WorkExperienceViewModelMap(src));
+            .Map(dest => dest.Education, src => EducationViewModelMap(src))
+            .Map(dest => dest.WorkExperience, src => WorkExperienceViewModelMap(src));
     }
 
     private static AboutViewModel AboutViewModelMap(ProfileEntity entity)
@@ -102,6 +93,18 @@ public static class ProfileMapper
             string.Empty
         );
         return viewModel;
+    }
+
+    private static EducationViewModel EducationViewModelMap(SummaryEntity src)
+    {
+        var academicBackground = src.Education?.Select(e => new AcademicBackgroundViewModel(
+            e.Degree,
+            e.StartDate.ToString("yyyy-MM-dd"),
+            e.InstitutionName,
+            e.Description
+        )).ToArray() ?? [];
+
+        return new EducationViewModel(academicBackground);
     }
 
     private static WorkExperienceViewModel WorkExperienceViewModelMap(SummaryEntity src)

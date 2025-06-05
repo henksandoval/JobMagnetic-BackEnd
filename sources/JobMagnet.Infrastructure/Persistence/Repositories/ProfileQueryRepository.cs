@@ -96,39 +96,10 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
     public IProfileQueryRepository WithServices()
     {
-        _projections.Add(p => new ProfileEntity
-        {
-            Id = p.Id,
-            FirstName = p.FirstName,
-            LastName = p.LastName,
-            MiddleName = p.MiddleName,
-            SecondLastName = p.SecondLastName,
-            ProfileImageUrl = p.ProfileImageUrl,
-            BirthDate = p.BirthDate,
-            Services = p.Services != null && p.Services.IsDeleted
-                ? null
-                : new ServiceEntity
-                {
-                    Id = p.Services!.Id,
-                    Overview = p.Services.Overview,
-                    GalleryItems = p.Services.GalleryItems.Select(g => new ServiceGalleryItemEntity
-                    {
-                        Id = g.Id,
-                        Title = g.Title,
-                        Description = g.Description,
-                        UrlImage = g.UrlImage,
-                        UrlLink = g.UrlLink,
-                        UrlVideo = g.UrlVideo,
-                        Type = g.Type
-                    }).ToList()
-                },
-            Talents = p.Talents,
-            PortfolioGallery = p.PortfolioGallery,
-            Resume = p.Resume,
-            Skill = p.Skill,
-            Summary = p.Summary,
-            Testimonials = p.Testimonials
-        });
+        _query = _query
+            .Include(p => p.Services)
+            .ThenInclude(s => s.GalleryItems);
+
         return this;
     }
 

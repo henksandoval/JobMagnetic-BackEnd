@@ -56,7 +56,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
             AddedBy = Guid.Empty
         };
 
-        var publicProfile = new PublicProfileIdentifierEntity(profileEntity, "john-doe-44d5c7");
+        var publicProfile = new PublicProfileIdentifierEntity(profileEntity, "john-doe-1a2b3c");
         profileEntity.PublicProfileIdentifiers.Add(publicProfile);
 
         await context.Profiles.AddAsync(profileEntity);
