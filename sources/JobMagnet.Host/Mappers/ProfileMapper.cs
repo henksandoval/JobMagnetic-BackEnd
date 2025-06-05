@@ -1,4 +1,5 @@
-﻿using JobMagnet.Domain.Core.Entities;
+﻿using System.Linq.Expressions;
+using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Host.ViewModels.Profile;
 using JobMagnet.Shared.Utils;
 using Mapster;
@@ -19,6 +20,23 @@ public static class ProfileMapper
 
     private static void ConfigMapper()
     {
+        TypeAdapterConfig<ProfileEntity, ProfileViewModel>
+            .NewConfig()
+            .Map(dest => dest.PersonalData, src => PersonalDataViewModelMap(src))
+            .Map(dest => dest.About, src => src.Adapt<AboutViewModel>())
+            .Map(dest => dest.Testimonials,
+                src => src.Testimonials.Select(t => t.Adapt<TestimonialsViewModel>()).ToArray(),
+                src => src.Testimonials.Any())
+            .Map(dest => dest.PortfolioGallery,
+                src => src.PortfolioGallery.Select(p => p.Adapt<PortfolioViewModel>()).ToArray(),
+                src => src.PortfolioGallery.Any())
+            .Map(dest => dest.SkillSet, src => src.Skill.Adapt<SkillSetViewModel>(),
+                src => src.Skill != null && src.Skill.SkillDetails.Count > 0)
+            .Map(dest => dest.Service, src => src.Services.Adapt<ServiceViewModel>(),
+                src => src.Services != null && src.Services.GalleryItems.Count > 0)
+            .Map(dest => dest.Summary, src => src.Summary.Adapt<SummaryViewModel>(),
+                src => src.Summary != null);
+
         TypeAdapterConfig<PortfolioGalleryEntity, PortfolioViewModel>
             .NewConfig()
             .Map(dest => dest.Image, src => src.UrlImage)
@@ -37,19 +55,7 @@ public static class ProfileMapper
 
         TypeAdapterConfig<ProfileEntity, AboutViewModel>
             .NewConfig()
-            .Map(dest => dest.ImageUrl, src => src.ProfileImageUrl)
-            .Map(dest => dest.Description, src => src.Resume.About)
-            .Map(dest => dest.Text, src => src.Resume.JobTitle)
-            .Map(dest => dest.Hobbies, src => src.Resume.Overview)
-            .Map(dest => dest.Birthday, src => src.BirthDate)
-            .Map(dest => dest.Website, src => GetContactValue(src, "Website"))
-            .Map(dest => dest.PhoneNumber, src => GetContactValue(src, "Mobile Phone"))
-            .Map(dest => dest.Email, src => GetContactValue(src, "Email"))
-            .Map(dest => dest.City, src => src.Resume.Address)
-            .Map(dest => dest.Age, src => src.BirthDate.GetAge())
-            .Map(dest => dest.Degree, src => src.Resume.Title ?? string.Empty)
-            .Map(dest => dest.WorkExperience, src => src.Resume.Summary)
-            .Map(dest => dest.Freelance, src => string.Empty);
+            .Map(dest => dest, src => AboutViewModelMap(src));
 
         TypeAdapterConfig<SkillEntity, SkillSetViewModel>
             .NewConfig()
@@ -74,24 +80,28 @@ public static class ProfileMapper
                 src => src.Education != null && src.Education.Count > 0)
             .Map(dest => dest.WorkExperience,
                 src => WorkExperienceViewModelMap(src));
+    }
 
-        TypeAdapterConfig<ProfileEntity, ProfileViewModel>
-            .NewConfig()
-            .Map(dest => dest.PersonalData, src => PersonalDataViewModelMap(src))
-            .Map(dest => dest.About, src => src.Adapt<AboutViewModel>(),
-                src => src.Resume != null && src.BirthDate != null)
-            .Map(dest => dest.Testimonials,
-                src => src.Testimonials.Select(t => t.Adapt<TestimonialsViewModel>()).ToArray(),
-                src => src.Testimonials.Any())
-            .Map(dest => dest.PortfolioGallery,
-                src => src.PortfolioGallery.Select(p => p.Adapt<PortfolioViewModel>()).ToArray(),
-                src => src.PortfolioGallery.Any())
-            .Map(dest => dest.SkillSet, src => src.Skill.Adapt<SkillSetViewModel>(),
-                src => src.Skill != null && src.Skill.SkillDetails.Count > 0)
-            .Map(dest => dest.Service, src => src.Services.Adapt<ServiceViewModel>(),
-                src => src.Services != null && src.Services.GalleryItems.Count > 0)
-            .Map(dest => dest.Summary, src => src.Summary.Adapt<SummaryViewModel>(),
-                src => src.Summary != null);
+    private static AboutViewModel AboutViewModelMap(ProfileEntity entity)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(nameof(ProfileEntity), "ProfileEntity cannot be null.");
+
+        var viewModel = new AboutViewModel(
+            entity.ProfileImageUrl ?? string.Empty,
+            entity.Resume?.About ?? string.Empty,
+            entity.Resume?.JobTitle ?? string.Empty,
+            entity.Resume?.Overview ?? string.Empty,
+            entity.BirthDate,
+            GetContactValue(entity, "Website"),
+            GetContactValue(entity, "Phone"),
+            entity.Resume?.Address ?? string.Empty,
+            entity.BirthDate.GetAge(),
+            entity.Resume?.Title ?? string.Empty,
+            GetContactValue(entity, "Email"),
+            entity.Resume?.Summary ?? string.Empty,
+            string.Empty
+        );
+        return viewModel;
     }
 
     private static WorkExperienceViewModel WorkExperienceViewModelMap(SummaryEntity src)
@@ -138,8 +148,8 @@ public static class ProfileMapper
 
     private static string GetContactValue(ProfileEntity entity, string contactTypeName)
     {
-        return entity.Resume.ContactInfo
-            .FirstOrDefault(c => c.ContactType.Name == contactTypeName)
+        return entity.Resume?.ContactInfo?
+            .FirstOrDefault(c => string.Equals(c.ContactType.Name, contactTypeName, StringComparison.OrdinalIgnoreCase))
             ?.Value ?? string.Empty;
     }
 }

@@ -5,7 +5,7 @@ public record AboutViewModel(
     string Description,
     string Text,
     string Hobbies,
-    DateOnly Birthday,
+    DateOnly? Birthday,
     string Website,
     string PhoneNumber,
     string City,

@@ -171,6 +171,10 @@ public class GeminiCvParser(IGeminiClient geminiClient, IOptions<GeminiSettings>
         promptBuilder.AppendLine("Extract from text to JSON.");
         promptBuilder.AppendLine("Output only the requested JSON; no extra text.");
         promptBuilder.AppendLine("Infer ALL possible information from the 'CV Text' for EVERY field in the 'Target JSON Structure'.");
+        promptBuilder.AppendLine("\nResume Content Instructions:");
+        promptBuilder.AppendLine("  - For 'Resume.About': Generate a brief, first-person personal introduction (e.g., 'Hello! I'm [Name], a passionate [Job Title]...'). This should highlight the candidate's professional identity and passion.");
+        promptBuilder.AppendLine("  - For 'Resume.Summary': Extract or generate a concise list or a few short sentences detailing key professional actions, responsibilities, or contributions from the candidate's experience (e.g., 'Developed and maintained web applications..., Assisted in the development of...'). Focus on what the candidate *did*.");
+        promptBuilder.AppendLine("  - For 'Resume.Overview': Generate a compelling and comprehensive professional overview. This text should summarize the candidate's key skills, overall experience, and suitability for roles, effectively acting as an 'elevator pitch'.");
         promptBuilder.AppendLine("Talents Instructions:");
         promptBuilder.AppendLine("  - From the entire 'CV Text' (including summary, experience, projects, and personal descriptions), identify key professional roles, identities, and core personal attributes or soft skills that define the candidate.");
         promptBuilder.AppendLine("  - Examples of what to look for: 'Developer', 'Photographer', 'Designer', 'Freelancer', 'Creative', 'Problem Solver', 'Team Player', 'Fast Learner', 'Leader', 'Communicator', 'Innovator'.");
