@@ -1,16 +1,11 @@
-using System.Reflection;
-using System.Text.Json;
 using GeminiDotNET;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
-using JobMagnet.Application.UseCases.CvParser.Ports;
-using JobMagnet.Infrastructure.ExternalServices.CvParsers;
 using JobMagnet.Infrastructure.ExternalServices.Gemini;
 using JobMagnet.Infrastructure.Settings;
 using JobMagnet.Shared.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
 
 namespace JobMagnet.Infrastructure.Extensions;
@@ -39,23 +34,6 @@ internal static class GeminiExtensions
         var generator = new JSchemaGenerator();
         var schemaJObject = generator.Generate(typeof(ProfileRaw));
         return schemaJObject.ToString();
-        var assembly = Assembly.GetExecutingAssembly();
-        const string resourceName = "JobMagnet.Infrastructure.Schemas.profileSchema.json";
-
-        using var stream = assembly.GetManifestResourceStream(resourceName);
-        if (stream == null) throw new FileNotFoundException($"Embedded resource '{resourceName}' not found.");
-
-        using var reader = new StreamReader(stream);
-        var indentedJsonSchema = reader.ReadToEnd();
-        try
-        {
-            using var jsonDoc = JsonDocument.Parse(indentedJsonSchema);
-            return JsonSerializer.Serialize(jsonDoc.RootElement, new JsonSerializerOptions { WriteIndented = false });
-        }
-        catch (JsonException ex)
-        {
-            throw new InvalidOperationException($"Error parsing embedded profileSchema.json: {ex.Message}", ex);
-        }
     }
 }
 
