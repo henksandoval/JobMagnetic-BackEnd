@@ -24,6 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".miscellaneous", ".miscella
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		README.md = README.md
+		.azure\GitVersion.yml = .azure\GitVersion.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Integration.Tests", "tests\JobMagnet.Integration.Tests\JobMagnet.Integration.Tests.csproj", "{4E357F41-1734-49B7-90E8-E1087FC6201F}"
@@ -37,6 +38,21 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Infrastructure", "sources\JobMagnet.Infrastructure\JobMagnet.Infrastructure.csproj", "{5EDE3D89-01EC-47CE-9AEF-8488945B6FD5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Shared", "sources\JobMagnet.Shared\JobMagnet.Shared.csproj", "{4DE95106-55F2-4D08-B7EF-A18EE4CC3482}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".azure", ".azure", "{644FA919-28BB-4CA1-A84E-1B23863DCB14}"
+	ProjectSection(SolutionItems) = preProject
+		.azure\continuous-delivery-dev.yml = .azure\continuous-delivery-dev.yml
+		.azure\continuous-deployment.yml = .azure\continuous-deployment.yml
+		.azure\continuous-integration.yml = .azure\continuous-integration.yml
+		.azure\pull-request.yml = .azure\pull-request.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{994EA433-2ACC-431F-A5A2-49DB572E1EA7}"
+	ProjectSection(SolutionItems) = preProject
+		.azure\templates\code-quality-template.yml = .azure\templates\code-quality-template.yml
+		.azure\templates\deploy-template.yml = .azure\templates\deploy-template.yml
+		.azure\templates\execute-gitversion-template.yml = .azure\templates\execute-gitversion-template.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +107,8 @@ Global
 		{372A5DFA-149D-4537-B905-66CB0D48BC5F} = {4CF9134D-2530-4614-8DAC-757DD4CDB2D8}
 		{5EDE3D89-01EC-47CE-9AEF-8488945B6FD5} = {4CF9134D-2530-4614-8DAC-757DD4CDB2D8}
 		{4DE95106-55F2-4D08-B7EF-A18EE4CC3482} = {4CF9134D-2530-4614-8DAC-757DD4CDB2D8}
+		{644FA919-28BB-4CA1-A84E-1B23863DCB14} = {D2C19C3C-4C63-472D-9C4A-01764E641D52}
+		{994EA433-2ACC-431F-A5A2-49DB572E1EA7} = {644FA919-28BB-4CA1-A84E-1B23863DCB14}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {32A35D63-83C2-443E-8430-B5CBE63090F8}
