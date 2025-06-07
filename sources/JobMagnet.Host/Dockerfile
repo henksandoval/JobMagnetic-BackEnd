@@ -13,17 +13,20 @@ RUN echo "Download ASP.NET ALPINE "
 FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["JobMagnet.csproj", "."]
-RUN dotnet restore "JobMagnet.csproj"
-COPY . .
-WORKDIR /src
-RUN dotnet build "JobMagnet.csproj" -c $BUILD_CONFIGURATION --no-restore
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "JobMagnet.csproj" -c $BUILD_CONFIGURATION -o /app/publish --no-build
+COPY sources/JobMagnet.Host/*.csproj ./sources/JobMagnet.Host/
+COPY sources/JobMagnet.Application/*.csproj ./sources/JobMagnet.Application/
+COPY sources/JobMagnet.Domain/*.csproj ./sources/JobMagnet.Domain/
+COPY sources/JobMagnet.Infrastructure/*.csproj ./sources/JobMagnet.Infrastructure/
+COPY sources/JobMagnet.Shared/*.csproj ./sources/JobMagnet.Shared/
+
+RUN dotnet restore "sources/JobMagnet.Host/JobMagnet.Host.csproj"
+
+COPY sources/. ./sources/
+
+RUN dotnet publish "sources/JobMagnet.Host/JobMagnet.Host.csproj" -c $BUILD_CONFIGURATION -o /app/publish --no-restore
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "JobMagnet.dll"]
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "JobMagnet.Host.dll"]
