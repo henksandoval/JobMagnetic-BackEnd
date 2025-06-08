@@ -43,7 +43,7 @@ public class GeminiSettingValidation(IConfiguration config) : IValidateOptions<G
     {
         if (string.IsNullOrWhiteSpace(settings.ApiKey))
             return ValidateOptionsResult.Fail(
-                "Gemini API Key is not configured. Ensure 'Gemini:ApiKey' or 'GeminiApiKey' is set in configuration.");
+                "Gemini API Key is not configured. Ensure 'Gemini:ApiKey' is set in configuration.");
 
         if (!Validator.CanBeValidApiKey(settings.ApiKey))
             return ValidateOptionsResult.Fail("Gemini API Key from configuration is invalid.");
