@@ -1,31 +1,29 @@
-# 🚀 JobMagnet: Your Professional Profile, Magnetized!
+# **JobMagnetic: Centralized Professional Ecosystem**
 
-## Overview
+## 🚀 Overview
 
-JobMagnet is a platform designed to revolutionize how professionals manage and showcase their career profiles. It empowers users by automatically transforming their CVs into elegant, public-facing professional sites. The core idea is to connect professionals with opportunities—be it new job roles, collaborations, or interested visitors—by making their information easily accessible and well-presented.
+JobMagnetic is a platform designed to revolutionize how professionals manage and showcase their career profiles. This repository contains the C# backend application that powers the entire ecosystem. It provides a robust and scalable RESTful API for profile management, AI-driven CV parsing, and all core data handling, built with .NET and Clean Architecture principles.
 
-This repository contains the C# backend application that powers JobMagnet. It provides a robust RESTful API for profile management, AI-driven CV parsing, and data handling, built with ASP.NET Core.
+## ✨ Core Functionality & Features
 
-## ✨ Key Features
+This backend enables the following key platform features:
 
--   **AI-Powered CV Parsing:** Intelligently extracts key information from CV files (provided by users) to automatically build and populate professional profiles.
--   **Comprehensive Profile Management:** Full CRUD (Create, Read, Update, Delete) operations for job profiles.
--   **Public Profile Generation:** Transforms user data into an elegant and optimized public-facing professional site (handled by a potential frontend, API provides the data).
--   **RESTful API Endpoints:** A well-defined API for interacting with profile data and CV processing.
--   **Layered Architecture:** Follows clean architecture principles for separation of concerns, testability, and maintainability.
--   **Efficient Data Access:** Utilizes the Repository pattern for abstracting data persistence logic.
--   **Modern Object Mapping:** Employs FastAdapter.Adaptor for seamless mapping between Data Transfer Objects (DTOs) and domain entities.
+-   **AI-Powered CV Parsing:** Intelligently extracts key information from user-provided CV files to automatically build and populate professional profiles.
+-   **Comprehensive Profile Management:** Exposes full CRUD (Create, Read, Update, Delete) operations for all domain entities.
+-   **Public Profile Generation:** Provides all necessary data endpoints for front-end applications to render elegant and optimized public-facing professional sites.
+-   **Secure & Versioned API:** A well-defined RESTful API with versioning to ensure stable and predictable interactions.
 
-## 🛠️ Technologies & Tools
+## 🛠️ Technology Stack & Tools
 
 **Core Stack:**
 -   C# & .NET 9.0
 -   ASP.NET Core (for RESTful APIs)
 -   Entity Framework Core (for data access and migrations)
+-   MS SQL Server
 
-**API & Framework:**
+**API & Framework Libraries:**
 -   `Asp.Versioning.Mvc` (for API versioning)
--   `FastAdapter.Adaptor` (for object mapping)
+-   `FastAdapter.Adaptor` (for high-performance object mapping)
 
 **Development & Build:**
 -   .NET SDK 9.0
@@ -33,56 +31,39 @@ This repository contains the C# backend application that powers JobMagnet. It pr
 
 ## 🏗️ Architecture
 
-The JobMagnet project adheres to a Clean Architecture approach, promoting a clear separation of concerns and enhancing maintainability and testability. The main logical layers are mapped to the following projects:
+The project adheres to a **Clean Architecture** approach, promoting a clear separation of concerns which enhances maintainability, scalability, and testability.
 
-1.  **Domain Layer (`JobMagnet.Domain`):**
-    *   Contains the core business logic: entities (e.g., `ProfileEntity`, `SkillEntity`), value objects, and domain-specific interfaces (e.g., `ICommandRepository`, `IQueryRepository`, `IUnitOfWork`).
-    *   This layer has no dependencies on other project layers.
+1.  **Domain Layer (`JobMagnet.Domain`):** Contains the core business logic: entities (e.g., `ProfileEntity`), value objects, and domain-specific interfaces (e.g., `ICommandRepository`, `IUnitOfWork`). It has no dependencies on other layers.
 
-2.  **Application Layer (`JobMagnet.Application`):**
-    *   Orchestrates the use cases (features) of the application.
-    *   Contains application logic, command/query handlers (see `UseCases/CvParser`), DTOs (see `Contracts/Commands`, `Contracts/Responses`), mappers, and application-level service interfaces (e.g., `ICurrentUserService`, `IRawCvParser`).
-    *   Depends on the Domain layer.
+2.  **Application Layer (`JobMagnet.Application`):** Orchestrates the application's use cases (features). Contains command/query handlers, DTOs, mappers, and application-level service interfaces. Depends on the Domain layer.
 
-3.  **Infrastructure Layer (`JobMagnet.Infrastructure`):**
-    *   Provides concrete implementations for interfaces defined in the Application and Domain layers.
-    *   Includes data persistence logic (EF Core `JobMagnetDbContext`, repository implementations like `Repository.cs`, `UnitOfWork.cs`, and migrations).
-    *   Handles external concerns like third-party API integrations (e.g., `GeminiRawCvParser.cs` for CV parsing via Gemini) and other infrastructure services.
-    *   Depends on the Application and Domain layers.
+3.  **Infrastructure Layer (`JobMagnet.Infrastructure`):** Provides concrete implementations for interfaces defined in the layers above. This includes data persistence logic (EF Core `DbContext`, Repositories) and integrations with external services (e.g., `GeminiRawCvParser` for CV parsing).
 
-4.  **Presentation Layer / Host (`JobMagnet.Host`):**
-    *   Exposes the API endpoints using ASP.NET Core (Controllers).
-    *   Handles HTTP requests/responses, authentication, authorization, request validation, and serialization.
-    *   Depends on the Application layer to execute commands and queries.
+4.  **Presentation Layer (`JobMagnet.Host`):** Exposes the API endpoints using ASP.NET Core Controllers. It handles the HTTP lifecycle, request validation, authentication, and serialization. This is the entry point of the application.
 
-5.  **Shared Layer (`JobMagnet.Shared`):**
-    *   Contains common utilities, extensions, or base classes that can be used across multiple layers or projects without introducing unwanted dependencies. For example, `StringExtensions.cs`.
+5.  **Shared Layer (`JobMagnet.Shared`):** Contains common utilities and extensions that can be used across multiple layers without introducing unwanted dependencies.
 
 ## 📁 Project Structure
 
-The solution is organized into the following key projects, located under the `sources` and `tests` directories respectively:
+The solution is organized into the following key projects, located under the `sources` and `tests` directories:
 
-**Source Projects (`sources/`):**
--   `JobMagnet.Domain/`: Core business entities, value objects, and domain interfaces.
--   `JobMagnet.Application/`: Application logic, use cases (commands/queries), DTOs, and application-level interfaces.
--   `JobMagnet.Infrastructure/`: Implementations for data access (EF Core, repositories), CV parsing services (Gemini), and other external concerns.
--   `JobMagnet.Host/`: ASP.NET Core API project, controllers, `Program.cs`, and API-specific configurations.
--   `JobMagnet.Shared/`: Common utilities and extensions shared across projects.
-
-**Test Projects (`tests/`):**
--   `JobMagnet.Unit.Tests/`: Unit tests, primarily for mappers and other isolated components.
--   `JobMagnet.Integration.Tests/`: Integration tests, focusing on controller interactions, database operations, and external service mocks.
--   `JobMagnet.Shared.Tests/`: Tests for the utilities and extensions in the `JobMagnet.Shared` project.
+-   `sources/JobMagnet.Domain/`: Core business entities and domain interfaces.
+-   `sources/JobMagnet.Application/`: Application logic, use cases (commands/queries), and DTOs.
+-   `sources/JobMagnet.Infrastructure/`: Data access (EF Core), repository implementations, and third-party services.
+-   `sources/JobMagnet.Host/`: ASP.NET Core API project, controllers, and startup configuration.
+-   `sources/JobMagnet.Shared/`: Shared utilities and extensions.
+-   `tests/`: Contains all unit, integration, and shared test projects.
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
--   [.NET SDK 9.0]
--   An IDE such as [JetBrains Rider], [Visual Studio], or [VS Code].
--   A local or remote MS SQL Server instance
+-   [.NET SDK 9.0](https://dotnet.microsoft.com/download/dotnet/9.0)
+-   An IDE like [JetBrains Rider](https://www.jetbrains.com/rider/), [Visual Studio](https://visualstudio.microsoft.com/), or [VS Code](https://code.visualstudio.com/).
+-   A local or remote MS SQL Server instance.
+-   [dotnet-ef tools](https://docs.microsoft.com/en-us/ef/core/cli/dotnet) installed globally.
 
-### Installation & Setup
+### ⚙️ Setup and Local Execution
 
 1.  **Clone the repository:**
     ```bash
@@ -96,8 +77,9 @@ The solution is organized into the following key projects, located under the `so
     ```
 
 3.  **Configure Database Connection:**
-    *   Open `sources/JobMagnet.Host/appsettings.Development.json` (o `appsettings.json`).
-    *   Update the `ConnectionStrings` section with your database connection details. Example for LocalDB:
+    *   In `sources/JobMagnet.Host/`, rename `appsettings.Example.json` to `appsettings.Development.json`.
+    *   Update the `DefaultConnection` string with your database details.
+    Example for LocalDB:
         ```json
         "ConnectionStrings": {
           "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=JobMagnetDB;Trusted_Connection=True;MultipleActiveResultSets=true"
@@ -105,18 +87,15 @@ The solution is organized into the following key projects, located under the `so
         ```
 
 4.  **Apply Database Migrations:**
-    *   Ensure you have `dotnet-ef` tools installed globally. If not: `dotnet tool install --global dotnet-ef`
-    *   **Important:** Due to the project's layered structure, where the `DbContext` is in `JobMagnet.Infrastructure` and the startup configurations are in `JobMagnet.Host`, you need to specify both projects when managing migrations.
-    *   From the root directory of the solution (e.g., `C:\Repos\JobMagnetic-BackEnd`), run the following command to generate and apply migrations:
-        ```bash
-        dotnet ef migrations add MIGRATION_NAME --project .\sources\JobMagnet.Infrastructure\JobMagnet.Infrastructure.csproj --startup-project .\sources\JobMagnet.Host\JobMagnet.Host.csproj
-        ```
-        ```bash
-        dotnet ef database update --project .\sources\JobMagnet.Infrastructure\JobMagnet.Infrastructure.csproj --startup-project .\sources\JobMagnet.Host\JobMagnet.Host.csproj
-        ```
-        This command tells Entity Framework Core to:
-        - Use the migration files from the `JobMagnet.Infrastructure` project.
-        - Use the `JobMagnet.Host` project to get the necessary configurations (like the database connection string) to apply these migrations.
+    > **Note:** Because our `DbContext` lives in `Infrastructure` and our configuration lives in `Host`, you must specify both projects when running EF Core commands from the solution root.
+
+    ```bash
+    # Create a new migration
+    dotnet ef migrations add InitialCreate --project sources/JobMagnet.Infrastructure --startup-project sources/JobMagnet.Host
+
+    # Apply migrations to the database
+    dotnet ef database update --project sources/JobMagnet.Infrastructure --startup-project sources/JobMagnet.Host
+    ```
 
 5.  **Build the project:**
     ```bash
@@ -160,40 +139,52 @@ Check the console output from `JobMagnet.Host` for the exact ports.
 
 ### API Documentation (Swagger/OpenAPI)
 
-Once the application is running, API documentation (Swagger UI) should be available at:
-`https://localhost:7109/swagger/index.html`
+Once the application is running, the interactive Swagger UI is available at:
+**`https://localhost:7109/swagger/index.html`**
 
-## 🧪 Running Tests and Generating Coverage Report
+### (Optional) Seed the Database with Sample Data
 
-The following commands should be run from the root directory of the solution.
+Use the Swagger UI or the `curl` commands below to populate the database with initial data.
+
+```bash
+# To seed master tables (e.g., skills, languages)
+curl -X POST 'https://localhost:7109/api/v0.1/admin/seedmastertables'
+
+# To seed a sample profile for testing
+curl -X POST 'https://localhost:7109/api/v0.1/admin/seedprofile'
+```
+
+## 🧪 Running Tests and Generating Coverage Reports
+
+Run these commands from the root directory of the solution.
 
 1.  **Run all tests:**
     ```bash
     dotnet test JobMagnet.sln --no-build
     ```
 
-2.  **Run tests with coverage and generate OpenCover report:**
-    ```bash
-    dotnet test JobMagnet.sln --no-build /p:CollectCoverage=true /p:CoverletOutput=./coverage.opencover.xml /p:CoverletOutputFormat=opencover
-    ```
-    *This will place `coverage.opencover.xml` in the solution root.*
-
-3.  **Generate HTML coverage report (using ReportGenerator):**
-    *   First, install the tool if you haven't:
+2.  **Generate a coverage report (HTML):**
+    *   First, install the report generator tool:
         ```bash
         dotnet tool install --global dotnet-reportgenerator-globaltool
         ```
-    *   Then, generate the report:
+    *   Run tests and generate the report in one step:
         ```bash
-        reportgenerator -reports:./coverage.opencover.xml -targetdir:./coverage_report -reporttypes:Html
+        dotnet test JobMagnet.sln --collect:"XPlat Code Coverage"
+        reportgenerator -reports:"**/TestResults/**/coverage.cobertura.xml" -targetdir:"coverage_report" -reporttypes:Html
         ```
-    *This will create an HTML report in the `coverage_report` directory in the solution root.*
+    *This creates a detailed HTML report in the `coverage_report` directory.*
 
 ## 🤝 Contributing
 
-We welcome contributions to JobMagnet! Whether it's fixing bugs, adding features, improving documentation, or enhancing tests, your help is appreciated.
-
+We welcome contributions! Whether it's fixing bugs, adding features, or improving documentation, your help is appreciated. Please feel free to fork the repository and submit a pull request.
 
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+<div align="center">
+  <p>
+    For the Spanish version, <a href="README.es.md">click here</a>.
+  </p>
+</div>
