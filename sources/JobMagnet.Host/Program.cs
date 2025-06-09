@@ -8,7 +8,7 @@ using JobMagnet.Infrastructure.Persistence.Context;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddSettingSections(builder.Configuration)
+    .AddAllowOrigins(builder.Configuration)
     .AddSqlServer<JobMagnetDbContext>(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         options =>
