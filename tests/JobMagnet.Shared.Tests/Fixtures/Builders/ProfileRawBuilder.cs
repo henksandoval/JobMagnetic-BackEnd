@@ -22,6 +22,11 @@ public class ProfileRawBuilder(IFixture fixture)
     public ProfileRawBuilder WithContactInfo(int count = 5)
     {
         var contactInfo = fixture.CreateMany<ContactInfoRaw>(count).ToList();
+        return WithContactInfo(contactInfo);
+    }
+
+    public ProfileRawBuilder WithContactInfo(List<ContactInfoRaw> contactInfo)
+    {
         var resumeBase = _instance.Resume ??
                          throw new InvalidOperationException("Resume must be set before adding contact info.");
         var updatedResume = resumeBase with { ContactInfo = contactInfo };
