@@ -47,7 +47,7 @@ public class ProfileController(
     {
         var command = new CvParserCommand(cvFile.OpenReadStream(), cvFile.FileName, cvFile.ContentType);
         var response = await cvParser.ParseAsync(command, cancellationToken).ConfigureAwait(false);
-        return Results.Ok(response);
+        return Results.CreatedAtRoute(nameof(GetProfileByIdAsync), new { id = response.ProfileId }, response.ProfileId);
     }
 
     [HttpGet("{id:long}", Name = nameof(GetProfileByIdAsync))]

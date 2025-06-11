@@ -33,7 +33,7 @@ public class CvParserHandler(
         await PersistProfileAsync(profileEntity, cancellationToken);
         var userEmail = GetUserEmail(profileEntity);
         var profileUrl = GetProfileSlugUrl(profileEntity);
-        return new CreateProfileResponse(userEmail, profileUrl);
+        return new CreateProfileResponse(profileEntity.Id, userEmail, profileUrl);
     }
 
     private async Task<ProfileEntity> ParseCvToProfileEntity(CvParserCommand command)

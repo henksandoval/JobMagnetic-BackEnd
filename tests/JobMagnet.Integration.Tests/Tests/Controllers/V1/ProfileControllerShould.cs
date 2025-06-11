@@ -210,11 +210,12 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         // Then
         response.EnsureSuccessStatusCode();
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
         var responseData = await response.Content.ReadFromJsonAsync<CreateProfileResponse>();
         responseData.ShouldNotBeNull();
         responseData.UserEmail.ShouldNotBeNullOrEmpty();
         responseData.ProfileUrl.ShouldNotBeNullOrEmpty();
+        responseData.ProfileId.ShouldBeGreaterThan(0);
         responseData.UserEmail.Should().Be("laura.gomez.dev@example.net");
         responseData.ProfileUrl.Should().StartWith("laura-gomez-");
     }
@@ -258,7 +259,8 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
             .Returns("alexander-gonzalez-6ca66d");
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<PublicProfileIdentifierEntity>>();
+        var commandRepository =
+            scope.ServiceProvider.GetRequiredService<ICommandRepository<PublicProfileIdentifierEntity>>();
         var publicProfile = new PublicProfileIdentifierEntity(profile, slugGenerator.Object)
         {
             ProfileEntity = null!
