@@ -69,8 +69,8 @@ public class CvParserHandlerShould
 
         var existingContactTypesInDb = new List<ContactTypeEntity>
         {
-            new() { Id = 1, Name = "Email" },
-            new() { Id = 2, Name = "Phone" }
+            new(1, "Email", "bx bx-envelope"),
+            new(2, "Phone", "bx bx-mobile")
         };
 
         _contactTypeQueryRepositoryMock

@@ -19,6 +19,8 @@ public static class ProfileParseDtoMapper
 
     private static void RegisterMaps()
     {
+        TypeAdapterConfig.GlobalSettings.Default.PreserveReference(true);
+
         TypeAdapterConfig<ProfileParseDto, ProfileEntity>.NewConfig()
             .Map(dest => dest.Talents, src => MapTalents(src))
             .Map(dest => dest.Testimonials, src => MapTestimonials(src))
@@ -28,14 +30,8 @@ public static class ProfileParseDtoMapper
             .NewConfig()
             .Map(dest => dest.About, src => src.About ?? string.Empty)
             .Map(dest => dest.Overview, src => src.Overview ?? string.Empty)
-            .Map(dest => dest.Summary, src => src.Summary ?? string.Empty);
-
-        TypeAdapterConfig<ContactInfoParseDto, ContactInfoEntity>.NewConfig()
-            .Map(dest => dest.ContactType, src => new ContactTypeEntity
-            {
-                Id = 0,
-                Name = src.ContactType ?? string.Empty
-            });
+            .Map(dest => dest.Summary, src => src.Summary ?? string.Empty)
+            .Map(dest => dest.ContactInfo, src => MapContactInfo(src));
 
         TypeAdapterConfig<SkillParseDto, SkillEntity>.NewConfig();
 
@@ -99,5 +95,23 @@ public static class ProfileParseDtoMapper
     private static List<TestimonialEntity> MapTestimonials(ProfileParseDto src)
     {
         return src is not { Testimonials: null } ? src.Testimonials.Adapt<List<TestimonialEntity>>() : [];
+    }
+
+    private static List<ContactInfoEntity> MapContactInfo(ResumeParseDto src)
+    {
+        if (src is { ContactInfo: null })
+        {
+            return [];
+        }
+
+        var result = src.ContactInfo.Select(c => new ContactInfoEntity
+        {
+            Id = 0,
+            Value = c.Value!,
+            ContactTypeId = 0,
+            ContactType = new ContactTypeEntity(c.ContactType)
+        }).ToList();
+
+        return result;
     }
 }

@@ -127,11 +127,7 @@ public class CvParserHandler(
                 continue;
             }
 
-            info.ContactType = new ContactTypeEntity
-            {
-                Id = 0,
-                Name = typeName
-            };
+            info.ContactType = new ContactTypeEntity(0, typeName, "asas");
         }
     }
 }

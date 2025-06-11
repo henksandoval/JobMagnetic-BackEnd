@@ -37,13 +37,6 @@ public record ContactTypesCollection
 
     private static ContactTypeEntity CreateContactType(string name, string iconClass)
     {
-        return new ContactTypeEntity
-        {
-            Id = 0,
-            Name = name,
-            IconClass = iconClass,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        };
+        return new ContactTypeEntity(0, name, iconClass, null);
     }
 }

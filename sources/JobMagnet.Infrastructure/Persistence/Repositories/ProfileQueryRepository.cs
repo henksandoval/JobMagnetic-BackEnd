@@ -16,44 +16,11 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
     public IProfileQueryRepository WithResume()
     {
-        _projections.Add(p => new ProfileEntity
-        {
-            Id = p.Id,
-            FirstName = p.FirstName,
-            LastName = p.LastName,
-            MiddleName = p.MiddleName,
-            SecondLastName = p.SecondLastName,
-            ProfileImageUrl = p.ProfileImageUrl,
-            BirthDate = p.BirthDate,
-            Services = p.Services,
-            Talents = p.Talents,
-            PortfolioGallery = p.PortfolioGallery,
-            Resume = p.Resume != null && p.Resume.IsDeleted
-                ? null
-                : new ResumeEntity
-                {
-                    Id = p.Resume!.Id,
-                    Overview = p.Resume.Overview,
-                    JobTitle = p.Resume.JobTitle,
-                    Address = p.Resume.Address,
-                    Summary = p.Resume.Summary,
-                    ContactInfo = p.Resume.ContactInfo.Select(c => new ContactInfoEntity
-                    {
-                        Id = c.Id,
-                        Value = c.Value,
-                        ContactType = new ContactTypeEntity
-                        {
-                            Id = c.ContactType.Id,
-                            Name = c.ContactType.Name,
-                            IconUrl = c.ContactType.IconUrl,
-                            IconClass = c.ContactType.IconClass
-                        }
-                    }).ToList()
-                },
-            Skill = p.Skill,
-            Summary = p.Summary,
-            Testimonials = p.Testimonials
-        });
+        _query = _query
+            .Include(p => p.Resume)
+            .ThenInclude(r => r.ContactInfo)
+            .ThenInclude(c => c.ContactType);
+
         return this;
     }
 

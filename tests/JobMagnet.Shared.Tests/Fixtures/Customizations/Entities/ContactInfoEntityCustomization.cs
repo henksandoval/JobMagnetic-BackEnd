@@ -19,7 +19,8 @@ public class ContactInfoEntityCustomization : ICustomization
 
     private static void ApplyCommonProperties(dynamic item)
     {
+        var contactTypeName = FixtureBuilder.Faker.PickRandom(StaticCustomizations.ContactTypes).Name;
         item.Value = FixtureBuilder.Faker.Phone.PhoneNumber();
-        item.ContactType = FixtureBuilder.Build().Create<ContactTypeEntity>();
+        item.ContactType = new ContactTypeEntity(contactTypeName);
     }
 }

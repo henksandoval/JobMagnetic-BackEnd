@@ -60,11 +60,7 @@ public class ProfileParseDtoMapperShould
             {
                 Id = 0,
                 Value = inf.Value!,
-                ContactType = new ContactTypeEntity
-                {
-                    Id = 0,
-                    Name = inf.ContactType ?? string.Empty
-                }
+                ContactType = new ContactTypeEntity(inf.ContactType)
             }).ToList()
         };
         entity.ShouldNotBeNull();

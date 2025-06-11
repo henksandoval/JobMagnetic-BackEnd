@@ -7,6 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>JobMagnet.Application</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>JobMagnet.Infrastructure</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    
+    <ItemGroup>
         <PackageReference Include="CSharpFunctionalExtensions" Version="3.6.0"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
     </ItemGroup>
