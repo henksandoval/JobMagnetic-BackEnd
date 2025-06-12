@@ -101,7 +101,7 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
     {
         using var scope = _webApplicationFactory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
-        await dbContext.ContactTypes.AddRangeAsync(new ContactTypesCollection().GetContactTypes());
+        await dbContext.ContactTypes.AddRangeAsync(new ContactTypesCollection().GetContactTypesWithAliases());
         await dbContext.SaveChangesAsync();
     }
 }

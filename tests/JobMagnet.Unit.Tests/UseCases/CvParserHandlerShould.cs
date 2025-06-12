@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Net.Mime;
 using AutoFixture;
+using CSharpFunctionalExtensions;
 using FluentAssertions;
 using JobMagnet.Application.UseCases.CvParser;
 using JobMagnet.Application.UseCases.CvParser.Commands;
@@ -22,8 +23,8 @@ public class CvParserHandlerShould
     private readonly Mock<IRawCvParser> _rawCvParserMock;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IProfileSlugGenerator> _slugGeneratorMock;
-    private readonly Mock<IQueryRepository<ContactTypeEntity, int>> _contactTypeQueryRepositoryMock;
     private readonly Mock<IQueryRepository<ContactTypeAliasEntity, int>> _contactTypeAliasQueryRepositoryMock;
+    private readonly Mock<IContactTypeResolverService> _contactTypeResolverMock;
     private readonly Mock<ICommandRepository<ProfileEntity>> _profileCommandRepositoryMock;
     private readonly Mock<ICommandRepository<PublicProfileIdentifierEntity>> _publicIdentifierCommandRepositoryMock;
 
@@ -34,7 +35,7 @@ public class CvParserHandlerShould
         _rawCvParserMock = new Mock<IRawCvParser>();
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _slugGeneratorMock = new Mock<IProfileSlugGenerator>();
-        _contactTypeQueryRepositoryMock = new Mock<IQueryRepository<ContactTypeEntity, int>>();
+        _contactTypeResolverMock = new Mock<IContactTypeResolverService>();
         _contactTypeAliasQueryRepositoryMock = new Mock<IQueryRepository<ContactTypeAliasEntity, int>>();
         _profileCommandRepositoryMock = new Mock<ICommandRepository<ProfileEntity>>();
         _publicIdentifierCommandRepositoryMock = new Mock<ICommandRepository<PublicProfileIdentifierEntity>>();
@@ -46,20 +47,14 @@ public class CvParserHandlerShould
             _rawCvParserMock.Object,
             _unitOfWorkMock.Object,
             _slugGeneratorMock.Object,
-            _contactTypeQueryRepositoryMock.Object,
-            _contactTypeAliasQueryRepositoryMock.Object);
+            _contactTypeResolverMock.Object);
     }
 
     [Fact(DisplayName = "Resolve existing contact types, create new ones, and enrich profile within transaction")]
     public async Task ResolveExistingAndCreateNewContactTypesAndEnrichProfile()
     {
         // Given
-        var contactInfoRaw = new List<ContactInfoRaw>
-        {
-            new("Email", "test@test.com" ),
-            new("Phone", "123456789" ),
-            new("LinkedIn", "linkedin.com/test")
-        };
+        var contactInfoRaw = PrepareContactInfoData();
 
         var profileRawBuilder = new ProfileRawBuilder(_fixture);
         var profileRaw = profileRawBuilder
@@ -70,15 +65,10 @@ public class CvParserHandlerShould
         _rawCvParserMock.Setup(p => p.ParseAsync(It.IsAny<Stream>()))
             .ReturnsAsync(profileRaw);
 
-        var existingContactTypesInDb = new List<ContactTypeEntity>
-        {
-            new(1, "Email", "bx bx-envelope"),
-            new(2, "Phone", "bx bx-mobile")
-        };
-
-        _contactTypeQueryRepositoryMock
-            .Setup(repo => repo.FindAsync(It.IsAny<Expression<Func<ContactTypeEntity, bool>>>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(existingContactTypesInDb);
+        _contactTypeAliasQueryRepositoryMock
+            .Setup(repo => repo.FirstOrDefaultAsync(It.IsAny<Expression<Func<ContactTypeAliasEntity, bool>>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ContactTypeAliasEntity("Email", new ContactTypeEntity("Email")));
 
         _slugGeneratorMock.Setup(g => g.GenerateProfileSlug(It.IsAny<ProfileEntity>())).Returns("test-slug");
 
@@ -101,5 +91,38 @@ public class CvParserHandlerShould
 
         result.ShouldNotBeNull();
         result.UserEmail.Should().Be("test@test.com");
+    }
+
+    private List<ContactInfoRaw> PrepareContactInfoData()
+    {
+        var emailType = new ContactTypeEntity(1, "Email", "bx bx-envelope");
+        var phoneType = new ContactTypeEntity(2, "Phone", "bx bx-mobile");
+        var linkedInType = new ContactTypeEntity(3, "LinkedIn", "bx bx-linkedin");
+
+        _contactTypeResolverMock
+            .Setup(r => r.ResolveAsync("EMAIL", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Maybe.From(emailType));
+
+        _contactTypeResolverMock
+            .Setup(r => r.ResolveAsync("PHONE", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Maybe.From(phoneType));
+
+        _contactTypeResolverMock
+            .Setup(r => r.ResolveAsync("Teléfono", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Maybe.From(phoneType));
+
+        _contactTypeResolverMock
+            .Setup(r => r.ResolveAsync("LinkedIn", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Maybe.From(linkedInType));
+
+        var contactInfoRaw = new List<ContactInfoRaw>
+        {
+            new("EMAIL", "test@test.com" ),
+            new("PHONE", "123456789" ),
+            new("LinkedIn", "linkedin.com/test"),
+            new ("Teléfono", "+58 412457824"),
+            new ("TypeDontExist", "Some value")
+        };
+        return contactInfoRaw;
     }
 }

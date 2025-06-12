@@ -5,38 +5,47 @@ namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 public record ContactTypesCollection
 {
-    private readonly List<(string Name, string Class)> _values =
+    private readonly List<(string Name, string Class, List<string> Aliases)> _values =
     [
-        ("Email", "bx bx-envelope"),
-        ("Mobile Phone", "bx bx-mobile"),
-        ("Home Phone", "bx bx-phone"),
-        ("Work Phone", "bx bx-phone-call"),
-        ("Website", "bx bx-globe"),
-        ("LinkedIn", "bx bxl-linkedin"),
-        ("GitHub", "bx bxl-github"),
-        ("Twitter", "bx bxl-twitter"),
-        ("Facebook", "bx bxl-facebook"),
-        ("Instagram", "bx bxl-instagram"),
-        ("YouTube", "bx bxl-youtube"),
-        ("WhatsApp", "bx bxl-whatsapp"),
-        ("Telegram", "bx bxl-telegram"),
-        ("Snapchat", "bx bxl-snapchat"),
-        ("Pinterest", "bx bxl-pinterest"),
-        ("Skype", "bx bxl-skype"),
-        ("Discord", "bx bxl-discord"),
-        ("Twitch", "bx bxl-twitch"),
-        ("TikTok", "bx bxl-tiktok"),
-        ("Reddit", "bx bxl-reddit"),
-        ("Vimeo", "bx bxl-vimeo")
+        ("Email", "bx bx-envelope", ["Correo Electrónico", "E-mail"]),
+        ("Mobile Phone", "bx bx-mobile", ["Teléfonos", "Teléfono Móvil", "Celular", "Móvil"]),
+        ("Home Phone", "bx bx-phone", ["Teléfono Fijo", "Teléfono de Casa"]),
+        ("Work Phone", "bx bx-phone-call", ["Teléfono de Trabajo", "Teléfono de Oficina"]),
+        ("Website", "bx bx-globe", ["Web Site", "Sitio Web", "Página Web", "Blog", "Portafolio"]),
+        ("LinkedIn", "bx bxl-linkedin", []),
+        ("GitHub", "bx bxl-github", []),
+        ("Twitter", "bx bxl-twitter", ["X"]),
+        ("Facebook", "bx bxl-facebook", []),
+        ("Instagram", "bx bxl-instagram", []),
+        ("YouTube", "bx bxl-youtube", []),
+        ("WhatsApp", "bx bxl-whatsapp", ["Wasap", "Whatsapp"]),
+        ("Telegram", "bx bxl-telegram", []),
+        ("Snapchat", "bx bxl-snapchat", []),
+        ("Pinterest", "bx bxl-pinterest", []),
+        ("Skype", "bx bxl-skype", []),
+        ("Discord", "bx bxl-discord", []),
+        ("Twitch", "bx bxl-twitch", []),
+        ("TikTok", "bx bxl-tiktok", []),
+        ("Reddit", "bx bxl-reddit", []),
+        ("Vimeo", "bx bxl-vimeo", [])
     ];
 
-    public ImmutableList<ContactTypeEntity> GetContactTypes()
+    public ImmutableList<ContactTypeEntity> GetContactTypesWithAliases()
     {
-        return _values.Select(x => CreateContactType(x.Name, x.Class)).ToImmutableList();
-    }
+        var contactTypes = new List<ContactTypeEntity>();
 
-    private static ContactTypeEntity CreateContactType(string name, string iconClass)
-    {
-        return new ContactTypeEntity(0, name, iconClass, null);
+        foreach (var (name, iconClass, aliases) in _values)
+        {
+            var contactType = new ContactTypeEntity(0, name, iconClass);
+
+            foreach (var alias in aliases)
+            {
+                contactType.AddAlias(alias);
+            }
+
+            contactTypes.Add(contactType);
+        }
+
+        return contactTypes.ToImmutableList();
     }
 }

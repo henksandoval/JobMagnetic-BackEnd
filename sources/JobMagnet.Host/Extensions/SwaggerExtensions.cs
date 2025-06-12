@@ -74,11 +74,13 @@ internal static class SwaggerExtensions
             {
                 config.SwaggerEndpoint($"{swaggerSettings.Url}/swagger/{groupName}/swagger.json",
                     groupName.ToUpperInvariant());
-                config.DocExpansion(DocExpansion.None);
-                config.EnableTryItOutByDefault();
             }
 
+            config.DocExpansion(DocExpansion.None);
+            config.EnableTryItOutByDefault();
             config.DefaultModelRendering(ModelRendering.Example);
+            config.EnableDeepLinking();
+            config.DisplayRequestDuration();
         });
 
         return application;

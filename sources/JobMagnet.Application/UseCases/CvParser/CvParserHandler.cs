@@ -19,13 +19,11 @@ public class CvParserHandler(
     IRawCvParser cvParser,
     IUnitOfWork unitOfWork,
     IProfileSlugGenerator slugGenerator,
-    IQueryRepository<ContactTypeEntity, int> contactTypeQueryRepository,
-    IQueryRepository<ContactTypeAliasEntity, int> contactTypeAliasQueryRepository)
+    IContactTypeResolverService contactTypeResolver)
     : ICvParserHandler
 {
     private readonly IRawCvParser _cvParser = cvParser ?? throw new ArgumentNullException(nameof(cvParser));
     private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-    private readonly IQueryRepository<ContactTypeEntity, int> _contactTypeQueryRepository = contactTypeQueryRepository ?? throw new ArgumentNullException(nameof(contactTypeQueryRepository));
 
     public async Task<CreateProfileResponse> ParseAsync(CvParserCommand command, CancellationToken cancellationToken = default)
     {
@@ -57,7 +55,7 @@ public class CvParserHandler(
         {
             if (profileEntity.Resume?.ContactInfo is { Count: > 0 })
             {
-                await ResolveContactTypesAsync(profileEntity.Resume.ContactInfo, cancellationToken).ConfigureAwait(false);
+                await ResolveAndAssignContactTypesAsync(profileEntity.Resume.ContactInfo, cancellationToken).ConfigureAwait(false);
             }
 
             await _unitOfWork.ProfileRepository
@@ -93,48 +91,32 @@ public class CvParserHandler(
         //TODO: Implement auditing fields setting logic
     }
 
-    private async Task ResolveContactTypesAsync(
-        ICollection<ContactInfoEntity>? contactInfo,
-        CancellationToken cancellationToken = default)
+    private async Task ResolveAndAssignContactTypesAsync(
+        ICollection<ContactInfoEntity>? contactInfoCollection,
+        CancellationToken cancellationToken)
     {
-        if (contactInfo is null || contactInfo.Count == 0)
+        if (contactInfoCollection is null || contactInfoCollection.Count == 0)
         {
             return;
         }
 
-        var contactTypesFromDto = contactInfo
-            .Select(inf => inf.ContactType.Name)
-            .Where(name => !string.IsNullOrEmpty(name))
-            .Distinct()
-            .ToList();
-
-        var existingContactTypes = await _contactTypeQueryRepository
-            .FindAsync(type => contactTypesFromDto.Contains(type.Name), cancellationToken)
-            .ConfigureAwait(false);
-
-        var existingContactTypeNamesDictionary = existingContactTypes.ToDictionary(
-            contactType => contactType.Name,
-            contactType => contactType,
-            StringComparer.OrdinalIgnoreCase);
-
-        foreach (var info in contactInfo)
+        foreach (var info in contactInfoCollection)
         {
-            var typeName = info.ContactType.Name;
+            var rawContactType = info.ContactType.Name;
+            if (string.IsNullOrWhiteSpace(rawContactType)) continue;
 
-            if (existingContactTypeNamesDictionary.TryGetValue(typeName, out var existingContactType))
+            var resolvedType = await contactTypeResolver.ResolveAsync(rawContactType, cancellationToken);
+
+            if (resolvedType.HasValue)
             {
-                info.ContactType = existingContactType;
-                info.ContactTypeId = existingContactType.Id;
+                info.ContactType = resolvedType.Value;
+                info.ContactTypeId = resolvedType.Value.Id;
                 continue;
             }
 
-            var contactType = await ContactTypeEntity.GetContactTypeByName(typeName, _contactTypeQueryRepository, contactTypeAliasQueryRepository, cancellationToken).ConfigureAwait(false);
-            if (contactType.HasValue)
-            {
-                info.ContactType = contactType.Value;
-            }
-
-
+            info.ContactTypeId = 0;
+            info.ContactType = new ContactTypeEntity(rawContactType);
+            info.ContactType.SetDefaultIcon();
         }
     }
 }

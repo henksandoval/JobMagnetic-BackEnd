@@ -59,6 +59,33 @@ namespace JobMagnet.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContactTypeAliasEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Alias = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ContactTypeId = table.Column<int>(type: "int", nullable: false),
+                    AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContactTypeAliasEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContactTypeAliasEntity_ContactTypes_ContactTypeId",
+                        column: x => x.ContactTypeId,
+                        principalTable: "ContactTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PorfolioGalleryItems",
                 columns: table => new
                 {
@@ -482,6 +509,11 @@ namespace JobMagnet.Infrastructure.Migrations
                 column: "ResumeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ContactTypeAliasEntity_ContactTypeId",
+                table: "ContactTypeAliasEntity",
+                column: "ContactTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Educations_SummaryId",
                 table: "Educations",
                 column: "SummaryId");
@@ -564,6 +596,9 @@ namespace JobMagnet.Infrastructure.Migrations
                 name: "ContactInfo");
 
             migrationBuilder.DropTable(
+                name: "ContactTypeAliasEntity");
+
+            migrationBuilder.DropTable(
                 name: "Educations");
 
             migrationBuilder.DropTable(
@@ -588,10 +623,10 @@ namespace JobMagnet.Infrastructure.Migrations
                 name: "WorkResponsibilities");
 
             migrationBuilder.DropTable(
-                name: "ContactTypes");
+                name: "Resumes");
 
             migrationBuilder.DropTable(
-                name: "Resumes");
+                name: "ContactTypes");
 
             migrationBuilder.DropTable(
                 name: "Services");

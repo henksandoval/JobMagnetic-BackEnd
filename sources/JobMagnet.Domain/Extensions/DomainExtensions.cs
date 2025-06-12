@@ -9,7 +9,9 @@ public static class DomainExtensions
     {
         ArgumentNullException.ThrowIfNull(services, nameof(services));
 
-        services.AddScoped<IProfileSlugGenerator, ProfileSlugGenerator>();
+        services
+            .AddScoped<IProfileSlugGenerator, ProfileSlugGenerator>()
+            .AddTransient<IContactTypeResolverService, ContactTypeResolverService>();
 
         return services;
     }

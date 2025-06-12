@@ -1,7 +1,9 @@
 ﻿using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Services;
+using JobMagnet.Infrastructure.Exceptions;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
+using Microsoft.EntityFrameworkCore;
 using ServiceCollection = JobMagnet.Infrastructure.Persistence.Seeders.Collections.ServiceCollection;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders;
@@ -18,7 +20,9 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
     {
         if (context.ContactTypes.Any()) return;
 
-        await context.ContactTypes.AddRangeAsync(new ContactTypesCollection().GetContactTypes(), cancellationToken);
+        var contactTypesWithAliases = new ContactTypesCollection().GetContactTypesWithAliases();
+
+        await context.ContactTypes.AddRangeAsync(contactTypesWithAliases, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
     }
 
@@ -26,18 +30,13 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
     {
         var profile = await RegisterProfileDataAsync();
         await context.SaveChangesAsync(cancellationToken);
-        var tasks = new List<Task>
-        {
-            RegisterTalentsAsync(profile.Id),
-            RegisterResumeAsync(profile.Id),
-            RegisterTestimonialAsync(profile.Id),
-            RegisterServiceAsync(profile.Id),
-            RegisterSummaryAsync(profile.Id),
-            RegisterSkillAsync(profile.Id),
-            RegisterPortfolioAsync(profile.Id)
-        };
-
-        await Task.WhenAll(tasks);
+        await RegisterTalentsAsync(profile.Id, cancellationToken);
+        await RegisterResumeAsync(profile.Id, cancellationToken);
+        await RegisterTestimonialAsync(profile.Id, cancellationToken);
+        await RegisterServiceAsync(profile.Id, cancellationToken);
+        await RegisterSummaryAsync(profile.Id, cancellationToken);
+        await RegisterSkillAsync(profile.Id, cancellationToken);
+        await RegisterPortfolioAsync(profile.Id, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
     }
 
@@ -63,13 +62,13 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         return profileEntity;
     }
 
-    private async Task RegisterTalentsAsync(long profileId)
+    private async Task RegisterTalentsAsync(long profileId, CancellationToken cancellationToken)
     {
         if (context.Talents.Any()) return;
-        await context.Talents.AddRangeAsync(new TalentsCollection(profileId).GetTalents());
+        await context.Talents.AddRangeAsync(new TalentsCollection(profileId).GetTalents(), cancellationToken);
     }
 
-    private async Task RegisterResumeAsync(long profileId)
+    private async Task RegisterResumeAsync(long profileId, CancellationToken cancellationToken)
     {
         if (context.Resumes.Any()) return;
 
@@ -93,15 +92,62 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
                        """,
             Address = "123 Main St, Springfield, USA",
             AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
+            AddedBy = Guid.Empty,
+            ContactInfo = new List<ContactInfoEntity>()
         };
 
-        resumeEntity.ContactInfo = new ContactInfoCollection(resumeEntity.Id).GetContactInfoCollection();
+        var contactInfoData = new List<(string value, string contactType)>
+        {
+            ("brandon.johnson@example.com", "Email"),
+            ("+1234567890", "Mobile Phone"),
+            ("https://linkedin.com/in/brandonjohnson", "LinkedIn"),
+            ("https://github.com/brandonjohnson", "GitHub"),
+            ("https://twitter.com/brandonjohnson", "Twitter"),
+            ("https://brandonjohnson.dev", "Web site"),
+            ("https://instagram.com/brandonjohnson", "Instagram"),
+            ("https://facebook.com/brandonjohnson", "Facebook"),
+            ("+9876543210", "Mobile Phone")
+        };
 
-        await context.Resumes.AddAsync(resumeEntity);
+        var contactTypesCollection = await context.ContactTypes.Include(type => type.Aliases)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+        var contactTypesMap = new Dictionary<string, ContactTypeEntity>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var type in contactTypesCollection)
+        {
+            contactTypesMap.TryAdd(type.Name, type);
+
+            foreach (var alias in type.Aliases)
+            {
+                contactTypesMap.TryAdd(alias.Alias, type);
+            }
+        }
+
+        foreach (var infoData in contactInfoData)
+        {
+            contactTypesMap.TryGetValue(infoData.contactType, out var contactType);
+            if (contactType == null)
+            {
+                throw new JobMagnetInfrastructureException(
+                    $"The contact type: ({infoData.contactType}) may be register in database.");
+            };
+
+            var contactInfo = new ContactInfoEntity
+            {
+                Id = 0,
+                Value = infoData.value,
+                ContactType = contactType,
+                AddedAt = DateTime.Now,
+                AddedBy = Guid.Empty
+            };
+
+            resumeEntity.ContactInfo.Add(contactInfo);
+        }
+
+        await context.Resumes.AddAsync(resumeEntity, cancellationToken);
     }
 
-    private async Task RegisterSkillAsync(long profileId)
+    private async Task RegisterSkillAsync(long profileId, CancellationToken cancellationToken)
     {
         if (context.Skills.Any()) return;
 
@@ -119,10 +165,10 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
             AddedBy = Guid.Empty
         };
 
-        await context.Skills.AddAsync(skillEntity);
+        await context.Skills.AddAsync(skillEntity, cancellationToken);
     }
 
-    private async Task RegisterSummaryAsync(long profileId)
+    private async Task RegisterSummaryAsync(long profileId, CancellationToken cancellationToken)
     {
         if (context.Summaries.Any()) return;
 
@@ -137,10 +183,10 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         };
 
         FillEducation(summaryEntity);
-        await context.Summaries.AddAsync(summaryEntity);
+        await context.Summaries.AddAsync(summaryEntity, cancellationToken);
     }
 
-    private async Task RegisterServiceAsync(long profileId)
+    private async Task RegisterServiceAsync(long profileId, CancellationToken cancellationToken)
     {
         if (context.Services.Any()) return;
 
@@ -156,22 +202,23 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
         FillServiceGalleryItem(serviceEntity);
 
-        await context.Services.AddAsync(serviceEntity);
+        await context.Services.AddAsync(serviceEntity, cancellationToken);
     }
 
-    private async Task RegisterPortfolioAsync(long profileId)
+    private async Task RegisterPortfolioAsync(long profileId, CancellationToken cancellationToken)
     {
         if (context.PortfolioGalleries.Any()) return;
 
-        await context.PortfolioGalleries.AddRangeAsync(new PortfolioCollection(profileId).GetPortfolioGallery());
+        await context.PortfolioGalleries.AddRangeAsync(new PortfolioCollection(profileId).GetPortfolioGallery(),
+            cancellationToken);
     }
 
-    private async Task RegisterTestimonialAsync(long profileId)
+    private async Task RegisterTestimonialAsync(long profileId, CancellationToken cancellationToken)
     {
         if (context.Testimonials.Any()) return;
 
         var testimonials = new TestimonialCollection(profileId).GetTestimonials();
-        await context.Testimonials.AddRangeAsync(testimonials);
+        await context.Testimonials.AddRangeAsync(testimonials, cancellationToken);
     }
 
     private static void FillServiceGalleryItem(ServiceEntity serviceEntity)

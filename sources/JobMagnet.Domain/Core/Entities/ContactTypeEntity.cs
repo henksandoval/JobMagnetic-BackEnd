@@ -15,28 +15,12 @@ public class ContactTypeEntity : SoftDeletableEntity<int>
 
     public virtual ICollection<ContactInfoEntity> ContactDetails { get; private set; }
     public virtual IReadOnlyCollection<ContactTypeAliasEntity> Aliases => _aliases.AsReadOnly();
-    public bool ContactTypeExistInDb => Id > 0;
 
     private readonly List<ContactTypeAliasEntity> _aliases = [];
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     public ContactTypeEntity()
     {
-    }
-
-    public static async Task<Maybe<ContactTypeEntity>> GetContactTypeByName(
-        string name,
-        IQueryRepository<ContactTypeEntity, int> contactTypeRepository,
-        IQueryRepository<ContactTypeAliasEntity, int> contactTypeAliasRepository,
-        CancellationToken cancellationToken)
-    {
-        var contactTypeAlias = await GetContactTypeAlias(name, contactTypeAliasRepository, cancellationToken).ConfigureAwait(false);
-
-        if (contactTypeAlias is not { HasValue: true, Value.ContactTypeExist: true })
-            return Maybe.None;
-
-        var contactType = await contactTypeRepository.GetByIdAsync(contactTypeAlias.Value.ContactTypeId, cancellationToken).ConfigureAwait(false);
-        return Maybe.From(contactType);
     }
 
     [SetsRequiredMembers]
@@ -88,17 +72,6 @@ public class ContactTypeEntity : SoftDeletableEntity<int>
         ValidateInvariants();
     }
 
-    private static async Task<Maybe<ContactTypeAliasEntity>> GetContactTypeAlias(string alias,
-        IQueryRepository<ContactTypeAliasEntity, int> contactTypeAliasRepository,
-        CancellationToken cancellationToken)
-    {
-        var result = await contactTypeAliasRepository
-            .FirstOrDefaultAsync(x => x.Alias.Equals(alias, StringComparison.CurrentCultureIgnoreCase),
-                cancellationToken)
-            .ConfigureAwait(false);
-        return Maybe.From(result);
-    }
-
     private void ValidateInvariants()
     {
         if (string.IsNullOrWhiteSpace(IconClass) && string.IsNullOrWhiteSpace(IconUrl))
@@ -106,5 +79,11 @@ public class ContactTypeEntity : SoftDeletableEntity<int>
             throw new JobMagnetDomainException(
                 $"A {nameof(ContactTypeEntity)} must have either an {nameof(IconClass)} or an {nameof(IconUrl)}. Both cannot be empty.");
         }
+    }
+
+    public void SetDefaultIcon()
+    {
+        IconClass = "bx bx-link-alt";
+        IconUrl = null;
     }
 }
