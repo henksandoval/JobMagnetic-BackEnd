@@ -62,7 +62,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository =
             scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
-        var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
+        var entityCreated = await queryRepository.GetByIdAsync(responseData.Id, CancellationToken.None);
 
         entityCreated.ShouldNotBeNull();
         entityCreated.ShouldSatisfyAllConditions(() => entityCreated.ProfileId.ShouldBe(profileEntity.Id)
@@ -125,7 +125,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         var queryPortfolioRepository =
             scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
 
-        var portfolioEntity = await queryPortfolioRepository.GetByIdAsync(entity.Id);
+        var portfolioEntity = await queryPortfolioRepository.GetByIdAsync(entity.Id, CancellationToken.None);
         portfolioEntity.ShouldBeNull();
     }
 
@@ -163,7 +163,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository =
             scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
-        var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
+        var dbEntity = await queryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
         dbEntity.ShouldNotBeNull();
         dbEntity.Title.ShouldBe(newTitle);
     }
@@ -187,7 +187,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository =
             scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
-        var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
+        var dbEntity = await queryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
         dbEntity.ShouldNotBeNull();
         dbEntity.Should().BeEquivalentTo(updatedEntity.PortfolioData);
     }

@@ -19,9 +19,9 @@ public class TestimonialController(
     [HttpGet("{id:long}", Name = nameof(GetTestimonialByIdAsync))]
     [ProducesResponseType(typeof(TestimonialResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> GetTestimonialByIdAsync(long id)
+    public async Task<IResult> GetTestimonialByIdAsync(long id, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
+        var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
@@ -48,7 +48,7 @@ public class TestimonialController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
+        var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
@@ -67,7 +67,7 @@ public class TestimonialController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PutAsync(int id, TestimonialCommand command, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
+        var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
@@ -88,7 +88,7 @@ public class TestimonialController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<TestimonialCommand> patchDocument, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
+        var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();

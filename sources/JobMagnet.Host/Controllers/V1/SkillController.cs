@@ -51,7 +51,7 @@ public class SkillController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
+        var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();

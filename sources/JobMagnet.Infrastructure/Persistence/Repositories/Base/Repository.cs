@@ -33,9 +33,9 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
         return await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<TEntity?> GetByIdAsync(TKey id)
+    public async Task<TEntity?> GetByIdAsync(TKey id, CancellationToken cancellationToken)
     {
-        var entity = await _dbSet.FindAsync(id).ConfigureAwait(false);
+        var entity = await _dbSet.FindAsync([id], cancellationToken).ConfigureAwait(false);
         return entity;
     }
 
@@ -49,9 +49,9 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
         return await _dbSet.Where(predicate).ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+    public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
     {
-        return await _dbSet.FirstOrDefaultAsync(predicate).ConfigureAwait(false);
+        return await _dbSet.FirstOrDefaultAsync(predicate, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<int> CountAsync()

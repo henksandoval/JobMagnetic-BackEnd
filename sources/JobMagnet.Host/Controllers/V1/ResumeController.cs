@@ -31,9 +31,9 @@ public class ResumeController(
     [HttpGet("{id:long}", Name = nameof(GetResumeByIdAsync))]
     [ProducesResponseType(typeof(ResumeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> GetResumeByIdAsync(long id)
+    public async Task<IResult> GetResumeByIdAsync(long id, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = await queryRepository.GetByIdAsync(id, cancellationToken);
 
         if (entity is null)
             return Results.NotFound();
@@ -49,7 +49,7 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PutAsync(int id, ResumeCommand command, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = await queryRepository.GetByIdAsync(id, cancellationToken);
 
         if (entity is null)
             return Results.NotFound();
@@ -69,7 +69,7 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
+        var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
@@ -88,7 +88,7 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ResumeCommand> patchDocument, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
+        var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();

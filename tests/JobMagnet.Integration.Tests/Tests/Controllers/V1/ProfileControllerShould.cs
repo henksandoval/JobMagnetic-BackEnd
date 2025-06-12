@@ -113,7 +113,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
-        var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
+        var entityCreated = await queryRepository.GetByIdAsync(responseData.Id, CancellationToken.None);
 
         entityCreated.ShouldNotBeNull();
         entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
@@ -168,7 +168,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
-        var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
+        var dbEntity = await queryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
         dbEntity.ShouldNotBeNull();
         dbEntity.Should().BeEquivalentTo(updateRequest, options => options.ExcludingMissingMembers());
     }

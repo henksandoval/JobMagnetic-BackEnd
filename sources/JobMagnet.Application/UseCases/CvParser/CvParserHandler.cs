@@ -19,12 +19,13 @@ public class CvParserHandler(
     IRawCvParser cvParser,
     IUnitOfWork unitOfWork,
     IProfileSlugGenerator slugGenerator,
-    IQueryRepository<ContactTypeEntity, long> contactTypeQueryRepository)
+    IQueryRepository<ContactTypeEntity, int> contactTypeQueryRepository,
+    IQueryRepository<ContactTypeAliasEntity, int> contactTypeAliasQueryRepository)
     : ICvParserHandler
 {
     private readonly IRawCvParser _cvParser = cvParser ?? throw new ArgumentNullException(nameof(cvParser));
     private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-    private readonly IQueryRepository<ContactTypeEntity, long> _contactTypeQueryRepository = contactTypeQueryRepository ?? throw new ArgumentNullException(nameof(contactTypeQueryRepository));
+    private readonly IQueryRepository<ContactTypeEntity, int> _contactTypeQueryRepository = contactTypeQueryRepository ?? throw new ArgumentNullException(nameof(contactTypeQueryRepository));
 
     public async Task<CreateProfileResponse> ParseAsync(CvParserCommand command, CancellationToken cancellationToken = default)
     {
@@ -127,7 +128,13 @@ public class CvParserHandler(
                 continue;
             }
 
-            info.ContactType = new ContactTypeEntity(0, typeName, "asas");
+            var contactType = await ContactTypeEntity.GetContactTypeByName(typeName, _contactTypeQueryRepository, contactTypeAliasQueryRepository, cancellationToken).ConfigureAwait(false);
+            if (contactType.HasValue)
+            {
+                info.ContactType = contactType.Value;
+            }
+
+
         }
     }
 }

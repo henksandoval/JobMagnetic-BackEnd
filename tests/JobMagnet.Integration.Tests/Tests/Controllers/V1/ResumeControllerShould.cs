@@ -92,7 +92,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
-        var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
+        var entityCreated = await queryRepository.GetByIdAsync(responseData.Id, CancellationToken.None);
 
         entityCreated.ShouldNotBeNull();
         entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
@@ -112,7 +112,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
-        var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
+        var dbEntity = await queryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
         dbEntity.ShouldBeNull();
     }
 
@@ -149,7 +149,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
-        var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
+        var dbEntity = await queryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
         dbEntity.ShouldNotBeNull();
         dbEntity.Should().BeEquivalentTo(updateRequest.ResumeData, options => options.ExcludingMissingMembers());
     }
@@ -188,7 +188,7 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<ResumeEntity, long>>();
-        var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
+        var dbEntity = await queryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
         dbEntity.ShouldNotBeNull();
         dbEntity.JobTitle.ShouldBe(newJobTitle);
     }

@@ -120,7 +120,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var querySummaryRepository = scope.ServiceProvider.GetRequiredService<ISummaryQueryRepository>();
-        var summaryEntity = await querySummaryRepository.GetByIdAsync(entity.Id);
+        var summaryEntity = await querySummaryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
         summaryEntity.ShouldBeNull();
     }
 

@@ -119,7 +119,7 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISkillQueryRepository>();
         var queryItemsRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<SkillItemEntity, long>>();
-        var skillEntity = await querySkillRepository.GetByIdAsync(entity.Id);
+        var skillEntity = await querySkillRepository.GetByIdAsync(entity.Id, CancellationToken.None);
         var entityItems = await queryItemsRepository.FindAsync(x => x.SkillId == entity.Id, CancellationToken.None);
         skillEntity.ShouldBeNull();
         entityItems.ShouldBeEmpty();

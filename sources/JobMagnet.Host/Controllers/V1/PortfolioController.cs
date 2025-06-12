@@ -32,10 +32,10 @@ public class PortfolioController(
     [HttpGet("{id:long}", Name = nameof(GetPortfolioByIdAsync))]
     [ProducesResponseType(typeof(ResumeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> GetPortfolioByIdAsync(long id)
+    public async Task<IResult> GetPortfolioByIdAsync(long id, CancellationToken cancellationToken)
     {
         var entity = await queryRepository
-            .GetByIdAsync(id).ConfigureAwait(false);
+            .GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
@@ -50,7 +50,7 @@ public class PortfolioController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
+        var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
@@ -69,7 +69,7 @@ public class PortfolioController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PutAsync(int id, PortfolioCommand updateCommand, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
+        var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
@@ -90,7 +90,7 @@ public class PortfolioController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<PortfolioCommand> patchDocument, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id).ConfigureAwait(false);
+        var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();

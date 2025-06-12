@@ -53,9 +53,9 @@ public class ProfileController(
     [HttpGet("{id:long}", Name = nameof(GetProfileByIdAsync))]
     [ProducesResponseType(typeof(ProfileResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> GetProfileByIdAsync(long id)
+    public async Task<IResult> GetProfileByIdAsync(long id, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = await queryRepository.GetByIdAsync(id, cancellationToken);
 
         if (entity is null)
             return Results.NotFound();
@@ -72,7 +72,7 @@ public class ProfileController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PutAsync(int id, ProfileCommand command, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = await queryRepository.GetByIdAsync(id, cancellationToken);
 
         if (entity is null)
             return Results.NotFound();
@@ -90,12 +90,12 @@ public class ProfileController(
     [HttpGet]
     [ProducesResponseType(typeof(ProfileViewModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> GetProfileAsync([FromQuery] ProfileQueryParameters queryParameters)
+    public async Task<IResult> GetProfileAsync([FromQuery] ProfileQueryParameters queryParameters, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queryParameters.ProfileSlug);
 
         var publicProfile = await publicProfileRepository
-            .FirstOrDefaultAsync(x => x.ProfileSlugUrl == queryParameters.ProfileSlug)
+            .FirstOrDefaultAsync(x => x.ProfileSlugUrl == queryParameters.ProfileSlug, cancellationToken)
             .ConfigureAwait(false);
 
         if (publicProfile is null)

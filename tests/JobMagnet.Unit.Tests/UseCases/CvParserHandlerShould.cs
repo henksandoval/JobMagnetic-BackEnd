@@ -22,7 +22,8 @@ public class CvParserHandlerShould
     private readonly Mock<IRawCvParser> _rawCvParserMock;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IProfileSlugGenerator> _slugGeneratorMock;
-    private readonly Mock<IQueryRepository<ContactTypeEntity, long>> _contactTypeQueryRepositoryMock;
+    private readonly Mock<IQueryRepository<ContactTypeEntity, int>> _contactTypeQueryRepositoryMock;
+    private readonly Mock<IQueryRepository<ContactTypeAliasEntity, int>> _contactTypeAliasQueryRepositoryMock;
     private readonly Mock<ICommandRepository<ProfileEntity>> _profileCommandRepositoryMock;
     private readonly Mock<ICommandRepository<PublicProfileIdentifierEntity>> _publicIdentifierCommandRepositoryMock;
 
@@ -33,7 +34,8 @@ public class CvParserHandlerShould
         _rawCvParserMock = new Mock<IRawCvParser>();
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _slugGeneratorMock = new Mock<IProfileSlugGenerator>();
-        _contactTypeQueryRepositoryMock = new Mock<IQueryRepository<ContactTypeEntity, long>>();
+        _contactTypeQueryRepositoryMock = new Mock<IQueryRepository<ContactTypeEntity, int>>();
+        _contactTypeAliasQueryRepositoryMock = new Mock<IQueryRepository<ContactTypeAliasEntity, int>>();
         _profileCommandRepositoryMock = new Mock<ICommandRepository<ProfileEntity>>();
         _publicIdentifierCommandRepositoryMock = new Mock<ICommandRepository<PublicProfileIdentifierEntity>>();
 
@@ -44,7 +46,8 @@ public class CvParserHandlerShould
             _rawCvParserMock.Object,
             _unitOfWorkMock.Object,
             _slugGeneratorMock.Object,
-            _contactTypeQueryRepositoryMock.Object);
+            _contactTypeQueryRepositoryMock.Object,
+            _contactTypeAliasQueryRepositoryMock.Object);
     }
 
     [Fact(DisplayName = "Resolve existing contact types, create new ones, and enrich profile within transaction")]
