@@ -29,4 +29,60 @@ public class ProfileEntity : SoftDeletableEntity<long>
 
         PublicProfileIdentifiers.Add(publicIdentifierEntity);
     }
+
+    public void AddTalent(string talent)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(talent);
+
+        var talentEntity = new TalentEntity
+        {
+            Id = 0,
+            ProfileId = Id,
+            Description = talent
+        };
+
+        Talents.Add(talentEntity);
+    }
+
+    public void AddResume(ResumeEntity resume)
+    {
+        ArgumentNullException.ThrowIfNull(resume);
+
+        Resume = resume;
+    }
+
+    public void AddSkill(SkillEntity skill)
+    {
+        ArgumentNullException.ThrowIfNull(skill);
+
+        Skill = skill;
+    }
+
+    public void AddSummary(SummaryEntity summary)
+    {
+        ArgumentNullException.ThrowIfNull(summary);
+
+        Summary = summary;
+    }
+
+    public void AddService(ServiceEntity service)
+    {
+        ArgumentNullException.ThrowIfNull(service);
+
+        Services = service;
+    }
+
+    public void AddPortfolioItem(PortfolioGalleryEntity item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        PortfolioGallery.Add(item);
+    }
+
+    public void AddTestimonial(TestimonialEntity testimonial)
+    {
+        ArgumentNullException.ThrowIfNull(testimonial);
+
+        Testimonials.Add(testimonial);
+    }
 }

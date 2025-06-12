@@ -1,10 +1,8 @@
 ﻿using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Services;
 using JobMagnet.Infrastructure.Exceptions;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using Microsoft.EntityFrameworkCore;
-using ServiceCollection = JobMagnet.Infrastructure.Persistence.Seeders.Collections.ServiceCollection;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders;
 
@@ -28,23 +26,20 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
     public async Task RegisterProfileAsync(CancellationToken cancellationToken)
     {
-        var profile = await RegisterProfileDataAsync();
-        await context.SaveChangesAsync(cancellationToken);
-        await RegisterTalentsAsync(profile.Id, cancellationToken);
-        await RegisterResumeAsync(profile.Id, cancellationToken);
-        await RegisterTestimonialAsync(profile.Id, cancellationToken);
-        await RegisterServiceAsync(profile.Id, cancellationToken);
-        await RegisterSummaryAsync(profile.Id, cancellationToken);
-        await RegisterSkillAsync(profile.Id, cancellationToken);
-        await RegisterPortfolioAsync(profile.Id, cancellationToken);
+        if (await context.Profiles.AnyAsync(p => p.FirstName == "John" && p.LastName == "Doe", cancellationToken))
+            return;
+
+        var sampleProfile = await BuildSampleProfileAsync(cancellationToken);
+
+        await context.Profiles.AddAsync(sampleProfile, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    private async Task<ProfileEntity> RegisterProfileDataAsync()
+    private async Task<ProfileEntity> BuildSampleProfileAsync(CancellationToken cancellationToken)
     {
-        if (context.Profiles.Any()) return context.Profiles.FirstOrDefault()!;
+        var contactTypeMap = await BuildContactTypeMapAsync(cancellationToken);
 
-        var profileEntity = new ProfileEntity
+        var profile = new ProfileEntity
         {
             Id = 0,
             FirstName = "John",
@@ -55,27 +50,38 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
             AddedBy = Guid.Empty
         };
 
-        var publicProfile = new PublicProfileIdentifierEntity(profileEntity, "john-doe-1a2b3c");
-        profileEntity.PublicProfileIdentifiers.Add(publicProfile);
+        AddPublicIdentifier(profile);
+        AddTalents(profile);
+        AddResume(profile, contactTypeMap);
+        AddSkills(profile);
+        AddSummary(profile);
+        AddServices(profile);
+        AddPortfolio(profile);
+        AddTestimonials(profile);
 
-        await context.Profiles.AddAsync(profileEntity);
-        return profileEntity;
+        return profile;
     }
 
-    private async Task RegisterTalentsAsync(long profileId, CancellationToken cancellationToken)
+    private static void AddPublicIdentifier(ProfileEntity profile)
     {
-        if (context.Talents.Any()) return;
-        await context.Talents.AddRangeAsync(new TalentsCollection(profileId).GetTalents(), cancellationToken);
+        var publicProfile = new PublicProfileIdentifierEntity(profile, "john-doe-1a2b3c");
+        profile.PublicProfileIdentifiers.Add(publicProfile);
     }
 
-    private async Task RegisterResumeAsync(long profileId, CancellationToken cancellationToken)
+    private static void AddTalents(ProfileEntity profile)
     {
-        if (context.Resumes.Any()) return;
+        List<string> talentsCollection = ["Creative", "Problem Solver", "Team Player", "Fast Learner"];
+        foreach (var talent in talentsCollection)
+        {
+            profile.AddTalent(talent);
+        }
+    }
 
-        var resumeEntity = new ResumeEntity
+    private static void AddResume(ProfileEntity profile, IReadOnlyDictionary<string, ContactTypeEntity> contactTypeMap)
+    {
+        var resume = new ResumeEntity
         {
             Id = 0,
-            ProfileId = profileId,
             JobTitle = "UI/UX Designer & Web Developer",
             Title = "Mr.",
             About = """
@@ -96,7 +102,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
             ContactInfo = new List<ContactInfoEntity>()
         };
 
-        var contactInfoData = new List<(string value, string contactType)>
+        var contactInfoData = new List<(string Value, string ContactTypeName)>
         {
             ("brandon.johnson@example.com", "Email"),
             ("+1234567890", "Mobile Phone"),
@@ -109,126 +115,94 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
             ("+9876543210", "Mobile Phone")
         };
 
-        var contactTypesCollection = await context.ContactTypes.Include(type => type.Aliases)
-            .ToListAsync(cancellationToken).ConfigureAwait(false);
-        var contactTypesMap = new Dictionary<string, ContactTypeEntity>(StringComparer.OrdinalIgnoreCase);
-
-        foreach (var type in contactTypesCollection)
+        foreach (var (value, contactTypeName) in contactInfoData)
         {
-            contactTypesMap.TryAdd(type.Name, type);
-
-            foreach (var alias in type.Aliases)
+            if (contactTypeMap.TryGetValue(contactTypeName, out var contactType))
             {
-                contactTypesMap.TryAdd(alias.Alias, type);
+                var contactInfo = new ContactInfoEntity { Id = 0, Value = value, ContactTypeId = contactType.Id };
+                resume.AddContactInfo(contactInfo);
+            }
+            else
+            {
+                throw new JobMagnetInfrastructureException(
+                    $"Seeding error: Contact type '{contactTypeName}' not found in database.");
             }
         }
 
-        foreach (var infoData in contactInfoData)
-        {
-            contactTypesMap.TryGetValue(infoData.contactType, out var contactType);
-            if (contactType == null)
-            {
-                throw new JobMagnetInfrastructureException(
-                    $"The contact type: ({infoData.contactType}) may be register in database.");
-            };
-
-            var contactInfo = new ContactInfoEntity
-            {
-                Id = 0,
-                Value = infoData.value,
-                ContactType = contactType,
-                AddedAt = DateTime.Now,
-                AddedBy = Guid.Empty
-            };
-
-            resumeEntity.ContactInfo.Add(contactInfo);
-        }
-
-        await context.Resumes.AddAsync(resumeEntity, cancellationToken);
+        profile.AddResume(resume);
     }
 
-    private async Task RegisterSkillAsync(long profileId, CancellationToken cancellationToken)
+    private static void AddSkills(ProfileEntity profile)
     {
-        if (context.Skills.Any()) return;
-
-        var skillEntity = new SkillEntity
+        var skill = new SkillEntity
         {
             Id = 0,
-            ProfileId = profileId,
             Overview = """
                        I am a passionate web developer with a strong background in front-end and back-end technologies.
                        I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
                        I am always eager to learn new technologies and improve my skills.
                        """,
             SkillDetails = new SkillsCollection().GetSkills().ToList(),
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
         };
-
-        await context.Skills.AddAsync(skillEntity, cancellationToken);
+        profile.AddSkill(skill);
     }
 
-    private async Task RegisterSummaryAsync(long profileId, CancellationToken cancellationToken)
+    private static void AddSummary(ProfileEntity profile)
     {
-        if (context.Summaries.Any()) return;
-
-        var summaryEntity = new SummaryEntity
+        var summary = new SummaryEntity
         {
             Id = 0,
             Introduction =
                 "Professional with experience in your area or profession, recognized for key skills. Committed to value or professional goal, seeking to contribute to the growth of company or industry.",
-            ProfileId = profileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
+            Education = new SummaryCollection().GetEducation().ToList(),
+            WorkExperiences = new SummaryCollection().GetWorkExperience().ToList()
         };
-
-        FillEducation(summaryEntity);
-        await context.Summaries.AddAsync(summaryEntity, cancellationToken);
+        profile.AddSummary(summary);
     }
 
-    private async Task RegisterServiceAsync(long profileId, CancellationToken cancellationToken)
+    private static void AddServices(ProfileEntity profile)
     {
-        if (context.Services.Any()) return;
-
-        var serviceEntity = new ServiceEntity
+        var service = new ServiceEntity
         {
             Id = 0,
             Overview =
                 "I offer a wide range of web development services, including front-end and back-end development, UI/UX design, and more.",
-            ProfileId = profileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
+            GalleryItems = new ServiceCollection().GetServicesGallery().ToList()
         };
-
-        FillServiceGalleryItem(serviceEntity);
-
-        await context.Services.AddAsync(serviceEntity, cancellationToken);
+        profile.AddService(service);
     }
 
-    private async Task RegisterPortfolioAsync(long profileId, CancellationToken cancellationToken)
+    private static void AddPortfolio(ProfileEntity profile)
     {
-        if (context.PortfolioGalleries.Any()) return;
-
-        await context.PortfolioGalleries.AddRangeAsync(new PortfolioCollection(profileId).GetPortfolioGallery(),
-            cancellationToken);
+        var portfolioItems = new PortfolioCollection().GetPortfolioGallery();
+        foreach (var item in portfolioItems) profile.AddPortfolioItem(item);
     }
 
-    private async Task RegisterTestimonialAsync(long profileId, CancellationToken cancellationToken)
+    private static void AddTestimonials(ProfileEntity profile)
     {
-        if (context.Testimonials.Any()) return;
-
-        var testimonials = new TestimonialCollection(profileId).GetTestimonials();
-        await context.Testimonials.AddRangeAsync(testimonials, cancellationToken);
+        var testimonials = new TestimonialCollection().GetTestimonials();
+        foreach (var testimonial in testimonials) profile.AddTestimonial(testimonial);
     }
 
-    private static void FillServiceGalleryItem(ServiceEntity serviceEntity)
+    private async Task<Dictionary<string, ContactTypeEntity>> BuildContactTypeMapAsync(
+        CancellationToken cancellationToken)
     {
-        serviceEntity.GalleryItems = new ServiceCollection(serviceEntity.Id).GetServicesGallery().ToList();
-    }
+        var map = new Dictionary<string, ContactTypeEntity>(StringComparer.OrdinalIgnoreCase);
 
-    private static void FillEducation(SummaryEntity summaryEntity)
-    {
-        summaryEntity.Education = new SummaryCollection(summaryEntity.Id).GetEducation().ToList();
-        summaryEntity.WorkExperiences = new SummaryCollection(summaryEntity.Id).GetWorkExperience().ToList();
+        var allTypes = await context.ContactTypes
+            .Include(ct => ct.Aliases)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        foreach (var type in allTypes)
+        {
+            map[type.Name] = type;
+            foreach (var alias in type.Aliases)
+            {
+                map[alias.Alias] = type;
+            }
+        }
+
+        return map;
     }
 }

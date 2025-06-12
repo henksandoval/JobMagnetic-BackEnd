@@ -76,6 +76,10 @@ public record SummaryCollection
             "Certificate in Web Development with a focus on front-end development and responsive design.")
     ];
 
+    public SummaryCollection()
+    {
+    }
+
     public SummaryCollection(long summaryId)
     {
         _summaryId = summaryId;
