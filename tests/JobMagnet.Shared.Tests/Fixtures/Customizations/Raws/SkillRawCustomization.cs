@@ -7,8 +7,8 @@ public class SkillRawCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Register<SkillRaw>(() =>
-            new(
+        fixture.Register(() =>
+            new SkillRaw(
                 FixtureBuilder.Faker.Lorem.Sentence(),
                 []
             )

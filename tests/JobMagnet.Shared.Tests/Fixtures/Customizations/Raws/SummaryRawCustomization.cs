@@ -7,8 +7,8 @@ public class SummaryRawCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Register<SummaryRaw>(() =>
-            new (
+        fixture.Register(() =>
+            new SummaryRaw(
                 FixtureBuilder.Faker.Lorem.Paragraph(),
                 [],
                 []

@@ -9,8 +9,8 @@ public class WorkExperienceRawCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Register<WorkExperienceRaw>(() =>
-            new (
+        fixture.Register(() =>
+            new WorkExperienceRaw(
                 FixtureBuilder.Faker.PickRandom(StaticCustomizations.JobTitles),
                 FixtureBuilder.Faker.PickRandom(StaticCustomizations.CompanyNames),
                 FixtureBuilder.Faker.Address.FullAddress(),

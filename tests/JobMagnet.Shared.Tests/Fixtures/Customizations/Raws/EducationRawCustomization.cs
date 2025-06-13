@@ -9,8 +9,8 @@ public class EducationRawCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Register<EducationRaw>(() =>
-            new (
+        fixture.Register(() =>
+            new EducationRaw(
                 FixtureBuilder.Faker.PickRandom(StaticCustomizations.Degrees),
                 FixtureBuilder.Faker.PickRandom(StaticCustomizations.Universities),
                 FixtureBuilder.Faker.Address.FullAddress(),
