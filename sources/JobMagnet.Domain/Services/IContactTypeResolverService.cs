@@ -16,9 +16,10 @@ public class ContactTypeResolverService(
 {
     public async Task<Maybe<ContactTypeEntity>> ResolveAsync(string nameOrAlias, CancellationToken cancellationToken)
     {
-        var contactType = await contactTypeRepository.FirstOrDefaultAsync(
-            ct => ct.Name.Equals(nameOrAlias, StringComparison.OrdinalIgnoreCase),
-            cancellationToken);
+        var contactType = await contactTypeRepository
+            .FirstOrDefaultAsync(c =>
+                c.Name.ToLower() == nameOrAlias.ToLower(),
+                cancellationToken);
 
         if (contactType is not null)
         {
@@ -26,7 +27,7 @@ public class ContactTypeResolverService(
         }
 
         var alias = await contactTypeAliasRepository.FirstOrDefaultAsync(
-            a => a.Alias.Equals(nameOrAlias, StringComparison.OrdinalIgnoreCase),
+            a => a.Alias.ToLower() == nameOrAlias.ToLower(),
             cancellationToken);
 
         if (alias is null || !alias.ContactTypeExist)

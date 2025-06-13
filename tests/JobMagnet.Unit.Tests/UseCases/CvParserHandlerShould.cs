@@ -21,31 +21,22 @@ public class CvParserHandlerShould
 {
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly Mock<IRawCvParser> _rawCvParserMock;
-    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IProfileSlugGenerator> _slugGeneratorMock;
-    private readonly Mock<IQueryRepository<ContactTypeAliasEntity, int>> _contactTypeAliasQueryRepositoryMock;
     private readonly Mock<IContactTypeResolverService> _contactTypeResolverMock;
     private readonly Mock<ICommandRepository<ProfileEntity>> _profileCommandRepositoryMock;
-    private readonly Mock<ICommandRepository<PublicProfileIdentifierEntity>> _publicIdentifierCommandRepositoryMock;
 
     private readonly CvParserHandler _handler;
 
     public CvParserHandlerShould()
     {
         _rawCvParserMock = new Mock<IRawCvParser>();
-        _unitOfWorkMock = new Mock<IUnitOfWork>();
+        _profileCommandRepositoryMock = new Mock<ICommandRepository<ProfileEntity>>();
         _slugGeneratorMock = new Mock<IProfileSlugGenerator>();
         _contactTypeResolverMock = new Mock<IContactTypeResolverService>();
-        _contactTypeAliasQueryRepositoryMock = new Mock<IQueryRepository<ContactTypeAliasEntity, int>>();
-        _profileCommandRepositoryMock = new Mock<ICommandRepository<ProfileEntity>>();
-        _publicIdentifierCommandRepositoryMock = new Mock<ICommandRepository<PublicProfileIdentifierEntity>>();
-
-        _unitOfWorkMock.Setup(uow => uow.ProfileRepository).Returns(_profileCommandRepositoryMock.Object);
-        _unitOfWorkMock.Setup(uow => uow.PublicProfileIdentifierRepository).Returns(_publicIdentifierCommandRepositoryMock.Object);
 
         _handler = new CvParserHandler(
             _rawCvParserMock.Object,
-            _unitOfWorkMock.Object,
+            _profileCommandRepositoryMock.Object,
             _slugGeneratorMock.Object,
             _contactTypeResolverMock.Object);
     }
@@ -65,17 +56,7 @@ public class CvParserHandlerShould
         _rawCvParserMock.Setup(p => p.ParseAsync(It.IsAny<Stream>()))
             .ReturnsAsync(profileRaw);
 
-        _contactTypeAliasQueryRepositoryMock
-            .Setup(repo => repo.FirstOrDefaultAsync(It.IsAny<Expression<Func<ContactTypeAliasEntity, bool>>>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ContactTypeAliasEntity("Email", new ContactTypeEntity("Email")));
-
         _slugGeneratorMock.Setup(g => g.GenerateProfileSlug(It.IsAny<ProfileEntity>())).Returns("test-slug");
-
-        _unitOfWorkMock
-            .Setup(uow => uow.ExecuteOperationInTransactionAsync(It.IsAny<Func<Task>>(), It.IsAny<CancellationToken>()))
-            .Callback<Func<Task>, CancellationToken>((action, cancellationToken) => action().Wait(cancellationToken))
-            .Returns(Task.CompletedTask);
 
         // WHEN
         var result = await _handler.ParseAsync(new CvParserCommand(new MemoryStream(), "fileName", MediaTypeNames.Text.Plain));
@@ -83,10 +64,6 @@ public class CvParserHandlerShould
         // THEN
         _profileCommandRepositoryMock.Verify(
             repo => repo.CreateAsync(It.IsAny<ProfileEntity>(), It.IsAny<CancellationToken>()),
-            Times.Once);
-
-        _publicIdentifierCommandRepositoryMock.Verify(
-            repo => repo.CreateAsync(It.IsAny<PublicProfileIdentifierEntity>(), It.IsAny<CancellationToken>()),
             Times.Once);
 
         result.ShouldNotBeNull();

@@ -1,4 +1,6 @@
 ﻿using JobMagnet.Domain.Core.Entities.Base;
+using JobMagnet.Domain.Core.Enums;
+using JobMagnet.Domain.Services;
 
 namespace JobMagnet.Domain.Core.Entities;
 
@@ -22,6 +24,20 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public virtual ICollection<TestimonialEntity> Testimonials { get; set; } = new HashSet<TestimonialEntity>();
     public virtual ICollection<PublicProfileIdentifierEntity> PublicProfileIdentifiers { get; set; } =
         new HashSet<PublicProfileIdentifierEntity>();
+
+    public void CreateAndAssignPublicIdentifier(IProfileSlugGenerator slugGenerator)
+    {
+        if (this.PublicProfileIdentifiers.Any(p => p.Type == LinkType.Primary))
+        {
+            return;
+        }
+
+        var generatedSlug = slugGenerator.GenerateProfileSlug(this);
+
+        var publicIdentifier = new PublicProfileIdentifierEntity(this, generatedSlug);
+
+        this.PublicProfileIdentifiers.Add(publicIdentifier);
+    }
 
     public void AddPublicProfileIdentifier(PublicProfileIdentifierEntity publicIdentifierEntity)
     {

@@ -261,7 +261,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository =
             scope.ServiceProvider.GetRequiredService<ICommandRepository<PublicProfileIdentifierEntity>>();
-        var publicProfile = new PublicProfileIdentifierEntity(profile, slugGenerator.Object)
+        var publicProfile = new PublicProfileIdentifierEntity(profile, "alexander-gonzalez-6ca66d")
         {
             ProfileEntity = null!
         };

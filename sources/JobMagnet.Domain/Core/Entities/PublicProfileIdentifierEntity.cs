@@ -17,20 +17,7 @@ public class PublicProfileIdentifierEntity : TrackableEntity<long>
 
     public ProfileEntity ProfileEntity { get; init; } = null!;
 
-    public PublicProfileIdentifierEntity() { }
-
-    [SetsRequiredMembers]
-    public PublicProfileIdentifierEntity(ProfileEntity profileEntity, IProfileSlugGenerator slugGenerator)
-    {
-        ArgumentNullException.ThrowIfNull(profileEntity, nameof(profileEntity));
-        ArgumentNullException.ThrowIfNull(slugGenerator, nameof(slugGenerator));
-
-        ProfileId = profileEntity.Id;
-        ProfileEntity = profileEntity;
-        ProfileSlugUrl = slugGenerator.GenerateProfileSlug(profileEntity);
-        Type = LinkType.Primary;
-        ViewCount = 0;
-    }
+    private PublicProfileIdentifierEntity() { }
 
     [SetsRequiredMembers]
     public PublicProfileIdentifierEntity(ProfileEntity profileEntity, string slug)
