@@ -8,10 +8,10 @@ public record ContactTypesCollection
     private readonly List<(string Name, string Class, List<string> Aliases)> _values =
     [
         ("Email", "bx bx-envelope", ["Correo Electrónico", "E-mail"]),
-        ("Mobile Phone", "bx bx-mobile", ["Teléfonos", "Teléfono Móvil", "Celular", "Móvil"]),
-        ("Home Phone", "bx bx-phone", ["Teléfono Fijo", "Teléfono de Casa"]),
-        ("Work Phone", "bx bx-phone-call", ["Teléfono de Trabajo", "Teléfono de Oficina"]),
-        ("Website", "bx bx-globe", ["Web Site", "Sitio Web", "Página Web", "Blog", "Portafolio"]),
+        ("Mobile Phone", "bx bx-mobile", ["Phone", "Teléfonos", "Teléfono Móvil", "Celular", "Móvil"]),
+        ("Home Phone", "bx bx-phone", ["Teléfono Fijo", "Teléfono de Casa", "Teléfono Casa"]),
+        ("Work Phone", "bx bx-phone-call", [ "Teléfono Trabajo", "Teléfono Oficina", "Teléfono de Trabajo", "Teléfono de Oficina"]),
+        ("Website", "bx bx-globe", ["Web Site", "Web-site", "Sitio Web", "Página Web", "Blog", "Portafolio"]),
         ("LinkedIn", "bx bxl-linkedin", []),
         ("GitHub", "bx bxl-github", []),
         ("Twitter", "bx bxl-twitter", ["X"]),
