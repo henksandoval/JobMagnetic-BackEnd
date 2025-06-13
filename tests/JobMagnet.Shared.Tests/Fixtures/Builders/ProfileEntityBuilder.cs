@@ -10,7 +10,7 @@ public class ProfileEntityBuilder(IFixture fixture)
     private string? _lastName;
     private ResumeEntity _resume = null!;
     private ServiceEntity _services = null!;
-    private SkillEntity _skill = null!;
+    private SkillSetEntity _skillSet = null!;
     private SummaryEntity _summary = null!;
     private List<PortfolioGalleryEntity> _portfolio = [];
     private List<TalentEntity> _talents = [];
@@ -35,18 +35,18 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithSkills()
     {
-        _skill = fixture.Create<SkillEntity>();
+        _skillSet = fixture.Create<SkillSetEntity>();
         return this;
     }
 
     public ProfileEntityBuilder WithSkillDetails(int count = 5)
     {
-        if (_skill == null)
+        if (_skillSet == null)
         {
             throw new InvalidOperationException("Cannot add contact info without a summary. Call WithSkills() first.");
         }
 
-        _skill.SkillDetails = fixture.CreateMany<SkillItemEntity>(count).ToList();
+        _skillSet.Skills = fixture.CreateMany<SkillEntity>(count).ToList();
         return this;
     }
 
@@ -143,9 +143,9 @@ public class ProfileEntityBuilder(IFixture fixture)
             profile.Summary = _summary;
         }
 
-        if (_skill is not null)
+        if (_skillSet is not null)
         {
-            profile.Skill = _skill;
+            profile.Skill = _skillSet;
         }
 
         if (_testimonials.Count > 0)

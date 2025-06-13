@@ -9,22 +9,22 @@ public static class SkillMapper
 {
     static SkillMapper()
     {
-        TypeAdapterConfig<SkillEntity, SkillResponse>
+        TypeAdapterConfig<SkillSetEntity, SkillResponse>
             .NewConfig()
             .Map(dest => dest.SkillData, src => src);
 
-        TypeAdapterConfig<SkillCommand, SkillEntity>
+        TypeAdapterConfig<SkillCommand, SkillSetEntity>
             .NewConfig()
             .Map(dest => dest, src => src.SkillData);
 
-        TypeAdapterConfig<SkillEntity, SkillCommand>
+        TypeAdapterConfig<SkillSetEntity, SkillCommand>
             .NewConfig()
             .Map(dest => dest.SkillData, src => src);
     }
 
-    public static SkillEntity ToEntity(this SkillCommand command)
+    public static SkillSetEntity ToEntity(this SkillCommand command)
     {
-        var entity = new SkillEntity
+        var entity = new SkillSetEntity
         {
             Id = 0,
             Overview = command.SkillData.Overview,
@@ -33,7 +33,7 @@ public static class SkillMapper
 
         foreach (var skillDetailCommand in command.SkillData.SkillDetails)
         {
-            var skillDetail = new SkillItemEntity(
+            var skillDetail = new SkillEntity(
                 skillDetailCommand.Name!,
                 skillDetailCommand.IconUrl!,
                 skillDetailCommand.Category!,
@@ -46,18 +46,18 @@ public static class SkillMapper
         return entity;
     }
 
-    public static SkillResponse ToModel(this SkillEntity entity)
+    public static SkillResponse ToModel(this SkillSetEntity setEntity)
     {
-        return entity.Adapt<SkillResponse>();
+        return setEntity.Adapt<SkillResponse>();
     }
 
-    public static SkillCommand ToUpdateCommand(this SkillEntity entity)
+    public static SkillCommand ToUpdateCommand(this SkillSetEntity setEntity)
     {
-        return entity.Adapt<SkillCommand>();
+        return setEntity.Adapt<SkillCommand>();
     }
 
-    public static void UpdateEntity(this SkillEntity entity, SkillCommand command)
+    public static void UpdateEntity(this SkillSetEntity setEntity, SkillCommand command)
     {
-        command.Adapt(entity);
+        command.Adapt(setEntity);
     }
 }

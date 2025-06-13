@@ -31,7 +31,7 @@ public class SkillMapperShould
         skillModel.Id.Should().Be(entity.Id);
         skillModel.SkillData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
-        skillModel.SkillData.SkillDetails.Should().BeEquivalentTo(entity.SkillDetails, options =>
+        skillModel.SkillData.SkillDetails.Should().BeEquivalentTo(entity.Skills, options =>
             options.Excluding(GetExcludeItemEntityProperties()));
     }
 
@@ -53,7 +53,7 @@ public class SkillMapperShould
     public void MapSkillEntityToSkillUpdateCommandCorrectly()
     {
         // Given
-        var entity = _fixture.Create<SkillEntity>();
+        var entity = _fixture.Create<SkillSetEntity>();
 
         // When
         var updateCommand = entity.ToUpdateCommand();
@@ -62,21 +62,22 @@ public class SkillMapperShould
         updateCommand.Should().NotBeNull();
         updateCommand.SkillData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
-        updateCommand.SkillData.SkillDetails.Should().BeEquivalentTo(entity.SkillDetails, options =>
+        updateCommand.SkillData.SkillDetails.Should().BeEquivalentTo(entity.Skills, options =>
             options.Excluding(GetExcludeItemEntityProperties()));
     }
 
-    private static Expression<Func<SkillEntity, object>> GetExcludeEntityProperties()
+    private static Expression<Func<SkillSetEntity, object>> GetExcludeEntityProperties()
     {
         return e => new
         {
-            e.Id, e.SkillDetails, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy,
+            e.Id,
+            SkillDetails = e.Skills, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy,
             e.LastModifiedAt, e.LastModifiedBy
         };
     }
 
-    private static Expression<Func<SkillItemEntity, object>> GetExcludeItemEntityProperties()
+    private static Expression<Func<SkillEntity, object>> GetExcludeItemEntityProperties()
     {
-        return e => new { e.Id, e.Skill, e.SkillId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy };
+        return e => new { e.Id, Skill = e.SkillSet, e.SkillId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy };
     }
 }

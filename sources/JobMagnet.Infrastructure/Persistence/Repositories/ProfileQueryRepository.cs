@@ -28,7 +28,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
     {
         _query = _query
             .Include(p => p.Skill)
-            .ThenInclude(s => s.SkillDetails);
+            .ThenInclude(s => s.Skills);
 
         return this;
     }

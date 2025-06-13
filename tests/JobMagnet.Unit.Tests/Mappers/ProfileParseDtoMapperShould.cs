@@ -80,11 +80,11 @@ public class ProfileParseDtoMapperShould
         entity.ShouldNotBeNull();
         entity.Skill.ShouldNotBeNull();
         entity.Skill.Overview.ShouldBe(dto.Skill.Overview);
-        entity.Skill.SkillDetails.ShouldNotBeNull();
-        entity.Skill.SkillDetails.Count.ShouldBe(dto.Skill.SkillDetails.Count());
+        entity.Skill.Skills.ShouldNotBeNull();
+        entity.Skill.Skills.Count.ShouldBe(dto.Skill.SkillDetails.Count());
 
         var firstSkillDetailDto = dto.Skill.SkillDetails.First();
-        var firstSkillDetailEntity = entity.Skill.SkillDetails.First();
+        var firstSkillDetailEntity = entity.Skill.Skills.First();
         firstSkillDetailEntity.Name.ShouldBe(firstSkillDetailDto.Name);
         firstSkillDetailEntity.ProficiencyLevel.ShouldBe(firstSkillDetailDto.Level ?? 0);
         // Category, Rank, IconUrl tendrán valores por defecto ya que no están en el DTO.
@@ -236,8 +236,8 @@ public class ProfileParseDtoMapperShould
         entity.Resume.ContactInfo.ShouldBeEmpty();
 
         entity.Skill.ShouldNotBeNull();
-        entity.Skill.SkillDetails.ShouldNotBeNull();
-        entity.Skill.SkillDetails.ShouldBeEmpty();
+        entity.Skill.Skills.ShouldNotBeNull();
+        entity.Skill.Skills.ShouldBeEmpty();
 
         entity.Services.ShouldBeNull();
         entity.Summary.ShouldBeNull();
@@ -278,7 +278,7 @@ public class ProfileParseDtoMapperShould
         entity.PortfolioGallery.ShouldBeEmpty();
         entity.Testimonials.ShouldBeEmpty();
         entity.Resume.ContactInfo.ShouldBeEmpty();
-        entity.Skill.SkillDetails.ShouldBeEmpty();
+        entity.Skill.Skills.ShouldBeEmpty();
         entity.Services.GalleryItems.ShouldBeEmpty();
         entity.Summary.Education.ShouldBeEmpty();
         entity.Summary.WorkExperiences.ShouldBeEmpty();

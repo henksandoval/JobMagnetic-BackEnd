@@ -19,7 +19,7 @@ public class SkillCustomization : ICustomization
             composer.WithAutoProperties()
         );
 
-        fixture.Customize<SkillEntity>(composer =>
+        fixture.Customize<SkillSetEntity>(composer =>
             composer
                 .With(x => x.Id, 0)
                 .With(x => x.IsDeleted, false)
@@ -42,6 +42,6 @@ public class SkillCustomization : ICustomization
     private static void ApplyCommonProperties(dynamic item)
     {
         item.Overview = FixtureBuilder.Faker.Lorem.Sentence();
-        item.SkillDetails = FixtureBuilder.Build().CreateMany<SkillItemEntity>().ToList();
+        item.SkillDetails = FixtureBuilder.Build().CreateMany<SkillEntity>().ToList();
     }
 }

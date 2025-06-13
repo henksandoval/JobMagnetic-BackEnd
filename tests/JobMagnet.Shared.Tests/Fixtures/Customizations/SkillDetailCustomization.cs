@@ -9,7 +9,7 @@ public class SkillDetailCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<SkillItemEntity>(composer =>
+        fixture.Customize<SkillEntity>(composer =>
             composer
                 .Without(x => x.Id)
                 .Do(ApplyCommonProperties)

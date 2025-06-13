@@ -15,7 +15,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public string? SecondLastName { get; set; }
 
     public virtual ResumeEntity? Resume { get; set; }
-    public virtual SkillEntity? Skill { get; set; }
+    public virtual SkillSetEntity? Skill { get; set; }
     public virtual ServiceEntity? Services { get; set; }
     public virtual SummaryEntity? Summary { get; set; }
     public virtual ICollection<TalentEntity> Talents { get; set; } = new HashSet<TalentEntity>();
@@ -67,11 +67,11 @@ public class ProfileEntity : SoftDeletableEntity<long>
         Resume = resume;
     }
 
-    public void AddSkill(SkillEntity skill)
+    public void AddSkill(SkillSetEntity skillSet)
     {
-        ArgumentNullException.ThrowIfNull(skill);
+        ArgumentNullException.ThrowIfNull(skillSet);
 
-        Skill = skill;
+        Skill = skillSet;
     }
 
     public void AddSummary(SummaryEntity summary)

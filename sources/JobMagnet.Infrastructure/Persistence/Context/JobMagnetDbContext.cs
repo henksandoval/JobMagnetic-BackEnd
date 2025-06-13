@@ -18,8 +18,8 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
     public DbSet<ServiceGalleryItemEntity> ServiceGalleries { get; set; }
     public DbSet<ResumeEntity> Resumes { get; set; }
     public DbSet<ContactInfoEntity> ContactInfo { get; set; }
-    public DbSet<SkillItemEntity> SkillSets { get; set; }
-    public DbSet<SkillEntity> Skills { get; set; }
+    public DbSet<SkillEntity> SkillSets { get; set; }
+    public DbSet<SkillSetEntity> Skills { get; set; }
     public DbSet<SummaryEntity> Summaries { get; set; }
     public DbSet<TestimonialEntity> Testimonials { get; set; }
     public DbSet<WorkExperienceEntity> WorkExperiences { get; set; }
@@ -41,8 +41,8 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
         modelBuilder.Entity<ServiceGalleryItemEntity>().ToTable("ServiceGalleryItems");
         modelBuilder.Entity<ResumeEntity>().ToTable("Resumes");
         modelBuilder.Entity<ContactInfoEntity>().ToTable("ContactInfo");
-        modelBuilder.Entity<SkillItemEntity>().ToTable("SkillItems");
-        modelBuilder.Entity<SkillEntity>().ToTable("Skills");
+        modelBuilder.Entity<SkillEntity>().ToTable("SkillItems");
+        modelBuilder.Entity<SkillSetEntity>().ToTable("Skills");
         modelBuilder.Entity<SummaryEntity>().ToTable("Summaries");
         modelBuilder.Entity<TestimonialEntity>().ToTable("Testimonials");
         modelBuilder.Entity<WorkExperienceEntity>().ToTable("WorkExperiences");

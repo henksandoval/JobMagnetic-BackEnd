@@ -15,7 +15,7 @@ namespace JobMagnet.Host.Controllers.V1;
 public class SkillController(
     ILogger<SkillController> logger,
     ISkillQueryRepository queryRepository,
-    ICommandRepository<SkillEntity> commandRepository) : BaseController<SkillController>(logger)
+    ICommandRepository<SkillSetEntity> commandRepository) : BaseController<SkillController>(logger)
 {
     [HttpPost]
     [ProducesResponseType(typeof(SkillResponse), StatusCodes.Status201Created)]

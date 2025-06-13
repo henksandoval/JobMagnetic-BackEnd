@@ -31,7 +31,7 @@ public static class ProfileMapper
                 src => src.PortfolioGallery.Select(p => p.Adapt<PortfolioViewModel>()).ToArray(),
                 src => src.PortfolioGallery.Any())
             .Map(dest => dest.SkillSet, src => src.Skill.Adapt<SkillSetViewModel>(),
-                src => src.Skill != null && src.Skill.SkillDetails.Count > 0)
+                src => src.Skill != null && src.Skill.Skills.Count > 0)
             .Map(dest => dest.Service, src => src.Services.Adapt<ServiceViewModel>(),
                 src => src.Services != null && src.Services.GalleryItems.Count > 0)
             .Map(dest => dest.Summary, src => src.Summary.Adapt<SummaryViewModel>(),
@@ -57,10 +57,10 @@ public static class ProfileMapper
             .NewConfig()
             .Map(dest => dest, src => AboutViewModelMap(src));
 
-        TypeAdapterConfig<SkillEntity, SkillSetViewModel>
+        TypeAdapterConfig<SkillSetEntity, SkillSetViewModel>
             .NewConfig()
             .Map(dest => dest.SkillDetails,
-                src => src.SkillDetails.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
+                src => src.Skills.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
 
         TypeAdapterConfig<ServiceEntity, ServiceViewModel>
             .NewConfig()

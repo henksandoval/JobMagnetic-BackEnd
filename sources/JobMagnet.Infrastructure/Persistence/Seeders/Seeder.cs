@@ -121,7 +121,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
     private static void AddSkills(ProfileEntity profile)
     {
-        var skill = new SkillEntity
+        var skill = new SkillSetEntity
         {
             Id = 0,
             Overview = """
@@ -133,7 +133,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
         foreach (var item in SkillsCollection.Data)
         {
-            var skillItem = new SkillItemEntity(item.Name,
+            var skillItem = new SkillEntity(item.Name,
                 item.IconUrl,
                 item.Category,
                 skill,

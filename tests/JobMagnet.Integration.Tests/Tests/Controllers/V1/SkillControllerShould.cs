@@ -66,7 +66,7 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var entityCreated = await queryRepository.GetByIdWithIncludesAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
-        entityCreated.SkillDetails.Should().BeEquivalentTo(createRequest.SkillData.SkillDetails, options => options
+        entityCreated.Skills.Should().BeEquivalentTo(createRequest.SkillData.SkillDetails, options => options
             .ExcludingMissingMembers()
             .Excluding(x => x.Id)
         );
@@ -118,7 +118,7 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISkillQueryRepository>();
-        var queryItemsRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<SkillItemEntity, long>>();
+        var queryItemsRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<SkillEntity, long>>();
         var skillEntity = await querySkillRepository.GetByIdAsync(entity.Id, CancellationToken.None);
         var entityItems = await queryItemsRepository.FindAsync(x => x.SkillId == entity.Id, CancellationToken.None);
         skillEntity.ShouldBeNull();
@@ -162,12 +162,12 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISkillQueryRepository>();
         _ = querySkillRepository.IncludeDetails();
         var skillEntity = await querySkillRepository.GetByIdWithIncludesAsync(skill.Id);
-        skillEntity!.SkillDetails.Count.ShouldBe(skill.SkillDetails.Count + patchDocument.Operations.Count);
-        skillEntity.SkillDetails.ShouldContain(x => x.Name == itemAdded01.Name);
-        skillEntity.SkillDetails.ShouldContain(x => x.ProficiencyLevel == itemAdded01.ProficiencyLevel);
-        skillEntity.SkillDetails.ShouldContain(x => x.Category == itemAdded02.Category);
-        skillEntity.SkillDetails.ShouldContain(x => x.Rank == itemAdded02.Rank);
-        skillEntity.SkillDetails.ShouldContain(x => x.IconUrl == itemAdded02.IconUrl);
+        skillEntity!.Skills.Count.ShouldBe(skill.Skills.Count + patchDocument.Operations.Count);
+        skillEntity.Skills.ShouldContain(x => x.Name == itemAdded01.Name);
+        skillEntity.Skills.ShouldContain(x => x.ProficiencyLevel == itemAdded01.ProficiencyLevel);
+        skillEntity.Skills.ShouldContain(x => x.Category == itemAdded02.Category);
+        skillEntity.Skills.ShouldContain(x => x.Rank == itemAdded02.Rank);
+        skillEntity.Skills.ShouldContain(x => x.IconUrl == itemAdded02.IconUrl);
     }
 
     [Fact(DisplayName = "Handle Remove operations in a PATCH request")]
@@ -175,8 +175,8 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var skill = await SetupEntityAsync();
-        var itemToRemove = skill.SkillDetails.ElementAt(2);
-        var indexItemToRemove = skill.SkillDetails.ToList().FindIndex(item => item.Id == itemToRemove.Id);
+        var itemToRemove = skill.Skills.ElementAt(2);
+        var indexItemToRemove = skill.Skills.ToList().FindIndex(item => item.Id == itemToRemove.Id);
         var patchDocument = new JsonPatchDocument<SkillCommand>();
         patchDocument.Remove(p => p.SkillData.SkillDetails, indexItemToRemove);
 
@@ -192,8 +192,8 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISkillQueryRepository>();
         _ = querySkillRepository.IncludeDetails();
         var skillEntity = await querySkillRepository.GetByIdWithIncludesAsync(skill.Id);
-        skillEntity!.SkillDetails.Count.ShouldBe(skill.SkillDetails.Count - 1);
-        skillEntity.SkillDetails.Contains(itemToRemove).ShouldBeFalse();
+        skillEntity!.Skills.Count.ShouldBe(skill.Skills.Count - 1);
+        skillEntity.Skills.Contains(itemToRemove).ShouldBeFalse();
     }
 
     [Fact(DisplayName = "Handle Replace operations in a PATCH request")]
@@ -201,9 +201,9 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var skill = await SetupEntityAsync();
-        var itemToReplace = skill.SkillDetails.ElementAt(0);
+        var itemToReplace = skill.Skills.ElementAt(0);
         var itemUpdated = _fixture.Build<SkillItemBase>().With(s => s.Id, itemToReplace.Id).Create();
-        var indexItemToReplace = skill.SkillDetails.ToList().FindIndex(item => item.Id == itemToReplace.Id);
+        var indexItemToReplace = skill.Skills.ToList().FindIndex(item => item.Id == itemToReplace.Id);
         var patchDocument = new JsonPatchDocument<SkillCommand>();
         patchDocument.Replace(p => p.SkillData.SkillDetails[indexItemToReplace], itemUpdated);
 
@@ -219,8 +219,8 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISkillQueryRepository>();
         _ = querySkillRepository.IncludeDetails();
         var skillEntity = await querySkillRepository.GetByIdWithIncludesAsync(skill.Id);
-        skillEntity!.SkillDetails.Count.ShouldBe(skill.SkillDetails.Count);
-        var entityUpdated = skillEntity.SkillDetails.First(x => x.Id == itemUpdated.Id);
+        skillEntity!.Skills.Count.ShouldBe(skill.Skills.Count);
+        var entityUpdated = skillEntity.Skills.First(x => x.Id == itemUpdated.Id);
         entityUpdated.Should().BeEquivalentTo(itemUpdated, options => options
             .ExcludingMissingMembers()
             .Excluding(x => x.Id)
@@ -232,13 +232,13 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         // Given
         var skill = await SetupEntityAsync();
-        var itemToRemove = skill.SkillDetails.ElementAt(0);
+        var itemToRemove = skill.Skills.ElementAt(0);
         var itemAdded01 = _fixture.Create<SkillItemBase>();
         var itemAdded02 = _fixture.Create<SkillItemBase>();
-        var itemToReplace = skill.SkillDetails.ElementAt(2);
+        var itemToReplace = skill.Skills.ElementAt(2);
         var itemUpdated = _fixture.Build<SkillItemBase>().With(s => s.Id, itemToReplace.Id).Create();
-        var indexItemToReplace = skill.SkillDetails.ToList().FindIndex(item => item.Id == itemToReplace.Id);
-        var indexItemToRemove = skill.SkillDetails.ToList().FindIndex(item => item.Id == itemToRemove.Id);
+        var indexItemToReplace = skill.Skills.ToList().FindIndex(item => item.Id == itemToReplace.Id);
+        var indexItemToRemove = skill.Skills.ToList().FindIndex(item => item.Id == itemToRemove.Id);
 
         var patchDocument = new JsonPatchDocument<SkillCommand>();
         patchDocument.Add(p => p.SkillData.SkillDetails, itemAdded01);
@@ -258,21 +258,21 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISkillQueryRepository>();
         _ = querySkillRepository.IncludeDetails();
         var skillEntity = await querySkillRepository.GetByIdWithIncludesAsync(skill.Id);
-        skillEntity!.SkillDetails.Count.ShouldBe(skill.SkillDetails.Count + 1);
-        skillEntity.SkillDetails.ShouldContain(x => x.Name == itemAdded01.Name);
-        skillEntity.SkillDetails.ShouldContain(x => x.ProficiencyLevel == itemAdded01.ProficiencyLevel);
-        skillEntity.SkillDetails.ShouldContain(x => x.Category == itemAdded02.Category);
-        skillEntity.SkillDetails.ShouldContain(x => x.Rank == itemAdded02.Rank);
-        skillEntity.SkillDetails.ShouldContain(x => x.IconUrl == itemAdded02.IconUrl);
-        var entityUpdated = skillEntity.SkillDetails.First(x => x.Id == itemUpdated.Id);
+        skillEntity!.Skills.Count.ShouldBe(skill.Skills.Count + 1);
+        skillEntity.Skills.ShouldContain(x => x.Name == itemAdded01.Name);
+        skillEntity.Skills.ShouldContain(x => x.ProficiencyLevel == itemAdded01.ProficiencyLevel);
+        skillEntity.Skills.ShouldContain(x => x.Category == itemAdded02.Category);
+        skillEntity.Skills.ShouldContain(x => x.Rank == itemAdded02.Rank);
+        skillEntity.Skills.ShouldContain(x => x.IconUrl == itemAdded02.IconUrl);
+        var entityUpdated = skillEntity.Skills.First(x => x.Id == itemUpdated.Id);
         entityUpdated.Should().BeEquivalentTo(itemUpdated, options => options
             .ExcludingMissingMembers()
             .Excluding(x => x.Id)
         );
-        skillEntity.SkillDetails.Contains(itemToRemove).ShouldBeFalse();
+        skillEntity.Skills.Contains(itemToRemove).ShouldBeFalse();
     }
 
-    private async Task<SkillEntity> SetupEntityAsync()
+    private async Task<SkillSetEntity> SetupEntityAsync()
     {
         await _testFixture.ResetDatabaseAsync();
         return await CreateAndPersistEntityAsync();
@@ -291,12 +291,12 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         return entity;
     }
 
-    private async Task<SkillEntity> CreateAndPersistEntityAsync()
+    private async Task<SkillSetEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<SkillEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<SkillSetEntity>>();
 
-        var entity = _fixture.Create<SkillEntity>();
+        var entity = _fixture.Create<SkillSetEntity>();
         await commandRepository.CreateAsync(entity);
         await commandRepository.SaveChangesAsync();
 

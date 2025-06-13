@@ -9,7 +9,7 @@ public interface IUnitOfWork
     ICommandRepository<ProfileEntity> ProfileRepository { get; }
     ICommandRepository<PublicProfileIdentifierEntity> PublicProfileIdentifierRepository { get; }
     ICommandRepository<ResumeEntity> ResumeRepository { get; }
-    ICommandRepository<SkillEntity> SkillRepository { get; }
+    ICommandRepository<SkillSetEntity> SkillRepository { get; }
     ICommandRepository<ServiceEntity> ServiceRepository { get; }
     ICommandRepository<SummaryEntity> SummaryRepository { get; }
     ICommandRepository<TalentEntity> TalentRepository { get; }
