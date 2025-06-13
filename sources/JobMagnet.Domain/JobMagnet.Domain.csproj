@@ -19,6 +19,7 @@
     </ItemGroup>
     
     <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
         <PackageReference Include="CSharpFunctionalExtensions" Version="3.6.0"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
     </ItemGroup>

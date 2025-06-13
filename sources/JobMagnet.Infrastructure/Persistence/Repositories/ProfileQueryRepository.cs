@@ -26,38 +26,10 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
     public IProfileQueryRepository WithSkills()
     {
-        _projections.Add(p => new ProfileEntity
-        {
-            Id = p.Id,
-            FirstName = p.FirstName,
-            LastName = p.LastName,
-            MiddleName = p.MiddleName,
-            SecondLastName = p.SecondLastName,
-            ProfileImageUrl = p.ProfileImageUrl,
-            BirthDate = p.BirthDate,
-            Services = p.Services,
-            Talents = p.Talents,
-            PortfolioGallery = p.PortfolioGallery,
-            Resume = p.Resume,
-            Skill = p.Skill != null && p.Skill.IsDeleted
-                ? null
-                : new SkillEntity
-                {
-                    Id = p.Skill!.Id,
-                    Overview = p.Skill.Overview,
-                    SkillDetails = p.Skill.SkillDetails.Select(s => new SkillItemEntity
-                    {
-                        Id = s.Id,
-                        Name = s.Name,
-                        ProficiencyLevel = s.ProficiencyLevel,
-                        Rank = s.Rank,
-                        IconUrl = s.IconUrl,
-                        Category = s.Category
-                    }).ToList()
-                },
-            Summary = p.Summary,
-            Testimonials = p.Testimonials
-        });
+        _query = _query
+            .Include(p => p.Skill)
+            .ThenInclude(s => s.SkillDetails);
+
         return this;
     }
 

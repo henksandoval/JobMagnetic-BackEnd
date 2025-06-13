@@ -1,13 +1,8 @@
-﻿using System.Collections.Immutable;
-using JobMagnet.Domain.Core.Entities;
-
-namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
+﻿namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 public record ContactInfoCollection
 {
-    private readonly long _resumeId;
-
-    private readonly List<(string value, string contactType)> _values =
+    public static readonly IReadOnlyList<(string value, string contactType)> Data =
     [
         ("brandon.johnson@example.com", "Email"),
         ("+1234567890", "Mobile Phone"),

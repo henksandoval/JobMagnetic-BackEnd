@@ -37,8 +37,6 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
     private async Task<ProfileEntity> BuildSampleProfileAsync(CancellationToken cancellationToken)
     {
-        var contactTypeMap = await BuildContactTypeMapAsync(cancellationToken);
-
         var profile = new ProfileEntity
         {
             Id = 0,
@@ -52,7 +50,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
         AddPublicIdentifier(profile);
         AddTalents(profile);
-        AddResume(profile, contactTypeMap);
+        await AddResumeAsync(profile, cancellationToken).ConfigureAwait(false);
         AddSkills(profile);
         AddSummary(profile);
         AddServices(profile);
@@ -77,8 +75,10 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         }
     }
 
-    private static void AddResume(ProfileEntity profile, IReadOnlyDictionary<string, ContactTypeEntity> contactTypeMap)
+    private async Task AddResumeAsync(ProfileEntity profile, CancellationToken cancellationToken)
     {
+        var contactTypeMap = await BuildContactTypeMapAsync(cancellationToken).ConfigureAwait(false);
+
         var resume = new ResumeEntity
         {
             Id = 0,
@@ -102,20 +102,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
             ContactInfo = new List<ContactInfoEntity>()
         };
 
-        var contactInfoData = new List<(string Value, string ContactTypeName)>
-        {
-            ("brandon.johnson@example.com", "Email"),
-            ("+1234567890", "Mobile Phone"),
-            ("https://linkedin.com/in/brandonjohnson", "LinkedIn"),
-            ("https://github.com/brandonjohnson", "GitHub"),
-            ("https://twitter.com/brandonjohnson", "Twitter"),
-            ("https://brandonjohnson.dev", "Web site"),
-            ("https://instagram.com/brandonjohnson", "Instagram"),
-            ("https://facebook.com/brandonjohnson", "Facebook"),
-            ("+9876543210", "Mobile Phone")
-        };
-
-        foreach (var (value, contactTypeName) in contactInfoData)
+        foreach (var (value, contactTypeName) in ContactInfoCollection.Data)
         {
             if (contactTypeMap.TryGetValue(contactTypeName, out var contactType))
             {
@@ -142,8 +129,19 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
                        I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
                        I am always eager to learn new technologies and improve my skills.
                        """,
-            SkillDetails = new SkillsCollection().GetSkills().ToList(),
         };
+
+        foreach (var item in SkillsCollection.Data)
+        {
+            var skillItem = new SkillItemEntity(item.Name,
+                item.IconUrl,
+                item.Category,
+                skill,
+                item.ProficiencyLevel,
+                item.Rank);
+            skill.Add(skillItem);
+        }
+
         profile.AddSkill(skill);
     }
 

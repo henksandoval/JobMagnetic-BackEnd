@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 
 namespace JobMagnet.Domain.Core.Entities;
@@ -14,4 +16,27 @@ public class SkillItemEntity : TrackableEntity<long>
     [ForeignKey(nameof(Skill))] public long SkillId { get; set; }
 
     public virtual SkillEntity Skill { get; set; }
+
+    private SkillItemEntity() { }
+
+    [SetsRequiredMembers]
+    public SkillItemEntity(string name, string iconUrl, string category, SkillEntity skill, ushort proficiencyLevel, ushort rank, long id = 0)
+    {
+        Guard.IsNotNullOrWhiteSpace(name);
+        Guard.IsNotNullOrWhiteSpace(iconUrl);
+        Guard.IsNotNullOrWhiteSpace(category);
+        Guard.IsNotNull(skill);
+        Guard.IsGreaterThan<ushort>(proficiencyLevel, 0);
+        Guard.IsGreaterThan<ushort>(rank, 0);
+        Guard.IsGreaterThanOrEqualTo<long>(id, 0);
+
+        Id = id;
+        Name = name;
+        IconUrl = iconUrl;
+        Category = category;
+        ProficiencyLevel = proficiencyLevel;
+        Rank = 0;
+        SkillId = skill.Id;
+        Skill = skill;
+    }
 }
