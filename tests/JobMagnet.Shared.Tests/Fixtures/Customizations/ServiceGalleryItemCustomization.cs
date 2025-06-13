@@ -1,10 +1,11 @@
 ﻿using AutoFixture;
 using JobMagnet.Application.Contracts.Responses.Base;
+using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Core.Entities;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
-public class ServiceGalleryItemEntityCustomization : ICustomization
+public class ServiceGalleryItemCustomization : ICustomization
 {
     private static int _autoIncrementId = 1;
 
@@ -31,6 +32,17 @@ public class ServiceGalleryItemEntityCustomization : ICustomization
                 .Without(x => x.Id)
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());
+
+        fixture.Customize<GalleryItemRaw>(composer =>
+            composer.FromFactory(() => new GalleryItemRaw(
+                FixtureBuilder.Faker.Company.CompanyName(),
+                FixtureBuilder.Faker.Lorem.Sentence(),
+                FixtureBuilder.Faker.Image.PicsumUrl(),
+                FixtureBuilder.Faker.Image.PicsumUrl(),
+                FixtureBuilder.Faker.Image.PicsumUrl(),
+                FixtureBuilder.Faker.Address.CountryCode()
+            ))
+        );
     }
 
     private static void ApplyCommonProperties(dynamic item)

@@ -1,10 +1,11 @@
 ﻿using AutoFixture;
 using JobMagnet.Application.Contracts.Responses.Base;
+using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Core.Entities;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
-public class SkillEntityCustomization : ICustomization
+public class SkillCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
@@ -28,6 +29,13 @@ public class SkillEntityCustomization : ICustomization
                 .With(x => x.ProfileId, 0)
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties()
+        );
+
+        fixture.Register(() =>
+            new SkillRaw(
+                FixtureBuilder.Faker.Lorem.Sentence(),
+                []
+            )
         );
     }
 

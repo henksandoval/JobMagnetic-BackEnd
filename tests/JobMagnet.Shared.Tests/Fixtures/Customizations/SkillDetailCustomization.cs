@@ -1,10 +1,11 @@
 ﻿using AutoFixture;
 using JobMagnet.Application.Contracts.Responses.Base;
+using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Core.Entities;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
-public class SkillItemEntityCustomization : ICustomization
+public class SkillDetailCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
@@ -18,6 +19,15 @@ public class SkillItemEntityCustomization : ICustomization
             composer
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());
+
+        fixture.Customize<SkillDetailRaw>(composer =>
+            composer.FromFactory(() =>
+                new SkillDetailRaw(
+                    FixtureBuilder.Faker.Company.CompanyName(),
+                    FixtureBuilder.Faker.Random.UShort(1, 10).ToString()
+                )
+            )
+        );
     }
 
     private static void ApplyCommonProperties(dynamic item)

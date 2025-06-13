@@ -1,9 +1,9 @@
-﻿using AutoFixture;
+using AutoFixture;
 using JobMagnet.Domain.Core.Entities;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
-public class ContactTypeEntityCustomization : ICustomization
+public class ContactTypeCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {

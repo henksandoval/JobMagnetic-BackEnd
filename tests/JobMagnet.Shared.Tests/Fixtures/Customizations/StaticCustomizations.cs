@@ -2,8 +2,8 @@ namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public static class StaticCustomizations
 {
-    public static readonly List<(string Name, string IconClass)> ContactTypes = new()
-    {
+    public static readonly List<(string Name, string IconClass)> ContactTypes =
+    [
         ("Email", "bx bx-envelope"),
         ("Mobile Phone", "bx bx-mobile"),
         ("Home Phone", "bx bx-phone"),
@@ -25,7 +25,7 @@ public static class StaticCustomizations
         ("TikTok", "bx bxl-tiktok"),
         ("Reddit", "bx bxl-reddit"),
         ("Vimeo", "bx bxl-vimeo")
-    };
+    ];
 
     public static readonly string[] Degrees =
     [

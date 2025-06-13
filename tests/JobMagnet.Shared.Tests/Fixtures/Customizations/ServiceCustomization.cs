@@ -1,9 +1,10 @@
 ﻿using AutoFixture;
+using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Core.Entities;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
-public class ServiceEntityCustomization : ICustomization
+public class ServiceCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
@@ -17,6 +18,13 @@ public class ServiceEntityCustomization : ICustomization
                 .With(x => x.ProfileId, 0)
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties()
+        );
+
+        fixture.Customize<ServiceRaw>(composer =>
+            composer.FromFactory(() => new ServiceRaw(
+                FixtureBuilder.Faker.Lorem.Paragraph(),
+                FixtureBuilder.Build().CreateMany<GalleryItemRaw>().ToList()
+            ))
         );
     }
 

@@ -1,9 +1,10 @@
-﻿using AutoFixture;
+using AutoFixture;
+using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Core.Entities;
 
-namespace JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
+namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
-public class PortfolioEntityCustomization : ICustomization
+public class PortfolioCustomization : ICustomization
 {
     private static int _autoIncrementId = 1;
 
@@ -19,6 +20,17 @@ public class PortfolioEntityCustomization : ICustomization
                 .Without(x => x.Profile)
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties()
+        );
+
+        fixture.Customize<PortfolioGalleryRaw>(composer =>
+            composer.FromFactory(() => new PortfolioGalleryRaw(
+                FixtureBuilder.Faker.Company.CompanyName(),
+                FixtureBuilder.Faker.Lorem.Sentence(),
+                FixtureBuilder.Faker.Image.PicsumUrl(),
+                FixtureBuilder.Faker.Image.PicsumUrl(),
+                FixtureBuilder.Faker.Image.PicsumUrl(),
+                FixtureBuilder.Faker.Address.CountryCode()
+            ))
         );
     }
 
