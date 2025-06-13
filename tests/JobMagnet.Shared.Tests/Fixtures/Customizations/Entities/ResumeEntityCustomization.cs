@@ -16,7 +16,7 @@ public class ResumeEntityCustomization : ICustomization
                 .Without(x => x.DeletedBy)
                 .Without(x => x.ContactInfo)
                 .With(x => x.ProfileId, 0)
-                .With(x => x.Profile, fixture.Create<ProfileEntity>())
+                .Without(x => x.Profile)
                 .With(x => x.Id, 0)
                 .With(x => x.IsDeleted, false)
                 .Do(ApplyCommonProperties)

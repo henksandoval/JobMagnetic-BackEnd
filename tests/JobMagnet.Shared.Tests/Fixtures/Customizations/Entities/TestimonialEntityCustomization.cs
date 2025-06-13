@@ -15,7 +15,7 @@ public class TestimonialEntityCustomization : ICustomization
                 .Without(x => x.DeletedAt)
                 .Without(x => x.DeletedBy)
                 .Do(ApplyCommonProperties)
-                .With(x => x.Profile, fixture.Create<ProfileEntity>())
+                .Without(x => x.Profile)
                 .OmitAutoProperties()
         );
     }

@@ -5,6 +5,7 @@ using JobMagnet.Application.Contracts.Commands.Skill;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Shared.Tests.Fixtures;
+using JobMagnet.Shared.Tests.Fixtures.Builders;
 
 namespace JobMagnet.Unit.Tests.Mappers;
 
@@ -16,7 +17,11 @@ public class SkillMapperShould
     public void MapSkillEntityToSkillModelCorrectly()
     {
         // Given
-        var entity = _fixture.Create<SkillEntity>();
+        var profileEntity = new ProfileEntityBuilder(_fixture)
+            .WithSkills()
+            .WithSkillDetails()
+            .Build();
+        var entity = profileEntity.Skill!;
 
         // When
         var skillModel = entity.ToModel();

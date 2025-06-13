@@ -16,7 +16,7 @@ public class PortfolioEntityCustomization : ICustomization
                 .Without(x => x.DeletedAt)
                 .Without(x => x.DeletedBy)
                 .With(x => x.ProfileId, 0)
-                .With(x => x.Profile, fixture.Create<ProfileEntity>())
+                .Without(x => x.Profile)
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties()
         );

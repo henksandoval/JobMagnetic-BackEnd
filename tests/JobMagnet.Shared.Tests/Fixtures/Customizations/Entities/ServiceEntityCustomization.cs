@@ -13,7 +13,7 @@ public class ServiceEntityCustomization : ICustomization
                 .With(x => x.IsDeleted, false)
                 .Without(x => x.DeletedAt)
                 .Without(x => x.DeletedBy)
-                .With(x => x.Profile, fixture.Create<ProfileEntity>())
+                .Without(x => x.Profile)
                 .With(x => x.ProfileId, 0)
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties()
