@@ -15,7 +15,7 @@ public class SkillEntity : SoftDeletableEntity<long>
 
     public void Add(SkillItemEntity skillItem)
     {
-        Guard.IsNull(skillItem);
+        Guard.IsNotNull(skillItem);
 
         SkillDetails.Add(skillItem);
     }

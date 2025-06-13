@@ -24,7 +24,26 @@ public static class SkillMapper
 
     public static SkillEntity ToEntity(this SkillCommand command)
     {
-        return command.Adapt<SkillEntity>();
+        var entity = new SkillEntity
+        {
+            Id = 0,
+            Overview = command.SkillData.Overview,
+            ProfileId = command.SkillData.ProfileId,
+        };
+
+        foreach (var skillDetailCommand in command.SkillData.SkillDetails)
+        {
+            var skillDetail = new SkillItemEntity(
+                skillDetailCommand.Name!,
+                skillDetailCommand.IconUrl!,
+                skillDetailCommand.Category!,
+                entity,
+                skillDetailCommand.ProficiencyLevel,
+                skillDetailCommand.Rank);
+            entity.Add(skillDetail);
+        }
+
+        return entity;
     }
 
     public static SkillResponse ToModel(this SkillEntity entity)

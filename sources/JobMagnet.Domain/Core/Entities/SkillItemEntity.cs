@@ -35,7 +35,7 @@ public class SkillItemEntity : TrackableEntity<long>
         IconUrl = iconUrl;
         Category = category;
         ProficiencyLevel = proficiencyLevel;
-        Rank = 0;
+        Rank = rank;
         SkillId = skill.Id;
         Skill = skill;
     }
