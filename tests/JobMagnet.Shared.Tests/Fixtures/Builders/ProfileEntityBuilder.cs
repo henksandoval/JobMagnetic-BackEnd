@@ -28,6 +28,8 @@ public class ProfileEntityBuilder(IFixture fixture)
             throw new InvalidOperationException("Cannot add contact info without a resume. Call WithResume() first.");
         }
 
+        fixture.Inject(_resume);
+
         _resume.ContactInfo = fixture.CreateMany<ContactInfoEntity>(count).ToList();
         return this;
     }

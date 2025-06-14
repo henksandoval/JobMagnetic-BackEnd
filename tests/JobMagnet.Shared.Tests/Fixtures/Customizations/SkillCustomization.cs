@@ -8,7 +8,7 @@ namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class SkillCustomization : ICustomization
 {
-    private static readonly Faker Faker = new();
+    private static readonly Faker Faker = new ();
 
     public void Customize(IFixture fixture)
     {
