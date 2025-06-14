@@ -231,12 +231,14 @@ public class ResumeControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     private async Task<ResumeEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ResumeEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
-        var entity = _fixture.Create<ResumeEntity>();
+        var entity = new ProfileEntityBuilder(_fixture)
+            .WithResume()
+            .Build();
         await commandRepository.CreateAsync(entity);
         await commandRepository.SaveChangesAsync();
 
-        return entity;
+        return entity.Resume!;
     }
 }

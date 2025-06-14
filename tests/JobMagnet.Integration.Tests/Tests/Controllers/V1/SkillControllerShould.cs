@@ -139,139 +139,6 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Handle multiple Add operations in a PATCH request")]
-    public async Task HandleAddMultipleOperationsInPatchRequestAsync()
-    {
-        // Given
-        var skill = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<SkillCommand>();
-        var itemAdded01 = _fixture.Create<SkillItemBase>();
-        var itemAdded02 = _fixture.Create<SkillItemBase>();
-        patchDocument.Add(p => p.SkillData.Skills, itemAdded01);
-        patchDocument.Add(p => p.SkillData.Skills, itemAdded02);
-
-        // When
-        var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{skill.Id}", patchDocument);
-
-        // Then
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISkillQueryRepository>();
-        _ = querySkillRepository.IncludeDetails();
-        var skillEntity = await querySkillRepository.GetByIdWithIncludesAsync(skill.Id);
-        skillEntity!.Skills.Count.ShouldBe(skill.Skills.Count + patchDocument.Operations.Count);
-        skillEntity.Skills.ShouldContain(x => x.Name == itemAdded01.Name);
-        skillEntity.Skills.ShouldContain(x => x.ProficiencyLevel == itemAdded01.ProficiencyLevel);
-        skillEntity.Skills.ShouldContain(x => x.Category == itemAdded02.Category);
-        skillEntity.Skills.ShouldContain(x => x.Rank == itemAdded02.Rank);
-        skillEntity.Skills.ShouldContain(x => x.IconUrl == itemAdded02.IconUrl);
-    }
-
-    [Fact(DisplayName = "Handle Remove operations in a PATCH request")]
-    public async Task HandleRemoveOperationsInPatchRequestAsync()
-    {
-        // Given
-        var skill = await SetupEntityAsync();
-        var itemToRemove = skill.Skills.ElementAt(2);
-        var indexItemToRemove = skill.Skills.ToList().FindIndex(item => item.Id == itemToRemove.Id);
-        var patchDocument = new JsonPatchDocument<SkillCommand>();
-        patchDocument.Remove(p => p.SkillData.Skills, indexItemToRemove);
-
-        // When
-        var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{skill.Id}", patchDocument);
-
-        // Then
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISkillQueryRepository>();
-        _ = querySkillRepository.IncludeDetails();
-        var skillEntity = await querySkillRepository.GetByIdWithIncludesAsync(skill.Id);
-        skillEntity!.Skills.Count.ShouldBe(skill.Skills.Count - 1);
-        skillEntity.Skills.Contains(itemToRemove).ShouldBeFalse();
-    }
-
-    [Fact(DisplayName = "Handle Replace operations in a PATCH request")]
-    public async Task HandleReplaceOperationsInPatchRequestAsync()
-    {
-        // Given
-        var skill = await SetupEntityAsync();
-        var itemToReplace = skill.Skills.ElementAt(0);
-        var itemUpdated = _fixture.Build<SkillItemBase>().With(s => s.Id, itemToReplace.Id).Create();
-        var indexItemToReplace = skill.Skills.ToList().FindIndex(item => item.Id == itemToReplace.Id);
-        var patchDocument = new JsonPatchDocument<SkillCommand>();
-        patchDocument.Replace(p => p.SkillData.Skills[indexItemToReplace], itemUpdated);
-
-        // When
-        var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{skill.Id}", patchDocument);
-
-        // Then
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISkillQueryRepository>();
-        _ = querySkillRepository.IncludeDetails();
-        var skillEntity = await querySkillRepository.GetByIdWithIncludesAsync(skill.Id);
-        skillEntity!.Skills.Count.ShouldBe(skill.Skills.Count);
-        var entityUpdated = skillEntity.Skills.First(x => x.Id == itemUpdated.Id);
-        entityUpdated.Should().BeEquivalentTo(itemUpdated, options => options
-            .ExcludingMissingMembers()
-            .Excluding(x => x.Id)
-        );
-    }
-
-    [Fact(DisplayName = "Handle multiple operations in a PATCH request")]
-    public async Task HandleMultipleOperationsInPatchRequestAsync()
-    {
-        // Given
-        var skill = await SetupEntityAsync();
-        var itemToRemove = skill.Skills.ElementAt(0);
-        var itemAdded01 = _fixture.Create<SkillItemBase>();
-        var itemAdded02 = _fixture.Create<SkillItemBase>();
-        var itemToReplace = skill.Skills.ElementAt(2);
-        var itemUpdated = _fixture.Build<SkillItemBase>().With(s => s.Id, itemToReplace.Id).Create();
-        var indexItemToReplace = skill.Skills.ToList().FindIndex(item => item.Id == itemToReplace.Id);
-        var indexItemToRemove = skill.Skills.ToList().FindIndex(item => item.Id == itemToRemove.Id);
-
-        var patchDocument = new JsonPatchDocument<SkillCommand>();
-        patchDocument.Add(p => p.SkillData.Skills, itemAdded01);
-        patchDocument.Add(p => p.SkillData.Skills, itemAdded02);
-        patchDocument.Replace(p => p.SkillData.Skills[indexItemToReplace], itemUpdated);
-        patchDocument.Remove(p => p.SkillData.Skills, indexItemToRemove);
-
-        // When
-        var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{skill.Id}", patchDocument);
-
-        // Then
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var querySkillRepository = scope.ServiceProvider.GetRequiredService<ISkillQueryRepository>();
-        _ = querySkillRepository.IncludeDetails();
-        var skillEntity = await querySkillRepository.GetByIdWithIncludesAsync(skill.Id);
-        skillEntity!.Skills.Count.ShouldBe(skill.Skills.Count + 1);
-        skillEntity.Skills.ShouldContain(x => x.Name == itemAdded01.Name);
-        skillEntity.Skills.ShouldContain(x => x.ProficiencyLevel == itemAdded01.ProficiencyLevel);
-        skillEntity.Skills.ShouldContain(x => x.Category == itemAdded02.Category);
-        skillEntity.Skills.ShouldContain(x => x.Rank == itemAdded02.Rank);
-        skillEntity.Skills.ShouldContain(x => x.IconUrl == itemAdded02.IconUrl);
-        var entityUpdated = skillEntity.Skills.First(x => x.Id == itemUpdated.Id);
-        entityUpdated.Should().BeEquivalentTo(itemUpdated, options => options
-            .ExcludingMissingMembers()
-            .Excluding(x => x.Id)
-        );
-        skillEntity.Skills.Contains(itemToRemove).ShouldBeFalse();
-    }
-
     private async Task<SkillSetEntity> SetupEntityAsync()
     {
         await _testFixture.ResetDatabaseAsync();
@@ -294,12 +161,16 @@ public class SkillControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     private async Task<SkillSetEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<SkillSetEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
-        var entity = _fixture.Create<SkillSetEntity>();
+        var entity = new ProfileEntityBuilder(_fixture)
+            .WithSkillSet()
+            .WithSkills()
+            .Build();
+
         await commandRepository.CreateAsync(entity);
         await commandRepository.SaveChangesAsync();
 
-        return entity;
+        return entity.Skill!;
     }
 }

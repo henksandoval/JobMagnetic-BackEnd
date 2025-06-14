@@ -13,11 +13,15 @@ public class SkillCustomization : ICustomization
     public void Customize(IFixture fixture)
     {
         fixture.Customize<SkillEntity>(composer =>
-            composer.FromFactory((SkillSetEntity parentSkillSet) => BuildSkillEntity(parentSkillSet))
+            composer
+                .FromFactory((SkillSetEntity parentSkillSet) => BuildSkillEntity(parentSkillSet))
+                .OmitAutoProperties()
         );
 
         fixture.Customize<SkillSetEntity>(composer =>
-            composer.FromFactory((long profileId) => BuildSkillSetEntity(profileId))
+            composer
+                .FromFactory((long profileId) => BuildSkillSetEntity(profileId))
+                .OmitAutoProperties()
         );
 
         fixture.Register(() =>

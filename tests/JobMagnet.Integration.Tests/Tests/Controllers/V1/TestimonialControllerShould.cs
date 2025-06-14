@@ -214,13 +214,15 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
     private async Task<TestimonialEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<TestimonialEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
-        var entity = _fixture.Create<TestimonialEntity>();
+        var entity = new ProfileEntityBuilder(_fixture)
+            .WithTestimonials()
+            .Build();
         await commandRepository.CreateAsync(entity);
         await commandRepository.SaveChangesAsync();
 
-        return entity;
+        return entity.Testimonials.First();
     }
 
     private async Task<TestimonialEntity> SetupEntityAsync()

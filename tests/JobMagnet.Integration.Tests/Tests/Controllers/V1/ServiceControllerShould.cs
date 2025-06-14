@@ -295,12 +295,14 @@ public class ServiceControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     private async Task<ServiceEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ServiceEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
-        var entity = _fixture.Create<ServiceEntity>();
+        var entity = new ProfileEntityBuilder(_fixture)
+            .WithServices()
+            .Build();
         await commandRepository.CreateAsync(entity);
         await commandRepository.SaveChangesAsync();
 
-        return entity;
+        return entity.Services!;
     }
 }

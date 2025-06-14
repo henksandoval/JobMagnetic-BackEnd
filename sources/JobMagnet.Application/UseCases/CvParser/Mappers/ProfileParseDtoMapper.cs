@@ -22,6 +22,7 @@ public static class ProfileParseDtoMapper
         TypeAdapterConfig.GlobalSettings.Default.PreserveReference(true);
 
         TypeAdapterConfig<ProfileParseDto, ProfileEntity>.NewConfig()
+            .Ignore(dest => dest.Skill)
             .Map(dest => dest.Talents, src => MapTalents(src))
             .Map(dest => dest.Testimonials, src => MapTestimonials(src))
             .Map(dest => dest.PortfolioGallery, src => MapPortfolio(src));
