@@ -1,5 +1,4 @@
 ﻿using AutoFixture;
-using AutoFixture.Dsl;
 using JobMagnet.Domain.Core.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Builders;
@@ -43,10 +42,18 @@ public class ProfileEntityBuilder(IFixture fixture)
     {
         if (_skillSet == null)
         {
-            throw new InvalidOperationException("Cannot add contact info without a summary. Call WithSkills() first.");
+            throw new InvalidOperationException("Cannot add skill details without a skill set. Call WithSkills() first.");
         }
 
-        _skillSet.Skills = fixture.CreateMany<SkillEntity>(count).ToList();
+        fixture.Inject(_skillSet);
+
+        var skills = fixture.CreateMany<SkillEntity>(count);
+
+        foreach (var skill in skills)
+        {
+            _skillSet.Add(skill);
+        }
+
         return this;
     }
 

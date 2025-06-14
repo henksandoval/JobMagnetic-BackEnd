@@ -121,15 +121,12 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
     private static void AddSkills(ProfileEntity profile)
     {
-        var skill = new SkillSetEntity
-        {
-            Id = 0,
-            Overview = """
-                       I am a passionate web developer with a strong background in front-end and back-end technologies.
-                       I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
-                       I am always eager to learn new technologies and improve my skills.
-                       """,
-        };
+        const string overview = """
+                         I am a passionate web developer with a strong background in front-end and back-end technologies.
+                         I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
+                         I am always eager to learn new technologies and improve my skills.
+                         """;
+        var skill = new SkillSetEntity(overview, profile.Id);
 
         foreach (var item in SkillsCollection.Data)
         {

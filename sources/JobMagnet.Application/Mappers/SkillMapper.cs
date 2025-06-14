@@ -24,12 +24,7 @@ public static class SkillMapper
 
     public static SkillSetEntity ToEntity(this SkillCommand command)
     {
-        var entity = new SkillSetEntity
-        {
-            Id = 0,
-            Overview = command.SkillData.Overview,
-            ProfileId = command.SkillData.ProfileId,
-        };
+        var entity = new SkillSetEntity(command.SkillData.Overview!, command.SkillData.ProfileId);
 
         foreach (var skillDetailCommand in command.SkillData.SkillDetails)
         {

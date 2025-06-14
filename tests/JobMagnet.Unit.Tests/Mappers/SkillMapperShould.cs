@@ -17,6 +17,10 @@ public class SkillMapperShould
     public void MapSkillEntityToSkillModelCorrectly()
     {
         // Given
+        _ = new ProfileEntityBuilder(_fixture)
+            .WithSkills()
+            .Build();
+
         var profileEntity = new ProfileEntityBuilder(_fixture)
             .WithSkills()
             .WithSkillDetails()
