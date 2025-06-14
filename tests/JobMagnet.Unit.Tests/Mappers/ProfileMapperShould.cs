@@ -121,7 +121,9 @@ public class ProfileMapperShould
     [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Skills are defined")]
     public void MapperProfileEntityToProfileViewModelWithSkills()
     {
-        var profileBuilder = new ProfileEntityBuilder(_fixture)
+        var profileBuilder =
+            new ProfileEntityBuilder(_fixture)
+            .WithSkillSet()
             .WithSkills();
 
         var profile = profileBuilder.Build();

@@ -32,17 +32,17 @@ public class ProfileEntityBuilder(IFixture fixture)
         return this;
     }
 
-    public ProfileEntityBuilder WithSkills()
+    public ProfileEntityBuilder WithSkillSet()
     {
         _skillSet = fixture.Create<SkillSetEntity>();
         return this;
     }
 
-    public ProfileEntityBuilder WithSkillDetails(int count = 5)
+    public ProfileEntityBuilder WithSkills(int count = 5)
     {
         if (_skillSet == null)
         {
-            throw new InvalidOperationException("Cannot add skill details without a skill set. Call WithSkills() first.");
+            throw new InvalidOperationException("Cannot add skills without a skill set. Call WithSkillSet() first.");
         }
 
         fixture.Inject(_skillSet);

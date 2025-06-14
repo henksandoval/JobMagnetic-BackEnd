@@ -240,8 +240,8 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
             .WithEducation(EducationCount)
             .WithWorkExperience(WorkExperienceCount)
             .WithServices()
-            .WithSkills()
-            .WithSkillDetails(SkillDetailsCount)
+            .WithSkillSet()
+            .WithSkills(SkillDetailsCount)
             .WithTestimonials(TestimonialsCount)
             .Build();
 

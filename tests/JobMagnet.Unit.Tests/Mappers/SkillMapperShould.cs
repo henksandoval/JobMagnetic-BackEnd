@@ -18,8 +18,8 @@ public class SkillMapperShould
     {
         // Given
         var profileEntity = new ProfileEntityBuilder(_fixture)
+            .WithSkillSet()
             .WithSkills()
-            .WithSkillDetails()
             .Build();
         var entity = profileEntity.Skill!;
 
