@@ -24,7 +24,7 @@ public class SkillController(
         var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity, cancellationToken).ConfigureAwait(false);
         await commandRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-        var newRecord = entity.ToModel();
+        var newRecord = entity.ToResponse();
 
         return Results.CreatedAtRoute(nameof(GetSkillByIdAsync), new { id = newRecord.Id }, newRecord);
     }
@@ -41,7 +41,7 @@ public class SkillController(
         if (entity is null)
             return Results.NotFound();
 
-        var responseModel = entity.ToModel();
+        var responseModel = entity.ToResponse();
 
         return Results.Ok(responseModel);
     }

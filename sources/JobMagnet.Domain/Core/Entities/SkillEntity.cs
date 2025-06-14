@@ -7,15 +7,15 @@ namespace JobMagnet.Domain.Core.Entities;
 
 public class SkillEntity : TrackableEntity<long>
 {
-    public string Name { get; set; } // Nombre de la habilidad (ej. "C#", "React")
-    public ushort ProficiencyLevel { get; set; } // Nivel de habilidad (1-10)
-    public string Category { get; set; } // Categoría (ej. "Programación", "Diseño")
-    public ushort Rank { get; set; }
-    public string IconUrl { get; set; }  //TODO: Refactor this property, remove it and use a separate entity for icons
+    public string Name { get; private set; } // Nombre de la habilidad (ej. "C#", "React")
+    public ushort ProficiencyLevel { get; private set; } // Nivel de habilidad (1-10)
+    public string Category { get; private set; } // Categoría (ej. "Programación", "Diseño")
+    public ushort Rank { get; private set; }
+    public string IconUrl { get; private set; }  //TODO: Refactor this property, remove it and use a separate entity for icons
 
-    [ForeignKey(nameof(SkillSet))] public long SkillId { get; set; }
+    [ForeignKey(nameof(SkillSet))] public long SkillId { get; private set; }
 
-    public virtual SkillSetEntity SkillSet { get; set; }
+    public virtual SkillSetEntity SkillSet { get; private set; }
 
     private SkillEntity() { }
 

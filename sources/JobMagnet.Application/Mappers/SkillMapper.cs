@@ -26,7 +26,7 @@ public static class SkillMapper
     {
         var entity = new SkillSetEntity(command.SkillData.Overview!, command.SkillData.ProfileId);
 
-        foreach (var skillDetailCommand in command.SkillData.SkillDetails)
+        foreach (var skillDetailCommand in command.SkillData.Skills)
         {
             var skillDetail = new SkillEntity(
                 skillDetailCommand.Name!,
@@ -41,7 +41,7 @@ public static class SkillMapper
         return entity;
     }
 
-    public static SkillResponse ToModel(this SkillSetEntity setEntity)
+    public static SkillResponse ToResponse(this SkillSetEntity setEntity)
     {
         return setEntity.Adapt<SkillResponse>();
     }

@@ -18,8 +18,6 @@ public class SkillCustomization : ICustomization
 
         fixture.Customize<SkillSetEntity>(composer =>
             composer.FromFactory((long profileId) => BuildSkillSetEntity(profileId))
-            .Without(x => x.Profile)
-            .Without(x => x.Skills)
         );
 
         fixture.Register(() =>

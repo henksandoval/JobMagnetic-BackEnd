@@ -8,11 +8,11 @@ namespace JobMagnet.Domain.Core.Entities;
 public class SkillSetEntity : SoftDeletableEntity<long>
 {
     public string? Overview { get; private set; }
-    public virtual ICollection<SkillEntity> Skills { get; set; } = new HashSet<SkillEntity>();
+    public virtual ICollection<SkillEntity> Skills { get; private set; } = new HashSet<SkillEntity>();
 
-    [ForeignKey(nameof(Profile))] public long ProfileId { get; set; }
+    [ForeignKey(nameof(Profile))] public long ProfileId { get; private set; }
 
-    public virtual ProfileEntity Profile { get; set; }
+    public virtual ProfileEntity Profile { get; private set; }
 
     private SkillSetEntity() { }
 

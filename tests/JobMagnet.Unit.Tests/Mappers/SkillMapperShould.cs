@@ -14,13 +14,9 @@ public class SkillMapperShould
     private readonly IFixture _fixture = FixtureBuilder.Build();
 
     [Fact]
-    public void MapSkillEntityToSkillModelCorrectly()
+    public void MapSkillEntityToSkillResponseCorrectly()
     {
         // Given
-        _ = new ProfileEntityBuilder(_fixture)
-            .WithSkills()
-            .Build();
-
         var profileEntity = new ProfileEntityBuilder(_fixture)
             .WithSkills()
             .WithSkillDetails()
@@ -28,14 +24,14 @@ public class SkillMapperShould
         var entity = profileEntity.Skill!;
 
         // When
-        var skillModel = entity.ToModel();
+        var skillModel = entity.ToResponse();
 
         // Then
         skillModel.Should().NotBeNull();
         skillModel.Id.Should().Be(entity.Id);
         skillModel.SkillData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
-        skillModel.SkillData.SkillDetails.Should().BeEquivalentTo(entity.Skills, options =>
+        skillModel.SkillData.Skills.Should().BeEquivalentTo(entity.Skills, options =>
             options.Excluding(GetExcludeItemEntityProperties()));
     }
 
@@ -66,7 +62,7 @@ public class SkillMapperShould
         updateCommand.Should().NotBeNull();
         updateCommand.SkillData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
-        updateCommand.SkillData.SkillDetails.Should().BeEquivalentTo(entity.Skills, options =>
+        updateCommand.SkillData.Skills.Should().BeEquivalentTo(entity.Skills, options =>
             options.Excluding(GetExcludeItemEntityProperties()));
     }
 
