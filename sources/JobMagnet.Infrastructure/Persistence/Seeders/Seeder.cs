@@ -19,8 +19,10 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         if (context.ContactTypes.Any()) return;
 
         var contactTypesWithAliases = new ContactTypesCollection().GetContactTypesWithAliases();
+        var skillsWithAliases = new SkillTypesCollection().GetSkillTypesWithAliases();
 
         await context.ContactTypes.AddRangeAsync(contactTypesWithAliases, cancellationToken);
+        await context.SkillTypes.AddRangeAsync(skillsWithAliases, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
     }
 
@@ -51,7 +53,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         AddPublicIdentifier(profile);
         AddTalents(profile);
         await AddResumeAsync(profile, cancellationToken).ConfigureAwait(false);
-        AddSkills(profile);
+        await AddSkills(profile, cancellationToken).ConfigureAwait(false);
         AddSummary(profile);
         AddServices(profile);
         AddPortfolio(profile);
@@ -77,7 +79,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
     private async Task AddResumeAsync(ProfileEntity profile, CancellationToken cancellationToken)
     {
-        var contactTypeMap = await BuildContactTypeMapAsync(cancellationToken).ConfigureAwait(false);
+        var contactTypeMap = await BuildContactTypesMapAsync(cancellationToken).ConfigureAwait(false);
 
         var resume = new ResumeEntity
         {
@@ -119,24 +121,32 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         profile.AddResume(resume);
     }
 
-    private static void AddSkills(ProfileEntity profile)
+    private async Task AddSkills(ProfileEntity profile, CancellationToken cancellationToken)
     {
+        var skillTypeMap = await BuildSkillTypesMapAsync(cancellationToken).ConfigureAwait(false);
+
         const string overview = """
                          I am a passionate web developer with a strong background in front-end and back-end technologies.
                          I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
                          I am always eager to learn new technologies and improve my skills.
                          """;
-        var skill = new SkillSetEntity(overview, profile.Id);
+        var skillSet = new SkillSetEntity(overview, profile.Id);
 
-        foreach (var item in SkillsCollection.Data)
+        foreach (var (skillName, proficiencyLevel, rank) in SkillInfoCollection.Data)
         {
-            var skillItem = new SkillEntity(skill,
-                item.ProficiencyLevel,
-                item.Rank);
-            skill.Add(skillItem);
+            if (skillTypeMap.TryGetValue(skillName, out var skillType))
+            {
+                var skill = new SkillEntity(skillSet, proficiencyLevel, rank);
+                skillSet.Add(skill);
+            }
+            else
+            {
+                throw new JobMagnetInfrastructureException(
+                    $"Seeding error: Skill type '{skillName}' not found in database.");
+            }
         }
 
-        profile.AddSkill(skill);
+        profile.AddSkill(skillSet);
     }
 
     private static void AddSummary(ProfileEntity profile)
@@ -176,12 +186,34 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         foreach (var testimonial in testimonials) profile.AddTestimonial(testimonial);
     }
 
-    private async Task<Dictionary<string, ContactTypeEntity>> BuildContactTypeMapAsync(
+    private async Task<Dictionary<string, ContactTypeEntity>> BuildContactTypesMapAsync(
         CancellationToken cancellationToken)
     {
         var map = new Dictionary<string, ContactTypeEntity>(StringComparer.OrdinalIgnoreCase);
 
         var allTypes = await context.ContactTypes
+            .Include(ct => ct.Aliases)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        foreach (var type in allTypes)
+        {
+            map[type.Name] = type;
+            foreach (var alias in type.Aliases)
+            {
+                map[alias.Alias] = type;
+            }
+        }
+
+        return map;
+    }
+
+    private async Task<Dictionary<string, SkillType>> BuildSkillTypesMapAsync(
+        CancellationToken cancellationToken)
+    {
+        var map = new Dictionary<string, SkillType>(StringComparer.OrdinalIgnoreCase);
+
+        var allTypes = await context.SkillTypes
             .Include(ct => ct.Aliases)
             .AsNoTracking()
             .ToListAsync(cancellationToken);

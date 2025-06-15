@@ -17,19 +17,25 @@ public class SkillType : SoftDeletableEntity<int>
     private SkillType() { }
 
     [SetsRequiredMembers]
-    public SkillType(int id, string name, Uri? iconUrl = null)
+    public SkillType(int id, string name, string category, Uri? iconUrl = null)
     {
         ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(category);
 
         Id = id;
         Name = name;
+        Category = category;
         IconUrl = iconUrl?.AbsoluteUri ?? string.Empty;
     }
 
     [SetsRequiredMembers]
-    public SkillType(string? name)
+    public SkillType(string name, string category)
     {
-        Name = name ?? string.Empty;
+        ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(category);
+
+        Name = name;
+        Category = category;
     }
 
     public void AddAlias(string alias)

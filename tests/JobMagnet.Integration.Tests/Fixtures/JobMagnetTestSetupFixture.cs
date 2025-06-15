@@ -97,7 +97,7 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         await dbContext.Database.EnsureCreatedAsync();
     }
 
-    private async Task SeedMasterTableDbContextAsync()
+    private async Task SeedMasterTableDbContextAsync() //TODO: Pending confirm it's necessary
     {
         using var scope = _webApplicationFactory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();

@@ -9,6 +9,7 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
     : DbContext(options)
 {
     public DbSet<ContactTypeEntity> ContactTypes { get; set; }
+    public DbSet<SkillType> SkillTypes { get; set; }
     public DbSet<ProfileEntity> Profiles { get; set; }
     public DbSet<PublicProfileIdentifierEntity> PublicProfileIdentifier { get; set; }
     public DbSet<EducationEntity> Educations { get; set; }
@@ -80,6 +81,13 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
                 .HasForeignKey(publicProfile => publicProfile.ProfileId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SkillType>(entity =>
+        {
+            entity.ToTable("SkillTypes")
+                .HasKey(skillType => skillType.Id);
+
         });
 
         modelBuilder.Entity<WorkResponsibilityEntity>(entity =>
