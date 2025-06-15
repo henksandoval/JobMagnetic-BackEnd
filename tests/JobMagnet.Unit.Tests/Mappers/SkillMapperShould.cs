@@ -22,7 +22,7 @@ public class SkillMapperShould
             .WithSkillSet()
             .WithSkills()
             .Build();
-        var entity = profileEntity.Skill!;
+        var entity = profileEntity.SkillSet!;
 
         var sourceSkills = entity.Skills.OrderBy(s => s.Rank).ToList();
 

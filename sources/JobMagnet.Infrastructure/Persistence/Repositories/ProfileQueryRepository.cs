@@ -27,7 +27,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
     public IProfileQueryRepository WithSkills()
     {
         _query = _query
-            .Include(p => p.Skill)
+            .Include(p => p.SkillSet)
             .ThenInclude(s => s.Skills);
 
         return this;
@@ -73,7 +73,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
             }).ToList(),
             PortfolioGallery = p.PortfolioGallery,
             Resume = p.Resume,
-            Skill = p.Skill,
+            SkillSet = p.SkillSet,
             Summary = p.Summary,
             Testimonials = p.Testimonials
         });
@@ -106,7 +106,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
                     Type = pg.Type
                 }).ToList(),
             Resume = p.Resume,
-            Skill = p.Skill,
+            SkillSet = p.SkillSet,
             Summary = p.Summary,
             Testimonials = p.Testimonials
         });
@@ -128,7 +128,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
             Talents = p.Talents,
             PortfolioGallery = p.PortfolioGallery,
             Resume = p.Resume,
-            Skill = p.Skill,
+            SkillSet = p.SkillSet,
             Summary = p.Summary,
             Testimonials = p.Testimonials.Where(t => !t.IsDeleted).Select(t => new TestimonialEntity
             {

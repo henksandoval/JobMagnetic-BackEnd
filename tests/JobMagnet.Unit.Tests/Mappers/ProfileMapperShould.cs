@@ -240,11 +240,11 @@ public class ProfileMapperShould
 
     private static SkillSetViewModel GetSkillViewModel(ProfileEntity profile)
     {
-        var skills = profile.Skill.Skills
+        var skills = profile.SkillSet.Skills
             .Select(skill => new SkillDetailsViewModel(skill.SkillType.Name, skill.SkillType.IconUrl, skill.Rank))
             .ToArray();
 
-        return new SkillSetViewModel(profile.Skill.Overview!, skills);
+        return new SkillSetViewModel(profile.SkillSet.Overview!, skills);
     }
 
     private static SummaryViewModel GetSummaryViewModel(ProfileEntity profile)

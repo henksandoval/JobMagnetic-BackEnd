@@ -78,13 +78,13 @@ public class ProfileParseDtoMapperShould
 
         // Then
         entity.ShouldNotBeNull();
-        entity.Skill.ShouldNotBeNull();
-        entity.Skill.Overview.ShouldBe(dto.Skill.Overview);
-        entity.Skill.Skills.ShouldNotBeNull();
-        entity.Skill.Skills.Count.ShouldBe(dto.Skill.SkillDetails.Count());
+        entity.SkillSet.ShouldNotBeNull();
+        entity.SkillSet.Overview.ShouldBe(dto.Skill.Overview);
+        entity.SkillSet.Skills.ShouldNotBeNull();
+        entity.SkillSet.Skills.Count.ShouldBe(dto.Skill.SkillDetails.Count());
 
         var firstSkillDetailDto = dto.Skill.SkillDetails.First();
-        var firstSkillDetailEntity = entity.Skill.Skills.First();
+        var firstSkillDetailEntity = entity.SkillSet.Skills.First();
         firstSkillDetailEntity.ProficiencyLevel.ShouldBe(firstSkillDetailDto.Level ?? 0);
         // Category, Rank, IconUrl tendrán valores por defecto ya que no están en el DTO.
     }

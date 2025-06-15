@@ -30,8 +30,8 @@ public static class ProfileMapper
             .Map(dest => dest.PortfolioGallery,
                 src => src.PortfolioGallery.Select(p => p.Adapt<PortfolioViewModel>()).ToArray(),
                 src => src.PortfolioGallery.Any())
-            .Map(dest => dest.SkillSet, src => src.Skill.Adapt<SkillSetViewModel>(),
-                src => src.Skill != null && src.Skill.Skills.Count > 0)
+            .Map(dest => dest.SkillSet, src => src.SkillSet.Adapt<SkillSetViewModel>(),
+                src => src.SkillSet != null && src.SkillSet.Skills.Count > 0)
             .Map(dest => dest.Service, src => src.Services.Adapt<ServiceViewModel>(),
                 src => src.Services != null && src.Services.GalleryItems.Count > 0)
             .Map(dest => dest.Summary, src => src.Summary.Adapt<SummaryViewModel>(),
