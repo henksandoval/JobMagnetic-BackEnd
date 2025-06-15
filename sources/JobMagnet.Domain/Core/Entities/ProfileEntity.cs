@@ -27,7 +27,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
 
     public void CreateAndAssignPublicIdentifier(IProfileSlugGenerator slugGenerator)
     {
-        if (this.PublicProfileIdentifiers.Any(p => p.Type == LinkType.Primary))
+        if (PublicProfileIdentifiers.Any(p => p.Type == LinkType.Primary))
         {
             return;
         }
@@ -36,7 +36,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
 
         var publicIdentifier = new PublicProfileIdentifierEntity(this, generatedSlug);
 
-        this.PublicProfileIdentifiers.Add(publicIdentifier);
+        PublicProfileIdentifiers.Add(publicIdentifier);
     }
 
     public void AddPublicProfileIdentifier(PublicProfileIdentifierEntity publicIdentifierEntity)
