@@ -9,7 +9,9 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
     : DbContext(options)
 {
     public DbSet<ContactTypeEntity> ContactTypes { get; set; }
+    public DbSet<ContactTypeAliasEntity> ContactAliases { get; set; }
     public DbSet<SkillType> SkillTypes { get; set; }
+    public DbSet<SkillTypeAlias> SkillTypeAliases { get; set; }
     public DbSet<ProfileEntity> Profiles { get; set; }
     public DbSet<PublicProfileIdentifierEntity> PublicProfileIdentifier { get; set; }
     public DbSet<EducationEntity> Educations { get; set; }

@@ -50,9 +50,11 @@ public class SkillCustomization : ICustomization
 
     private static SkillEntity BuildSkillEntity(SkillSetEntity parentSkillSet)
     {
-        var skill = new SkillEntity(skillSet: parentSkillSet,
-            proficiencyLevel: (ushort)Faker.Random.Number(1, 10),
-            rank: (ushort)Faker.Random.Number(1, 100)
+        var skill = new SkillEntity(
+            (ushort)Faker.Random.Number(1, 10),
+            (ushort)Faker.Random.Number(1, 100),
+            parentSkillSet,
+            null
         );
 
         return skill;

@@ -136,7 +136,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         {
             if (skillTypeMap.TryGetValue(skillName, out var skillType))
             {
-                var skill = new SkillEntity(skillSet, proficiencyLevel, rank);
+                var skill = new SkillEntity(proficiencyLevel, rank, skillSet, skillType);
                 skillSet.Add(skill);
             }
             else
@@ -215,7 +215,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
         var allTypes = await context.SkillTypes
             .Include(ct => ct.Aliases)
-            .AsNoTracking()
+            .AsTracking()
             .ToListAsync(cancellationToken);
 
         foreach (var type in allTypes)
