@@ -7,11 +7,9 @@ namespace JobMagnet.Domain.Core.Entities;
 
 public class SkillEntity : TrackableEntity<long>
 {
-    public string Name { get; private set; } // Nombre de la habilidad (ej. "C#", "React")
-    public ushort ProficiencyLevel { get; private set; } // Nivel de habilidad (1-10)
-    public string Category { get; private set; } // Categoría (ej. "Programación", "Diseño")
+    public ushort ProficiencyLevel { get; private set; }
     public ushort Rank { get; private set; }
-    public string IconUrl { get; private set; }  //TODO: Refactor this property, remove it and use a separate entity for icons
+    public SkillType SkillType { get; private set; }
 
     [ForeignKey(nameof(SkillSet))] public long SkillId { get; private set; }
 
@@ -20,20 +18,14 @@ public class SkillEntity : TrackableEntity<long>
     private SkillEntity() { }
 
     [SetsRequiredMembers]
-    public SkillEntity(string name, string iconUrl, string category, SkillSetEntity skillSet, ushort proficiencyLevel, ushort rank, long id = 0)
+    public SkillEntity(SkillSetEntity skillSet, ushort proficiencyLevel, ushort rank, long id = 0)
     {
-        Guard.IsNotNullOrWhiteSpace(name);
-        Guard.IsNotNullOrWhiteSpace(iconUrl);
-        Guard.IsNotNullOrWhiteSpace(category);
-        Guard.IsNotNull(skillSet);
-        Guard.IsGreaterThan<ushort>(proficiencyLevel, 0);
-        Guard.IsGreaterThan<ushort>(rank, 0);
         Guard.IsGreaterThanOrEqualTo<long>(id, 0);
+        Guard.IsBetweenOrEqualTo<ushort>(proficiencyLevel, 0, 10);
+        Guard.IsGreaterThan<ushort>(rank, 0);
+        Guard.IsNotNull(skillSet);
 
         Id = id;
-        Name = name;
-        IconUrl = iconUrl;
-        Category = category;
         ProficiencyLevel = proficiencyLevel;
         Rank = rank;
         SkillId = skillSet.Id;

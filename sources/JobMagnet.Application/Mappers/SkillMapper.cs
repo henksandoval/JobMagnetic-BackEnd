@@ -28,11 +28,7 @@ public static class SkillMapper
 
         foreach (var skillDetailCommand in command.SkillData.Skills)
         {
-            var skillDetail = new SkillEntity(
-                skillDetailCommand.Name!,
-                skillDetailCommand.IconUrl!,
-                skillDetailCommand.Category!,
-                entity,
+            var skillDetail = new SkillEntity(entity,
                 skillDetailCommand.ProficiencyLevel,
                 skillDetailCommand.Rank);
             entity.Add(skillDetail);

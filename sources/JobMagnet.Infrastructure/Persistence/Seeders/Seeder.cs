@@ -130,10 +130,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
         foreach (var item in SkillsCollection.Data)
         {
-            var skillItem = new SkillEntity(item.Name,
-                item.IconUrl,
-                item.Category,
-                skill,
+            var skillItem = new SkillEntity(skill,
                 item.ProficiencyLevel,
                 item.Rank);
             skill.Add(skillItem);

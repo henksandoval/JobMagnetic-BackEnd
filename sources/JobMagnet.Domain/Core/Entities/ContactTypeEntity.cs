@@ -12,8 +12,6 @@ public class ContactTypeEntity : SoftDeletableEntity<int>
     public string Name { get; private set; }
     public string? IconClass { get; private set; }
     public string? IconUrl { get; private set; }
-
-    public virtual ICollection<ContactInfoEntity> ContactDetails { get; private set; }
     public virtual IReadOnlyCollection<ContactTypeAliasEntity> Aliases => _aliases.AsReadOnly();
 
     private readonly List<ContactTypeAliasEntity> _aliases = [];
@@ -32,7 +30,6 @@ public class ContactTypeEntity : SoftDeletableEntity<int>
         Name = name;
         IconClass = iconClass;
         IconUrl = iconUrl?.AbsoluteUri;
-        ContactDetails = new List<ContactInfoEntity>();
         ValidateInvariants();
     }
 

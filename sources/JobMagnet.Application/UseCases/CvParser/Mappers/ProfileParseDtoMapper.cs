@@ -34,14 +34,6 @@ public static class ProfileParseDtoMapper
             .Map(dest => dest.Summary, src => src.Summary ?? string.Empty)
             .Map(dest => dest.ContactInfo, src => MapContactInfo(src));
 
-        TypeAdapterConfig<SkillParseDto, SkillSetEntity>.NewConfig();
-
-        TypeAdapterConfig<SkillDetailParseDto, SkillEntity>.NewConfig()
-            .Map(dest => dest.ProficiencyLevel, src => src.Level)
-            .Map(dest => dest.IconUrl, src => string.Empty)
-            .Map(dest => dest.Category, src => string.Empty)
-            .Map(dest => dest.Rank, src => 0);
-
         TypeAdapterConfig<ServiceParseDto, ServiceEntity>
             .NewConfig()
             .Map(dest => dest.Overview, src => src.Overview ?? string.Empty);

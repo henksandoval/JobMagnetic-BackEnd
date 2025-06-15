@@ -85,7 +85,6 @@ public class ProfileParseDtoMapperShould
 
         var firstSkillDetailDto = dto.Skill.SkillDetails.First();
         var firstSkillDetailEntity = entity.Skill.Skills.First();
-        firstSkillDetailEntity.Name.ShouldBe(firstSkillDetailDto.Name);
         firstSkillDetailEntity.ProficiencyLevel.ShouldBe(firstSkillDetailDto.Level ?? 0);
         // Category, Rank, IconUrl tendrán valores por defecto ya que no están en el DTO.
     }
