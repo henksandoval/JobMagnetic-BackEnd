@@ -11,6 +11,7 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
     public DbSet<ContactTypeEntity> ContactTypes { get; set; }
     public DbSet<ContactTypeAliasEntity> ContactAliases { get; set; }
     public DbSet<SkillType> SkillTypes { get; set; }
+    public DbSet<SkillCategory> SkillCategories { get; set; }
     public DbSet<SkillTypeAlias> SkillTypeAliases { get; set; }
     public DbSet<ProfileEntity> Profiles { get; set; }
     public DbSet<PublicProfileIdentifierEntity> PublicProfileIdentifier { get; set; }
@@ -89,7 +90,12 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
         {
             entity.ToTable("SkillTypes")
                 .HasKey(skillType => skillType.Id);
+        });
 
+        modelBuilder.Entity<SkillCategory>(entity =>
+        {
+            entity.ToTable("SkillCategories")
+                .HasKey(category => category.Id);
         });
 
         modelBuilder.Entity<WorkResponsibilityEntity>(entity =>

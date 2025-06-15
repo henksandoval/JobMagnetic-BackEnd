@@ -7,17 +7,18 @@ namespace JobMagnet.Domain.Core.Entities;
 public class SkillType : SoftDeletableEntity<int>
 {
     public string Name { get; private set; }
-    public string Category { get; private set; }
     public string IconUrl { get; private set; }
+    public ushort CategoryId { get; private set; }
 
     public virtual IReadOnlyCollection<SkillTypeAlias> Aliases => _aliases.AsReadOnly();
+    public virtual SkillCategory Category { get; private set; }
 
     private readonly List<SkillTypeAlias> _aliases = [];
 
     private SkillType() { }
 
     [SetsRequiredMembers]
-    public SkillType(int id, string name, string category, Uri? iconUrl = null)
+    public SkillType(int id, string name, SkillCategory category, Uri? iconUrl = null)
     {
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(category);
@@ -25,17 +26,8 @@ public class SkillType : SoftDeletableEntity<int>
         Id = id;
         Name = name;
         Category = category;
+        CategoryId = category.Id;
         IconUrl = iconUrl?.AbsoluteUri ?? string.Empty;
-    }
-
-    [SetsRequiredMembers]
-    public SkillType(string name, string category)
-    {
-        ArgumentNullException.ThrowIfNull(name);
-        ArgumentNullException.ThrowIfNull(category);
-
-        Name = name;
-        Category = category;
     }
 
     public void AddAlias(string alias)

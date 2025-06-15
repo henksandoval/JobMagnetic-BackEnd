@@ -548,6 +548,44 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.ToTable("ServiceGalleryItems", (string)null);
                 });
 
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.SkillCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("AddedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SkillCategories", (string)null);
+                });
+
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.SkillEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -646,9 +684,8 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Property<Guid>("AddedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
@@ -674,6 +711,8 @@ namespace JobMagnet.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("SkillTypes", (string)null);
                 });
@@ -1091,6 +1130,17 @@ namespace JobMagnet.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Profile");
+                });
+
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.SkillType", b =>
+                {
+                    b.HasOne("JobMagnet.Domain.Core.Entities.SkillCategory", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.SkillTypeAlias", b =>

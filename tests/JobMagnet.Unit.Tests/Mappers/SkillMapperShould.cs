@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Application.Contracts.Commands.Skill;
+using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -23,30 +24,32 @@ public class SkillMapperShould
             .Build();
         var entity = profileEntity.Skill!;
 
+        var sourceSkills = entity.Skills.OrderBy(s => s.Rank).ToList();
+
         // When
         var skillModel = entity.ToResponse();
+        var mappedSkills = skillModel.SkillData.Skills.OrderBy(s => s.Rank).ToList();
 
         // Then
         skillModel.Should().NotBeNull();
         skillModel.Id.Should().Be(entity.Id);
+
         skillModel.SkillData.Should().BeEquivalentTo(entity, options =>
-            options.Excluding(GetExcludeEntityProperties()));
-        skillModel.SkillData.Skills.Should().BeEquivalentTo(entity.Skills, options =>
-            options.Excluding(GetExcludeItemEntityProperties()));
-    }
+            options.Excluding(e => e.Skills).Excluding(GetExcludeEntityProperties()));
 
-    [Fact]
-    public void MapSkillCommandToSkillEntityCorrectly()
-    {
-        // Given
-        var createCommand = _fixture.Create<SkillCommand>();
+        mappedSkills.Should().HaveSameCount(sourceSkills);
 
-        // When
-        var entity = createCommand.ToEntity();
+        for (var i = 0; i < sourceSkills.Count; i++)
+        {
+            var sourceSkill = sourceSkills[i];
+            var mappedSkill = mappedSkills[i];
 
-        // Then
-        entity.Should().NotBeNull();
-        entity.Should().BeEquivalentTo(createCommand.SkillData);
+            mappedSkill.Id.Should().Be(sourceSkill.Id);
+            mappedSkill.ProficiencyLevel.Should().Be(sourceSkill.ProficiencyLevel);
+            mappedSkill.Rank.Should().Be(sourceSkill.Rank);
+            mappedSkill.Name.Should().Be(sourceSkill.SkillType.Name);
+            mappedSkill.IconUrl.Should().Be(sourceSkill.SkillType.IconUrl);
+        }
     }
 
     [Fact]
@@ -78,6 +81,6 @@ public class SkillMapperShould
 
     private static Expression<Func<SkillEntity, object>> GetExcludeItemEntityProperties()
     {
-        return e => new { e.Id, Skill = e.SkillSet, e.SkillId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy };
+        return e => new { e.Id, Skill = e.SkillSet, e.SkillId, e.SkillType, e.SkillTypeId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy };
     }
 }

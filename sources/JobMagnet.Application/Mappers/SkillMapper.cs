@@ -1,4 +1,5 @@
 ﻿using JobMagnet.Application.Contracts.Commands.Skill;
+using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Skill;
 using JobMagnet.Domain.Core.Entities;
 using Mapster;
@@ -9,6 +10,14 @@ public static class SkillMapper
 {
     static SkillMapper()
     {
+        TypeAdapterConfig<SkillEntity, SkillItemBase>
+            .NewConfig()
+            .Map(dest => dest.ProficiencyLevel, src => src.ProficiencyLevel)
+            .Map(dest => dest.Rank, src => src.Rank)
+            .Map(dest => dest.Name, src => src.SkillType.Name)
+            .Map(dest => dest.IconUrl, src => src.SkillType.IconUrl)
+            .Map(dest => dest.Category, src => src.SkillType.Category.Name);
+
         TypeAdapterConfig<SkillSetEntity, SkillResponse>
             .NewConfig()
             .Map(dest => dest.SkillData, src => src);
@@ -46,10 +55,5 @@ public static class SkillMapper
     public static SkillCommand ToUpdateCommand(this SkillSetEntity setEntity)
     {
         return setEntity.Adapt<SkillCommand>();
-    }
-
-    public static void UpdateEntity(this SkillSetEntity setEntity, SkillCommand command)
-    {
-        command.Adapt(setEntity);
     }
 }

@@ -50,13 +50,31 @@ public class SkillCustomization : ICustomization
 
     private static SkillEntity BuildSkillEntity(SkillSetEntity parentSkillSet)
     {
+        var randomSkillTypeId = Faker.Random.Short(1, 5);
+
+        var (type, uri, categoryName) = GenerateSkillTypes(randomSkillTypeId);
+
+        var category = new SkillCategory(categoryName);
         var skill = new SkillEntity(
             (ushort)Faker.Random.Number(1, 10),
-            (ushort)Faker.Random.Number(1, 100),
+            (ushort)Faker.Random.Number(1, 10),
             parentSkillSet,
-            null
+            new SkillType(0, type, category, new Uri(uri))
         );
 
         return skill;
+    }
+
+    private static (string type, string uri, string categoryValue) GenerateSkillTypes(short contactTypeId)
+    {
+        return contactTypeId switch
+        {
+            1 => ("HTML", "https://cdn.simpleicons.org/html5", "Software Development"),
+            2 => ("CSS", "https://cdn.simpleicons.org/css3", "Software Development"),
+            3 => ("JavaScript", "https://cdn.simpleicons.org/javascript", "Software Development"),
+            4 => ("C#", "https://cdn.simpleicons.org/dotnet", "Software Development"),
+            5 => ("TS", "https://cdn.simpleicons.org/typescript", "Software Development"),
+            _ => throw new ArgumentOutOfRangeException(nameof(contactTypeId), contactTypeId, null)
+        };
     }
 }

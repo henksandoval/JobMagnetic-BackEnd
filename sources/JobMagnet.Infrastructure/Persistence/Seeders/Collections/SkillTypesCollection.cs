@@ -29,7 +29,8 @@ public record SkillTypesCollection
 
         foreach (var item in _values)
         {
-            var skill = new SkillType(0, item.type, item.category, new Uri(item.uri));
+            var category = new SkillCategory(item.category);
+            var skill = new SkillType(0, item.type, category, new Uri(item.uri));
 
             foreach (var alias in item.aliases)
             {
