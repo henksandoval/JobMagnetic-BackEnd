@@ -21,8 +21,11 @@ public class ProfileFactoryService(
         {
             Id = 0,
             FirstName = profileDto.FirstName,
+            SecondLastName = profileDto.SecondLastName,
             LastName = profileDto.LastName,
-            BirthDate = profileDto.BirthDate
+            MiddleName = profileDto.MiddleName,
+            BirthDate = profileDto.BirthDate,
+            ProfileImageUrl = profileDto.ProfileImageUrl
         };
 
         profileEntity.AddTalents(BuildTalents(profileDto.Talents));
@@ -74,7 +77,8 @@ public class ProfileFactoryService(
             Id = 0,
             Name = dto.Name!,
             Feedback = dto.Feedback!,
-            JobTitle = dto.JobTitle!
+            JobTitle = dto.JobTitle!,
+            PhotoUrl = dto.PhotoUrl!
         }).ToList();
     }
 

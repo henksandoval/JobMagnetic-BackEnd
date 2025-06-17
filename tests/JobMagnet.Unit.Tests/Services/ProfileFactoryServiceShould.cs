@@ -1,6 +1,7 @@
 using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Application.Services;
+using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Domain.Core.Entities;
@@ -29,8 +30,8 @@ public class ProfileFactoryServiceShould
             _contactTypeRepository.Object);
     }
 
-    [Fact(DisplayName = "Generate correctly profile when have ProfileDto with only first level properties")]
-    public async Task GenerateCorrectlyProfileWhenHaveProfileProperties()
+    [Fact(DisplayName = "Map root properties from a simple DTO")]
+    public async Task MapRootProperties_FromSimpleDto()
     {
         var profileDto = _profileBuilder
             .Build()
@@ -39,18 +40,11 @@ public class ProfileFactoryServiceShould
         var profile = await _profileFactoryService.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         profile.Should().NotBeNull();
-        profile.Should().BeEquivalentTo(profileDto, options => options
-            .WithMapping<ProfileEntity>(entity => entity.FirstName, dto => dto.FirstName)
-            .WithMapping<ProfileEntity>(entity => entity.SecondLastName, dto => dto.SecondLastName)
-            .WithMapping<ProfileEntity>(entity => entity.LastName, dto => dto.LastName)
-            .WithMapping<ProfileEntity>(entity => entity.SecondLastName, dto => dto.SecondLastName)
-            .WithMapping<ProfileEntity>(entity => entity.BirthDate, dto => dto.BirthDate)
-            .ExcludingMissingMembers()
-        );
+        profile.Should().BeEquivalentTo(profileDto, options => options.ExcludingMissingMembers());
     }
 
-    [Fact(DisplayName = "Generate correctly profile when have ProfileDto with only first level properties")]
-    public async Task GenerateCorrectlyProfileWhenHaveTalents()
+    [Fact(DisplayName = "Map talents collection when the DTO provides them")]
+    public async Task MapTalents_WhenDtoProvidesThem()
     {
         var profileDto = _profileBuilder
             .WithTalents()
@@ -60,5 +54,20 @@ public class ProfileFactoryServiceShould
         var profile = await _profileFactoryService.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         profile.Should().NotBeNull();
+        profile.Talents.Should().BeEquivalentTo(profileDto.Talents, options => options.ExcludingMissingMembers());
+    }
+
+    [Fact(DisplayName = "Map testimonials collection when the DTO provides them")]
+    public async Task MapTestimonials_WhenDtoProvidesThem()
+    {
+        var profileDto = _profileBuilder
+            .WithTestimonials()
+            .Build()
+            .ToProfileParseDto();
+
+        var profile = await _profileFactoryService.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+
+        profile.Should().NotBeNull();
+        profile.Testimonials.Should().BeEquivalentTo(profileDto.Testimonials, options => options.ExcludingMissingMembers());
     }
 }
