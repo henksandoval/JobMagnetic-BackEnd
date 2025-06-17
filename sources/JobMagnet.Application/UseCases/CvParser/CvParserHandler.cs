@@ -1,4 +1,5 @@
 using JobMagnet.Application.Exceptions;
+using JobMagnet.Application.Services;
 using JobMagnet.Application.UseCases.CvParser.Commands;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Application.UseCases.CvParser.Ports;
@@ -19,7 +20,9 @@ public class CvParserHandler(
     IRawCvParser cvParser,
     ICommandRepository<ProfileEntity> profileRepository,
     IProfileSlugGenerator slugGenerator,
-    IContactTypeResolverService contactTypeResolver)
+    IProfileFactoryService profileFactory,
+    IContactTypeResolverService contactTypeResolver,
+    ISkillTypeResolverService skillTypeResolver)
     : ICvParserHandler
 {
     public async Task<CreateProfileResponse> ParseAsync(CvParserCommand command, CancellationToken cancellationToken = default)
@@ -45,11 +48,17 @@ public class CvParserHandler(
             throw new JobMagnetApplicationException("Failed to parse the CV.");
         }
 
-        var profileEntity = rawProfile.Value.ToProfileParseDto().ToProfileEntity();
+        var profileParse = rawProfile.Value.ToProfileParseDto();
+        var profileEntity = await profileFactory.CreateProfileFromDtoAsync(profileParse, cancellationToken);
 
         if (profileEntity.Resume?.ContactInfo is { Count: > 0 })
         {
             await ResolveAndAssignContactTypesAsync(profileEntity.Resume.ContactInfo, cancellationToken);
+        }
+
+        if (profileEntity.SkillSet?.Skills is { Count: > 0 })
+        {
+            await ResolveAndAssignSkillsAsync(profileEntity.SkillSet.Skills, cancellationToken);
         }
 
         return profileEntity;
@@ -95,6 +104,28 @@ public class CvParserHandler(
             info.ContactTypeId = 0;
             info.ContactType = new ContactTypeEntity(rawContactType);
             info.ContactType.SetDefaultIcon();
+        }
+    }
+
+    private async Task ResolveAndAssignSkillsAsync(ICollection<SkillEntity>? skills, CancellationToken cancellationToken)
+    {
+        if (skills is null || skills.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var skill in skills)
+        {
+            var rawSkill = skill.SkillType.Name;
+            if (string.IsNullOrWhiteSpace(rawSkill)) continue;
+
+            var resolvedType = await skillTypeResolver.ResolveAsync(rawSkill, cancellationToken);
+
+            if (resolvedType.HasValue)
+            {
+                continue;
+            }
+
         }
     }
 }

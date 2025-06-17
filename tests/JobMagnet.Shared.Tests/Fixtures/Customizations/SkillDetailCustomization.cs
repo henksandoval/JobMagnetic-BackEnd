@@ -20,9 +20,9 @@ public class SkillDetailCustomization : ICustomization
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());
 
-        fixture.Customize<SkillDetailRaw>(composer =>
+        fixture.Customize<SkillRaw>(composer =>
             composer.FromFactory(() =>
-                new SkillDetailRaw(
+                new SkillRaw(
                     FixtureBuilder.Faker.Company.CompanyName(),
                     FixtureBuilder.Faker.Random.UShort(1, 10).ToString()
                 )

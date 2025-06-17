@@ -105,6 +105,126 @@ public static class StaticCustomizations
         "Designed and implemented scalable cloud-based solutions for enterprise clients."
     ];
 
+    public static readonly string[] Skills =
+    [
+        // --- Lenguajes de Programación ---
+        "C#",
+        "Java",
+        "Python",
+        "JavaScript",
+        "TypeScript",
+        "Go",
+        "Rust",
+        "Kotlin",
+        "Swift",
+        "PHP",
+        "Ruby",
+        "C++",
+        "SQL",
+
+        // --- Frameworks y Librerías (Backend) ---
+        ".NET",
+        "ASP.NET Core",
+        "Spring Boot",
+        "Django",
+        "Flask",
+        "Node.js",
+        "Express.js",
+        "Ruby on Rails",
+        "Laravel",
+        "Entity Framework Core",
+
+        // --- Frameworks y Librerías (Frontend) ---
+        "React",
+        "Angular",
+        "Vue.js",
+        "Svelte",
+        "Blazor",
+        "jQuery",
+        "HTML5",
+        "CSS3",
+        "Sass/SCSS",
+        "Tailwind CSS",
+
+        // --- Bases de Datos ---
+        "SQL Server",
+        "PostgreSQL",
+        "MySQL",
+        "Oracle Database",
+        "MongoDB",
+        "Redis",
+        "Cassandra",
+        "SQLite",
+        "Cosmos DB",
+        "DynamoDB",
+
+        // --- Cloud y DevOps ---
+        "Microsoft Azure",
+        "Amazon Web Services (AWS)",
+        "Google Cloud Platform (GCP)",
+        "Docker",
+        "Kubernetes",
+        "Terraform",
+        "Ansible",
+        "Jenkins",
+        "Azure DevOps",
+        "GitHub Actions",
+        "GitLab CI",
+        "Prometheus",
+        "Grafana",
+
+        // --- Arquitectura y Patrones de Diseño ---
+        "Microservices Architecture",
+        "Domain-Driven Design (DDD)",
+        "SOLID Principles",
+        "REST APIs",
+        "GraphQL",
+        "Event-Driven Architecture",
+        "CQRS",
+        "Design Patterns",
+
+        // --- Testing ---
+        "Unit Testing",
+        "Integration Testing",
+        "End-to-End Testing",
+        "xUnit",
+        "NUnit",
+        "MSTest",
+        "Selenium",
+        "Cypress",
+        "Playwright",
+        "Jest",
+
+        // --- Data Science y Machine Learning ---
+        "Machine Learning",
+        "Data Analysis",
+        "Pandas",
+        "NumPy",
+        "TensorFlow",
+        "PyTorch",
+        "Scikit-learn",
+        "Power BI",
+        "Tableau",
+
+        // --- Metodologías y Herramientas de Gestión ---
+        "Agile Methodologies",
+        "Scrum",
+        "Kanban",
+        "JIRA",
+        "Confluence",
+        "Trello",
+
+        // --- Habilidades Blandas (Soft Skills) ---
+        "Team Leadership",
+        "Effective Communication",
+        "Problem Solving",
+        "Public Speaking",
+        "Time Management",
+        "Critical Thinking",
+        "Mentoring",
+        "Collaboration"
+    ];
+
     public const string CvContent = """
                                     Laura Gómez Fernández
                                     (+34) 611-22-33-44 | laura.gomez.dev@example.net | linkedin.com/in/laura-gomez-fernandez | https://lauragomez.dev

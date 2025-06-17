@@ -22,7 +22,7 @@ public static class ProfileParseDtoMapper
         TypeAdapterConfig.GlobalSettings.Default.PreserveReference(true);
 
         TypeAdapterConfig<ProfileParseDto, ProfileEntity>.NewConfig()
-            .Ignore(dest => dest.SkillSet)
+            .Map(dest => dest.SkillSet, src => MapSkillSet(src.SkillSet!))
             .Map(dest => dest.Talents, src => MapTalents(src))
             .Map(dest => dest.Testimonials, src => MapTestimonials(src))
             .Map(dest => dest.PortfolioGallery, src => MapPortfolio(src));
@@ -106,5 +106,28 @@ public static class ProfileParseDtoMapper
         }).ToList();
 
         return result;
+    }
+
+    private static SkillSetEntity MapSkillSet(SkillSetParseDto src)
+    {
+        var skillSet = new SkillSetEntity(src.Overview!, 0);
+
+        var skills = src.Skills
+            .Select((skillDto, i) =>
+            {
+                var oneBasedIndex = (ushort)(i + 1);
+
+                return new SkillEntity(
+                    Convert.ToUInt16(skillDto.Level),
+                    oneBasedIndex,
+                    skillSet,
+                    new SkillType(0, skillDto.Name!, new SkillCategory(""))
+                );
+            })
+            .ToList();
+
+        skillSet.AddRange(skills);
+
+        return skillSet;
     }
 }

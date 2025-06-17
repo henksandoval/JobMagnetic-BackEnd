@@ -3,6 +3,7 @@ using System.Net.Mime;
 using AutoFixture;
 using CSharpFunctionalExtensions;
 using FluentAssertions;
+using JobMagnet.Application.Services;
 using JobMagnet.Application.UseCases.CvParser;
 using JobMagnet.Application.UseCases.CvParser.Commands;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
@@ -23,7 +24,9 @@ public class CvParserHandlerShould
     private readonly Mock<IRawCvParser> _rawCvParserMock;
     private readonly Mock<IProfileSlugGenerator> _slugGeneratorMock;
     private readonly Mock<IContactTypeResolverService> _contactTypeResolverMock;
+    private readonly Mock<ISkillTypeResolverService> _skillTypeResolverMock;
     private readonly Mock<ICommandRepository<ProfileEntity>> _profileCommandRepositoryMock;
+    private readonly Mock<IProfileFactoryService> _profileFactoryMock;
 
     private readonly CvParserHandler _handler;
 
@@ -32,13 +35,17 @@ public class CvParserHandlerShould
         _rawCvParserMock = new Mock<IRawCvParser>();
         _profileCommandRepositoryMock = new Mock<ICommandRepository<ProfileEntity>>();
         _slugGeneratorMock = new Mock<IProfileSlugGenerator>();
+        _profileFactoryMock = new Mock<IProfileFactoryService>();
         _contactTypeResolverMock = new Mock<IContactTypeResolverService>();
+        _skillTypeResolverMock = new Mock<ISkillTypeResolverService>();
 
         _handler = new CvParserHandler(
             _rawCvParserMock.Object,
             _profileCommandRepositoryMock.Object,
             _slugGeneratorMock.Object,
-            _contactTypeResolverMock.Object);
+            _profileFactoryMock.Object,
+            _contactTypeResolverMock.Object,
+            _skillTypeResolverMock.Object);
     }
 
     [Fact(DisplayName = "Resolve existing contact types, create new ones, and enrich profile within transaction")]
@@ -51,6 +58,7 @@ public class CvParserHandlerShould
         var profileRaw = profileRawBuilder
             .WithResume()
             .WithContactInfo(contactInfoRaw)
+            .WithSkillSet()
             .Build();
 
         _rawCvParserMock.Setup(p => p.ParseAsync(It.IsAny<Stream>()))

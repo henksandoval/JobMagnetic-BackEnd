@@ -3,9 +3,16 @@ using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
-public class ProfileRawBuilder(IFixture fixture)
+public class ProfileRawBuilder
 {
-    private ProfileRaw _instance = fixture.Create<ProfileRaw>();
+    private ProfileRaw _instance;
+    private readonly IFixture _fixture;
+
+    public ProfileRawBuilder(IFixture fixture)
+    {
+        _fixture = fixture;
+        _instance = fixture.Create<ProfileRaw>();
+    }
 
     public ProfileRawBuilder WithBirthDate(string? rawDateString)
     {
@@ -15,13 +22,13 @@ public class ProfileRawBuilder(IFixture fixture)
 
     public ProfileRawBuilder WithResume()
     {
-        _instance = _instance with { Resume = fixture.Create<ResumeRaw>() };
+        _instance = _instance with { Resume = _fixture.Create<ResumeRaw>() };
         return this;
     }
 
     public ProfileRawBuilder WithContactInfo(int count = 5)
     {
-        var contactInfo = fixture.CreateMany<ContactInfoRaw>(count).ToList();
+        var contactInfo = _fixture.CreateMany<ContactInfoRaw>(count).ToList();
         return WithContactInfo(contactInfo);
     }
 
@@ -34,44 +41,44 @@ public class ProfileRawBuilder(IFixture fixture)
         return this;
     }
 
-    public ProfileRawBuilder WithSkills()
+    public ProfileRawBuilder WithSkillSet()
     {
-        var skill = fixture.Create<SkillRaw>();
-        _instance = _instance with { Skill = skill };
+        var skillSet = _fixture.Create<SkillSetRaw>();
+        _instance = _instance with { SkillSet = skillSet };
         return this;
     }
 
     public ProfileRawBuilder WithServices()
     {
-        var services = fixture.Create<ServiceRaw>();
+        var services = _fixture.Create<ServiceRaw>();
         _instance = _instance with { Services = services };
         return this;
     }
 
     public ProfileRawBuilder WithTalents(int count = 5)
     {
-        var talents = fixture.CreateMany<TalentRaw>(count).ToList();
+        var talents = _fixture.CreateMany<TalentRaw>(count).ToList();
         _instance = _instance with { Talents = talents };
         return this;
     }
 
     public ProfileRawBuilder WithPortfolio(int count = 5)
     {
-        var portfolioGallery = fixture.CreateMany<PortfolioGalleryRaw>(count).ToList();
+        var portfolioGallery = _fixture.CreateMany<PortfolioGalleryRaw>(count).ToList();
         _instance = _instance with { PortfolioGallery = portfolioGallery };
         return this;
     }
 
     public ProfileRawBuilder WithSummaries()
     {
-        var summary = fixture.Create<SummaryRaw>();
+        var summary = _fixture.Create<SummaryRaw>();
         _instance = _instance with { Summary = summary };
         return this;
     }
 
     public ProfileRawBuilder WithEducation(int count = 5)
     {
-        var educationList = fixture.CreateMany<EducationRaw>(count).ToList();
+        var educationList = _fixture.CreateMany<EducationRaw>(count).ToList();
         var summaryBase = _instance.Summary ?? new SummaryRaw(null, [], []);
         _instance = _instance with { Summary = summaryBase with { Education = educationList } };
         return this;
@@ -79,7 +86,7 @@ public class ProfileRawBuilder(IFixture fixture)
 
     public ProfileRawBuilder WithWorkExperience(int count = 5)
     {
-        var workExperienceList = fixture.CreateMany<WorkExperienceRaw>(count).ToList();
+        var workExperienceList = _fixture.CreateMany<WorkExperienceRaw>(count).ToList();
         var summaryBase = _instance.Summary ?? new SummaryRaw(null, [], []);
         _instance = _instance with { Summary = summaryBase with { WorkExperiences = workExperienceList } };
         return this;
@@ -87,7 +94,7 @@ public class ProfileRawBuilder(IFixture fixture)
 
     public ProfileRawBuilder WithTestimonials(int count = 5)
     {
-        var testimonials = fixture.CreateMany<TestimonialRaw>(count).ToList();
+        var testimonials = _fixture.CreateMany<TestimonialRaw>(count).ToList();
         _instance = _instance with { Testimonials = testimonials };
         return this;
     }

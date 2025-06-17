@@ -8,7 +8,7 @@ namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class SkillCustomization : ICustomization
 {
-    private static readonly Faker Faker = new ();
+    private static readonly Faker Faker = new();
 
     public void Customize(IFixture fixture)
     {
@@ -25,9 +25,16 @@ public class SkillCustomization : ICustomization
         );
 
         fixture.Register(() =>
-            new SkillRaw(
+            new SkillSetRaw(
                 Faker.Lorem.Sentence(),
                 []
+            )
+        );
+
+        fixture.Register(() =>
+            new SkillRaw(
+                FixtureBuilder.Faker.PickRandom(StaticCustomizations.Skills),
+                    Faker.Random.Int(1, 10).ToString()
             )
         );
 
@@ -65,7 +72,7 @@ public class SkillCustomization : ICustomization
         return skill;
     }
 
-    private static (string type, string uri, string categoryValue) GenerateSkillTypes(short contactTypeId)
+    private static (string type, string uri, string category) GenerateSkillTypes(short contactTypeId)
     {
         return contactTypeId switch
         {

@@ -30,11 +30,11 @@ public static class CvParserMapper
             .NewConfig()
             .Map(dest => dest.ContactInfo, src => MapContactInfo(src.ContactInfo));
 
-        TypeAdapterConfig<SkillRaw, SkillParseDto>
+        TypeAdapterConfig<SkillSetRaw, SkillSetParseDto>
             .NewConfig()
-            .Map(dest => dest.SkillDetails, src => MapSkills(src.SkillDetails));
+            .Map(dest => dest.Skills, src => MapSkills(src.Skills));
 
-        TypeAdapterConfig<SkillDetailRaw, SkillDetailParseDto>
+        TypeAdapterConfig<SkillRaw, SkillParseDto>
             .NewConfig()
             .Map(dest => dest.Level, src => Convert.ToUInt16(src.Level));
 
@@ -67,8 +67,8 @@ public static class CvParserMapper
     private static List<GalleryItemParseDto> MapServices(ICollection<GalleryItemRaw>? srcGallery) =>
         srcGallery == null ? [] : srcGallery.Adapt<List<GalleryItemParseDto>>();
 
-    private static List<SkillDetailParseDto> MapSkills(IEnumerable<SkillDetailRaw>? srcSkills) =>
-        srcSkills == null ? [] : srcSkills.Adapt<List<SkillDetailParseDto>>();
+    private static List<SkillParseDto> MapSkills(IEnumerable<SkillRaw>? srcSkills) =>
+        srcSkills == null ? [] : srcSkills.Adapt<List<SkillParseDto>>();
 
     private static List<TestimonialParseDto> MapTestimonial(List<TestimonialRaw>? srcTestimonials) =>
         srcTestimonials == null ? [] : srcTestimonials.Adapt<List<TestimonialParseDto>>();

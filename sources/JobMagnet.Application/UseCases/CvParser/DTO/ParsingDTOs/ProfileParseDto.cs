@@ -3,7 +3,7 @@ namespace JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 public class ProfileParseDto
 {
     public ResumeParseDto? Resume { get; set; }
-    public SkillParseDto? Skill { get; set; }
+    public SkillSetParseDto? SkillSet { get; set; }
     public ServiceParseDto? Services { get; set; }
     public SummaryParseDto? Summary { get; set; }
     public List<TalentParseDto> Talents { get; set; }

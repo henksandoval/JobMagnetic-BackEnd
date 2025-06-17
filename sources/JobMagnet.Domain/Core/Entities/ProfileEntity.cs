@@ -60,6 +60,14 @@ public class ProfileEntity : SoftDeletableEntity<long>
         Talents.Add(talentEntity);
     }
 
+    public void AddTalents(List<TalentEntity> talents)
+    {
+        ArgumentNullException.ThrowIfNull(talents);
+
+        foreach (var talent in talents)
+            Talents.Add(talent);
+    }
+
     public void AddResume(ResumeEntity resume)
     {
         ArgumentNullException.ThrowIfNull(resume);
@@ -100,5 +108,17 @@ public class ProfileEntity : SoftDeletableEntity<long>
         ArgumentNullException.ThrowIfNull(testimonial);
 
         Testimonials.Add(testimonial);
+    }
+
+    public void AddTestimonials(List<TestimonialEntity> testimonials)
+    {
+        foreach (var testimonial in testimonials)
+            Testimonials.Add(testimonial);
+    }
+
+    public void AddPortfolioItems(List<PortfolioGalleryEntity> portfolio)
+    {
+        foreach (var gallery in portfolio)
+            PortfolioGallery.Add(gallery);
     }
 }

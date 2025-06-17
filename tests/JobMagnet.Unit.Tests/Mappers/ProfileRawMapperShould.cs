@@ -153,22 +153,22 @@ public class ProfileRawMapperShould
     {
         // Given
         var profileRaw = new ProfileRawBuilder(_fixture)
-            .WithSkills()
+            .WithSkillSet()
             .Build();
 
         // When
         var result = profileRaw.ToProfileParseDto();
 
         // Then
-        result.Skill.Should().NotBeNull();
-        var expectedSkillDto = new SkillParseDto
+        result.SkillSet.Should().NotBeNull();
+        var expectedSkillDto = new SkillSetParseDto
         {
-            Overview = profileRaw.Skill!.Overview,
-            SkillDetails = profileRaw.Skill.SkillDetails!
-                .Select(skill => new SkillDetailParseDto { Name = skill.Name, Level = Convert.ToUInt16(skill.Level) })
+            Overview = profileRaw.SkillSet!.Overview,
+            Skills = profileRaw.SkillSet.Skills!
+                .Select(skill => new SkillParseDto { Name = skill.Name, Level = Convert.ToUInt16(skill.Level) })
                 .ToList()
         };
-        result.Skill.Should().BeEquivalentTo(expectedSkillDto);
+        result.SkillSet.Should().BeEquivalentTo(expectedSkillDto);
     }
 
     [Fact(DisplayName = "Map ServiceRaw to ServiceParseDto")]

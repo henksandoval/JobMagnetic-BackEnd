@@ -11,7 +11,8 @@ public static class DomainExtensions
 
         services
             .AddScoped<IProfileSlugGenerator, ProfileSlugGenerator>()
-            .AddTransient<IContactTypeResolverService, ContactTypeResolverService>();
+            .AddTransient<IContactTypeResolverService, ContactTypeResolverService>()
+            .AddTransient<ISkillTypeResolverService, SkillTypeResolverService>();
 
         return services;
     }

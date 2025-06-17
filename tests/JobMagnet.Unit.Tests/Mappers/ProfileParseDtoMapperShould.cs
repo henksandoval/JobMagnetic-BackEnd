@@ -39,7 +39,7 @@ public class ProfileParseDtoMapperShould
     {
         // Given
         var dto = CreateFullProfileParseDto();
-        dto.Skill = null;
+        dto.SkillSet = null;
         dto.Services = null;
 
         // When
@@ -79,11 +79,11 @@ public class ProfileParseDtoMapperShould
         // Then
         entity.ShouldNotBeNull();
         entity.SkillSet.ShouldNotBeNull();
-        entity.SkillSet.Overview.ShouldBe(dto.Skill.Overview);
+        entity.SkillSet.Overview.ShouldBe(dto.SkillSet.Overview);
         entity.SkillSet.Skills.ShouldNotBeNull();
-        entity.SkillSet.Skills.Count.ShouldBe(dto.Skill.SkillDetails.Count());
+        entity.SkillSet.Skills.Count.ShouldBe(dto.SkillSet.Skills.Count());
 
-        var firstSkillDetailDto = dto.Skill.SkillDetails.First();
+        var firstSkillDetailDto = dto.SkillSet.Skills.First();
         var firstSkillDetailEntity = entity.SkillSet.Skills.First();
         firstSkillDetailEntity.ProficiencyLevel.ShouldBe(firstSkillDetailDto.Level ?? 0);
         // Category, Rank, IconUrl tendrán valores por defecto ya que no están en el DTO.
@@ -216,9 +216,9 @@ public class ProfileParseDtoMapperShould
             {
                 ContactInfo = []
             },
-            Skill = new SkillParseDto
+            SkillSet = new SkillSetParseDto
             {
-                SkillDetails = []
+                Skills = []
             }
         };
 
@@ -259,7 +259,7 @@ public class ProfileParseDtoMapperShould
             PortfolioGallery = [],
             Testimonials = [],
             Resume = new ResumeParseDto { ContactInfo = new List<ContactInfoParseDto>() },
-            Skill = new SkillParseDto { SkillDetails = new List<SkillDetailParseDto>() },
+            SkillSet = new SkillSetParseDto { Skills = new List<SkillParseDto>() },
             Services = new ServiceParseDto { GalleryItems = new List<GalleryItemParseDto>() },
             Summary = new SummaryParseDto
             {
@@ -308,10 +308,10 @@ public class ProfileParseDtoMapperShould
                     new() { ContactType = "Phone", Value = "555-1234" }
                 }
             },
-            Skill = new SkillParseDto
+            SkillSet = new SkillSetParseDto
             {
                 Overview = "Technical Skills Overview",
-                SkillDetails = new List<SkillDetailParseDto>
+                Skills = new List<SkillParseDto>
                 {
                     new() { Name = "C#", Level = 5 },
                     new() { Name = "SQL", Level = 4 }

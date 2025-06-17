@@ -8,9 +8,9 @@ public sealed record ProfileRaw(
     string? MiddleName,
     string? SecondLastName,
     ResumeRaw? Resume,
-    SkillRaw? Skill,
+    SkillSetRaw? SkillSet,
     ServiceRaw? Services,
     SummaryRaw? Summary,
-    List<TalentRaw> Talents,
-    List<PortfolioGalleryRaw> PortfolioGallery,
+    List<TalentRaw>? Talents,
+    List<PortfolioGalleryRaw>? PortfolioGallery,
     List<TestimonialRaw>? Testimonials);
