@@ -13,7 +13,8 @@ public class ProfileFactoryService(
     IQueryRepository<SkillType, int> skillTypeRepository,
     IQueryRepository<ContactTypeEntity, int> contactTypeRepository) : IProfileFactoryService
 {
-    public async Task<ProfileEntity> CreateProfileFromDtoAsync(ProfileParseDto profileDto, CancellationToken cancellationToken)
+    public async Task<ProfileEntity> CreateProfileFromDtoAsync(ProfileParseDto profileDto,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(profileDto);
 
@@ -31,11 +32,12 @@ public class ProfileFactoryService(
         profileEntity.AddTalents(BuildTalents(profileDto.Talents));
         profileEntity.AddTestimonials(BuildTestimonials(profileDto.Testimonials));
         profileEntity.AddPortfolioItems(BuildPortfolio(profileDto.PortfolioGallery));
-/*
         if (profileDto.Resume is not null)
         {
             profileEntity.AddResume(await BuildResumeAsync(profileDto.Resume, cancellationToken));
         }
+
+/*
 
         if (profileDto.SkillSet is not null)
         {
@@ -44,19 +46,30 @@ public class ProfileFactoryService(
 */
         return profileEntity;
     }
-/*
+
     private async Task<ResumeEntity> BuildResumeAsync(ResumeParseDto resumeDto, CancellationToken cancellationToken)
     {
-        var resumeEntity = new ResumeEntity(resumeDto.About ?? string.Empty, resumeDto.Overview ?? string.Empty);
+        var resumeEntity = new ResumeEntity
+        {
+            Id = 0,
+            ProfileId = 0,
+            About = resumeDto.About ?? string.Empty,
+            Overview = resumeDto.Overview ?? string.Empty,
+            JobTitle = resumeDto.JobTitle ?? string.Empty,
+            Address = resumeDto.Address ?? string.Empty,
+            Suffix = resumeDto.Suffix ?? string.Empty,
+            Summary = resumeDto.Summary ?? string.Empty,
+            Title = resumeDto.Title ?? string.Empty
+        };
 
-        resumeEntity.AddSummary(BuildSummary(resumeDto.Summary));
-        resumeEntity.AddEducationHistory(BuildEducationHistory(resumeDto.Education));
-        resumeEntity.AddWorkExperience(BuildWorkExperience(resumeDto.WorkExperience));
-        resumeEntity.AddContactInfo(await BuildContactInfoAsync(resumeDto.ContactInfo, cancellationToken));
+        var contactInfoCollection = await BuildContactInfoAsync(resumeDto.ContactInfo, cancellationToken);
+
+        foreach (var contactInfo in contactInfoCollection)
+            resumeEntity.AddContactInfo(contactInfo);
 
         return resumeEntity;
     }
-*/
+
     private List<TalentEntity> BuildTalents(List<TalentParseDto>? talentDtos)
     {
         if (talentDtos is null) return [];
@@ -95,16 +108,19 @@ public class ProfileFactoryService(
             UrlImage = dto.UrlImage!
         }).ToList();
     }
-/*
-    private async Task<List<ContactInfoEntity>> BuildContactInfoAsync(List<ContactInfoParseDto>? contactDtos, CancellationToken cancellationToken)
+
+    private async Task<List<ContactInfoEntity>> BuildContactInfoAsync(
+        List<ContactInfoParseDto>? contactDtos,
+        CancellationToken cancellationToken)
     {
         if (contactDtos is null || contactDtos.Count == 0) return [];
 
         var contactTypeNames = contactDtos.Select(c => c.ContactType!).Distinct().ToList();
 
-        var existingContactTypes = await contactTypeRepository
-            .FindByCondition(ct => contactTypeNames.Contains(ct.Name))
-            .ToDictionaryAsync(ct => ct.Name, cancellationToken);
+        var existingContactTypes = (await contactTypeRepository
+                .FindAsync(ct => contactTypeNames.Contains(ct.Name), cancellationToken)
+                .ConfigureAwait(false))
+            .ToDictionary(c => c.Name);
 
         return contactDtos.Select(dto =>
         {
@@ -114,7 +130,12 @@ public class ProfileFactoryService(
                 existingContactTypes[dto.ContactType!] = contactType;
             }
 
-            return new ContactInfoEntity(dto.Value!, contactType);
+            return new ContactInfoEntity {
+                Id = 0,
+                Value = dto.Value!,
+                ContactType = contactType,
+                ContactTypeId = contactType.Id
+            };
         }).ToList();
     }
 
@@ -147,10 +168,14 @@ public class ProfileFactoryService(
     {
         if (summaryDto is null) return null;
 
-        return new SummaryEntity(summaryDto.Introduction ?? string.Empty);
+        return new SummaryEntity {
+            Id = 0,
+            Introduction = summaryDto.Introduction ?? string.Empty
+        };
     }
 
-    private async Task<SkillSetEntity> BuildSkillSetAsync(SkillSetParseDto skillSetDto, CancellationToken cancellationToken)
+    private async Task<SkillSetEntity> BuildSkillSetAsync(SkillSetParseDto skillSetDto,
+        CancellationToken cancellationToken)
     {
         var skillSetEntity = new SkillSetEntity(skillSetDto.Overview!, 0);
 
@@ -161,15 +186,16 @@ public class ProfileFactoryService(
 
         var skillNames = skillSetDto.Skills.Select(s => s.Name!).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 
-        var existingSkillTypes = await skillTypeRepository
+        var existingSkillTypes = (await skillTypeRepository
             .FindAsync(st => skillNames.Contains(st.Name), cancellationToken)
-            .ConfigureAwait(false);
+            .ConfigureAwait(false))
+            .ToDictionary(s => s.Name);
 
         var skills = skillSetDto.Skills.Select((skillDto, i) =>
         {
             if (!existingSkillTypes.TryGetValue(skillDto.Name!, out var skillType))
             {
-                skillType = new SkillType(skillDto.Name!, "Uncategorized");
+                skillType = new SkillType(0, skillDto.Name!, new SkillCategory(""));
                 existingSkillTypes[skillDto.Name!] = skillType;
             }
 
@@ -179,14 +205,14 @@ public class ProfileFactoryService(
             return new SkillEntity(level, rank, skillSetEntity, skillType);
         }).ToList();
 
-        foreach(var skill in skills)
+        foreach (var skill in skills)
         {
             skillSetEntity.Add(skill);
         }
 
         return skillSetEntity;
     }
-*/
+
     private static DateTime ToDateTimeOrDefault(DateOnly? date) => date?.ToDateTime(TimeOnly.MinValue) ?? default;
     private static DateTime? ToNullableDateTime(DateOnly? date) => date?.ToDateTime(TimeOnly.MinValue);
 }
