@@ -1,9 +1,6 @@
 using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Application.Factories;
-using JobMagnet.Application.Services;
-using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
-using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;

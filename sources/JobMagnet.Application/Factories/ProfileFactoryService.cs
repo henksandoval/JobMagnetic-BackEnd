@@ -29,12 +29,18 @@ public class ProfileFactory(
             ProfileImageUrl = profileDto.ProfileImageUrl
         };
 
-        profileEntity.AddTalents(BuildTalents(profileDto.Talents));
-        profileEntity.AddTestimonials(BuildTestimonials(profileDto.Testimonials));
-        profileEntity.AddPortfolioItems(BuildPortfolio(profileDto.PortfolioGallery));
+        var talents = BuildTalents(profileDto.Talents);
+        var testimonials = BuildTestimonials(profileDto.Testimonials);
+        var portfolio = BuildPortfolio(profileDto.PortfolioGallery);
+
+        profileEntity.AddTalents(talents);
+        profileEntity.AddTestimonials(testimonials);
+        profileEntity.AddPortfolioItems(portfolio);
+
         if (profileDto.Resume is not null)
         {
-            profileEntity.AddResume(await BuildResumeAsync(profileDto.Resume, cancellationToken));
+            var resume = await BuildResumeAsync(profileDto.Resume, cancellationToken);
+            profileEntity.AddResume(resume);
         }
 
 /*
