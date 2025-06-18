@@ -1,6 +1,8 @@
 using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
+using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
+using JobMagnet.Domain.Services;
 
 namespace JobMagnet.Application.Factories;
 
@@ -11,7 +13,8 @@ public interface IProfileFactory
 
 public class ProfileFactory(
     IQueryRepository<SkillType, int> skillTypeRepository,
-    IQueryRepository<ContactTypeEntity, int> contactTypeRepository) : IProfileFactory
+    IQueryRepository<ContactTypeEntity, int> contactTypeRepository,
+    IContactTypeResolverService contactTypeResolver) : IProfileFactory
 {
     public async Task<ProfileEntity> CreateProfileFromDtoAsync(ProfileParseDto profileDto,
         CancellationToken cancellationToken)
@@ -59,19 +62,18 @@ public class ProfileFactory(
         {
             Id = 0,
             ProfileId = 0,
-            About = resumeDto.About ?? string.Empty,
-            Overview = resumeDto.Overview ?? string.Empty,
-            JobTitle = resumeDto.JobTitle ?? string.Empty,
-            Address = resumeDto.Address ?? string.Empty,
-            Suffix = resumeDto.Suffix ?? string.Empty,
-            Summary = resumeDto.Summary ?? string.Empty,
-            Title = resumeDto.Title ?? string.Empty
+            About = resumeDto.About!,
+            Overview = resumeDto.Overview!,
+            JobTitle = resumeDto.JobTitle!,
+            Address = resumeDto.Address!,
+            Suffix = resumeDto.Suffix!,
+            Summary = resumeDto.Summary!,
+            Title = resumeDto.Title!
         };
 
-        var contactInfoCollection = await BuildContactInfoAsync(resumeDto.ContactInfo, cancellationToken);
+        var contactInfo = await BuildContactInfoCollectionAsync(resumeDto.ContactInfo, cancellationToken);
 
-        foreach (var contactInfo in contactInfoCollection)
-            resumeEntity.AddContactInfo(contactInfo);
+        resumeEntity.AddContactInfo(contactInfo);
 
         return resumeEntity;
     }
@@ -115,34 +117,36 @@ public class ProfileFactory(
         }).ToList();
     }
 
-    private async Task<List<ContactInfoEntity>> BuildContactInfoAsync(
-        List<ContactInfoParseDto>? contactDtos,
+    private async Task<List<ContactInfoEntity>> BuildContactInfoCollectionAsync(
+        List<ContactInfoParseDto>? contactInfoDtos,
         CancellationToken cancellationToken)
     {
-        if (contactDtos is null || contactDtos.Count == 0) return [];
-
-        var contactTypeNames = contactDtos.Select(c => c.ContactType!).Distinct().ToList();
-
-        var existingContactTypes = (await contactTypeRepository
-                .FindAsync(ct => contactTypeNames.Contains(ct.Name), cancellationToken)
-                .ConfigureAwait(false))
-            .ToDictionary(c => c.Name);
-
-        return contactDtos.Select(dto =>
+        if (contactInfoDtos is null || contactInfoDtos.Count == 0)
         {
-            if (!existingContactTypes.TryGetValue(dto.ContactType!, out var contactType))
+            return [];
+        }
+
+        var contactInfoResult = new List<ContactInfoEntity>();
+
+        foreach (var dto in contactInfoDtos.Where(info => !string.IsNullOrWhiteSpace(info.ContactType)))
+        {
+            ContactTypeEntity contactType;
+            var resolvedType = await contactTypeResolver.ResolveAsync(dto.ContactType!, cancellationToken);
+
+            if (resolvedType.HasValue)
+            {
+                contactType = resolvedType.Value;
+            }
+            else
             {
                 contactType = new ContactTypeEntity(dto.ContactType!);
-                existingContactTypes[dto.ContactType!] = contactType;
+                contactType.SetDefaultIcon();
             }
 
-            return new ContactInfoEntity {
-                Id = 0,
-                Value = dto.Value!,
-                ContactType = contactType,
-                ContactTypeId = contactType.Id
-            };
-        }).ToList();
+            contactInfoResult.Add(new ContactInfoEntity(0, dto.Value!, contactType));
+        }
+
+        return contactInfoResult;
     }
 
     private List<EducationEntity> BuildEducationHistory(List<EducationParseDto>? educationDtos)

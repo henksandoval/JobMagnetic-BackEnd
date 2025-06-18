@@ -97,13 +97,9 @@ public static class ProfileParseDtoMapper
             return [];
         }
 
-        var result = src.ContactInfo.Select(c => new ContactInfoEntity
-        {
-            Id = 0,
-            Value = c.Value!,
-            ContactTypeId = 0,
-            ContactType = new ContactTypeEntity(c.ContactType)
-        }).ToList();
+        var result = src.ContactInfo.Select(c =>
+            new ContactInfoEntity(0, c.Value!, new ContactTypeEntity(c.ContactType)))
+            .ToList();
 
         return result;
     }

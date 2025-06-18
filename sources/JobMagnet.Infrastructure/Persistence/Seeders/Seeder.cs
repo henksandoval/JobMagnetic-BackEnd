@@ -108,7 +108,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         {
             if (contactTypeMap.TryGetValue(contactTypeName, out var contactType))
             {
-                var contactInfo = new ContactInfoEntity { Id = 0, Value = value, ContactTypeId = contactType.Id };
+                var contactInfo = new ContactInfoEntity(0, value, contactType);
                 resume.AddContactInfo(contactInfo);
             }
             else

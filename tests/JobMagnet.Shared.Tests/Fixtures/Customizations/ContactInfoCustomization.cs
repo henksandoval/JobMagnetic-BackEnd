@@ -13,34 +13,31 @@ public class ContactInfoCustomization : ICustomization
     {
         fixture.Customize<ContactInfoEntity>(composer =>
             composer
-                .FromFactory((ResumeEntity resume) => BuildContactInfo(resume))
+                .FromFactory((ResumeEntity resume) => BuildContactInfoEntity())
                 .OmitAutoProperties());
 
         fixture.Customize<ContactInfoRaw>(composer =>
-            composer.FromFactory(() =>
-                new ContactInfoRaw(
-                    FixtureBuilder.Faker.PickRandom(StaticCustomizations.ContactTypes).Name,
-                    FixtureBuilder.Faker.Phone.PhoneNumber()
-                )
-            )
-        );
+            composer
+                .FromFactory(BuildContactInfoRaw)
+                .OmitAutoProperties());
     }
 
-    private static ContactInfoEntity BuildContactInfo(ResumeEntity resume)
+    private static ContactInfoEntity BuildContactInfoEntity()
     {
         var randomContactTypeId = Faker.Random.Short(1, 6);
 
         var (typeName, value) = GenerateContactDetails(randomContactTypeId);
 
-        return new ContactInfoEntity
-        {
-            Id = 0,
-            ContactTypeId = randomContactTypeId,
-            ContactType = new ContactTypeEntity(typeName),
-            ResumeId = resume.Id,
-            Resume = resume,
-            Value = value
-        };
+        return new ContactInfoEntity(0, value, new ContactTypeEntity(typeName));
+    }
+
+    private static ContactInfoRaw BuildContactInfoRaw()
+    {
+        var randomContactTypeId = Faker.Random.Short(1, 6);
+
+        var (typeName, value) = GenerateContactDetails(randomContactTypeId);
+
+        return new ContactInfoRaw(typeName, value);
     }
 
     private static (string TypeName, string Value) GenerateContactDetails(short contactTypeId)

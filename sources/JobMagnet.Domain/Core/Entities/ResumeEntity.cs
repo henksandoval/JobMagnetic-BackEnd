@@ -19,8 +19,16 @@ public class ResumeEntity : SoftDeletableEntity<long>
     public virtual ProfileEntity Profile { get; set; }
     public virtual ICollection<ContactInfoEntity>? ContactInfo { get; set; } = new HashSet<ContactInfoEntity>();
 
+    public void AddContactInfo(IEnumerable<ContactInfoEntity> contactInfoCollection)
+    {
+        foreach (var contactInfo in contactInfoCollection)
+            ContactInfo?.Add(contactInfo);
+    }
+
     public void AddContactInfo(ContactInfoEntity contactInfo)
     {
+        ArgumentNullException.ThrowIfNull(contactInfo);
+
         ContactInfo?.Add(contactInfo);
     }
 }
