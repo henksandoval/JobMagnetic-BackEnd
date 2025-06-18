@@ -55,6 +55,17 @@ public class ProfileRawBuilder
         return this;
     }
 
+    public ProfileRawBuilder WithSkills(List<SkillRaw> skills)
+    {
+        var skillSet = _instance.SkillSet ??
+                         throw new InvalidOperationException("SkillSet must be set before adding contact info. Call WithSkillSet() first.");
+        var skillSetRaw = skillSet with { Skills = skills };
+
+        _instance = _instance with { SkillSet = skillSetRaw };
+
+        return this;
+    }
+
     public ProfileRawBuilder WithServices()
     {
         var services = _fixture.Create<ServiceRaw>();

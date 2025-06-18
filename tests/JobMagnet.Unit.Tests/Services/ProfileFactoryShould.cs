@@ -5,7 +5,6 @@ using JobMagnet.Application.Factories;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
@@ -18,19 +17,17 @@ public class ProfileFactoryShould
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly ProfileRawBuilder _profileBuilder;
     private readonly ProfileFactory _profileFactory;
-    private readonly Mock<IQueryRepository<SkillType, int>> _skillTypeRepository;
-    private readonly Mock<IQueryRepository<ContactTypeEntity, int>> _contactTypeRepository;
     private readonly Mock<IContactTypeResolverService> _contactTypeResolverMock;
+    private readonly Mock<ISkillTypeResolverService> _skillTypeResolverMock;
 
     public ProfileFactoryShould()
     {
         _profileBuilder = new ProfileRawBuilder(_fixture);
-        _skillTypeRepository = new Mock<IQueryRepository<SkillType, int>>();
-        _contactTypeRepository = new Mock<IQueryRepository<ContactTypeEntity, int>>();
+        _skillTypeResolverMock = new Mock<ISkillTypeResolverService>();
         _contactTypeResolverMock = new Mock<IContactTypeResolverService>();
         _profileFactory = new ProfileFactory(
-            _skillTypeRepository.Object,
-            _contactTypeResolverMock.Object);
+            _contactTypeResolverMock.Object,
+            _skillTypeResolverMock.Object);
     }
 
     [Fact(DisplayName = "Map root properties from a simple DTO")]
@@ -244,5 +241,38 @@ public class ProfileFactoryShould
         // Then
         profile.Should().NotBeNull();
         profile.SkillSet.Should().BeEquivalentTo(profileDto.SkillSet, options => options.ExcludingMissingMembers());
+    }
+
+    [Fact(DisplayName = "Map skills collection when the type exists")]
+    public async Task MapSkills_WhenTypeExists_MapsCorrectly()
+    {
+        // Given
+        var skills = new List<SkillRaw> { new ("C#", "10") };
+        var csharpSkill = new SkillType(
+            1,
+            "C#",
+            new SkillCategory("Programming"),
+            new Uri("https://example.com/csharp-icon.png"));
+
+        _skillTypeResolverMock
+            .Setup(r => r.ResolveAsync(
+                It.Is<string>(s => s.Equals("C#", StringComparison.InvariantCultureIgnoreCase)),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Maybe.From(csharpSkill));
+
+        var profileDto = _profileBuilder
+            .WithSkillSet()
+            .WithSkills(skills)
+            .Build()
+            .ToProfileParseDto();
+
+        var expectedSkill = new List<SkillEntity> { new(10, 1, csharpSkill) };
+
+        // When
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+
+        // Then
+        var currentSkills = profile.SkillSet!.Skills!.ToList();
+        currentSkills.Should().BeEquivalentTo(expectedSkill, options => options.Excluding(ci => ci.Id));
     }
 }
