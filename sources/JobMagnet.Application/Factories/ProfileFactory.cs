@@ -45,13 +45,12 @@ public class ProfileFactory(
             profileEntity.AddResume(resume);
         }
 
-/*
-
         if (profileDto.SkillSet is not null)
         {
-            profileEntity.AddSkill(await BuildSkillSetAsync(profileDto.SkillSet, cancellationToken));
+            var skillSet = await BuildSkillSetAsync(profileDto.SkillSet, cancellationToken);
+            profileEntity.AddSkill(skillSet);
         }
-*/
+
         return profileEntity;
     }
 
