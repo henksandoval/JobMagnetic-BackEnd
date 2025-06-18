@@ -129,18 +129,11 @@ public class ProfileFactory(
 
         foreach (var dto in contactInfoDtos.Where(info => !string.IsNullOrWhiteSpace(info.ContactType)))
         {
-            ContactTypeEntity contactType;
             var resolvedType = await contactTypeResolver.ResolveAsync(dto.ContactType!, cancellationToken);
 
-            if (resolvedType.HasValue)
-            {
-                contactType = resolvedType.Value;
-            }
-            else
-            {
-                contactType = new ContactTypeEntity(dto.ContactType!);
+            var contactType = resolvedType.HasValue ? resolvedType.Value : new ContactTypeEntity(dto.ContactType!);
+            if (!resolvedType.HasValue)
                 contactType.SetDefaultIcon();
-            }
 
             contactInfoResult.Add(new ContactInfoEntity(0, dto.Value!, contactType));
         }
