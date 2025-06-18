@@ -13,7 +13,6 @@ public interface IProfileFactory
 
 public class ProfileFactory(
     IQueryRepository<SkillType, int> skillTypeRepository,
-    IQueryRepository<ContactTypeEntity, int> contactTypeRepository,
     IContactTypeResolverService contactTypeResolver) : IProfileFactory
 {
     public async Task<ProfileEntity> CreateProfileFromDtoAsync(ProfileParseDto profileDto,

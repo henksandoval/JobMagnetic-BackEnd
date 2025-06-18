@@ -30,7 +30,6 @@ public class ProfileFactoryShould
         _contactTypeResolverMock = new Mock<IContactTypeResolverService>();
         _profileFactory = new ProfileFactory(
             _skillTypeRepository.Object,
-            _contactTypeRepository.Object,
             _contactTypeResolverMock.Object);
     }
 
