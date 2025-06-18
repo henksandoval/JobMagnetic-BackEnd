@@ -84,6 +84,7 @@ public class ProfileFactoryShould
             .BeEquivalentTo(profileDto.Testimonials, options => options.ExcludingMissingMembers());
     }
 
+    #region Resume Mapping Tests
     [Fact(DisplayName = "Map resume aggregation when the DTO provides them")]
     public async Task MapResume_WhenDtoProvidesThem()
     {
@@ -225,5 +226,23 @@ public class ProfileFactoryShould
         var actualContactInfo = profile.Resume!.ContactInfo!.OrderBy(c => c.Value).ToList();
         var orderedExpected = expectedContactInfo.OrderBy(c => c.Value).ToList();
         actualContactInfo.Should().BeEquivalentTo(orderedExpected, options => options.Excluding(ci => ci.Id));
+    }
+    #endregion
+
+    [Fact(DisplayName = "Map SkillSet aggregation when the DTO provides them")]
+    public async Task MapSkillSet_WhenDtoProvidesThem()
+    {
+        // Given
+        var profileDto = _profileBuilder
+            .WithSkillSet()
+            .Build()
+            .ToProfileParseDto();
+
+        // When
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+
+        // Then
+        profile.Should().NotBeNull();
+        profile.SkillSet.Should().BeEquivalentTo(profileDto.SkillSet, options => options.ExcludingMissingMembers());
     }
 }
