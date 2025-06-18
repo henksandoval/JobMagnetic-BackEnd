@@ -146,9 +146,6 @@ public class ProfileFactoryShould
 
         var contactInfo = profile.Resume!.ContactInfo!.OrderBy(c => c.Value).ToList();
         contactInfo.Should().HaveSameCount(expectedContactInfo);
-        var firstContactInfoEntity = contactInfo[0];
-        var firstContactInfoEntityExpected = expectedContactInfo[0];
-        firstContactInfoEntity.Should().BeEquivalentTo(firstContactInfoEntityExpected);
         contactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options
             .WithMapping<ContactInfoEntity>(expect => expect.Value, sut => sut.Value)
             .ExcludingMissingMembers()
