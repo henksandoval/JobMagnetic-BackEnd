@@ -124,6 +124,18 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
+        var expectedContactInfo = contactInfoCollection
+            .Select(source =>
+            {
+                typeMappings.TryGetValue(source.ContactType!, out var resolvedType);
+                var contactType = resolvedType ?? new ContactTypeEntity(source.ContactType!);
+                if (resolvedType == null)
+                    contactType.SetDefaultIcon();
+                return new ContactInfoEntity(0, source.Value!, contactType);
+            })
+            .OrderBy(c => c.Value)
+            .ToList();
+
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
@@ -133,27 +145,15 @@ public class ProfileFactoryShould
             .Excluding(x => x!.ContactInfo)
             .ExcludingMissingMembers());
 
-        var mappedContacts = profile.Resume!.ContactInfo!.OrderBy(c => c.Value).ToList();
-        var sourceContacts = profileDto.Resume!.ContactInfo.OrderBy(c => c.Value).ToList();
-
-        mappedContacts.Should().HaveSameCount(sourceContacts);
-
-        for (var i = 0; i < sourceContacts.Count; i++)
-        {
-            var source = sourceContacts[i];
-            var mapped = mappedContacts[i];
-
-            mapped.Value.Should().Be(source.Value);
-
-            if (typeMappings.TryGetValue(source.ContactType!, out var expectedType))
-            {
-                mapped.ContactType.Name.Should().Be(expectedType.Name);
-            }
-            else
-            {
-                mapped.ContactType.Name.Should().Be(source.ContactType);
-            }
-        }
+        var contactInfo = profile.Resume!.ContactInfo!.OrderBy(c => c.Value).ToList();
+        contactInfo.Should().HaveSameCount(expectedContactInfo);
+        var firstContactInfoEntity = contactInfo[0];
+        var firstContactInfoEntityExpected = expectedContactInfo[0];
+        firstContactInfoEntity.Should().BeEquivalentTo(firstContactInfoEntityExpected);
+        contactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options
+            .WithMapping<ContactInfoEntity>(expect => expect.Value, sut => sut.Value)
+            .ExcludingMissingMembers()
+        );
     }
 
     private static Dictionary<string, ContactTypeEntity> GetContactTypeEntities()
@@ -162,7 +162,7 @@ public class ProfileFactoryShould
         var phoneType = new ContactTypeEntity(2, "Phone", "bx bx-mobile");
         var linkedInType = new ContactTypeEntity(3, "LinkedIn", "bx bx-linkedin");
 
-        var typeMappings = new Dictionary<string, ContactTypeEntity>
+        var typeMappings = new Dictionary<string, ContactTypeEntity>(StringComparer.InvariantCultureIgnoreCase)
         {
             { "Email", emailType },
             { "Phone", phoneType },
@@ -177,7 +177,9 @@ public class ProfileFactoryShould
         foreach (var mapping in typeMappings)
         {
             _contactTypeResolverMock
-                .Setup(r => r.ResolveAsync(mapping.Key, It.IsAny<CancellationToken>()))
+                .Setup(r => r.ResolveAsync(
+                    It.Is<string>(s => s.Equals(mapping.Key, StringComparison.InvariantCultureIgnoreCase)),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(mapping.Value));
         }
     }
