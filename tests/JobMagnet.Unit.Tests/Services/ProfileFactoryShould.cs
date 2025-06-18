@@ -37,12 +37,15 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map root properties from a simple DTO")]
     public async Task MapRootProperties_FromSimpleDto()
     {
+        // Given
         var profileDto = _profileBuilder
             .Build()
             .ToProfileParseDto();
 
+        // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
+        // Then
         profile.Should().NotBeNull();
         profile.Should().BeEquivalentTo(profileDto, options => options.ExcludingMissingMembers());
     }
@@ -50,13 +53,16 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map talents collection when the DTO provides them")]
     public async Task MapTalents_WhenDtoProvidesThem()
     {
+        // Given
         var profileDto = _profileBuilder
             .WithTalents()
             .Build()
             .ToProfileParseDto();
 
+        // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
+        // Then
         profile.Should().NotBeNull();
         profile.Talents.Should().BeEquivalentTo(profileDto.Talents, options => options.ExcludingMissingMembers());
     }
@@ -64,27 +70,34 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map testimonials collection when the DTO provides them")]
     public async Task MapTestimonials_WhenDtoProvidesThem()
     {
+        // Given
         var profileDto = _profileBuilder
             .WithTestimonials()
             .Build()
             .ToProfileParseDto();
 
+        // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
+        // Then
         profile.Should().NotBeNull();
-        profile.Testimonials.Should().BeEquivalentTo(profileDto.Testimonials, options => options.ExcludingMissingMembers());
+        profile.Testimonials.Should()
+            .BeEquivalentTo(profileDto.Testimonials, options => options.ExcludingMissingMembers());
     }
 
     [Fact(DisplayName = "Map resume aggregation when the DTO provides them")]
     public async Task MapResume_WhenDtoProvidesThem()
     {
+        // Given
         var profileDto = _profileBuilder
             .WithResume()
             .Build()
             .ToProfileParseDto();
 
+        // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
+        // Then
         profile.Should().NotBeNull();
         profile.Resume.Should().BeEquivalentTo(profileDto.Resume, options => options.ExcludingMissingMembers());
     }
@@ -92,7 +105,18 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map resume aggregation with contact info collection when the DTO provides them")]
     public async Task MapResumeWithContactInfo_WhenDtoProvidesThem()
     {
-        var contactInfoCollection = PrepareAndGetContactInfoData();
+        // Given
+        var typeMappings = GetContactTypeEntities();
+        SetupContactTypeResolverMock(typeMappings);
+
+        var contactInfoCollection = new List<ContactInfoRaw>
+        {
+            new("EMAIL", "test@test.com"),
+            new("PHONE", "123456789"),
+            new("LinkedIn", "linkedin.com/test"),
+            new("Teléfono", "+58 412457824"),
+            new("TypeDontExist", "Some value")
+        };
 
         var profileDto = _profileBuilder
             .WithResume()
@@ -100,8 +124,10 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
+        // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
+        // Then
         profile.Should().NotBeNull();
         profile.Resume.Should().BeEquivalentTo(profileDto.Resume, options => options
             .Excluding(x => x!.ContactInfo)
@@ -119,49 +145,40 @@ public class ProfileFactoryShould
 
             mapped.Value.Should().Be(source.Value);
 
-            if (source.ContactType == "TypeDontExist")
+            if (typeMappings.TryGetValue(source.ContactType!, out var expectedType))
             {
-                mapped.ContactType.Name.Should().Be(source.ContactType);
+                mapped.ContactType.Name.Should().Be(expectedType.Name);
             }
             else
             {
-                var expectedTypeName = await _contactTypeResolverMock.Object.ResolveAsync(
-                    source.ContactType!, CancellationToken.None);
-                mapped.ContactType.Name.Should().Be(expectedTypeName.Value.Name);
+                mapped.ContactType.Name.Should().Be(source.ContactType);
             }
         }
     }
 
-    private List<ContactInfoRaw> PrepareAndGetContactInfoData()
+    private static Dictionary<string, ContactTypeEntity> GetContactTypeEntities()
     {
-        var emailType = new ContactTypeEntity(1, "Email", "bx bx-envelope");
+        var emailType = new ContactTypeEntity(1, "EMAIL", "bx bx-envelope");
         var phoneType = new ContactTypeEntity(2, "Phone", "bx bx-mobile");
         var linkedInType = new ContactTypeEntity(3, "LinkedIn", "bx bx-linkedin");
 
-        _contactTypeResolverMock
-            .Setup(r => r.ResolveAsync("EMAIL", It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Maybe.From(emailType));
-
-        _contactTypeResolverMock
-            .Setup(r => r.ResolveAsync("PHONE", It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Maybe.From(phoneType));
-
-        _contactTypeResolverMock
-            .Setup(r => r.ResolveAsync("Teléfono", It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Maybe.From(phoneType));
-
-        _contactTypeResolverMock
-            .Setup(r => r.ResolveAsync("LinkedIn", It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Maybe.From(linkedInType));
-
-        var contactInfoRaw = new List<ContactInfoRaw>
+        var typeMappings = new Dictionary<string, ContactTypeEntity>
         {
-            new("EMAIL", "test@test.com" ),
-            new("PHONE", "123456789" ),
-            new("LinkedIn", "linkedin.com/test"),
-            new ("Teléfono", "+58 412457824"),
-            new ("TypeDontExist", "Some value")
+            { "Email", emailType },
+            { "Phone", phoneType },
+            { "Teléfono", phoneType },
+            { "LinkedIn", linkedInType }
         };
-        return contactInfoRaw;
+        return typeMappings;
+    }
+
+    private void SetupContactTypeResolverMock(Dictionary<string, ContactTypeEntity> typeMappings)
+    {
+        foreach (var mapping in typeMappings)
+        {
+            _contactTypeResolverMock
+                .Setup(r => r.ResolveAsync(mapping.Key, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Maybe.From(mapping.Value));
+        }
     }
 }
