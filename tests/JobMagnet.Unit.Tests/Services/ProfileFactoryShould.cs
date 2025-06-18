@@ -1,5 +1,6 @@
 using AutoFixture;
 using FluentAssertions;
+using JobMagnet.Application.Factories;
 using JobMagnet.Application.Services;
 using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
@@ -12,20 +13,20 @@ using Moq;
 
 namespace JobMagnet.Unit.Tests.Services;
 
-public class ProfileFactoryServiceShould
+public class ProfileFactoryShould
 {
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly ProfileRawBuilder _profileBuilder;
-    private readonly ProfileFactoryService _profileFactoryService;
+    private readonly ProfileFactory _profileFactory;
     private readonly Mock<IQueryRepository<SkillType, int>> _skillTypeRepository;
     private readonly Mock<IQueryRepository<ContactTypeEntity, int>> _contactTypeRepository;
 
-    public ProfileFactoryServiceShould()
+    public ProfileFactoryShould()
     {
         _profileBuilder = new ProfileRawBuilder(_fixture);
         _skillTypeRepository = new Mock<IQueryRepository<SkillType, int>>();
         _contactTypeRepository = new Mock<IQueryRepository<ContactTypeEntity, int>>();
-        _profileFactoryService = new ProfileFactoryService(
+        _profileFactory = new ProfileFactory(
             _skillTypeRepository.Object,
             _contactTypeRepository.Object);
     }
@@ -37,7 +38,7 @@ public class ProfileFactoryServiceShould
             .Build()
             .ToProfileParseDto();
 
-        var profile = await _profileFactoryService.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         profile.Should().NotBeNull();
         profile.Should().BeEquivalentTo(profileDto, options => options.ExcludingMissingMembers());
@@ -51,7 +52,7 @@ public class ProfileFactoryServiceShould
             .Build()
             .ToProfileParseDto();
 
-        var profile = await _profileFactoryService.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         profile.Should().NotBeNull();
         profile.Talents.Should().BeEquivalentTo(profileDto.Talents, options => options.ExcludingMissingMembers());
@@ -65,7 +66,7 @@ public class ProfileFactoryServiceShould
             .Build()
             .ToProfileParseDto();
 
-        var profile = await _profileFactoryService.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         profile.Should().NotBeNull();
         profile.Testimonials.Should().BeEquivalentTo(profileDto.Testimonials, options => options.ExcludingMissingMembers());

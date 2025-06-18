@@ -1,3 +1,4 @@
+using JobMagnet.Application.Factories;
 using JobMagnet.Application.Services;
 using JobMagnet.Application.UseCases.CvParser;
 using JobMagnet.Domain.Extensions;
@@ -14,7 +15,7 @@ public static class ApplicationExtensions
         return services
             .AddLogging()
             .AddDomainDependencies()
-            .AddTransient<IProfileFactoryService, ProfileFactoryService>()
+            .AddTransient<IProfileFactory, ProfileFactory>()
             .AddTransient<ICvParserHandler, CvParserHandler>();
     }
 }

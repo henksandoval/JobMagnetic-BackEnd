@@ -1,4 +1,5 @@
 using JobMagnet.Application.Exceptions;
+using JobMagnet.Application.Factories;
 using JobMagnet.Application.Services;
 using JobMagnet.Application.UseCases.CvParser.Commands;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
@@ -20,7 +21,7 @@ public class CvParserHandler(
     IRawCvParser cvParser,
     ICommandRepository<ProfileEntity> profileRepository,
     IProfileSlugGenerator slugGenerator,
-    IProfileFactoryService profileFactory,
+    IProfileFactory profileFactory,
     IContactTypeResolverService contactTypeResolver,
     ISkillTypeResolverService skillTypeResolver)
     : ICvParserHandler

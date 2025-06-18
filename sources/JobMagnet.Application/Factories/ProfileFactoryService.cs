@@ -2,16 +2,16 @@ using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 
-namespace JobMagnet.Application.Services;
+namespace JobMagnet.Application.Factories;
 
-public interface IProfileFactoryService
+public interface IProfileFactory
 {
     Task<ProfileEntity> CreateProfileFromDtoAsync(ProfileParseDto profileDto, CancellationToken cancellationToken);
 }
 
-public class ProfileFactoryService(
+public class ProfileFactory(
     IQueryRepository<SkillType, int> skillTypeRepository,
-    IQueryRepository<ContactTypeEntity, int> contactTypeRepository) : IProfileFactoryService
+    IQueryRepository<ContactTypeEntity, int> contactTypeRepository) : IProfileFactory
 {
     public async Task<ProfileEntity> CreateProfileFromDtoAsync(ProfileParseDto profileDto,
         CancellationToken cancellationToken)

@@ -3,6 +3,7 @@ using System.Net.Mime;
 using AutoFixture;
 using CSharpFunctionalExtensions;
 using FluentAssertions;
+using JobMagnet.Application.Factories;
 using JobMagnet.Application.Services;
 using JobMagnet.Application.UseCases.CvParser;
 using JobMagnet.Application.UseCases.CvParser.Commands;
@@ -26,7 +27,7 @@ public class CvParserHandlerShould
     private readonly Mock<IContactTypeResolverService> _contactTypeResolverMock;
     private readonly Mock<ISkillTypeResolverService> _skillTypeResolverMock;
     private readonly Mock<ICommandRepository<ProfileEntity>> _profileCommandRepositoryMock;
-    private readonly Mock<IProfileFactoryService> _profileFactoryMock;
+    private readonly Mock<IProfileFactory> _profileFactoryMock;
 
     private readonly CvParserHandler _handler;
 
@@ -35,7 +36,7 @@ public class CvParserHandlerShould
         _rawCvParserMock = new Mock<IRawCvParser>();
         _profileCommandRepositoryMock = new Mock<ICommandRepository<ProfileEntity>>();
         _slugGeneratorMock = new Mock<IProfileSlugGenerator>();
-        _profileFactoryMock = new Mock<IProfileFactoryService>();
+        _profileFactoryMock = new Mock<IProfileFactory>();
         _contactTypeResolverMock = new Mock<IContactTypeResolverService>();
         _skillTypeResolverMock = new Mock<ISkillTypeResolverService>();
 
