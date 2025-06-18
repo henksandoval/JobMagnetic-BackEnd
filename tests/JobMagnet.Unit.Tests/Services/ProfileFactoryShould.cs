@@ -101,82 +101,129 @@ public class ProfileFactoryShould
         profile.Resume.Should().BeEquivalentTo(profileDto.Resume, options => options.ExcludingMissingMembers());
     }
 
-    [Fact(DisplayName = "Map resume aggregation with contact info collection when the DTO provides them")]
-    public async Task MapResumeWithContactInfo_WhenDtoProvidesThem()
+    [Fact(DisplayName = "Map contact info when the type exists")]
+    public async Task MapContactInfo_WhenTypeExists_MapsCorrectly()
     {
         // Given
-        var typeMappings = GetContactTypeEntities();
-        SetupContactTypeResolverMock(typeMappings);
+        var emailType = new ContactTypeEntity(1, "Email", "bx bx-envelope");
 
-        var contactInfoCollection = new List<ContactInfoRaw>
-        {
-            new("EMAIL", "test@test.com"),
-            new("PHONE", "123456789"),
-            new("LinkedIn", "linkedin.com/test"),
-            new("Teléfono", "+58 412457824"),
-            new("TypeDontExist", "Some value")
-        };
+        _contactTypeResolverMock
+            .Setup(r => r.ResolveAsync(
+                It.Is<string>(s => s.Equals("Email", StringComparison.InvariantCultureIgnoreCase)),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Maybe.From(emailType));
 
+        var contacts = new[] { new ContactInfoRaw("EMAIL", "test@test.com") };
         var profileDto = _profileBuilder
             .WithResume()
-            .WithContactInfo(contactInfoCollection)
+            .WithContactInfo(contacts.ToList())
             .Build()
             .ToProfileParseDto();
 
-        var expectedContactInfo = contactInfoCollection
-            .Select(source =>
-            {
-                typeMappings.TryGetValue(source.ContactType!, out var resolvedType);
-                var contactType = resolvedType ?? new ContactTypeEntity(source.ContactType!);
-                if (resolvedType == null)
-                    contactType.SetDefaultIcon();
-                return new ContactInfoEntity(0, source.Value!, contactType);
-            })
-            .OrderBy(c => c.Value)
-            .ToList();
+        var expectedContactInfo = new List<ContactInfoEntity> { new(0, "test@test.com", emailType) };
 
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         // Then
-        profile.Should().NotBeNull();
-        profile.Resume.Should().BeEquivalentTo(profileDto.Resume, options => options
-            .Excluding(x => x!.ContactInfo)
-            .ExcludingMissingMembers());
-
-        var contactInfo = profile.Resume!.ContactInfo!.OrderBy(c => c.Value).ToList();
-        contactInfo.Should().HaveSameCount(expectedContactInfo);
-        contactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options
-            .WithMapping<ContactInfoEntity>(expect => expect.Value, sut => sut.Value)
-            .ExcludingMissingMembers()
-        );
+        var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
+        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options.Excluding(ci => ci.Id));
     }
 
-    private static Dictionary<string, ContactTypeEntity> GetContactTypeEntities()
+    [Fact(DisplayName = "Map contact info when the type is an alias")]
+    public async Task MapContactInfo_WhenTypeIsAlias_MapsToCorrectBaseType()
     {
-        var emailType = new ContactTypeEntity(1, "EMAIL", "bx bx-envelope");
+        // Given
         var phoneType = new ContactTypeEntity(2, "Phone", "bx bx-mobile");
-        var linkedInType = new ContactTypeEntity(3, "LinkedIn", "bx bx-linkedin");
 
-        var typeMappings = new Dictionary<string, ContactTypeEntity>(StringComparer.InvariantCultureIgnoreCase)
-        {
-            { "Email", emailType },
-            { "Phone", phoneType },
-            { "Teléfono", phoneType },
-            { "LinkedIn", linkedInType }
-        };
-        return typeMappings;
+        _contactTypeResolverMock
+            .Setup(r => r.ResolveAsync("Teléfono", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Maybe.From(phoneType));
+
+        var contacts = new[] { new ContactInfoRaw("Teléfono", "+58 412457824") };
+        var profileDto = _profileBuilder
+            .WithResume()
+            .WithContactInfo(contacts.ToList())
+            .Build()
+            .ToProfileParseDto();
+
+        var expectedContactInfo = new List<ContactInfoEntity> { new(0, "+58 412457824", phoneType) };
+
+        // When
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+
+        // Then
+        var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
+        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options.Excluding(ci => ci.Id));
     }
 
-    private void SetupContactTypeResolverMock(Dictionary<string, ContactTypeEntity> typeMappings)
+    [Fact(DisplayName = "Map contact info when the type does not exist")]
+    public async Task MapContactInfo_WhenTypeDoesNotExist_CreatesAdHocTypeWithDefaultIcon()
     {
-        foreach (var mapping in typeMappings)
+        // Given
+        _contactTypeResolverMock
+            .Setup(r => r.ResolveAsync("TypeDontExist", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Maybe<ContactTypeEntity>.None);
+
+        var contacts = new[] { new ContactInfoRaw("TypeDontExist", "Some value") };
+        var profileDto = _profileBuilder
+            .WithResume()
+            .WithContactInfo(contacts.ToList())
+            .Build()
+            .ToProfileParseDto();
+
+        var expectedAdHocType = new ContactTypeEntity("TypeDontExist");
+        expectedAdHocType.SetDefaultIcon();
+
+        var expectedContactInfo = new List<ContactInfoEntity> { new(0, "Some value", expectedAdHocType) };
+
+        // When
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+
+        // Then
+        var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
+        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options.Excluding(ci => ci.Id));
+    }
+
+    [Fact(DisplayName = "Map multiple contact infos with mixed types")]
+    public async Task MapContactInfo_WithMultipleItems_MapsAllCorrectly()
+    {
+        // Given
+        var emailType = new ContactTypeEntity(1, "Email", "bx bx-envelope");
+        _contactTypeResolverMock
+            .Setup(r => r.ResolveAsync("Email", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Maybe.From(emailType));
+
+        _contactTypeResolverMock
+            .Setup(r => r.ResolveAsync("TypeDontExist", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Maybe<ContactTypeEntity>.None);
+
+        var contacts = new[]
         {
-            _contactTypeResolverMock
-                .Setup(r => r.ResolveAsync(
-                    It.Is<string>(s => s.Equals(mapping.Key, StringComparison.InvariantCultureIgnoreCase)),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Maybe.From(mapping.Value));
-        }
+            new ContactInfoRaw("Email", "test@test.com"),
+            new ContactInfoRaw("TypeDontExist", "Some value")
+        };
+        var profileDto = _profileBuilder
+            .WithResume()
+            .WithContactInfo(contacts.ToList())
+            .Build()
+            .ToProfileParseDto();
+
+        var expectedAdHocType = new ContactTypeEntity("TypeDontExist");
+        expectedAdHocType.SetDefaultIcon();
+
+        var expectedContactInfo = new List<ContactInfoEntity>
+        {
+            new(0, "test@test.com", emailType),
+            new(0, "Some value", expectedAdHocType)
+        };
+
+        // When
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+
+        // Then
+        var actualContactInfo = profile.Resume!.ContactInfo!.OrderBy(c => c.Value).ToList();
+        var orderedExpected = expectedContactInfo.OrderBy(c => c.Value).ToList();
+        actualContactInfo.Should().BeEquivalentTo(orderedExpected, options => options.Excluding(ci => ci.Id));
     }
 }
