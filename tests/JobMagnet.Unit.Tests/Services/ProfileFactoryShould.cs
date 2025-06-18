@@ -68,4 +68,18 @@ public class ProfileFactoryShould
         profile.Should().NotBeNull();
         profile.Testimonials.Should().BeEquivalentTo(profileDto.Testimonials, options => options.ExcludingMissingMembers());
     }
+
+    [Fact(DisplayName = "Map resume aggregation when the DTO provides them")]
+    public async Task MapResume_WhenDtoProvidesThem()
+    {
+        var profileDto = _profileBuilder
+            .WithResume()
+            .Build()
+            .ToProfileParseDto();
+
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+
+        profile.Should().NotBeNull();
+        profile.Resume.Should().BeEquivalentTo(profileDto.Resume, options => options.ExcludingMissingMembers());
+    }
 }
