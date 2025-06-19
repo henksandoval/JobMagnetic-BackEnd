@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
+using JobMagnet.Domain.Exceptions;
 
 namespace JobMagnet.Domain.Core.Entities;
 
@@ -34,9 +35,35 @@ public class SkillSetEntity : SoftDeletableEntity<long>
     {
         Guard.IsBetweenOrEqualTo<ushort>(proficiencyLevel, 0, 10);
         Guard.IsNotNull(skillType);
-        Guard.IsNotNull(skillType);
 
-        var newSkill = new SkillEntity(proficiencyLevel, 0, this, skillType);
+        if (_skills.Any(s => s.SkillTypeId == skillType.Id))
+        {
+            throw new JobMagnetDomainException($"Skill of type {skillType.Name} already exists in this skill set.");
+        }
+
+        var newRank = (ushort)(_skills.Count + 1);
+
+        var newSkill = new SkillEntity(proficiencyLevel, newRank, this, skillType);
         _skills.Add(newSkill);
+    }
+
+    public void ReorderSkills(List<long> orderedSkillIds)
+    {
+        Guard.IsNotNull(orderedSkillIds);
+
+        var currentSkillIds = _skills.Select(s => s.Id).ToHashSet();
+        if (!currentSkillIds.SetEquals(orderedSkillIds))
+        {
+            throw new JobMagnetDomainException("The provided skill IDs do not match the current skills in this skill set.");
+        }
+
+        var skillMap = _skills.ToDictionary(s => s.Id);
+
+        ushort currentRank = 1;
+        foreach (var skillToUpdate in orderedSkillIds.Select(skillId => skillMap[skillId]))
+        {
+            skillToUpdate.UpdateRank(currentRank);
+            currentRank++;
+        }
     }
 }

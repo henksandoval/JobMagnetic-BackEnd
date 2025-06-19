@@ -19,11 +19,11 @@ public class SkillEntity : TrackableEntity<long>
     private SkillEntity() { }
 
     [SetsRequiredMembers]
-    public SkillEntity(ushort proficiencyLevel, ushort rank, SkillSetEntity skillSet, SkillType skillType, long id = 0)
+    internal SkillEntity(ushort proficiencyLevel, ushort rank, SkillSetEntity skillSet, SkillType skillType, long id = 0)
     {
         Guard.IsGreaterThanOrEqualTo<long>(id, 0);
         Guard.IsBetweenOrEqualTo<ushort>(proficiencyLevel, 0, 10);
-        //Guard.IsGreaterThan<ushort>(rank, 0); //TODO: Enable again
+        Guard.IsGreaterThan<ushort>(rank, 0);
         Guard.IsNotNull(skillSet);
         Guard.IsNotNull(skillType);
 
@@ -34,5 +34,12 @@ public class SkillEntity : TrackableEntity<long>
         SkillTypeId = skillType.Id;
         SkillSet = skillSet;
         SkillType = skillType;
+    }
+
+    internal void UpdateRank(ushort newRank)
+    {
+        Guard.IsGreaterThan<ushort>(newRank, 0);
+
+        Rank = newRank;
     }
 }

@@ -62,14 +62,10 @@ public class SkillCustomization : ICustomization
         var (type, uri, categoryName) = GenerateSkillTypes(randomSkillTypeId);
 
         var category = new SkillCategory(categoryName);
-        var skill = new SkillEntity(
-            (ushort)Faker.Random.Number(1, 10),
-            (ushort)Faker.Random.Number(1, 10),
-            parentSkillSet,
-            new SkillType(0, type, category, new Uri(uri))
-        );
+        var skillType = new SkillType(0, type, category, new Uri(uri));
+        parentSkillSet.AddSkill((ushort)Faker.Random.Number(1, 10), skillType);
 
-        return skill;
+        return parentSkillSet.Skills.Last();
     }
 
     private static (string type, string uri, string category) GenerateSkillTypes(short contactTypeId)
