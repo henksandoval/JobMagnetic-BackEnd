@@ -269,7 +269,9 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var expectedSkill = new List<SkillEntity> { new(10, 0, csharpSkill) };
+        var skillSet = new SkillSetEntity("Test Overview", 1);
+        skillSet.AddSkill(10, csharpSkill);
+        var expectedSkill = skillSet.Skills.ToList();
 
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
@@ -302,7 +304,9 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var expectedSkill = new List<SkillEntity> { new(10, 0, csharpSkill) };
+        var skillSet = new SkillSetEntity("Test Overview", 1);
+        skillSet.AddSkill(10, csharpSkill);
+        var expectedSkill = skillSet.Skills.ToList();
 
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
@@ -327,7 +331,9 @@ public class ProfileFactoryShould
         var expectedAdHocType = new SkillType("TypeDontExist");
         expectedAdHocType.SetDefaultIcon();
 
-        var expectedSkill = new List<SkillEntity> { new(10, 0, expectedAdHocType) };
+        var skillSet = new SkillSetEntity("Test Overview", 1);
+        skillSet.AddSkill(10, expectedAdHocType);
+        var expectedSkill = skillSet.Skills.ToList();
 
         var profileDto = _profileBuilder
             .WithSkillSet()
@@ -361,10 +367,6 @@ public class ProfileFactoryShould
             .Setup(r => r.ResolveAsync(It.Is<string>("csharp", StringComparer.InvariantCulture), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(csharpSkill));
 
-        // _skillTypeResolverMock
-        //     .Setup(r => r.ResolveAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-        //     .ReturnsAsync(Maybe.None);
-
         var expectedAdHocType = new SkillType("TypeDontExist");
         expectedAdHocType.SetDefaultIcon();
 
@@ -379,11 +381,10 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var expectedSkills = new List<SkillEntity>
-        {
-            new(5, 0, csharpSkill),
-            new(2, 0, expectedAdHocType)
-        };
+        var skillSet = new SkillSetEntity("Test Overview", 1);
+        skillSet.AddSkill(5, csharpSkill);
+        skillSet.AddSkill(2, expectedAdHocType);
+        var expectedSkills = skillSet.Skills.ToList();
 
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
