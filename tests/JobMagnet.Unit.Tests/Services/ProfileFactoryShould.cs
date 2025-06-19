@@ -227,6 +227,8 @@ public class ProfileFactoryShould
     }
     #endregion
 
+    #region SkillSet Mapping Tests
+
     [Fact(DisplayName = "Map SkillSet aggregation when the DTO provides them")]
     public async Task MapSkillSet_WhenDtoProvidesThem()
     {
@@ -343,4 +345,55 @@ public class ProfileFactoryShould
             .Excluding(entity => entity.SkillSet)
         );
     }
+
+
+    [Fact(DisplayName = "Map multiple skills with mixed types")]
+    public async Task MapSkills_WithMultipleItems_MapsAllCorrectly()
+    {
+        // Given
+        var csharpSkill = new SkillType(
+            1,
+            "C#",
+            new SkillCategory("Programming"),
+            new Uri("https://example.com/csharp-icon.png"));
+
+        _skillTypeResolverMock
+            .Setup(r => r.ResolveAsync(It.Is<string>("csharp", StringComparer.InvariantCulture), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Maybe.From(csharpSkill));
+
+        // _skillTypeResolverMock
+        //     .Setup(r => r.ResolveAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+        //     .ReturnsAsync(Maybe.None);
+
+        var expectedAdHocType = new SkillType("TypeDontExist");
+        expectedAdHocType.SetDefaultIcon();
+
+        var skills = new[]
+        {
+            new SkillRaw("csharp", "5"),
+            new SkillRaw("TypeDontExist", "2")
+        };
+        var profileDto = _profileBuilder
+            .WithSkillSet()
+            .WithSkills(skills.ToList())
+            .Build()
+            .ToProfileParseDto();
+
+        var expectedSkills = new List<SkillEntity>
+        {
+            new(5, 0, csharpSkill),
+            new(2, 0, expectedAdHocType)
+        };
+
+        // When
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+
+        // Then
+        var currentSkills = profile.SkillSet!.Skills!.ToList();
+        currentSkills.Should().BeEquivalentTo(expectedSkills, options => options
+            .Excluding(entity => entity.Id)
+            .Excluding(entity => entity.SkillSet)
+        );
+    }
+    #endregion
 }
