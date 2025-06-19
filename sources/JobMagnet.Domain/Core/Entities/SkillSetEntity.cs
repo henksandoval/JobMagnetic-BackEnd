@@ -46,11 +46,4 @@ public class SkillSetEntity : SoftDeletableEntity<long>
 
         _skills.Add(skill);
     }
-
-    public void AddSkills(List<SkillEntity> skills)
-    {
-        foreach (var skill in skills)
-            AddSkill(skill);
-    }
-
 }
