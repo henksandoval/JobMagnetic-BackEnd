@@ -82,6 +82,7 @@ public class ProfileFactoryShould
     }
 
     #region Resume Mapping Tests
+
     [Fact(DisplayName = "Map resume aggregation when the DTO provides them")]
     public async Task MapResume_WhenDtoProvidesThem()
     {
@@ -258,6 +259,39 @@ public class ProfileFactoryShould
             .Setup(r => r.ResolveAsync(
                 It.Is<string>(s => s.Equals("C#", StringComparison.InvariantCultureIgnoreCase)),
                 It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Maybe.From(csharpSkill));
+
+        var profileDto = _profileBuilder
+            .WithSkillSet()
+            .WithSkills(skills)
+            .Build()
+            .ToProfileParseDto();
+
+        var expectedSkill = new List<SkillEntity> { new(10, 0, csharpSkill) };
+
+        // When
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+
+        // Then
+        var currentSkills = profile.SkillSet!.Skills!.ToList();
+        currentSkills.Should().BeEquivalentTo(expectedSkill, options => options
+            .Excluding(entity => entity.SkillSet)
+        );
+    }
+
+    [Fact(DisplayName = "Map skills collection when the type is an alias")]
+    public async Task MapSkills_WhenTypeIsAlias_MapsToCorrectBaseType()
+    {
+        // Given
+        var skills = new List<SkillRaw> { new ("csharp", "10") };
+        var csharpSkill = new SkillType(
+            1,
+            "C#",
+            new SkillCategory("Programming"),
+            new Uri("https://example.com/csharp-icon.png"));
+
+        _skillTypeResolverMock
+            .Setup(r => r.ResolveAsync("csharp", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(csharpSkill));
 
         var profileDto = _profileBuilder
