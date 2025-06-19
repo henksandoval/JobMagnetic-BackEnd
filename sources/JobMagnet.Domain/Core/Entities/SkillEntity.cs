@@ -35,19 +35,4 @@ public class SkillEntity : TrackableEntity<long>
         SkillSet = skillSet;
         SkillType = skillType;
     }
-
-    [SetsRequiredMembers]
-    public SkillEntity(ushort proficiencyLevel, ushort rank, SkillType skillType, long id = 0)
-    {
-        Guard.IsGreaterThanOrEqualTo<long>(id, 0);
-        Guard.IsBetweenOrEqualTo<ushort>(proficiencyLevel, 0, 10);
-        //Guard.IsGreaterThan<ushort>(rank, 0); //TODO: Enable again
-        Guard.IsNotNull(skillType);
-
-        Id = id;
-        ProficiencyLevel = proficiencyLevel;
-        Rank = rank;
-        SkillType = skillType;
-        SkillTypeId = skillType.Id;
-    }
 }
