@@ -122,7 +122,7 @@ public static class ProfileParseDtoMapper
             })
             .ToList();
 
-        skillSet.AddRange(skills);
+        skillSet.AddSkills(skills);
 
         return skillSet;
     }

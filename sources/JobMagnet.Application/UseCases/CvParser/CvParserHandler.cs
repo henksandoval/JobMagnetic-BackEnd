@@ -57,11 +57,6 @@ public class CvParserHandler(
             await ResolveAndAssignContactTypesAsync(profileEntity.Resume.ContactInfo, cancellationToken);
         }
 
-        if (profileEntity.SkillSet?.Skills is { Count: > 0 })
-        {
-            await ResolveAndAssignSkillsAsync(profileEntity.SkillSet.Skills, cancellationToken);
-        }
-
         return profileEntity;
     }
 
@@ -105,28 +100,6 @@ public class CvParserHandler(
             info.ContactTypeId = 0;
             info.ContactType = new ContactTypeEntity(rawContactType);
             info.ContactType.SetDefaultIcon();
-        }
-    }
-
-    private async Task ResolveAndAssignSkillsAsync(ICollection<SkillEntity>? skills, CancellationToken cancellationToken)
-    {
-        if (skills is null || skills.Count == 0)
-        {
-            return;
-        }
-
-        foreach (var skill in skills)
-        {
-            var rawSkill = skill.SkillType.Name;
-            if (string.IsNullOrWhiteSpace(rawSkill)) continue;
-
-            var resolvedType = await skillTypeResolver.ResolveAsync(rawSkill, cancellationToken);
-
-            if (resolvedType.HasValue)
-            {
-                continue;
-            }
-
         }
     }
 }

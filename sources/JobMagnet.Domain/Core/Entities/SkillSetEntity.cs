@@ -7,8 +7,10 @@ namespace JobMagnet.Domain.Core.Entities;
 
 public class SkillSetEntity : SoftDeletableEntity<long>
 {
+    private readonly HashSet<SkillEntity> _skills = [];
+
     public string? Overview { get; private set; }
-    public virtual ICollection<SkillEntity> Skills { get; private set; } = new HashSet<SkillEntity>();
+    public virtual IReadOnlyCollection<SkillEntity> Skills => _skills;
 
     [ForeignKey(nameof(Profile))] public long ProfileId { get; private set; }
 
@@ -28,20 +30,24 @@ public class SkillSetEntity : SoftDeletableEntity<long>
         ProfileId = profileId;
     }
 
-    public void AddSkills(List<SkillEntity> skills)
+    public void AddSkill(ushort proficiencyLevel, SkillType skillType)
     {
-        foreach (var skill in skills)
-            AddSkill(skill);
+        Guard.IsBetweenOrEqualTo<ushort>(proficiencyLevel, 0, 10);
+        Guard.IsNotNull(skillType);
+        Guard.IsNotNull(skillType);
+
+        var newSkill = new SkillEntity(proficiencyLevel, 0, this, skillType);
+        _skills.Add(newSkill);
     }
 
     public void AddSkill(SkillEntity skill)
     {
         Guard.IsNotNull(skill);
 
-        Skills.Add(skill);
+        _skills.Add(skill);
     }
 
-    public void AddRange(List<SkillEntity> skills)
+    public void AddSkills(List<SkillEntity> skills)
     {
         foreach (var skill in skills)
             AddSkill(skill);

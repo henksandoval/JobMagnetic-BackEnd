@@ -179,36 +179,18 @@ public class ProfileFactory(
     {
         var skillSetEntity = new SkillSetEntity(skillSetDto.Overview!, 0);
 
-        var skills = await BuildSkillCollectionAsync(skillSetDto.Skills, skillSetEntity, cancellationToken);
-
-        skillSetEntity.AddSkills(skills);
-
-        return skillSetEntity;
-    }
-
-    private async Task<List<SkillEntity>> BuildSkillCollectionAsync(List<SkillParseDto>? skillsDto,
-        SkillSetEntity skillSetEntity,
-        CancellationToken cancellationToken)
-    {
-        if (skillsDto is null || skillsDto.Count == 0)
+        foreach (var skill in skillSetDto.Skills.Where(skill => !string.IsNullOrWhiteSpace(skill.Name)))
         {
-            return [];
-        }
+            var resolvedType = await skillTypeResolverService.ResolveAsync(skill.Name!, cancellationToken); //TODO: Add method by resolving skills by batch
 
-        var skills = new List<SkillEntity>();
-
-        foreach (var dto in skillsDto.Where(skill => !string.IsNullOrWhiteSpace(skill.Name)))
-        {
-            var resolvedType = await skillTypeResolverService.ResolveAsync(dto.Name!, cancellationToken);
-
-            var skillType = resolvedType.HasValue ? resolvedType.Value : new SkillType(dto.Name!);
+            var skillType = resolvedType.HasValue ? resolvedType.Value : new SkillType(skill.Name!);
             if (!resolvedType.HasValue)
                 skillType.SetDefaultIcon();
 
-            skills.Add(new SkillEntity(dto.Level.GetValueOrDefault(), 0, skillSetEntity, skillType));
+            skillSetEntity.AddSkill(skill.Level.GetValueOrDefault(), skillType);
         }
 
-        return skills;
+        return skillSetEntity;
     }
 
     private static DateTime ToDateTimeOrDefault(DateOnly? date) => date?.ToDateTime(TimeOnly.MinValue) ?? default;
