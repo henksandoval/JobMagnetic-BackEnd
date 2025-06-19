@@ -126,7 +126,7 @@ public class ProfileFactoryShould
 
         // Then
         var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
-        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options.Excluding(ci => ci.Id));
+        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options.Excluding(entity => entity.Id));
     }
 
     [Fact(DisplayName = "Map contact info when the type is an alias")]
@@ -153,7 +153,7 @@ public class ProfileFactoryShould
 
         // Then
         var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
-        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options.Excluding(ci => ci.Id));
+        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options.Excluding(entity => entity.Id));
     }
 
     [Fact(DisplayName = "Map contact info when the type does not exist")]
@@ -181,7 +181,7 @@ public class ProfileFactoryShould
 
         // Then
         var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
-        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options.Excluding(ci => ci.Id));
+        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options.Excluding(entity => entity.Id));
     }
 
     [Fact(DisplayName = "Map multiple contact infos with mixed types")]
@@ -223,7 +223,7 @@ public class ProfileFactoryShould
         // Then
         var actualContactInfo = profile.Resume!.ContactInfo!.OrderBy(c => c.Value).ToList();
         var orderedExpected = expectedContactInfo.OrderBy(c => c.Value).ToList();
-        actualContactInfo.Should().BeEquivalentTo(orderedExpected, options => options.Excluding(ci => ci.Id));
+        actualContactInfo.Should().BeEquivalentTo(orderedExpected, options => options.Excluding(entity => entity.Id));
     }
     #endregion
 
@@ -308,6 +308,38 @@ public class ProfileFactoryShould
         // Then
         var currentSkills = profile.SkillSet!.Skills!.ToList();
         currentSkills.Should().BeEquivalentTo(expectedSkill, options => options
+            .Excluding(entity => entity.SkillSet)
+        );
+    }
+
+    [Fact(DisplayName = "Map skills when the type does not exist")]
+    public async Task MapSkills_WhenTypeDoesNotExist_CreatesAdHocTypeWithDefaultIcon()
+    {
+        // Given
+        var skills = new List<SkillRaw> { new ("TypeDontExist", "10") };
+
+        _skillTypeResolverMock
+            .Setup(r => r.ResolveAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Maybe.None);
+
+        var expectedAdHocType = new SkillType("TypeDontExist");
+        expectedAdHocType.SetDefaultIcon();
+
+        var expectedSkill = new List<SkillEntity> { new(10, 0, expectedAdHocType) };
+
+        var profileDto = _profileBuilder
+            .WithSkillSet()
+            .WithSkills(skills)
+            .Build()
+            .ToProfileParseDto();
+
+        // When
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+
+        // Then
+        var currentSkills = profile.SkillSet!.Skills!.ToList();
+        currentSkills.Should().BeEquivalentTo(expectedSkill, options => options
+            .Excluding(entity => entity.Id)
             .Excluding(entity => entity.SkillSet)
         );
     }
