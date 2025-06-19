@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 
 namespace JobMagnet.Domain.Core.Entities;
@@ -17,14 +18,18 @@ public class ContactInfoEntity : SoftDeletableEntity<long>
     private ContactInfoEntity() { }
 
     [SetsRequiredMembers]
-    public ContactInfoEntity(long id, string value, ContactTypeEntity contactType)
+    public ContactInfoEntity(long id, string value, ResumeEntity resume, ContactTypeEntity contactType)
     {
-        ArgumentException.ThrowIfNullOrEmpty(value);
-        ArgumentNullException.ThrowIfNull(contactType);
+        Guard.IsGreaterThanOrEqualTo(0, id);
+        Guard.IsNotNullOrEmpty(value);
+        Guard.IsNotNull(resume);
+        Guard.IsNotNull(contactType);
 
         Id = id;
         Value = value;
         ContactTypeId = contactType.Id;
         ContactType = contactType;
+        ResumeId = resume.Id;
+        Resume = resume;
     }
 }

@@ -15,7 +15,6 @@ public class ResumeCustomization : ICustomization
                 .With(x => x.IsDeleted, false)
                 .Without(x => x.DeletedAt)
                 .Without(x => x.DeletedBy)
-                .Without(x => x.ContactInfo)
                 .With(x => x.ProfileId, 0)
                 .Without(x => x.Profile)
                 .With(x => x.Id, 0)

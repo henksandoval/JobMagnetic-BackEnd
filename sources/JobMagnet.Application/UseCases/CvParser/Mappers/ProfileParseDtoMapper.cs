@@ -92,16 +92,7 @@ public static class ProfileParseDtoMapper
 
     private static List<ContactInfoEntity> MapContactInfo(ResumeParseDto src)
     {
-        if (src is { ContactInfo: null })
-        {
-            return [];
-        }
-
-        var result = src.ContactInfo.Select(c =>
-            new ContactInfoEntity(0, c.Value!, new ContactTypeEntity(c.ContactType)))
-            .ToList();
-
-        return result;
+        return [];
     }
 
     private static SkillSetEntity MapSkillSet(SkillSetParseDto src)

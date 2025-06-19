@@ -30,7 +30,13 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         fixture.Inject(_resume);
 
-        _resume.ContactInfo = fixture.CreateMany<ContactInfoEntity>(count).ToList();
+        var contactInfoCollection = fixture.CreateMany<ContactInfoEntity>(count).ToList();
+
+        foreach (var contactInfo in contactInfoCollection)
+        {
+            _resume.AddContactInfo(contactInfo.Value, contactInfo.ContactType);
+        }
+
         return this;
     }
 

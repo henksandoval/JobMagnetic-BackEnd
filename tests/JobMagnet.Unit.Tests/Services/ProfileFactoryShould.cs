@@ -119,14 +119,19 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var expectedContactInfo = new List<ContactInfoEntity> { new(0, "test@test.com", emailType) };
+        var resume = new ResumeEntity { Id = 0 };
+        resume.AddContactInfo("test@test.com", emailType);
+        var expectedContactInfo = resume.ContactInfo!.ToList();
 
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         // Then
         var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
-        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options.Excluding(entity => entity.Id));
+        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options
+            .Excluding(entity => entity.Id)
+            .Excluding(entity => entity.Resume)
+        );
     }
 
     [Fact(DisplayName = "Map contact info when the type is an alias")]
@@ -146,14 +151,19 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var expectedContactInfo = new List<ContactInfoEntity> { new(0, "+58 412457824", phoneType) };
+        var resume = new ResumeEntity { Id = 0 };
+        resume.AddContactInfo("+58 412457824", phoneType);
+        var expectedContactInfo = resume.ContactInfo!.ToList();
 
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         // Then
         var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
-        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options.Excluding(entity => entity.Id));
+        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options
+            .Excluding(entity => entity.Id)
+            .Excluding(entity => entity.Resume)
+        );
     }
 
     [Fact(DisplayName = "Map contact info when the type does not exist")]
@@ -173,15 +183,19 @@ public class ProfileFactoryShould
 
         var expectedAdHocType = new ContactTypeEntity("TypeDontExist");
         expectedAdHocType.SetDefaultIcon();
-
-        var expectedContactInfo = new List<ContactInfoEntity> { new(0, "Some value", expectedAdHocType) };
+        var resume = new ResumeEntity { Id = 0 };
+        resume.AddContactInfo("Some value", expectedAdHocType);
+        var expectedContactInfo = resume.ContactInfo!.ToList();
 
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         // Then
         var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
-        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options.Excluding(entity => entity.Id));
+        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options
+            .Excluding(entity => entity.Id)
+            .Excluding(entity => entity.Resume)
+        );
     }
 
     [Fact(DisplayName = "Map multiple contact infos with mixed types")]
@@ -211,11 +225,10 @@ public class ProfileFactoryShould
         var expectedAdHocType = new ContactTypeEntity("TypeDontExist");
         expectedAdHocType.SetDefaultIcon();
 
-        var expectedContactInfo = new List<ContactInfoEntity>
-        {
-            new(0, "test@test.com", emailType),
-            new(0, "Some value", expectedAdHocType)
-        };
+        var resume = new ResumeEntity { Id = 0 };
+        resume.AddContactInfo("Some value", expectedAdHocType);
+        resume.AddContactInfo("test@test.com", emailType);
+        var expectedContactInfo = resume.ContactInfo!.ToList();
 
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
@@ -223,7 +236,10 @@ public class ProfileFactoryShould
         // Then
         var actualContactInfo = profile.Resume!.ContactInfo!.OrderBy(c => c.Value).ToList();
         var orderedExpected = expectedContactInfo.OrderBy(c => c.Value).ToList();
-        actualContactInfo.Should().BeEquivalentTo(orderedExpected, options => options.Excluding(entity => entity.Id));
+        actualContactInfo.Should().BeEquivalentTo(orderedExpected, options => options
+            .Excluding(entity => entity.Id)
+            .Excluding(entity => entity.Resume)
+        );
     }
     #endregion
 

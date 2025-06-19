@@ -56,10 +56,11 @@ public class ProfileParseDtoMapperShould
             Title = dto.Resume.Title,
             Suffix = dto.Resume.Suffix,
             Address = dto.Resume.Address,
-            ContactInfo = dto.Resume.ContactInfo.Select(inf =>
-                new ContactInfoEntity(0, inf.Value!, new ContactTypeEntity(inf.ContactType))
-            ).ToList()
         };
+
+        foreach (var contactInfo in dto.Resume.ContactInfo)
+            expectedResume.AddContactInfo(contactInfo.Value!, new ContactTypeEntity(contactInfo.ContactType));
+
         entity.ShouldNotBeNull();
         entity.Resume.ShouldBeEquivalentTo(expectedResume);
     }

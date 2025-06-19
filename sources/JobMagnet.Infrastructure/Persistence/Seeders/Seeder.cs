@@ -101,15 +101,13 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
             Address = "123 Main St, Springfield, USA",
             AddedAt = DateTime.Now,
             AddedBy = Guid.Empty,
-            ContactInfo = new List<ContactInfoEntity>()
         };
 
         foreach (var (value, contactTypeName) in ContactInfoCollection.Data)
         {
             if (contactTypeMap.TryGetValue(contactTypeName, out var contactType))
             {
-                var contactInfo = new ContactInfoEntity(0, value, contactType);
-                resume.AddContactInfo(contactInfo);
+                resume.AddContactInfo(value, contactType);
             }
             else
             {

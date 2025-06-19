@@ -68,25 +68,7 @@ public class ProfileFactory(
             Title = resumeDto.Title!
         };
 
-        var contactInfo = await BuildContactInfoCollectionAsync(resumeDto.ContactInfo, cancellationToken);
-
-        resumeEntity.AddContactInfo(contactInfo);
-
-        return resumeEntity;
-    }
-
-    private async Task<List<ContactInfoEntity>> BuildContactInfoCollectionAsync(
-        List<ContactInfoParseDto>? contactInfoDtos,
-        CancellationToken cancellationToken)
-    {
-        if (contactInfoDtos is null || contactInfoDtos.Count == 0)
-        {
-            return [];
-        }
-
-        var contactInfoResult = new List<ContactInfoEntity>();
-
-        foreach (var dto in contactInfoDtos.Where(info => !string.IsNullOrWhiteSpace(info.ContactType)))
+        foreach (var dto in resumeDto.ContactInfo.Where(info => !string.IsNullOrWhiteSpace(info.ContactType)))
         {
             var resolvedType = await contactTypeResolver.ResolveAsync(dto.ContactType!, cancellationToken);
 
@@ -94,10 +76,10 @@ public class ProfileFactory(
             if (!resolvedType.HasValue)
                 contactType.SetDefaultIcon();
 
-            contactInfoResult.Add(new ContactInfoEntity(0, dto.Value!, contactType));
+            resumeEntity.AddContactInfo(dto.Value!, contactType);
         }
 
-        return contactInfoResult;
+        return resumeEntity;
     }
 
     private List<TalentEntity> BuildTalents(List<TalentParseDto>? talentDtos)

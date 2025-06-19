@@ -50,14 +50,7 @@ public class CvParserHandler(
         }
 
         var profileParse = rawProfile.Value.ToProfileParseDto();
-        var profileEntity = await profileFactory.CreateProfileFromDtoAsync(profileParse, cancellationToken);
-
-        if (profileEntity.Resume?.ContactInfo is { Count: > 0 })
-        {
-            await ResolveAndAssignContactTypesAsync(profileEntity.Resume.ContactInfo, cancellationToken);
-        }
-
-        return profileEntity;
+        return await profileFactory.CreateProfileFromDtoAsync(profileParse, cancellationToken);
     }
 
     private static string GetUserEmail(ProfileEntity profileEntity)
@@ -72,34 +65,5 @@ public class CvParserHandler(
     private static string GetProfileSlugUrl(ProfileEntity profileEntity)
     {
         return profileEntity.PublicProfileIdentifiers!.SingleOrDefault(x => x.Type == LinkType.Primary)!.ProfileSlugUrl;
-    }
-
-    private async Task ResolveAndAssignContactTypesAsync(
-        ICollection<ContactInfoEntity>? contactInfoCollection,
-        CancellationToken cancellationToken)
-    {
-        if (contactInfoCollection is null || contactInfoCollection.Count == 0)
-        {
-            return;
-        }
-
-        foreach (var info in contactInfoCollection)
-        {
-            var rawContactType = info.ContactType.Name;
-            if (string.IsNullOrWhiteSpace(rawContactType)) continue;
-
-            var resolvedType = await contactTypeResolver.ResolveAsync(rawContactType, cancellationToken);
-
-            if (resolvedType.HasValue)
-            {
-                info.ContactType = resolvedType.Value;
-                info.ContactTypeId = resolvedType.Value.Id;
-                continue;
-            }
-
-            info.ContactTypeId = 0;
-            info.ContactType = new ContactTypeEntity(rawContactType);
-            info.ContactType.SetDefaultIcon();
-        }
     }
 }

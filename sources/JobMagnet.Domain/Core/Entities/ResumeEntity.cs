@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 
 namespace JobMagnet.Domain.Core.Entities;
@@ -6,6 +7,8 @@ namespace JobMagnet.Domain.Core.Entities;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ResumeEntity : SoftDeletableEntity<long>
 {
+    private readonly HashSet<ContactInfoEntity> _contactInfo = [];
+
     public string JobTitle { get; set; }
     public string About { get; set; }
     public string Summary { get; set; }
@@ -17,18 +20,14 @@ public class ResumeEntity : SoftDeletableEntity<long>
     [ForeignKey(nameof(Profile))] public long ProfileId { get; set; }
 
     public virtual ProfileEntity Profile { get; set; }
-    public virtual ICollection<ContactInfoEntity>? ContactInfo { get; set; } = new HashSet<ContactInfoEntity>();
+    public virtual IReadOnlyCollection<ContactInfoEntity>? ContactInfo => _contactInfo;
 
-    public void AddContactInfo(IEnumerable<ContactInfoEntity> contactInfoCollection)
+    public void AddContactInfo(string value, ContactTypeEntity contactType)
     {
-        foreach (var contactInfo in contactInfoCollection)
-            ContactInfo?.Add(contactInfo);
-    }
+        Guard.IsNotNullOrEmpty(value);
+        Guard.IsNotNull(contactType);
 
-    public void AddContactInfo(ContactInfoEntity contactInfo)
-    {
-        ArgumentNullException.ThrowIfNull(contactInfo);
-
-        ContactInfo?.Add(contactInfo);
+        var contactInfo = new ContactInfoEntity(0, value, this, contactType);
+        _contactInfo?.Add(contactInfo);
     }
 }
