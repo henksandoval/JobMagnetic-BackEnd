@@ -59,7 +59,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         foreach (var skill in skills)
         {
-            _skillSet.AddSkill(skill);
+            _skillSet.AddSkill(skill.ProficiencyLevel, skill.SkillType);
         }
 
         return this;

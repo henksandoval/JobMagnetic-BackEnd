@@ -39,11 +39,4 @@ public class SkillSetEntity : SoftDeletableEntity<long>
         var newSkill = new SkillEntity(proficiencyLevel, 0, this, skillType);
         _skills.Add(newSkill);
     }
-
-    public void AddSkill(SkillEntity skill)
-    {
-        Guard.IsNotNull(skill);
-
-        _skills.Add(skill);
-    }
 }

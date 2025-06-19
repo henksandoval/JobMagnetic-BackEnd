@@ -134,8 +134,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         {
             if (skillTypeMap.TryGetValue(skillName, out var skillType))
             {
-                var skill = new SkillEntity(proficiencyLevel, rank, skillSet, skillType);
-                skillSet.AddSkill(skill);
+                skillSet.AddSkill(proficiencyLevel, skillType);
             }
             else
             {

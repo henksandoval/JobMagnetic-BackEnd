@@ -31,22 +31,6 @@ public static class SkillMapper
             .Map(dest => dest.SkillData, src => src);
     }
 
-    public static SkillSetEntity ToEntity(this SkillCommand command)
-    {
-        var entity = new SkillSetEntity(command.SkillData.Overview!, command.SkillData.ProfileId);
-
-        foreach (var skillDetailCommand in command.SkillData.Skills)
-        {
-            var skillDetail = new SkillEntity(skillDetailCommand.ProficiencyLevel,
-                skillDetailCommand.Rank,
-                entity,
-                null);
-            entity.AddSkill(skillDetail);
-        }
-
-        return entity;
-    }
-
     public static SkillResponse ToResponse(this SkillSetEntity setEntity)
     {
         return setEntity.Adapt<SkillResponse>();
