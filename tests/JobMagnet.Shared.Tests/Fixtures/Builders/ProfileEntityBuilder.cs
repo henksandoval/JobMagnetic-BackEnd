@@ -53,7 +53,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         foreach (var skill in skills)
         {
-            _skillSet.Add(skill);
+            _skillSet.AddSkill(skill);
         }
 
         return this;

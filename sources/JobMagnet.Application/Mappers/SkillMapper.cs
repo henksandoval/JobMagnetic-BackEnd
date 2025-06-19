@@ -41,7 +41,7 @@ public static class SkillMapper
                 skillDetailCommand.Rank,
                 entity,
                 null);
-            entity.Add(skillDetail);
+            entity.AddSkill(skillDetail);
         }
 
         return entity;

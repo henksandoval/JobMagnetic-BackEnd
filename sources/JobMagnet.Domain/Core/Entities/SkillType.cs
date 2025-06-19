@@ -30,6 +30,15 @@ public class SkillType : SoftDeletableEntity<int>
         IconUrl = iconUrl?.AbsoluteUri ?? string.Empty;
     }
 
+    [SetsRequiredMembers]
+    public SkillType(string name)
+    {
+        ArgumentNullException.ThrowIfNull(name);
+
+        Id = 0;
+        Name = name;
+    }
+
     public void AddAlias(string alias)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(alias);
@@ -59,6 +68,6 @@ public class SkillType : SoftDeletableEntity<int>
 
     public void SetDefaultIcon()
     {
-        IconUrl = null;
+        IconUrl = "https://jobmagnet.com/default-icon.png";
     }
 }

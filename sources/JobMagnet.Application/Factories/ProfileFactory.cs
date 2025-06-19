@@ -1,7 +1,6 @@
 using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 
 namespace JobMagnet.Application.Factories;
@@ -12,8 +11,8 @@ public interface IProfileFactory
 }
 
 public class ProfileFactory(
-    IQueryRepository<SkillType, int> skillTypeRepository,
-    IContactTypeResolverService contactTypeResolver) : IProfileFactory
+    IContactTypeResolverService contactTypeResolver,
+    ISkillTypeResolverService skillTypeResolverService) : IProfileFactory
 {
     public async Task<ProfileEntity> CreateProfileFromDtoAsync(ProfileParseDto profileDto,
         CancellationToken cancellationToken)
@@ -76,6 +75,31 @@ public class ProfileFactory(
         return resumeEntity;
     }
 
+    private async Task<List<ContactInfoEntity>> BuildContactInfoCollectionAsync(
+        List<ContactInfoParseDto>? contactInfoDtos,
+        CancellationToken cancellationToken)
+    {
+        if (contactInfoDtos is null || contactInfoDtos.Count == 0)
+        {
+            return [];
+        }
+
+        var contactInfoResult = new List<ContactInfoEntity>();
+
+        foreach (var dto in contactInfoDtos.Where(info => !string.IsNullOrWhiteSpace(info.ContactType)))
+        {
+            var resolvedType = await contactTypeResolver.ResolveAsync(dto.ContactType!, cancellationToken);
+
+            var contactType = resolvedType.HasValue ? resolvedType.Value : new ContactTypeEntity(dto.ContactType!);
+            if (!resolvedType.HasValue)
+                contactType.SetDefaultIcon();
+
+            contactInfoResult.Add(new ContactInfoEntity(0, dto.Value!, contactType));
+        }
+
+        return contactInfoResult;
+    }
+
     private List<TalentEntity> BuildTalents(List<TalentParseDto>? talentDtos)
     {
         if (talentDtos is null) return [];
@@ -113,31 +137,6 @@ public class ProfileFactory(
             Type = dto.Type!,
             UrlImage = dto.UrlImage!
         }).ToList();
-    }
-
-    private async Task<List<ContactInfoEntity>> BuildContactInfoCollectionAsync(
-        List<ContactInfoParseDto>? contactInfoDtos,
-        CancellationToken cancellationToken)
-    {
-        if (contactInfoDtos is null || contactInfoDtos.Count == 0)
-        {
-            return [];
-        }
-
-        var contactInfoResult = new List<ContactInfoEntity>();
-
-        foreach (var dto in contactInfoDtos.Where(info => !string.IsNullOrWhiteSpace(info.ContactType)))
-        {
-            var resolvedType = await contactTypeResolver.ResolveAsync(dto.ContactType!, cancellationToken);
-
-            var contactType = resolvedType.HasValue ? resolvedType.Value : new ContactTypeEntity(dto.ContactType!);
-            if (!resolvedType.HasValue)
-                contactType.SetDefaultIcon();
-
-            contactInfoResult.Add(new ContactInfoEntity(0, dto.Value!, contactType));
-        }
-
-        return contactInfoResult;
     }
 
     private List<EducationEntity> BuildEducationHistory(List<EducationParseDto>? educationDtos)
@@ -180,38 +179,36 @@ public class ProfileFactory(
     {
         var skillSetEntity = new SkillSetEntity(skillSetDto.Overview!, 0);
 
-        if (skillSetDto.Skills is null || !skillSetDto.Skills.Any())
-        {
-            return skillSetEntity;
-        }
+        var skills = await BuildSkillCollectionAsync(skillSetDto.Skills, skillSetEntity, cancellationToken);
 
-        var skillNames = skillSetDto.Skills.Select(s => s.Name!).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-
-        var existingSkillTypes = (await skillTypeRepository
-            .FindAsync(st => skillNames.Contains(st.Name), cancellationToken)
-            .ConfigureAwait(false))
-            .ToDictionary(s => s.Name);
-
-        var skills = skillSetDto.Skills.Select((skillDto, i) =>
-        {
-            if (!existingSkillTypes.TryGetValue(skillDto.Name!, out var skillType))
-            {
-                skillType = new SkillType(0, skillDto.Name!, new SkillCategory(""));
-                existingSkillTypes[skillDto.Name!] = skillType;
-            }
-
-            var rank = (ushort)(i + 1);
-            var level = Convert.ToUInt16(skillDto.Level);
-
-            return new SkillEntity(level, rank, skillSetEntity, skillType);
-        }).ToList();
-
-        foreach (var skill in skills)
-        {
-            skillSetEntity.Add(skill);
-        }
+        skillSetEntity.AddSkills(skills);
 
         return skillSetEntity;
+    }
+
+    private async Task<List<SkillEntity>> BuildSkillCollectionAsync(List<SkillParseDto>? skillsDto,
+        SkillSetEntity skillSetEntity,
+        CancellationToken cancellationToken)
+    {
+        if (skillsDto is null || skillsDto.Count == 0)
+        {
+            return [];
+        }
+
+        var skills = new List<SkillEntity>();
+
+        foreach (var dto in skillsDto.Where(skill => !string.IsNullOrWhiteSpace(skill.Name)))
+        {
+            var resolvedType = await skillTypeResolverService.ResolveAsync(dto.Name!, cancellationToken);
+
+            var skillType = resolvedType.HasValue ? resolvedType.Value : new SkillType(dto.Name!);
+            if (!resolvedType.HasValue)
+                skillType.SetDefaultIcon();
+
+            skills.Add(new SkillEntity(dto.Level.GetValueOrDefault(), 0, skillSetEntity, skillType));
+        }
+
+        return skills;
     }
 
     private static DateTime ToDateTimeOrDefault(DateOnly? date) => date?.ToDateTime(TimeOnly.MinValue) ?? default;

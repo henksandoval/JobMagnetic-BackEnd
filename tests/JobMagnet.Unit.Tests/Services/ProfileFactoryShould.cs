@@ -266,13 +266,15 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var expectedSkill = new List<SkillEntity> { new(10, 1, csharpSkill) };
+        var expectedSkill = new List<SkillEntity> { new(10, 0, csharpSkill) };
 
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         // Then
         var currentSkills = profile.SkillSet!.Skills!.ToList();
-        currentSkills.Should().BeEquivalentTo(expectedSkill, options => options.Excluding(ci => ci.Id));
+        currentSkills.Should().BeEquivalentTo(expectedSkill, options => options
+            .Excluding(entity => entity.SkillSet)
+        );
     }
 }

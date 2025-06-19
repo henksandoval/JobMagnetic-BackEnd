@@ -28,7 +28,13 @@ public class SkillSetEntity : SoftDeletableEntity<long>
         ProfileId = profileId;
     }
 
-    public void Add(SkillEntity skill)
+    public void AddSkills(List<SkillEntity> skills)
+    {
+        foreach (var skill in skills)
+            AddSkill(skill);
+    }
+
+    public void AddSkill(SkillEntity skill)
     {
         Guard.IsNotNull(skill);
 
@@ -38,6 +44,7 @@ public class SkillSetEntity : SoftDeletableEntity<long>
     public void AddRange(List<SkillEntity> skills)
     {
         foreach (var skill in skills)
-            Add(skill);
+            AddSkill(skill);
     }
+
 }
