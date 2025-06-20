@@ -9,7 +9,7 @@ namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class SkillCustomization : ICustomization
 {
-    private static readonly Faker Faker = new();
+    private static readonly Faker Faker = FixtureBuilder.Faker;
     private static readonly List<SkillType> Skills = [];
 
     static SkillCustomization()
@@ -39,22 +39,13 @@ public class SkillCustomization : ICustomization
                 .OmitAutoProperties()
         );
 
-        fixture.Customize<SkillSetEntity>(composer =>
-            composer
-                .FromFactory((long profileId) => BuildSkillSetEntity(profileId))
-                .OmitAutoProperties()
-        );
+        fixture.Register(() => new SkillSetEntity(Faker.Lorem.Sentence(), 0));
 
-        fixture.Register(() =>
-            new SkillSetRaw(
-                Faker.Lorem.Sentence(),
-                []
-            )
-        );
+        fixture.Register(() => new SkillSetRaw(Faker.Lorem.Sentence(),[]));
 
         fixture.Register(() =>
             new SkillRaw(
-                FixtureBuilder.Faker.PickRandom(StaticCustomizations.Skills),
+                Faker.PickRandom(StaticCustomizations.Skills),
                     Faker.Random.Int(1, 10).ToString()
             )
         );
@@ -68,11 +59,5 @@ public class SkillCustomization : ICustomization
         fixture.Customize<SkillBase>(composer =>
             composer.WithAutoProperties()
         );
-    }
-
-    private static SkillSetEntity BuildSkillSetEntity(long profileId)
-    {
-        var skillSet = new SkillSetEntity(Faker.Lorem.Paragraph(), profileId);
-        return skillSet;
     }
 }

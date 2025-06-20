@@ -14,6 +14,7 @@ using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Host.ViewModels.Profile;
+using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
@@ -229,6 +230,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     private async Task<ProfileEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
         var entity = new ProfileEntityBuilder(_fixture)
@@ -244,6 +246,9 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
             .WithSkills(SkillDetailsCount)
             .WithTestimonials(TestimonialsCount)
             .Build();
+
+        var skillTypesInGraph = entity.SkillSet!.Skills.Select(s => s.SkillType).Distinct();
+        dbContext.AttachRange(skillTypesInGraph);
 
         await commandRepository.CreateAsync(entity);
         await commandRepository.SaveChangesAsync();
