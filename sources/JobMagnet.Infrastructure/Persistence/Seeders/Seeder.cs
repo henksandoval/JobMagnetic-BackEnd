@@ -190,7 +190,6 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
         var allTypes = await context.ContactTypes
             .Include(ct => ct.Aliases)
-            .AsNoTracking()
             .ToListAsync(cancellationToken);
 
         foreach (var type in allTypes)
