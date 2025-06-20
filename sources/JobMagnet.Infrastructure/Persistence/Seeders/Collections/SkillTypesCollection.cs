@@ -42,14 +42,4 @@ public record SkillTypesCollection
 
         return skills.ToImmutableList();
     }
-
-
-
-    public record SkillProperties(
-        string Name,
-        string IconUrl,
-        ushort ProficiencyLevel,
-        string Category,
-        ushort Rank
-    );
 }

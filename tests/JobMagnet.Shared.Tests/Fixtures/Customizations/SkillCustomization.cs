@@ -3,18 +3,39 @@ using Bogus;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class SkillCustomization : ICustomization
 {
     private static readonly Faker Faker = new();
+    private static readonly List<SkillType> Skills = [];
+
+    static SkillCustomization()
+    {
+        var skillsFromCollection = new SkillTypesCollection().GetSkillTypesWithAliases();
+
+        var currentId = 1;
+
+        foreach (var skill in skillsFromCollection)
+        {
+            var testSkill = new SkillType(currentId++, skill.Name, skill.Category, new Uri(skill.IconUrl));
+
+            foreach (var alias in skill.Aliases)
+            {
+                testSkill.AddAlias(alias.Alias);
+            }
+
+            Skills.Add(testSkill);
+        }
+    }
 
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<SkillEntity>(composer =>
+        fixture.Customize<SkillType>(composer =>
             composer
-                .FromFactory((SkillSetEntity parentSkillSet) => BuildSkillEntity(parentSkillSet))
+                .FromFactory(() => Faker.PickRandom(Skills))
                 .OmitAutoProperties()
         );
 
@@ -53,31 +74,5 @@ public class SkillCustomization : ICustomization
     {
         var skillSet = new SkillSetEntity(Faker.Lorem.Paragraph(), profileId);
         return skillSet;
-    }
-
-    private static SkillEntity BuildSkillEntity(SkillSetEntity parentSkillSet)
-    {
-        var randomSkillTypeId = Faker.Random.Short(1, 5);
-
-        var (type, uri, categoryName) = GenerateSkillTypes(randomSkillTypeId);
-
-        var category = new SkillCategory(categoryName);
-        var skillType = new SkillType(0, type, category, new Uri(uri));
-        parentSkillSet.AddSkill((ushort)Faker.Random.Number(1, 10), skillType);
-
-        return parentSkillSet.Skills.Last();
-    }
-
-    private static (string type, string uri, string category) GenerateSkillTypes(short contactTypeId)
-    {
-        return contactTypeId switch
-        {
-            1 => ("HTML", "https://cdn.simpleicons.org/html5", "Software Development"),
-            2 => ("CSS", "https://cdn.simpleicons.org/css3", "Software Development"),
-            3 => ("JavaScript", "https://cdn.simpleicons.org/javascript", "Software Development"),
-            4 => ("C#", "https://cdn.simpleicons.org/dotnet", "Software Development"),
-            5 => ("TS", "https://cdn.simpleicons.org/typescript", "Software Development"),
-            _ => throw new ArgumentOutOfRangeException(nameof(contactTypeId), contactTypeId, null)
-        };
     }
 }

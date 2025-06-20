@@ -47,6 +47,13 @@ public class SkillSetEntity : SoftDeletableEntity<long>
         _skills.Add(newSkill);
     }
 
+    public bool SkillExists(string skillType)
+    {
+        Guard.IsNotNullOrEmpty(skillType);
+
+        return _skills.Any(s => s.SkillType.Aliases.Any(alias => string.Equals(alias.Alias, skillType, StringComparison.InvariantCulture)));
+    }
+
     public void ReorderSkills(List<long> orderedSkillIds)
     {
         Guard.IsNotNull(orderedSkillIds);

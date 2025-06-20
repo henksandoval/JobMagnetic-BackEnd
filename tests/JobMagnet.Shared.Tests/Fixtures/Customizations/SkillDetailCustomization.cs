@@ -9,12 +9,6 @@ public class SkillDetailCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<SkillEntity>(composer =>
-            composer
-                .Without(x => x.Id)
-                .Do(ApplyCommonProperties)
-                .OmitAutoProperties());
-
         fixture.Customize<SkillItemBase>(composer =>
             composer
                 .Do(ApplyCommonProperties)

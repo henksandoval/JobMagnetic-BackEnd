@@ -53,13 +53,19 @@ public class ProfileEntityBuilder(IFixture fixture)
             throw new InvalidOperationException("Cannot add skills without a skill set. Call WithSkillSet() first.");
         }
 
-        fixture.Inject(_skillSet);
+        var random = new Random();
 
-        var skills = fixture.CreateMany<SkillEntity>(count);
-
-        foreach (var skill in skills)
+        while (_skillSet.Skills.Count < count)
         {
-            _skillSet.AddSkill(skill.ProficiencyLevel, skill.SkillType);
+            var skillType = fixture.Create<SkillType>();
+            var proficiencyLevel = (ushort) random.Next(1, 10);
+
+            if (_skillSet.SkillExists(skillType.Name))
+            {
+                continue;
+            }
+
+            _skillSet.AddSkill(proficiencyLevel, skillType);
         }
 
         return this;
