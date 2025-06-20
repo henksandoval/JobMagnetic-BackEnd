@@ -33,8 +33,8 @@ public class ProfileCustomization : ICustomization
 
         fixture.Customize<ProfileRaw>(composer =>
             composer
-                .With(x => x.FirstName, "FixtureBuilder.Faker.Name.FirstName()")
-                .With(x => x.LastName, "FixtureBuilder.Faker.Name.LastName()")
+                .With(x => x.FirstName, FixtureBuilder.Faker.Name.FirstName())
+                .With(x => x.LastName, FixtureBuilder.Faker.Name.LastName())
                 .With(x => x.BirthDate, DateOnly.FromDateTime(FixtureBuilder.Faker.Date.Past(30)).ToShortDateString())
                 .With(x => x.ProfileImageUrl, FixtureBuilder.Faker.Image.PicsumUrl())
                 .With(x => x.MiddleName, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.FirstName()))
