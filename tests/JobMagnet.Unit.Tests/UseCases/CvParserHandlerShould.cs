@@ -7,6 +7,7 @@ using JobMagnet.Application.Factories;
 using JobMagnet.Application.Services;
 using JobMagnet.Application.UseCases.CvParser;
 using JobMagnet.Application.UseCases.CvParser.Commands;
+using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Domain.Core.Entities;
@@ -44,9 +45,7 @@ public class CvParserHandlerShould
             _rawCvParserMock.Object,
             _profileCommandRepositoryMock.Object,
             _slugGeneratorMock.Object,
-            _profileFactoryMock.Object,
-            _contactTypeResolverMock.Object,
-            _skillTypeResolverMock.Object);
+            _profileFactoryMock.Object);
     }
 
     [Fact(DisplayName = "Resolve existing contact types, create new ones, and enrich profile within transaction")]
@@ -62,10 +61,22 @@ public class CvParserHandlerShould
             .WithSkillSet()
             .Build();
 
+        var contactInfoEmail = contactInfoRaw.FirstOrDefault(c => c.ContactType == "EMAIL");
+        var resumeEntity = new ResumeEntity { Id = 0 };
+        var contactType = new ContactTypeEntity(contactInfoEmail!.ContactType);
+        resumeEntity.AddContactInfo(contactInfoEmail.Value!, contactType);
+
+        var profileEntity = new ProfileEntity
+        {
+            Id = 0,
+            Resume = resumeEntity,
+        };
+
         _rawCvParserMock.Setup(p => p.ParseAsync(It.IsAny<Stream>()))
             .ReturnsAsync(profileRaw);
-
         _slugGeneratorMock.Setup(g => g.GenerateProfileSlug(It.IsAny<ProfileEntity>())).Returns("test-slug");
+        _profileFactoryMock.Setup(p => p.CreateProfileFromDtoAsync(It.IsAny<ProfileParseDto>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(profileEntity);
 
         // WHEN
         var result = await _handler.ParseAsync(new CvParserCommand(new MemoryStream(), "fileName", MediaTypeNames.Text.Plain));

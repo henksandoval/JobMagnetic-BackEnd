@@ -21,9 +21,7 @@ public class CvParserHandler(
     IRawCvParser cvParser,
     ICommandRepository<ProfileEntity> profileRepository,
     IProfileSlugGenerator slugGenerator,
-    IProfileFactory profileFactory,
-    IContactTypeResolverService contactTypeResolver,
-    ISkillTypeResolverService skillTypeResolver)
+    IProfileFactory profileFactory)
     : ICvParserHandler
 {
     public async Task<CreateProfileResponse> ParseAsync(CvParserCommand command, CancellationToken cancellationToken = default)
