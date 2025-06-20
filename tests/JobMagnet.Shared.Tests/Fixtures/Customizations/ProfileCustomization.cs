@@ -29,6 +29,7 @@ public class ProfileCustomization : ICustomization
                 .Without(x => x.SkillSet)
                 .Without(x => x.Testimonials)
                 .Without(x => x.PublicProfileIdentifiers)
+                .OmitAutoProperties()
         );
 
         fixture.Customize<ProfileRaw>(composer =>
@@ -46,6 +47,7 @@ public class ProfileCustomization : ICustomization
                 .With(x => x.Talents, () => [])
                 .With(x => x.PortfolioGallery, () => [])
                 .With(x => x.Testimonials, () => [])
+                .OmitAutoProperties()
         );
     }
 }
