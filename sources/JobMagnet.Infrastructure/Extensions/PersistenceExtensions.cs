@@ -29,6 +29,8 @@ internal static class PersistenceExtensions
             .AddTransient<IQueryRepository<ContactTypeEntity, int>, Repository<ContactTypeEntity, int>>()
             .AddTransient<IQueryRepository<ContactTypeAliasEntity, int>, Repository<ContactTypeAliasEntity, int>>()
             .AddTransient<IQueryRepository<TestimonialEntity, long>, Repository<TestimonialEntity, long>>()
+            .AddTransient<IQueryRepository<SkillType, int>, Repository<SkillType, int>>()
+            .AddTransient<IQueryRepository<SkillTypeAlias, int>, Repository<SkillTypeAlias, int>>()
             .AddTransient<IQueryRepository<PortfolioGalleryEntity, long>,
                 Repository<PortfolioGalleryEntity, long>>()
             .AddTransient<IQueryRepository<SkillEntity, long>, Repository<SkillEntity, long>>()
