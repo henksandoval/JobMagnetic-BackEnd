@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
@@ -48,24 +49,28 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithSkills(int count = 5)
     {
+        if (count > new SkillTypesCollection().Count)
+        {
+            throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available skill types.");
+        }
+
         if (_skillSet == null)
         {
             throw new InvalidOperationException("Cannot add skills without a skill set. Call WithSkillSet() first.");
         }
 
         var random = new Random();
+        var addedSkillTypes = new HashSet<int>();
 
         while (_skillSet.Skills.Count < count)
         {
             var skillType = fixture.Create<SkillType>();
             var proficiencyLevel = (ushort) random.Next(1, 10);
 
-            if (_skillSet.SkillExists(skillType.Name))
+            if (addedSkillTypes.Add(skillType.Id))
             {
-                continue;
+                _skillSet.AddSkill(proficiencyLevel, skillType);
             }
-
-            _skillSet.AddSkill(proficiencyLevel, skillType);
         }
 
         return this;

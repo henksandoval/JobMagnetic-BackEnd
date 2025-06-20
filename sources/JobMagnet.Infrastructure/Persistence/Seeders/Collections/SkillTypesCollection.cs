@@ -23,6 +23,8 @@ public record SkillTypesCollection
         new("Docker", "https://cdn.simpleicons.org/docker", "Software Development", []),
     ];
 
+    public int Count => _values.Count;
+
     public ImmutableList<SkillType> GetSkillTypesWithAliases()
     {
         var skills = new List<SkillType>();
