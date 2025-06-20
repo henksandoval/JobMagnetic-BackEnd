@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using Bogus;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
@@ -15,6 +16,8 @@ public class ProfileEntityBuilder(IFixture fixture)
     private List<PortfolioGalleryEntity> _portfolio = [];
     private List<TalentEntity> _talents = [];
     private List<TestimonialEntity> _testimonials = [];
+    private static readonly Faker Faker = FixtureBuilder.Faker;
+
 
     public ProfileEntityBuilder WithResume()
     {
@@ -24,18 +27,22 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithContactInfo(int count = 5)
     {
+        if (count > new ContactTypesCollection().Count)
+        {
+            throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available contact types.");
+        }
+
         if (_resume == null)
         {
             throw new InvalidOperationException("Cannot add contact info without a resume. Call WithResume() first.");
         }
 
-        fixture.Inject(_resume);
-
-        var contactInfoCollection = fixture.CreateMany<ContactInfoEntity>(count).ToList();
-
-        foreach (var contactInfo in contactInfoCollection)
+        while (_resume.ContactInfo?.Count < count)
         {
-            _resume.AddContactInfo(contactInfo.Value, contactInfo.ContactType);
+            var contactType = fixture.Create<ContactTypeEntity>();
+            var value = GenerateContactDetails(contactType.Name);
+
+            _resume.AddContactInfo(value, contactType);
         }
 
         return this;
@@ -190,5 +197,18 @@ public class ProfileEntityBuilder(IFixture fixture)
         }
 
         return profile;
+    }
+
+    private static string GenerateContactDetails(string contactType)
+    {
+        return contactType switch
+        {
+            "Email" => Faker.Person.Email,
+            "Phone" => Faker.Phone.PhoneNumber(),
+            "LinkedIn" => $"https://linkedin.com/in/{Faker.Internet.UserName()}",
+            "GitHub" => $"https://github.com/{Faker.Internet.UserName()}",
+            "Website" => Faker.Internet.Url(),
+            _ => Faker.Internet.DomainName()
+        };
     }
 }

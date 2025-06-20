@@ -1,7 +1,6 @@
 using AutoFixture;
 using Bogus;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
-using JobMagnet.Domain.Core.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
@@ -11,25 +10,10 @@ public class ContactInfoCustomization : ICustomization
 
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<ContactInfoEntity>(composer =>
-            composer
-                .FromFactory((ResumeEntity resume) => BuildContactInfoEntity(resume))
-                .OmitAutoProperties());
-
         fixture.Customize<ContactInfoRaw>(composer =>
             composer
                 .FromFactory(BuildContactInfoRaw)
                 .OmitAutoProperties());
-    }
-
-    private static ContactInfoEntity BuildContactInfoEntity(ResumeEntity resume)
-    {
-        var randomContactTypeId = Faker.Random.Short(1, 6);
-
-        var (typeName, value) = GenerateContactDetails(randomContactTypeId);
-
-        resume.AddContactInfo(value, new ContactTypeEntity(typeName));
-        return resume.ContactInfo!.FirstOrDefault()!;
     }
 
     private static ContactInfoRaw BuildContactInfoRaw()

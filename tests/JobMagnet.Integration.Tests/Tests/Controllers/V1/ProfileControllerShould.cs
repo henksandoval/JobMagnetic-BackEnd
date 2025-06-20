@@ -248,7 +248,9 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
             .Build();
 
         var skillTypesInGraph = entity.SkillSet!.Skills.Select(s => s.SkillType).Distinct();
+        var contactTypesInGraph = entity.Resume!.ContactInfo!.Select(ci => ci.ContactType).Distinct();
         dbContext.AttachRange(skillTypesInGraph);
+        dbContext.AttachRange(contactTypesInGraph);
 
         await commandRepository.CreateAsync(entity);
         await commandRepository.SaveChangesAsync();

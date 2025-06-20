@@ -30,6 +30,8 @@ public record ContactTypesCollection
         ("Vimeo", "bx bxl-vimeo", [])
     ];
 
+    public int Count => _values.Count;
+
     public ImmutableList<ContactTypeEntity> GetContactTypesWithAliases()
     {
         var contactTypes = new List<ContactTypeEntity>();
