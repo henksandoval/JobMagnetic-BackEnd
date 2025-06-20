@@ -10,32 +10,12 @@ namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 public class SkillCustomization : ICustomization
 {
     private static readonly Faker Faker = FixtureBuilder.Faker;
-    private static readonly List<SkillType> Skills = [];
-
-    static SkillCustomization()
-    {
-        var skillsFromCollection = new SkillTypesCollection().GetSkillTypesWithAliases();
-
-        var currentId = 1;
-
-        foreach (var skill in skillsFromCollection)
-        {
-            var testSkill = new SkillType(currentId++, skill.Name, skill.Category, new Uri(skill.IconUrl));
-
-            foreach (var alias in skill.Aliases)
-            {
-                testSkill.AddAlias(alias.Alias);
-            }
-
-            Skills.Add(testSkill);
-        }
-    }
 
     public void Customize(IFixture fixture)
     {
         fixture.Customize<SkillType>(composer =>
             composer
-                .FromFactory(() => Faker.PickRandom(Skills))
+                .FromFactory(() => Faker.PickRandom(new SkillTypesCollection().GetSkillTypesWithAliases().ToList()))
                 .OmitAutoProperties()
         );
 

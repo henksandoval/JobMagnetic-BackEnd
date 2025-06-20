@@ -36,7 +36,7 @@ public class SkillSetEntity : SoftDeletableEntity<long>
         Guard.IsBetweenOrEqualTo<ushort>(proficiencyLevel, 0, 10);
         Guard.IsNotNull(skillType);
 
-        if (_skills.Any(s => s.SkillTypeId == skillType.Id))
+        if (_skills.Any(s => s.SkillTypeId > 0 && s.SkillTypeId == skillType.Id))
         {
             throw new JobMagnetDomainException($"Skill of type {skillType.Name} already exists in this skill set.");
         }
