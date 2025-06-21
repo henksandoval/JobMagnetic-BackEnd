@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 
-namespace JobMagnet.Domain.Core.Entities;
+namespace JobMagnet.Domain.Core.Entities.Skills;
 
 public class SkillEntity : TrackableEntity<long>
 {

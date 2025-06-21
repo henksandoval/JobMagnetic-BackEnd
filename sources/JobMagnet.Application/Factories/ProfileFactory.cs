@@ -1,6 +1,6 @@
 using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
-using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Domain.Services;
 
 namespace JobMagnet.Application.Factories;

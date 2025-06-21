@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Core.Enums;
-using JobMagnet.Domain.Services;
 
 namespace JobMagnet.Domain.Core.Entities;
 

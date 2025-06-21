@@ -1,10 +1,8 @@
 using System.Linq.Expressions;
 using AutoFixture;
 using FluentAssertions;
-using JobMagnet.Application.Contracts.Commands.Skill;
-using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Mappers;
-using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 

@@ -1,5 +1,4 @@
 using JobMagnet.Application.Factories;
-using JobMagnet.Application.Services;
 using JobMagnet.Application.UseCases.CvParser;
 using JobMagnet.Domain.Extensions;
 using Microsoft.Extensions.DependencyInjection;

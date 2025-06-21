@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using CSharpFunctionalExtensions;
 using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Exceptions;
-using JobMagnet.Domain.Ports.Repositories.Base;
 
 namespace JobMagnet.Domain.Core.Entities;
 

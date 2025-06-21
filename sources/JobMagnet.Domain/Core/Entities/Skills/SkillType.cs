@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Exceptions;
 
-namespace JobMagnet.Domain.Core.Entities;
+namespace JobMagnet.Domain.Core.Entities.Skills;
 
 public class SkillType : SoftDeletableEntity<int>
 {

@@ -1,4 +1,5 @@
 ﻿using JobMagnet.Domain.Core.Entities.Base;
+using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Domain.Services;
 

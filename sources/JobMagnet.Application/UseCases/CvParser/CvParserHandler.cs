@@ -1,6 +1,5 @@
 using JobMagnet.Application.Exceptions;
 using JobMagnet.Application.Factories;
-using JobMagnet.Application.Services;
 using JobMagnet.Application.UseCases.CvParser.Commands;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Application.UseCases.CvParser.Ports;

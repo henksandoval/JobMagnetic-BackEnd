@@ -1,10 +1,8 @@
-using System.Linq.Expressions;
 using System.Net.Mime;
 using AutoFixture;
 using CSharpFunctionalExtensions;
 using FluentAssertions;
 using JobMagnet.Application.Factories;
-using JobMagnet.Application.Services;
 using JobMagnet.Application.UseCases.CvParser;
 using JobMagnet.Application.UseCases.CvParser.Commands;
 using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;

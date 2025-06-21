@@ -1,5 +1,5 @@
-﻿using System.Linq.Expressions;
-using JobMagnet.Domain.Core.Entities;
+﻿using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Host.ViewModels.Profile;
 using JobMagnet.Shared.Utils;
 using Mapster;

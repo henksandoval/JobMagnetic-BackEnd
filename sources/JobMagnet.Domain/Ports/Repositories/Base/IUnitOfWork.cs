@@ -1,4 +1,5 @@
 using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Core.Entities.Skills;
 
 namespace JobMagnet.Domain.Ports.Repositories.Base;
 
