@@ -9,10 +9,10 @@ public class ResumeEntity : SoftDeletableEntity<long>
 {
     private readonly HashSet<ContactInfoEntity> _contactInfo = [];
 
-    public string JobTitle { get; set; }
-    public string About { get; set; }
-    public string Summary { get; set; }
-    public string Overview { get; set; }
+    public string? JobTitle { get; set; }
+    public string? About { get; set; }
+    public string? Summary { get; set; }
+    public string? Overview { get; set; }
     public string? Title { get; set; }
     public string? Suffix { get; set; }
     public string? Address { get; set; }
