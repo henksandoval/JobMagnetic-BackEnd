@@ -1,5 +1,5 @@
 ﻿using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Core.Entities.ContactInfo;
+using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Infrastructure.Exceptions;
@@ -185,10 +185,10 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         foreach (var testimonial in testimonials) profile.AddTestimonial(testimonial);
     }
 
-    private async Task<Dictionary<string, ContactTypeEntity>> BuildContactTypesMapAsync(
+    private async Task<Dictionary<string, ContactType>> BuildContactTypesMapAsync(
         CancellationToken cancellationToken)
     {
-        var map = new Dictionary<string, ContactTypeEntity>(StringComparer.OrdinalIgnoreCase);
+        var map = new Dictionary<string, ContactType>(StringComparer.OrdinalIgnoreCase);
 
         var allTypes = await context.ContactTypes
             .Include(ct => ct.Aliases)

@@ -2,23 +2,23 @@
 using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Exceptions;
 
-namespace JobMagnet.Domain.Core.Entities.ContactInfo;
+namespace JobMagnet.Domain.Core.Entities.Contact;
 
-public class ContactTypeEntity : SoftDeletableEntity<int>
+public class ContactType : SoftDeletableEntity<int>
 {
     public string Name { get; private set; }
     public string? IconClass { get; private set; }
     public string? IconUrl { get; private set; }
-    public virtual IReadOnlyCollection<ContactTypeAliasEntity> Aliases => _aliases.AsReadOnly();
+    public virtual IReadOnlyCollection<ContactTypeAlias> Aliases => _aliases.AsReadOnly();
 
-    private readonly List<ContactTypeAliasEntity> _aliases = [];
+    private readonly List<ContactTypeAlias> _aliases = [];
 
-    private ContactTypeEntity()
+    private ContactType()
     {
     }
 
     [SetsRequiredMembers]
-    public ContactTypeEntity(int id, string name, string? iconClass = null, Uri? iconUrl = null)
+    public ContactType(int id, string name, string? iconClass = null, Uri? iconUrl = null)
     {
         ArgumentNullException.ThrowIfNull(name);
 
@@ -30,7 +30,7 @@ public class ContactTypeEntity : SoftDeletableEntity<int>
     }
 
     [SetsRequiredMembers]
-    public ContactTypeEntity(string? name)
+    public ContactType(string? name)
     {
         Name = name ?? string.Empty;
     }
@@ -44,7 +44,7 @@ public class ContactTypeEntity : SoftDeletableEntity<int>
             throw new JobMagnetDomainException($"The alias ({alias}) already exists.");
         }
 
-        var newAlias = new ContactTypeAliasEntity(alias, this);
+        var newAlias = new ContactTypeAlias(alias, this);
         _aliases.Add(newAlias);
     }
 
@@ -70,7 +70,7 @@ public class ContactTypeEntity : SoftDeletableEntity<int>
         if (string.IsNullOrWhiteSpace(IconClass) && string.IsNullOrWhiteSpace(IconUrl))
         {
             throw new JobMagnetDomainException(
-                $"A {nameof(ContactTypeEntity)} must have either an {nameof(IconClass)} or an {nameof(IconUrl)}. Both cannot be empty.");
+                $"A {nameof(ContactType)} must have either an {nameof(IconClass)} or an {nameof(IconUrl)}. Both cannot be empty.");
         }
     }
 

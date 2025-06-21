@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobMagnet.Infrastructure.Migrations
 {
     [DbContext(typeof(JobMagnetDbContext))]
-    [Migration("20250621210734_InitialDb")]
+    [Migration("20250621211323_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace JobMagnet.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfo.ContactInfoEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Contact.ContactInfo", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -70,53 +70,10 @@ namespace JobMagnet.Infrastructure.Migrations
 
                     b.HasIndex("ResumeId");
 
-                    b.ToTable("ContactInfo", (string)null);
+                    b.ToTable("ContactInfo");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfo.ContactTypeAliasEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AddedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("AddedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Alias")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ContactTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("LastModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContactTypeId");
-
-                    b.ToTable("ContactAliases");
-                });
-
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfo.ContactTypeEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Contact.ContactType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -157,7 +114,50 @@ namespace JobMagnet.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ContactTypes", (string)null);
+                    b.ToTable("ContactTypes");
+                });
+
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Contact.ContactTypeAlias", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("AddedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ContactTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContactTypeId");
+
+                    b.ToTable("ContactAliases");
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.EducationEntity", b =>
@@ -1009,9 +1009,9 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.ToTable("WorkResponsibilities", (string)null);
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfo.ContactInfoEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Contact.ContactInfo", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ContactInfo.ContactTypeEntity", "ContactType")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.Contact.ContactType", "ContactType")
                         .WithMany()
                         .HasForeignKey("ContactTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1026,9 +1026,9 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Navigation("ContactType");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfo.ContactTypeAliasEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Contact.ContactTypeAlias", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ContactInfo.ContactTypeEntity", "ContactType")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.Contact.ContactType", "ContactType")
                         .WithMany("Aliases")
                         .HasForeignKey("ContactTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1204,7 +1204,7 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Navigation("WorkExperience");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfo.ContactTypeEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Contact.ContactType", b =>
                 {
                     b.Navigation("Aliases");
                 });

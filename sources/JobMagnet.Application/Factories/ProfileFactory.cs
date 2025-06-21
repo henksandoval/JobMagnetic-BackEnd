@@ -1,6 +1,6 @@
 using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Core.Entities.ContactInfo;
+using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Domain.Services;
 
@@ -73,7 +73,7 @@ public class ProfileFactory(
         {
             var resolvedType = await contactTypeResolver.ResolveAsync(dto.ContactType!, cancellationToken);
 
-            var contactType = resolvedType.HasValue ? resolvedType.Value : new ContactTypeEntity(dto.ContactType!);
+            var contactType = resolvedType.HasValue ? resolvedType.Value : new ContactType(dto.ContactType!);
             if (!resolvedType.HasValue)
                 contactType.SetDefaultIcon();
 

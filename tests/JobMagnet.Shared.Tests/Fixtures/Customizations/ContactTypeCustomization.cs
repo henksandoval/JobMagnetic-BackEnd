@@ -1,7 +1,7 @@
 using AutoFixture;
 using Bogus;
 using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Core.Entities.ContactInfo;
+using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
@@ -12,7 +12,7 @@ public class ContactTypeCustomization : ICustomization
 
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<ContactTypeEntity>(composer =>
+        fixture.Customize<ContactType>(composer =>
             composer
                 .FromFactory(() => Faker.PickRandom(new ContactTypesCollection().GetContactTypesWithAliases().ToList()))
                 .OmitAutoProperties());

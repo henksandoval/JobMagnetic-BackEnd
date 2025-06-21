@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Core.Entities.ContactInfo;
+using JobMagnet.Domain.Core.Entities.Contact;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
@@ -33,13 +33,13 @@ public record ContactTypesCollection
 
     public int Count => _values.Count;
 
-    public ImmutableList<ContactTypeEntity> GetContactTypesWithAliases()
+    public ImmutableList<ContactType> GetContactTypesWithAliases()
     {
-        var contactTypes = new List<ContactTypeEntity>();
+        var contactTypes = new List<ContactType>();
 
         foreach (var (name, iconClass, aliases) in _values)
         {
-            var contactType = new ContactTypeEntity(0, name, iconClass);
+            var contactType = new ContactType(0, name, iconClass);
 
             foreach (var alias in aliases)
             {

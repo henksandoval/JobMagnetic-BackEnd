@@ -1,21 +1,21 @@
 using CSharpFunctionalExtensions;
 using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Core.Entities.ContactInfo;
+using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Domain.Ports.Repositories.Base;
 
 namespace JobMagnet.Domain.Services;
 
 public interface IContactTypeResolverService
 {
-    Task<Maybe<ContactTypeEntity>> ResolveAsync(string nameOrAlias, CancellationToken cancellationToken);
+    Task<Maybe<ContactType>> ResolveAsync(string nameOrAlias, CancellationToken cancellationToken);
 }
 
 public class ContactTypeResolverService(
-    IQueryRepository<ContactTypeEntity, int> contactTypeRepository,
-    IQueryRepository<ContactTypeAliasEntity, int> contactTypeAliasRepository)
+    IQueryRepository<ContactType, int> contactTypeRepository,
+    IQueryRepository<ContactTypeAlias, int> contactTypeAliasRepository)
     : IContactTypeResolverService
 {
-    public async Task<Maybe<ContactTypeEntity>> ResolveAsync(string nameOrAlias, CancellationToken cancellationToken)
+    public async Task<Maybe<ContactType>> ResolveAsync(string nameOrAlias, CancellationToken cancellationToken)
     {
         var contactType = await contactTypeRepository
             .FirstOrDefaultAsync(c =>

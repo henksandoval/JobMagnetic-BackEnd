@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using Bogus;
 using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Core.Entities.ContactInfo;
+using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
@@ -41,7 +41,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         while (_resume.ContactInfo?.Count < count)
         {
-            var contactType = fixture.Create<ContactTypeEntity>();
+            var contactType = fixture.Create<ContactType>();
             var value = GenerateContactDetails(contactType.Name);
 
             _resume.AddContactInfo(value, contactType);

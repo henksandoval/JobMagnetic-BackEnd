@@ -1,5 +1,5 @@
 using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Core.Entities.ContactInfo;
+using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
@@ -28,8 +28,8 @@ internal static class PersistenceExtensions
         return services
             .AddTransient<IQueryRepository<ResumeEntity, long>, Repository<ResumeEntity, long>>()
             .AddTransient<IQueryRepository<PublicProfileIdentifierEntity, long>, Repository<PublicProfileIdentifierEntity, long>>()
-            .AddTransient<IQueryRepository<ContactTypeEntity, int>, Repository<ContactTypeEntity, int>>()
-            .AddTransient<IQueryRepository<ContactTypeAliasEntity, int>, Repository<ContactTypeAliasEntity, int>>()
+            .AddTransient<IQueryRepository<ContactType, int>, Repository<ContactType, int>>()
+            .AddTransient<IQueryRepository<ContactTypeAlias, int>, Repository<ContactTypeAlias, int>>()
             .AddTransient<IQueryRepository<TestimonialEntity, long>, Repository<TestimonialEntity, long>>()
             .AddTransient<IQueryRepository<SkillType, int>, Repository<SkillType, int>>()
             .AddTransient<IQueryRepository<SkillTypeAlias, int>, Repository<SkillTypeAlias, int>>()

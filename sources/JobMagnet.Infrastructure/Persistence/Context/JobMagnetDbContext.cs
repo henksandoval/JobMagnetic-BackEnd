@@ -2,7 +2,7 @@
 using JobMagnet.Application.Services;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Core.Entities.Base.Interfaces;
-using JobMagnet.Domain.Core.Entities.ContactInfo;
+using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Domain.Core.Entities.Skills;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,13 +11,14 @@ namespace JobMagnet.Infrastructure.Persistence.Context;
 public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService currentUserService)
     : DbContext(options)
 {
-    public DbSet<ContactTypeEntity> ContactTypes { get; set; }
-    public DbSet<ContactTypeAliasEntity> ContactAliases { get; set; }
     public DbSet<SkillSet> SkillSets { get; set; }
     public DbSet<Skill> Skills { get; set; }
     public DbSet<SkillType> SkillTypes { get; set; }
     public DbSet<SkillCategory> SkillCategories { get; set; }
     public DbSet<SkillTypeAlias> SkillTypeAliases { get; set; }
+    public DbSet<ContactInfo> ContactInfo { get; set; }
+    public DbSet<ContactType> ContactTypes { get; set; }
+    public DbSet<ContactTypeAlias> ContactAliases { get; set; }
     public DbSet<ProfileEntity> Profiles { get; set; }
     public DbSet<PublicProfileIdentifierEntity> PublicProfileIdentifier { get; set; }
     public DbSet<EducationEntity> Educations { get; set; }
@@ -26,7 +27,6 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
     public DbSet<ServiceEntity> Services { get; set; }
     public DbSet<ServiceGalleryItemEntity> ServiceGalleries { get; set; }
     public DbSet<ResumeEntity> Resumes { get; set; }
-    public DbSet<ContactInfoEntity> ContactInfo { get; set; }
     public DbSet<SummaryEntity> Summaries { get; set; }
     public DbSet<TestimonialEntity> Testimonials { get; set; }
     public DbSet<WorkExperienceEntity> WorkExperiences { get; set; }
@@ -40,14 +40,12 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
                 .ToTable("Profiles")
                 .HasKey(profile => profile.Id);
         });
-        modelBuilder.Entity<ContactTypeEntity>().ToTable("ContactTypes");
         modelBuilder.Entity<EducationEntity>().ToTable("Educations");
         modelBuilder.Entity<PortfolioGalleryEntity>().ToTable("PorfolioGalleryItems");
         modelBuilder.Entity<TalentEntity>().ToTable("Talents");
         modelBuilder.Entity<ServiceEntity>().ToTable("Services");
         modelBuilder.Entity<ServiceGalleryItemEntity>().ToTable("ServiceGalleryItems");
         modelBuilder.Entity<ResumeEntity>().ToTable("Resumes");
-        modelBuilder.Entity<ContactInfoEntity>().ToTable("ContactInfo");
         modelBuilder.Entity<SummaryEntity>().ToTable("Summaries");
         modelBuilder.Entity<TestimonialEntity>().ToTable("Testimonials");
         modelBuilder.Entity<WorkExperienceEntity>().ToTable("WorkExperiences");

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
-using JobMagnet.Domain.Core.Entities.ContactInfo;
+using JobMagnet.Domain.Core.Entities.Contact;
 
 namespace JobMagnet.Domain.Core.Entities;
 
@@ -10,7 +10,7 @@ public class ResumeEntity : SoftDeletableEntity<long>
 {
     public const int MaxTitleLength = 100;
 
-    private readonly HashSet<ContactInfoEntity> _contactInfo = [];
+    private readonly HashSet<ContactInfo> _contactInfo = [];
 
     public string? Title { get; set; }
     public string? JobTitle { get; set; }
@@ -23,14 +23,14 @@ public class ResumeEntity : SoftDeletableEntity<long>
     [ForeignKey(nameof(Profile))] public long ProfileId { get; set; }
 
     public virtual ProfileEntity Profile { get; set; }
-    public virtual IReadOnlyCollection<ContactInfoEntity>? ContactInfo => _contactInfo;
+    public virtual IReadOnlyCollection<ContactInfo>? ContactInfo => _contactInfo;
 
-    public void AddContactInfo(string value, ContactTypeEntity contactType)
+    public void AddContactInfo(string value, ContactType contactType)
     {
         Guard.IsNotNullOrEmpty(value);
         Guard.IsNotNull(contactType);
 
-        var contactInfo = new ContactInfoEntity(0, value, contactType, Id);
+        var contactInfo = new ContactInfo(0, value, contactType, Id);
         _contactInfo?.Add(contactInfo);
     }
 }

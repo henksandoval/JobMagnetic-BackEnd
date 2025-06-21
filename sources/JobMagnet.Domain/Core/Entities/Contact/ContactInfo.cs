@@ -2,20 +2,20 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 
-namespace JobMagnet.Domain.Core.Entities.ContactInfo;
+namespace JobMagnet.Domain.Core.Entities.Contact;
 
-public class ContactInfoEntity : SoftDeletableEntity<long>
+public class ContactInfo : SoftDeletableEntity<long>
 {
     public string Value { get; set; }
     public int ContactTypeId { get; set; }
     public long ResumeId { get; set; }
 
-    public virtual ContactTypeEntity ContactType { get; set; }
+    public virtual ContactType ContactType { get; set; }
 
-    private ContactInfoEntity() { }
+    private ContactInfo() { }
 
     [SetsRequiredMembers]
-    internal ContactInfoEntity(long id, string value, ContactTypeEntity contactType, long resumeId)
+    internal ContactInfo(long id, string value, ContactType contactType, long resumeId)
     {
         Guard.IsGreaterThanOrEqualTo(id, 0);
         Guard.IsGreaterThanOrEqualTo(resumeId, 0);

@@ -9,7 +9,7 @@ using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Core.Entities.ContactInfo;
+using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -62,7 +62,7 @@ public class CvParserHandlerShould
 
         var contactInfoEmail = contactInfoRaw.FirstOrDefault(c => c.ContactType == "EMAIL");
         var resumeEntity = new ResumeEntity { Id = 0 };
-        var contactType = new ContactTypeEntity(contactInfoEmail!.ContactType);
+        var contactType = new ContactType(contactInfoEmail!.ContactType);
         resumeEntity.AddContactInfo(contactInfoEmail.Value!, contactType);
 
         var profileEntity = new ProfileEntity
@@ -91,9 +91,9 @@ public class CvParserHandlerShould
 
     private List<ContactInfoRaw> PrepareContactInfoData()
     {
-        var emailType = new ContactTypeEntity(1, "Email", "bx bx-envelope");
-        var phoneType = new ContactTypeEntity(2, "Phone", "bx bx-mobile");
-        var linkedInType = new ContactTypeEntity(3, "LinkedIn", "bx bx-linkedin");
+        var emailType = new ContactType(1, "Email", "bx bx-envelope");
+        var phoneType = new ContactType(2, "Phone", "bx bx-mobile");
+        var linkedInType = new ContactType(3, "LinkedIn", "bx bx-linkedin");
 
         _contactTypeResolverMock
             .Setup(r => r.ResolveAsync("EMAIL", It.IsAny<CancellationToken>()))

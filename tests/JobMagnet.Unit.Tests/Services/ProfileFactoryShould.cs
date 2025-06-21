@@ -5,7 +5,7 @@ using JobMagnet.Application.Factories;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Core.Entities.ContactInfo;
+using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -106,7 +106,7 @@ public class ProfileFactoryShould
     public async Task MapContactInfo_WhenTypeExists_MapsCorrectly()
     {
         // Given
-        var emailType = new ContactTypeEntity(1, "Email", "bx bx-envelope");
+        var emailType = new ContactType(1, "Email", "bx bx-envelope");
 
         _contactTypeResolverMock
             .Setup(r => r.ResolveAsync(
@@ -139,7 +139,7 @@ public class ProfileFactoryShould
     public async Task MapContactInfo_WhenTypeIsAlias_MapsToCorrectBaseType()
     {
         // Given
-        var phoneType = new ContactTypeEntity(2, "Phone", "bx bx-mobile");
+        var phoneType = new ContactType(2, "Phone", "bx bx-mobile");
 
         _contactTypeResolverMock
             .Setup(r => r.ResolveAsync("Teléfono", It.IsAny<CancellationToken>()))
@@ -172,7 +172,7 @@ public class ProfileFactoryShould
         // Given
         _contactTypeResolverMock
             .Setup(r => r.ResolveAsync("TypeDontExist", It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Maybe<ContactTypeEntity>.None);
+            .ReturnsAsync(Maybe<ContactType>.None);
 
         var contacts = new[] { new ContactInfoRaw("TypeDontExist", "Some value") };
         var profileDto = _profileBuilder
@@ -181,7 +181,7 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var expectedAdHocType = new ContactTypeEntity("TypeDontExist");
+        var expectedAdHocType = new ContactType("TypeDontExist");
         expectedAdHocType.SetDefaultIcon();
         var resume = new ResumeEntity { Id = 0 };
         resume.AddContactInfo("Some value", expectedAdHocType);
@@ -201,14 +201,14 @@ public class ProfileFactoryShould
     public async Task MapContactInfo_WithMultipleItems_MapsAllCorrectly()
     {
         // Given
-        var emailType = new ContactTypeEntity(1, "Email", "bx bx-envelope");
+        var emailType = new ContactType(1, "Email", "bx bx-envelope");
         _contactTypeResolverMock
             .Setup(r => r.ResolveAsync("Email", It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(emailType));
 
         _contactTypeResolverMock
             .Setup(r => r.ResolveAsync("TypeDontExist", It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Maybe<ContactTypeEntity>.None);
+            .ReturnsAsync(Maybe<ContactType>.None);
 
         var contacts = new[]
         {
@@ -221,7 +221,7 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var expectedAdHocType = new ContactTypeEntity("TypeDontExist");
+        var expectedAdHocType = new ContactType("TypeDontExist");
         expectedAdHocType.SetDefaultIcon();
 
         var resume = new ResumeEntity { Id = 0 };
