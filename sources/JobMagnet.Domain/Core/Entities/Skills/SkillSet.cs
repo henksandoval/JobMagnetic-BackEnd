@@ -43,7 +43,7 @@ public class SkillSet : SoftDeletableEntity<long>
 
         var newRank = (ushort)(_skills.Count + 1);
 
-        var newSkill = new Skill(proficiencyLevel, newRank, skillType, this.Id);
+        var newSkill = new Skill(proficiencyLevel, newRank, skillType, Id);
         _skills.Add(newSkill);
     }
 

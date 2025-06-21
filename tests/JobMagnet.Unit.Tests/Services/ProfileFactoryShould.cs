@@ -132,7 +132,6 @@ public class ProfileFactoryShould
         var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
         actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options
             .Excluding(entity => entity.Id)
-            .Excluding(entity => entity.Resume)
         );
     }
 
@@ -164,7 +163,6 @@ public class ProfileFactoryShould
         var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
         actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options
             .Excluding(entity => entity.Id)
-            .Excluding(entity => entity.Resume)
         );
     }
 
@@ -196,7 +194,6 @@ public class ProfileFactoryShould
         var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
         actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options
             .Excluding(entity => entity.Id)
-            .Excluding(entity => entity.Resume)
         );
     }
 
@@ -240,7 +237,6 @@ public class ProfileFactoryShould
         var orderedExpected = expectedContactInfo.OrderBy(c => c.Value).ToList();
         actualContactInfo.Should().BeEquivalentTo(orderedExpected, options => options
             .Excluding(entity => entity.Id)
-            .Excluding(entity => entity.Resume)
         );
     }
     #endregion

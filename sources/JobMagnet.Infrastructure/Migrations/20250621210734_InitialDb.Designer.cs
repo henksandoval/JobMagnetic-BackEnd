@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobMagnet.Infrastructure.Migrations
 {
     [DbContext(typeof(JobMagnetDbContext))]
-    [Migration("20250621173043_InitialDb")]
+    [Migration("20250621210734_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace JobMagnet.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfoEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfo.ContactInfoEntity", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -73,7 +73,7 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.ToTable("ContactInfo", (string)null);
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactTypeAliasEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfo.ContactTypeAliasEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -116,7 +116,7 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.ToTable("ContactAliases");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactTypeEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfo.ContactTypeEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -435,7 +435,8 @@ namespace JobMagnet.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -1008,28 +1009,26 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.ToTable("WorkResponsibilities", (string)null);
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfoEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfo.ContactInfoEntity", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ContactTypeEntity", "ContactType")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.ContactInfo.ContactTypeEntity", "ContactType")
                         .WithMany()
                         .HasForeignKey("ContactTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ResumeEntity", "Resume")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.ResumeEntity", null)
                         .WithMany("ContactInfo")
                         .HasForeignKey("ResumeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ContactType");
-
-                    b.Navigation("Resume");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactTypeAliasEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfo.ContactTypeAliasEntity", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ContactTypeEntity", "ContactType")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.ContactInfo.ContactTypeEntity", "ContactType")
                         .WithMany("Aliases")
                         .HasForeignKey("ContactTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1205,7 +1204,7 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Navigation("WorkExperience");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactTypeEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ContactInfo.ContactTypeEntity", b =>
                 {
                     b.Navigation("Aliases");
                 });

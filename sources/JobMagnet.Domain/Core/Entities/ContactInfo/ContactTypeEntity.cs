@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Exceptions;
 
@@ -14,8 +13,7 @@ public class ContactTypeEntity : SoftDeletableEntity<int>
 
     private readonly List<ContactTypeAliasEntity> _aliases = [];
 
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public ContactTypeEntity()
+    private ContactTypeEntity()
     {
     }
 
