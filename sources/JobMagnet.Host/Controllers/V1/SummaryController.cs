@@ -64,30 +64,4 @@ public class SummaryController(
 
         return Results.NoContent();
     }
-
-    [HttpPatch("{id:long}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<SummaryCommand> patchDocument, CancellationToken cancellationToken)
-    {
-        _ = queryRepository.IncludeEducation().IncludeWorkExperience();
-        var entity = await queryRepository.GetByIdWithIncludesAsync(id).ConfigureAwait(false);
-
-        if (entity is null)
-            return Results.NotFound();
-
-        var updateRequest = entity.ToUpdateCommand();
-
-        patchDocument.ApplyTo(updateRequest);
-
-        entity.UpdateEntity(updateRequest);
-
-        await commandRepository
-            .Update(entity)
-            .SaveChangesAsync(cancellationToken)
-            .ConfigureAwait(false);
-
-        return Results.NoContent();
-    }
 }

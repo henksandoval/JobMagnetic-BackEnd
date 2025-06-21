@@ -81,29 +81,4 @@ public class ResumeController(
 
         return Results.NoContent();
     }
-
-    [HttpPatch("{id:long}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PatchAsync(int id, [FromBody] JsonPatchDocument<ResumeCommand> patchDocument, CancellationToken cancellationToken)
-    {
-        var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
-
-        if (entity is null)
-            return Results.NotFound();
-
-        var updateRequest = entity.ToUpdateRequest();
-
-        patchDocument.ApplyTo(updateRequest);
-
-        entity.UpdateEntity(updateRequest);
-
-        await commandRepository
-            .Update(entity)
-            .SaveChangesAsync(cancellationToken)
-            .ConfigureAwait(false);
-
-        return Results.NoContent();
-    }
 }

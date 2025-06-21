@@ -171,46 +171,6 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Return 204 when a valid PATCH request is provided")]
-    public async Task ReturnNotContent_WhenReceivedValidPatchRequestAsync()
-    {
-        // Given
-        const string newJobTitle = "Software developer";
-        var entity = await SetupEntityAsync();
-        var patchDocument = new JsonPatchDocument<TestimonialCommand>();
-        patchDocument.Replace(a => a.TestimonialData.JobTitle, newJobTitle);
-
-        // When
-        var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{entity.Id}", patchDocument);
-
-        // Then
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<TestimonialEntity, long>>();
-        var dbEntity = await queryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
-        dbEntity.ShouldNotBeNull();
-        dbEntity.JobTitle.ShouldBe(newJobTitle);
-    }
-
-    [Fact(DisplayName = "Return 404 when a PATCH request with invalid ID is provided")]
-    public async Task ReturnNotFound_WhenPatchRequestWithInvalidIdIsProvidedAsync()
-    {
-        // Given
-        await _testFixture.ResetDatabaseAsync();
-        var patchDocument = new JsonPatchDocument<TestimonialCommand>();
-
-        // When
-        var response =
-            await _httpClient.PatchAsNewtonsoftJsonAsync($"{RequestUriController}/{InvalidId}", patchDocument);
-
-        // Then
-        response.IsSuccessStatusCode.ShouldBeFalse();
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-    }
-
     private async Task<TestimonialEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
