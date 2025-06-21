@@ -13,9 +13,9 @@ public class ContactInfoEntityTypeConfiguration : IEntityTypeConfiguration<Conta
         builder.Property(x => x.Value)
             .IsRequired();
 
-        builder.HasOne<ContactType>(x => x.ContactType)
+        builder.HasOne<ContactType>(info => info.ContactType)
             .WithMany()
-            .HasForeignKey(x => x.ContactTypeId)
+            .HasForeignKey(info => info.ContactTypeId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

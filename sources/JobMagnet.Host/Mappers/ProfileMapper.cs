@@ -136,7 +136,7 @@ public static class ProfileMapper
                 c.ContactType.Name,
                 c.Value,
                 c.ContactType.IconClass ?? string.Empty,
-                c.ContactType.IconUrl ?? string.Empty))
+                c.ContactType.IconUrl?.AbsoluteUri ?? string.Empty))
             .ToArray() ?? [];
 
         var professions = src.Talents?.Select(t => t.Description).ToArray() ?? [];

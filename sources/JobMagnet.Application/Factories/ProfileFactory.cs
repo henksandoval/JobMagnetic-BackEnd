@@ -74,8 +74,6 @@ public class ProfileFactory(
             var resolvedType = await contactTypeResolver.ResolveAsync(dto.ContactType!, cancellationToken);
 
             var contactType = resolvedType.HasValue ? resolvedType.Value : new ContactType(dto.ContactType!);
-            if (!resolvedType.HasValue)
-                contactType.SetDefaultIcon();
 
             resumeEntity.AddContactInfo(dto.Value!, contactType);
         }

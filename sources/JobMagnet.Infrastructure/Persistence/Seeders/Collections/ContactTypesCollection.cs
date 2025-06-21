@@ -39,7 +39,7 @@ public record ContactTypesCollection
 
         foreach (var (name, iconClass, aliases) in _values)
         {
-            var contactType = new ContactType(0, name, iconClass);
+            var contactType = new ContactType(name, 0, iconClass);
 
             foreach (var alias in aliases)
             {

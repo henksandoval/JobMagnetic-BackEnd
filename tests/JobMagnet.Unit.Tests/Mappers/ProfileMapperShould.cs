@@ -169,7 +169,7 @@ public class ProfileMapperShould
                 c.ContactType.Name,
                 c.Value,
                 c.ContactType.IconClass ?? string.Empty,
-                c.ContactType.IconUrl ?? string.Empty
+                c.ContactType.IconUrl?.AbsoluteUri ?? string.Empty
             )).ToArray()
         );
     }

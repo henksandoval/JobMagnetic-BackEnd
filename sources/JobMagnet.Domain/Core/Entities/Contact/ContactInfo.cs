@@ -9,7 +9,6 @@ public class ContactInfo : SoftDeletableEntity<long>
     public string Value { get; set; }
     public int ContactTypeId { get; set; }
     public long ResumeId { get; set; }
-
     public virtual ContactType ContactType { get; set; }
 
     private ContactInfo() { }

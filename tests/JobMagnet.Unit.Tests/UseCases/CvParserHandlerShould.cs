@@ -91,9 +91,9 @@ public class CvParserHandlerShould
 
     private List<ContactInfoRaw> PrepareContactInfoData()
     {
-        var emailType = new ContactType(1, "Email", "bx bx-envelope");
-        var phoneType = new ContactType(2, "Phone", "bx bx-mobile");
-        var linkedInType = new ContactType(3, "LinkedIn", "bx bx-linkedin");
+        var emailType = new ContactType("Email", 1, "bx bx-envelope");
+        var phoneType = new ContactType("Phone", 2, "bx bx-mobile");
+        var linkedInType = new ContactType("LinkedIn", 3, "bx bx-linkedin");
 
         _contactTypeResolverMock
             .Setup(r => r.ResolveAsync("EMAIL", It.IsAny<CancellationToken>()))

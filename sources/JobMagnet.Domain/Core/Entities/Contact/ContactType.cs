@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Exceptions;
 
@@ -6,33 +7,35 @@ namespace JobMagnet.Domain.Core.Entities.Contact;
 
 public class ContactType : SoftDeletableEntity<int>
 {
+    public const int MaxNameLength = 20;
+    public const int MaxIconClassLength = 20;
+
+    private readonly HashSet<ContactTypeAlias> _aliases = [];
     public string Name { get; private set; }
     public string? IconClass { get; private set; }
-    public string? IconUrl { get; private set; }
-    public virtual IReadOnlyCollection<ContactTypeAlias> Aliases => _aliases.AsReadOnly();
-
-    private readonly List<ContactTypeAlias> _aliases = [];
+    public Uri? IconUrl { get; private set; }
+    public virtual IReadOnlyCollection<ContactTypeAlias> Aliases => _aliases;
 
     private ContactType()
     {
     }
 
     [SetsRequiredMembers]
-    public ContactType(int id, string name, string? iconClass = null, Uri? iconUrl = null)
+    public ContactType(string name, int id = 0, string? iconClass = null, Uri? iconUrl = null)
     {
-        ArgumentNullException.ThrowIfNull(name);
+        Guard.IsGreaterThanOrEqualTo(id, 0);
+        Guard.IsNotNullOrEmpty(name);
 
         Id = id;
         Name = name;
-        IconClass = iconClass;
-        IconUrl = iconUrl?.AbsoluteUri;
-        ValidateInvariants();
-    }
 
-    [SetsRequiredMembers]
-    public ContactType(string? name)
-    {
-        Name = name ?? string.Empty;
+        if (string.IsNullOrEmpty(iconClass) && iconUrl is null)
+        {
+            IconClass = "bx bx-link-alt";
+        }
+
+        IconClass = iconClass;
+        IconUrl = iconUrl;
     }
 
     public void AddAlias(string alias)
@@ -44,7 +47,7 @@ public class ContactType : SoftDeletableEntity<int>
             throw new JobMagnetDomainException($"The alias ({alias}) already exists.");
         }
 
-        var newAlias = new ContactTypeAlias(alias, this);
+        var newAlias = new ContactTypeAlias(alias, this.Id);
         _aliases.Add(newAlias);
     }
 
@@ -60,23 +63,17 @@ public class ContactType : SoftDeletableEntity<int>
     public void UpdateIcons(string? newIconClass, Uri? newIconUrl)
     {
         IconClass = newIconClass;
-        IconUrl = newIconUrl?.AbsoluteUri;
+        IconUrl = newIconUrl;
 
         ValidateInvariants();
     }
 
     private void ValidateInvariants()
     {
-        if (string.IsNullOrWhiteSpace(IconClass) && string.IsNullOrWhiteSpace(IconUrl))
+        if (string.IsNullOrWhiteSpace(IconClass) && IconUrl is null)
         {
             throw new JobMagnetDomainException(
                 $"A {nameof(ContactType)} must have either an {nameof(IconClass)} or an {nameof(IconUrl)}. Both cannot be empty.");
         }
-    }
-
-    public void SetDefaultIcon()
-    {
-        IconClass = "bx bx-link-alt";
-        IconUrl = null;
     }
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobMagnet.Infrastructure.Migrations
 {
     [DbContext(typeof(JobMagnetDbContext))]
-    [Migration("20250621211323_InitialDb")]
+    [Migration("20250621213516_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -94,7 +94,8 @@ namespace JobMagnet.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("IconClass")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("IconUrl")
                         .HasColumnType("nvarchar(max)");
@@ -110,7 +111,8 @@ namespace JobMagnet.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -133,7 +135,8 @@ namespace JobMagnet.Infrastructure.Migrations
 
                     b.Property<string>("Alias")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("ContactTypeId")
                         .HasColumnType("int");
@@ -156,6 +159,9 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ContactTypeId");
+
+                    b.HasIndex("Alias", "ContactTypeId")
+                        .IsUnique();
 
                     b.ToTable("ContactAliases");
                 });
@@ -1028,13 +1034,11 @@ namespace JobMagnet.Infrastructure.Migrations
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Contact.ContactTypeAlias", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.Contact.ContactType", "ContactType")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.Contact.ContactType", null)
                         .WithMany("Aliases")
                         .HasForeignKey("ContactTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ContactType");
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.EducationEntity", b =>

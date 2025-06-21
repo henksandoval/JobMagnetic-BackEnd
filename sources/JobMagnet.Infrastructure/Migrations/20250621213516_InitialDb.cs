@@ -17,8 +17,8 @@ namespace JobMagnet.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IconClass = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    IconClass = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     IconUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -84,7 +84,7 @@ namespace JobMagnet.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Alias = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Alias = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     ContactTypeId = table.Column<int>(type: "int", nullable: false),
                     AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -576,6 +576,12 @@ namespace JobMagnet.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContactAliases_Alias_ContactTypeId",
+                table: "ContactAliases",
+                columns: new[] { "Alias", "ContactTypeId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContactAliases_ContactTypeId",
