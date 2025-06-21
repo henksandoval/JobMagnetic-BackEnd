@@ -6,10 +6,10 @@ namespace JobMagnet.Domain.Core.Entities.Contact;
 
 public class ContactInfo : SoftDeletableEntity<long>
 {
-    public string Value { get; set; }
-    public int ContactTypeId { get; set; }
-    public long ResumeId { get; set; }
-    public virtual ContactType ContactType { get; set; }
+    public string Value { get; private set; }
+    public int ContactTypeId { get; private set; }
+    public long ResumeId { get; private set; }
+    public virtual ContactType ContactType { get; private set; }
 
     private ContactInfo() { }
 
