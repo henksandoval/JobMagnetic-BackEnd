@@ -295,9 +295,7 @@ public class ProfileFactoryShould
 
         // Then
         var currentSkills = profile.SkillSet!.Skills!.ToList();
-        currentSkills.Should().BeEquivalentTo(expectedSkill, options => options
-            .Excluding(entity => entity.SkillSet)
-        );
+        currentSkills.Should().BeEquivalentTo(expectedSkill, options => options);
     }
 
     [Fact(DisplayName = "Map skills collection when the type is an alias")]
@@ -330,9 +328,7 @@ public class ProfileFactoryShould
 
         // Then
         var currentSkills = profile.SkillSet!.Skills!.ToList();
-        currentSkills.Should().BeEquivalentTo(expectedSkill, options => options
-            .Excluding(entity => entity.SkillSet)
-        );
+        currentSkills.Should().BeEquivalentTo(expectedSkill);
     }
 
     [Fact(DisplayName = "Map skills when the type does not exist")]
@@ -365,7 +361,6 @@ public class ProfileFactoryShould
         var currentSkills = profile.SkillSet!.Skills!.ToList();
         currentSkills.Should().BeEquivalentTo(expectedSkill, options => options
             .Excluding(entity => entity.Id)
-            .Excluding(entity => entity.SkillSet)
         );
     }
 
@@ -410,7 +405,6 @@ public class ProfileFactoryShould
         var currentSkills = profile.SkillSet!.Skills!.ToList();
         currentSkills.Should().BeEquivalentTo(expectedSkills, options => options
             .Excluding(entity => entity.Id)
-            .Excluding(entity => entity.SkillSet)
         );
     }
     #endregion

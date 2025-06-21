@@ -10,14 +10,9 @@ public class SkillEntityTypeConfiguration : IEntityTypeConfiguration<Skill>
     {
         builder.HasKey(s => s.Id);
 
-        builder.HasOne<SkillType>()
+        builder.HasOne(skill => skill.SkillType)
             .WithMany()
             .HasForeignKey(s => s.SkillTypeId)
-            .IsRequired();
-
-        builder.HasOne<SkillSet>()
-            .WithMany()
-            .HasForeignKey(s => s.SkillSetId)
             .IsRequired();
     }
 }

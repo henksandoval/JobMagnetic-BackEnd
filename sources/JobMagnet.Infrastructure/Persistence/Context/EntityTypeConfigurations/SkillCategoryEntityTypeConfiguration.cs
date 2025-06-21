@@ -11,7 +11,6 @@ public class SkillCategoryEntityTypeConfiguration : IEntityTypeConfiguration<Ski
         builder.HasKey(c => c.Id);
 
         builder.Property(c => c.Name)
-            .HasColumnType("varchar(50)")
             .HasMaxLength(50)
             .IsRequired();
     }

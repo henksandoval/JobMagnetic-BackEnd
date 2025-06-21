@@ -12,6 +12,8 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
 {
     public DbSet<ContactTypeEntity> ContactTypes { get; set; }
     public DbSet<ContactTypeAliasEntity> ContactAliases { get; set; }
+    public DbSet<SkillSet> SkillSets { get; set; }
+    public DbSet<Skill> Skills { get; set; }
     public DbSet<SkillType> SkillTypes { get; set; }
     public DbSet<SkillCategory> SkillCategories { get; set; }
     public DbSet<SkillTypeAlias> SkillTypeAliases { get; set; }
@@ -24,8 +26,6 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
     public DbSet<ServiceGalleryItemEntity> ServiceGalleries { get; set; }
     public DbSet<ResumeEntity> Resumes { get; set; }
     public DbSet<ContactInfoEntity> ContactInfo { get; set; }
-    public DbSet<Skill> SkillSets { get; set; }
-    public DbSet<SkillSet> Skills { get; set; }
     public DbSet<SummaryEntity> Summaries { get; set; }
     public DbSet<TestimonialEntity> Testimonials { get; set; }
     public DbSet<WorkExperienceEntity> WorkExperiences { get; set; }

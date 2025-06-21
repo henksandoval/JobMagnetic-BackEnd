@@ -11,7 +11,7 @@ public class SkillSetEntityTypeConfiguration : IEntityTypeConfiguration<SkillSet
         builder.HasKey(s => s.Id);
 
         builder.HasMany(s => s.Skills)
-            .WithOne(skill => skill.SkillSet)
+            .WithOne()
             .HasForeignKey(skill => skill.SkillSetId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);

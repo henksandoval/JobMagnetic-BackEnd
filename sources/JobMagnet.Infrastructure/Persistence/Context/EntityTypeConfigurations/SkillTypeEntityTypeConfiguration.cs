@@ -11,12 +11,10 @@ public class SkillTypeEntityTypeConfiguration : IEntityTypeConfiguration<SkillTy
         builder.HasKey(s => s.Id);
 
         builder.Property(s => s.Name)
-            .HasColumnType("varchar(50)")
             .HasMaxLength(50)
             .IsRequired();
 
         builder.Property(s => s.IconUrl)
-            .HasColumnType("varchar(100)")
             .HasMaxLength(100)
             .IsRequired();
 

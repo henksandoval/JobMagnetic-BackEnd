@@ -11,7 +11,6 @@ public class SkillTypeAliasEntityTypeConfiguration : IEntityTypeConfiguration<Sk
         builder.HasKey(alias => alias.Id);
 
         builder.Property(alias => alias.Alias)
-            .HasColumnType("varchar(50)")
             .HasMaxLength(50)
             .IsRequired();
     }

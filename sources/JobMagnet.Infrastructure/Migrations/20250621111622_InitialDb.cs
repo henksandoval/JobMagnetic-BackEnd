@@ -64,7 +64,7 @@ namespace JobMagnet.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -170,10 +170,10 @@ namespace JobMagnet.Infrastructure.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    JobTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    About = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Summary = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Overview = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    JobTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    About = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Summary = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Overview = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Suffix = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -225,7 +225,7 @@ namespace JobMagnet.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Skills",
+                name: "SkillSets",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -242,9 +242,9 @@ namespace JobMagnet.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Skills", x => x.Id);
+                    table.PrimaryKey("PK_SkillSets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Skills_Profiles_ProfileId",
+                        name: "FK_SkillSets_Profiles_ProfileId",
                         column: x => x.ProfileId,
                         principalTable: "Profiles",
                         principalColumn: "Id",
@@ -341,8 +341,8 @@ namespace JobMagnet.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IconUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    IconUrl = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -492,14 +492,14 @@ namespace JobMagnet.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SkillItems",
+                name: "Skills",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProficiencyLevel = table.Column<int>(type: "int", nullable: false),
                     Rank = table.Column<int>(type: "int", nullable: false),
-                    SkillId = table.Column<long>(type: "bigint", nullable: false),
+                    SkillSetId = table.Column<long>(type: "bigint", nullable: false),
                     SkillTypeId = table.Column<int>(type: "int", nullable: false),
                     AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -508,17 +508,17 @@ namespace JobMagnet.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SkillItems", x => x.Id);
+                    table.PrimaryKey("PK_Skills", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SkillItems_SkillTypes_SkillTypeId",
-                        column: x => x.SkillTypeId,
-                        principalTable: "SkillTypes",
+                        name: "FK_Skills_SkillSets_SkillSetId",
+                        column: x => x.SkillSetId,
+                        principalTable: "SkillSets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SkillItems_Skills_SkillId",
-                        column: x => x.SkillId,
-                        principalTable: "Skills",
+                        name: "FK_Skills_SkillTypes_SkillTypeId",
+                        column: x => x.SkillTypeId,
+                        principalTable: "SkillTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -529,7 +529,7 @@ namespace JobMagnet.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Alias = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Alias = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     SkillTypeId = table.Column<int>(type: "int", nullable: false),
                     AddedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -631,18 +631,18 @@ namespace JobMagnet.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_SkillItems_SkillId",
-                table: "SkillItems",
-                column: "SkillId");
+                name: "IX_Skills_SkillSetId",
+                table: "Skills",
+                column: "SkillSetId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SkillItems_SkillTypeId",
-                table: "SkillItems",
+                name: "IX_Skills_SkillTypeId",
+                table: "Skills",
                 column: "SkillTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Skills_ProfileId",
-                table: "Skills",
+                name: "IX_SkillSets_ProfileId",
+                table: "SkillSets",
                 column: "ProfileId",
                 unique: true);
 
@@ -705,7 +705,7 @@ namespace JobMagnet.Infrastructure.Migrations
                 name: "ServiceGalleryItems");
 
             migrationBuilder.DropTable(
-                name: "SkillItems");
+                name: "Skills");
 
             migrationBuilder.DropTable(
                 name: "SkillTypeAliases");
@@ -729,7 +729,7 @@ namespace JobMagnet.Infrastructure.Migrations
                 name: "Services");
 
             migrationBuilder.DropTable(
-                name: "Skills");
+                name: "SkillSets");
 
             migrationBuilder.DropTable(
                 name: "SkillTypes");
