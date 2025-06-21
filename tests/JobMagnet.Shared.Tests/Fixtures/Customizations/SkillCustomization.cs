@@ -19,7 +19,7 @@ public class SkillCustomization : ICustomization
                 .OmitAutoProperties()
         );
 
-        fixture.Register(() => new SkillSetEntity(Faker.Lorem.Sentence(), 0));
+        fixture.Register(() => new SkillSet(Faker.Lorem.Sentence(), 0));
 
         fixture.Register(() => new SkillSetRaw(Faker.Lorem.Sentence(),[]));
 

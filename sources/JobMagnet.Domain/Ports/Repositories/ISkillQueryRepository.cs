@@ -3,9 +3,9 @@ using JobMagnet.Domain.Ports.Repositories.Base;
 
 namespace JobMagnet.Domain.Ports.Repositories;
 
-public interface ISkillQueryRepository : IQueryRepository<SkillSetEntity, long>
+public interface ISkillQueryRepository : IQueryRepository<SkillSet, long>
 {
     ISkillQueryRepository IncludeDetails();
-    Task<IReadOnlyCollection<SkillSetEntity>> GetAllWithIncludesAsync();
-    Task<SkillSetEntity?> GetByIdWithIncludesAsync(long id);
+    Task<IReadOnlyCollection<SkillSet>> GetAllWithIncludesAsync();
+    Task<SkillSet?> GetByIdWithIncludesAsync(long id);
 }

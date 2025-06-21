@@ -156,10 +156,10 @@ public class ProfileFactory(
         };
     }
 
-    private async Task<SkillSetEntity> BuildSkillSetAsync(SkillSetParseDto skillSetDto,
+    private async Task<SkillSet> BuildSkillSetAsync(SkillSetParseDto skillSetDto,
         CancellationToken cancellationToken)
     {
-        var skillSetEntity = new SkillSetEntity(skillSetDto.Overview!, 0);
+        var skillSetEntity = new SkillSet(skillSetDto.Overview!, 0);
 
         foreach (var skill in skillSetDto.Skills.Where(skill => !string.IsNullOrWhiteSpace(skill.Name)))
         {

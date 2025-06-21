@@ -129,7 +129,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
                          I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
                          I am always eager to learn new technologies and improve my skills.
                          """;
-        var skillSet = new SkillSetEntity(overview, profile.Id);
+        var skillSet = new SkillSet(overview, profile.Id);
 
         foreach (var (skillName, proficiencyLevel, rank) in SkillInfoCollection.Data)
         {

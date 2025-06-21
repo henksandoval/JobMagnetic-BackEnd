@@ -57,12 +57,12 @@ public static class ProfileMapper
             .NewConfig()
             .Map(dest => dest, src => AboutViewModelMap(src));
 
-        TypeAdapterConfig<SkillEntity, SkillDetailsViewModel>
+        TypeAdapterConfig<Skill, SkillDetailsViewModel>
             .NewConfig()
             .Map(dest => dest.Name, src => src.SkillType.Name)
             .Map(dest => dest.IconUrl, src => src.SkillType.IconUrl);
 
-        TypeAdapterConfig<SkillSetEntity, SkillSetViewModel>
+        TypeAdapterConfig<SkillSet, SkillSetViewModel>
             .NewConfig()
             .Map(dest => dest.SkillDetails,
                 src => src.Skills.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());

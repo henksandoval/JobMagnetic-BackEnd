@@ -12,7 +12,7 @@ public class ProfileEntityBuilder(IFixture fixture)
     private string? _lastName;
     private ResumeEntity _resume = null!;
     private ServiceEntity _services = null!;
-    private SkillSetEntity _skillSet = null!;
+    private SkillSet _skillSet = null!;
     private SummaryEntity _summary = null!;
     private List<PortfolioGalleryEntity> _portfolio = [];
     private List<TalentEntity> _talents = [];
@@ -51,7 +51,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithSkillSet()
     {
-        _skillSet = fixture.Create<SkillSetEntity>();
+        _skillSet = fixture.Create<SkillSet>();
         return this;
     }
 

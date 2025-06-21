@@ -6,21 +6,21 @@ using JobMagnet.Domain.Exceptions;
 
 namespace JobMagnet.Domain.Core.Entities.Skills;
 
-public class SkillSetEntity : SoftDeletableEntity<long>
+public class SkillSet : SoftDeletableEntity<long>
 {
-    private readonly HashSet<SkillEntity> _skills = [];
+    private readonly HashSet<Skill> _skills = [];
 
     public string? Overview { get; private set; }
-    public virtual IReadOnlyCollection<SkillEntity> Skills => _skills;
+    public virtual IReadOnlyCollection<Skill> Skills => _skills;
 
     [ForeignKey(nameof(Profile))] public long ProfileId { get; private set; }
 
     public virtual ProfileEntity Profile { get; private set; }
 
-    private SkillSetEntity() { }
+    private SkillSet() { }
 
     [SetsRequiredMembers]
-    public SkillSetEntity(string overview, long profileId, long id = 0)
+    public SkillSet(string overview, long profileId, long id = 0)
     {
         Guard.IsNotNullOrWhiteSpace(overview);
         Guard.IsGreaterThanOrEqualTo(profileId, 0);
@@ -43,7 +43,7 @@ public class SkillSetEntity : SoftDeletableEntity<long>
 
         var newRank = (ushort)(_skills.Count + 1);
 
-        var newSkill = new SkillEntity(proficiencyLevel, newRank, this, skillType);
+        var newSkill = new Skill(proficiencyLevel, newRank, this, skillType);
         _skills.Add(newSkill);
     }
 

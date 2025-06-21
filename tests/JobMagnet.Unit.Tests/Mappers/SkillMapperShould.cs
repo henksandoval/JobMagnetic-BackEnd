@@ -54,7 +54,7 @@ public class SkillMapperShould
     public void MapSkillEntityToSkillUpdateCommandCorrectly()
     {
         // Given
-        var entity = _fixture.Create<SkillSetEntity>();
+        var entity = _fixture.Create<SkillSet>();
 
         // When
         var updateCommand = entity.ToUpdateCommand();
@@ -67,7 +67,7 @@ public class SkillMapperShould
             options.Excluding(GetExcludeItemEntityProperties()));
     }
 
-    private static Expression<Func<SkillSetEntity, object>> GetExcludeEntityProperties()
+    private static Expression<Func<SkillSet, object>> GetExcludeEntityProperties()
     {
         return e => new
         {
@@ -77,7 +77,7 @@ public class SkillMapperShould
         };
     }
 
-    private static Expression<Func<SkillEntity, object>> GetExcludeItemEntityProperties()
+    private static Expression<Func<Skill, object>> GetExcludeItemEntityProperties()
     {
         return e => new { e.Id, Skill = e.SkillSet, e.SkillId, e.SkillType, e.SkillTypeId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy };
     }

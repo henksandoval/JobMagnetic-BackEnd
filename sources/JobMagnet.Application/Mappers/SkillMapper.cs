@@ -10,7 +10,7 @@ public static class SkillMapper
 {
     static SkillMapper()
     {
-        TypeAdapterConfig<SkillEntity, SkillItemBase>
+        TypeAdapterConfig<Skill, SkillItemBase>
             .NewConfig()
             .Map(dest => dest.ProficiencyLevel, src => src.ProficiencyLevel)
             .Map(dest => dest.Rank, src => src.Rank)
@@ -18,26 +18,26 @@ public static class SkillMapper
             .Map(dest => dest.IconUrl, src => src.SkillType.IconUrl)
             .Map(dest => dest.Category, src => src.SkillType.Category.Name);
 
-        TypeAdapterConfig<SkillSetEntity, SkillResponse>
+        TypeAdapterConfig<SkillSet, SkillResponse>
             .NewConfig()
             .Map(dest => dest.SkillData, src => src);
 
-        TypeAdapterConfig<SkillCommand, SkillSetEntity>
+        TypeAdapterConfig<SkillCommand, SkillSet>
             .NewConfig()
             .Map(dest => dest, src => src.SkillData);
 
-        TypeAdapterConfig<SkillSetEntity, SkillCommand>
+        TypeAdapterConfig<SkillSet, SkillCommand>
             .NewConfig()
             .Map(dest => dest.SkillData, src => src);
     }
 
-    public static SkillResponse ToResponse(this SkillSetEntity setEntity)
+    public static SkillResponse ToResponse(this SkillSet set)
     {
-        return setEntity.Adapt<SkillResponse>();
+        return set.Adapt<SkillResponse>();
     }
 
-    public static SkillCommand ToUpdateCommand(this SkillSetEntity setEntity)
+    public static SkillCommand ToUpdateCommand(this SkillSet set)
     {
-        return setEntity.Adapt<SkillCommand>();
+        return set.Adapt<SkillCommand>();
     }
 }

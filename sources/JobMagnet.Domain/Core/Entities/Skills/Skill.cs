@@ -5,7 +5,7 @@ using JobMagnet.Domain.Core.Entities.Base;
 
 namespace JobMagnet.Domain.Core.Entities.Skills;
 
-public class SkillEntity : TrackableEntity<long>
+public class Skill : TrackableEntity<long>
 {
     public ushort ProficiencyLevel { get; private set; }
     public ushort Rank { get; private set; }
@@ -14,12 +14,12 @@ public class SkillEntity : TrackableEntity<long>
     [ForeignKey(nameof(SkillType))] public int SkillTypeId { get; private set; }
 
     public virtual SkillType SkillType { get; private set; }
-    public virtual SkillSetEntity SkillSet { get; private set; }
+    public virtual SkillSet SkillSet { get; private set; }
 
-    private SkillEntity() { }
+    private Skill() { }
 
     [SetsRequiredMembers]
-    internal SkillEntity(ushort proficiencyLevel, ushort rank, SkillSetEntity skillSet, SkillType skillType, long id = 0)
+    internal Skill(ushort proficiencyLevel, ushort rank, SkillSet skillSet, SkillType skillType, long id = 0)
     {
         Guard.IsGreaterThanOrEqualTo<long>(id, 0);
         Guard.IsBetweenOrEqualTo<ushort>(proficiencyLevel, 0, 10);

@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 namespace JobMagnet.Infrastructure.Persistence.Repositories;
 
 public class SkillQueryRepository(JobMagnetDbContext dbContext)
-    : Repository<SkillSetEntity, long>(dbContext), ISkillQueryRepository
+    : Repository<SkillSet, long>(dbContext), ISkillQueryRepository
 {
-    private IQueryable<SkillSetEntity> _query = dbContext.Set<SkillSetEntity>();
+    private IQueryable<SkillSet> _query = dbContext.Set<SkillSet>();
 
     public ISkillQueryRepository IncludeDetails()
     {
@@ -17,12 +17,12 @@ public class SkillQueryRepository(JobMagnetDbContext dbContext)
         return this;
     }
 
-    public async Task<IReadOnlyCollection<SkillSetEntity>> GetAllWithIncludesAsync()
+    public async Task<IReadOnlyCollection<SkillSet>> GetAllWithIncludesAsync()
     {
         return await _query.ToListAsync().ConfigureAwait(false);
     }
 
-    public async Task<SkillSetEntity?> GetByIdWithIncludesAsync(long id)
+    public async Task<SkillSet?> GetByIdWithIncludesAsync(long id)
     {
         return await _query.FirstOrDefaultAsync(p => p.Id == id).ConfigureAwait(false);
     }

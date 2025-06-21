@@ -286,7 +286,7 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var skillSet = new SkillSetEntity("Test Overview", 1);
+        var skillSet = new SkillSet("Test Overview", 1);
         skillSet.AddSkill(10, csharpSkill);
         var expectedSkill = skillSet.Skills.ToList();
 
@@ -321,7 +321,7 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var skillSet = new SkillSetEntity("Test Overview", 1);
+        var skillSet = new SkillSet("Test Overview", 1);
         skillSet.AddSkill(10, csharpSkill);
         var expectedSkill = skillSet.Skills.ToList();
 
@@ -348,7 +348,7 @@ public class ProfileFactoryShould
         var expectedAdHocType = new SkillType("TypeDontExist");
         expectedAdHocType.SetDefaultIcon();
 
-        var skillSet = new SkillSetEntity("Test Overview", 1);
+        var skillSet = new SkillSet("Test Overview", 1);
         skillSet.AddSkill(10, expectedAdHocType);
         var expectedSkill = skillSet.Skills.ToList();
 
@@ -398,7 +398,7 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var skillSet = new SkillSetEntity("Test Overview", 1);
+        var skillSet = new SkillSet("Test Overview", 1);
         skillSet.AddSkill(5, csharpSkill);
         skillSet.AddSkill(2, expectedAdHocType);
         var expectedSkills = skillSet.Skills.ToList();
