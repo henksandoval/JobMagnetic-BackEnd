@@ -13,7 +13,7 @@ public class SkillSet : SoftDeletableEntity<long>
     public string? Overview { get; private set; }
     public virtual IReadOnlyCollection<Skill> Skills => _skills;
 
-    [ForeignKey(nameof(Profile))] public long ProfileId { get; private set; }
+    [ForeignKey(nameof(Profile))] public long ProfileId { get; private set; } //TODO: Pending refactor to ProfileEntity
 
     public virtual ProfileEntity Profile { get; private set; }
 

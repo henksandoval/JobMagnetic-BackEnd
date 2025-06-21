@@ -1,4 +1,5 @@
-﻿using JobMagnet.Application.Services;
+﻿using System.Reflection;
+using JobMagnet.Application.Services;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Core.Entities.Base.Interfaces;
 using JobMagnet.Domain.Core.Entities.Skills;
@@ -46,8 +47,6 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
         modelBuilder.Entity<ServiceGalleryItemEntity>().ToTable("ServiceGalleryItems");
         modelBuilder.Entity<ResumeEntity>().ToTable("Resumes");
         modelBuilder.Entity<ContactInfoEntity>().ToTable("ContactInfo");
-        modelBuilder.Entity<Skill>().ToTable("SkillItems");
-        modelBuilder.Entity<SkillSet>().ToTable("Skills");
         modelBuilder.Entity<SummaryEntity>().ToTable("Summaries");
         modelBuilder.Entity<TestimonialEntity>().ToTable("Testimonials");
         modelBuilder.Entity<WorkExperienceEntity>().ToTable("WorkExperiences");
@@ -87,18 +86,6 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
-        modelBuilder.Entity<SkillType>(entity =>
-        {
-            entity.ToTable("SkillTypes")
-                .HasKey(skillType => skillType.Id);
-        });
-
-        modelBuilder.Entity<SkillCategory>(entity =>
-        {
-            entity.ToTable("SkillCategories")
-                .HasKey(category => category.Id);
-        });
-
         modelBuilder.Entity<WorkResponsibilityEntity>(entity =>
         {
             entity.ToTable("WorkResponsibilities")
@@ -116,6 +103,8 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
         });
+
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 
     public override int SaveChanges()

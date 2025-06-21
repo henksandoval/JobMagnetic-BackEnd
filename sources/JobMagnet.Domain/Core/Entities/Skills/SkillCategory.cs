@@ -6,7 +6,6 @@ namespace JobMagnet.Domain.Core.Entities.Skills;
 public class SkillCategory : SoftDeletableEntity<ushort>
 {
     public string Name { get; private set; }
-
     private SkillCategory() { }
 
     [SetsRequiredMembers]

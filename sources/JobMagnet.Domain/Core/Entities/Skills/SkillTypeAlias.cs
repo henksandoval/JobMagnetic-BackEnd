@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 
 namespace JobMagnet.Domain.Core.Entities.Skills;
@@ -7,20 +8,17 @@ public class SkillTypeAlias : SoftDeletableEntity<int>
 {
     public string Alias { get; private set; }
     public int SkillTypeId { get; private set; }
-    public virtual SkillType SkillType { get; private set; }
-
     public bool SkillTypeExist => Id > 0 && !IsDeleted;
 
     private SkillTypeAlias() {}
 
     [SetsRequiredMembers]
-    internal SkillTypeAlias(string alias, SkillType skillType)
+    internal SkillTypeAlias(string alias, int skillTypeId)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(alias, nameof(alias));
-        ArgumentNullException.ThrowIfNull(skillType, nameof(skillType));
+        Guard.IsNotNullOrWhiteSpace(alias);
+        Guard.IsGreaterThanOrEqualTo<int>(skillTypeId, 0);
 
         Alias = alias;
-        SkillType = skillType;
-        SkillTypeId = skillType.Id;
+        SkillTypeId = skillTypeId;
     }
 }

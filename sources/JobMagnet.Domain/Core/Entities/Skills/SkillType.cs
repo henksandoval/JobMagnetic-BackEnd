@@ -48,7 +48,7 @@ public class SkillType : SoftDeletableEntity<int>
             throw new JobMagnetDomainException($"The alias ({alias}) already exists.");
         }
 
-        var newAlias = new SkillTypeAlias(alias, this);
+        var newAlias = new SkillTypeAlias(alias, Id);
         _aliases.Add(newAlias);
     }
 

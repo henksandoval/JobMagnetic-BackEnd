@@ -9,10 +9,8 @@ public class Skill : TrackableEntity<long>
 {
     public ushort ProficiencyLevel { get; private set; }
     public ushort Rank { get; private set; }
-
-    [ForeignKey(nameof(SkillSet))] public long SkillId { get; private set; }
-    [ForeignKey(nameof(SkillType))] public int SkillTypeId { get; private set; }
-
+    public long SkillSetId { get; private set; }
+    public int SkillTypeId { get; private set; }
     public virtual SkillType SkillType { get; private set; }
     public virtual SkillSet SkillSet { get; private set; }
 
@@ -30,9 +28,9 @@ public class Skill : TrackableEntity<long>
         Id = id;
         ProficiencyLevel = proficiencyLevel;
         Rank = rank;
-        SkillId = skillSet.Id;
-        SkillTypeId = skillType.Id;
+        SkillSetId = skillSet.Id;
         SkillSet = skillSet;
+        SkillTypeId = skillType.Id;
         SkillType = skillType;
     }
 

@@ -79,6 +79,6 @@ public class SkillMapperShould
 
     private static Expression<Func<Skill, object>> GetExcludeItemEntityProperties()
     {
-        return e => new { e.Id, Skill = e.SkillSet, e.SkillId, e.SkillType, e.SkillTypeId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy };
+        return e => new { e.Id, Skill = e.SkillSet, SkillId = e.SkillSetId, e.SkillType, e.SkillTypeId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy };
     }
 }
