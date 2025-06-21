@@ -9,6 +9,7 @@ using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Core.Entities.ContactInfo;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Tests.Fixtures;

@@ -1,5 +1,6 @@
 using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Core.Entities.ContactInfo;
 using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Domain.Services;
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Core.Entities.ContactInfo;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 

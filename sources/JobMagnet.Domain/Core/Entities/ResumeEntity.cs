@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
+using JobMagnet.Domain.Core.Entities.ContactInfo;
 
 namespace JobMagnet.Domain.Core.Entities;
 
