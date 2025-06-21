@@ -95,7 +95,7 @@ public static class ProfileMapper
             entity.Resume?.Title ?? string.Empty,
             GetContactValue(entity, "Email"),
             entity.Resume?.Summary ?? string.Empty,
-            string.Empty
+            entity.Resume?.Summary ?? string.Empty
         );
         return viewModel;
     }

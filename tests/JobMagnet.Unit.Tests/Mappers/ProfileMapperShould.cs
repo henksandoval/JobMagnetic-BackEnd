@@ -37,7 +37,7 @@ public class ProfileMapperShould
         result.PersonalData!.ShouldBeEquivalentTo(profileExpected.PersonalData);
     }
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when About is defined", Skip = "Temp skip")]
+    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when About is defined")]
     public void MapperProfileEntityToProfileViewModelWithAbout()
     {
         var profileBuilder = new ProfileEntityBuilder(_fixture)
@@ -178,7 +178,7 @@ public class ProfileMapperShould
     {
         var webSite = GetContactValue("Website");
         var email = GetContactValue("Email");
-        var mobilePhone = GetContactValue("Mobile Phone");
+        var mobilePhone = GetContactValue("Phone");
 
         return new AboutViewModel(
             entity.ProfileImageUrl,
@@ -192,7 +192,7 @@ public class ProfileMapperShould
             entity.BirthDate.GetAge(),
             entity.Resume.Title ?? string.Empty,
             email,
-            "",
+            entity.Resume.Summary ?? string.Empty,
             entity.Resume.Summary
         );
 

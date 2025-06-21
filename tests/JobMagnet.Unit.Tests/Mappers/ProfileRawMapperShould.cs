@@ -202,7 +202,7 @@ public class ProfileRawMapperShould
         result.Services.Should().BeEquivalentTo(expectedServiceDto);
     }
 
-    [Fact(DisplayName = "Map SummaryRaw (Introduction, Education, WorkExperience) to SummaryParseDto", Skip = "Temp skip")]
+    [Fact(DisplayName = "Map SummaryRaw (Introduction, Education, WorkExperience) to SummaryParseDto")]
     public void MapSummaryRawCorrectly()
     {
         // Given
@@ -239,6 +239,11 @@ public class ProfileRawMapperShould
                     Description = work.Description,
                     StartDate = DateOnly.Parse(work.StartDate!),
                     EndDate = string.IsNullOrEmpty(work.EndDate) ? null : DateOnly.Parse(work.EndDate!),
+                    Responsibilities = work.Responsibilities!
+                        .Select(responsibility => new ResponsibilityParseDto
+                        {
+                            Description = responsibility.Description
+                        }).ToList()
                 }).ToList()
         };
         result.Summary.Should().BeEquivalentTo(expectedSummaryDto);

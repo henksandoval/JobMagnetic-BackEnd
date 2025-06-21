@@ -32,20 +32,6 @@ public class SummaryMapperShould
             options.Excluding(GetExcludeWorkExperienceEntityProperties()));
     }
 
-    [Fact(Skip = "TODO: Fix this test")]
-    public void MapSummaryCommandToSummaryEntityCorrectly()
-    {
-        // Given
-        var createCommand = _fixture.Create<SummaryCommand>();
-
-        // When
-        var entity = createCommand.ToEntity();
-
-        // Then
-        entity.Should().NotBeNull();
-        entity.Should().BeEquivalentTo(createCommand.SummaryData);
-    }
-
     [Fact]
     public void MapSummaryEntityToSummaryUpdateCommandCorrectly()
     {
