@@ -28,7 +28,6 @@ public class ProfileCustomization : ICustomization
                 .Without(x => x.Services)
                 .Without(x => x.SkillSet)
                 .Without(x => x.Testimonials)
-                .Without(x => x.PublicProfileIdentifiers)
                 .OmitAutoProperties()
         );
 

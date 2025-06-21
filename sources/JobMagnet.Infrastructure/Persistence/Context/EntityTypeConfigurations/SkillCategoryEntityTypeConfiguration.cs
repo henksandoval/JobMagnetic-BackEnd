@@ -11,7 +11,7 @@ public class SkillCategoryEntityTypeConfiguration : IEntityTypeConfiguration<Ski
         builder.HasKey(c => c.Id);
 
         builder.Property(c => c.Name)
-            .HasMaxLength(50)
+            .HasMaxLength(SkillCategory.MaxNameLength)
             .IsRequired();
     }
 }

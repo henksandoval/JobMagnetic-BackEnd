@@ -1,5 +1,6 @@
 ﻿using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Core.Entities.Skills;
+using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Infrastructure.Exceptions;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
@@ -65,8 +66,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
     private static void AddPublicIdentifier(ProfileEntity profile)
     {
-        var publicProfile = new PublicProfileIdentifierEntity(profile, "john-doe-1a2b3c");
-        profile.PublicProfileIdentifiers.Add(publicProfile);
+        profile.AddPublicProfileIdentifier("john-doe-1a2b3c");
     }
 
     private static void AddTalents(ProfileEntity profile)

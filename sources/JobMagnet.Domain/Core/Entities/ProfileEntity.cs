@@ -1,4 +1,5 @@
-﻿using JobMagnet.Domain.Core.Entities.Base;
+﻿using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Domain.Services;
@@ -8,6 +9,7 @@ namespace JobMagnet.Domain.Core.Entities;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ProfileEntity : SoftDeletableEntity<long>
 {
+    private readonly HashSet<PublicProfileIdentifierEntity> _publicProfileIdentifiers = [];
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? ProfileImageUrl { get; set; }
@@ -23,28 +25,26 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public virtual ICollection<PortfolioGalleryEntity> PortfolioGallery { get; set; } =
         new HashSet<PortfolioGalleryEntity>();
     public virtual ICollection<TestimonialEntity> Testimonials { get; set; } = new HashSet<TestimonialEntity>();
-    public virtual ICollection<PublicProfileIdentifierEntity> PublicProfileIdentifiers { get; set; } =
-        new HashSet<PublicProfileIdentifierEntity>();
+    public virtual ICollection<PublicProfileIdentifierEntity> PublicProfileIdentifiers => _publicProfileIdentifiers;
 
     public void CreateAndAssignPublicIdentifier(IProfileSlugGenerator slugGenerator)
     {
-        if (PublicProfileIdentifiers.Any(p => p.Type == LinkType.Primary))
+        if (_publicProfileIdentifiers.Any(p => p.Type == LinkType.Primary))
         {
             return;
         }
 
         var generatedSlug = slugGenerator.GenerateProfileSlug(this);
-
-        var publicIdentifier = new PublicProfileIdentifierEntity(this, generatedSlug);
-
-        PublicProfileIdentifiers.Add(publicIdentifier);
+        AddPublicProfileIdentifier(generatedSlug);
     }
 
-    public void AddPublicProfileIdentifier(PublicProfileIdentifierEntity publicIdentifierEntity)
+    public void AddPublicProfileIdentifier(string slug, LinkType type = LinkType.Primary)
     {
-        ArgumentNullException.ThrowIfNull(publicIdentifierEntity);
+        Guard.IsNotNullOrEmpty(slug);
 
-        PublicProfileIdentifiers.Add(publicIdentifierEntity);
+        var publicIdentifier = new PublicProfileIdentifierEntity(slug, Id);
+
+        _publicProfileIdentifiers.Add(publicIdentifier);
     }
 
     public void AddTalent(string talent)

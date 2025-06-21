@@ -139,7 +139,7 @@ namespace JobMagnet.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PublicProfileIdentifiers",
+                name: "PublicProfileIdentifier",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -155,13 +155,13 @@ namespace JobMagnet.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PublicProfileIdentifiers", x => x.Id);
+                    table.PrimaryKey("PK_PublicProfileIdentifier", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PublicProfileIdentifiers_Profiles_ProfileId",
+                        name: "FK_PublicProfileIdentifier_Profiles_ProfileId",
                         column: x => x.ProfileId,
                         principalTable: "Profiles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -604,13 +604,13 @@ namespace JobMagnet.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_PublicProfileIdentifier_Identifier",
-                table: "PublicProfileIdentifiers",
+                table: "PublicProfileIdentifier",
                 column: "ProfileSlugUrl",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PublicProfileIdentifier_ProfileId",
-                table: "PublicProfileIdentifiers",
+                table: "PublicProfileIdentifier",
                 column: "ProfileId");
 
             migrationBuilder.CreateIndex(
@@ -699,7 +699,7 @@ namespace JobMagnet.Infrastructure.Migrations
                 name: "PorfolioGalleryItems");
 
             migrationBuilder.DropTable(
-                name: "PublicProfileIdentifiers");
+                name: "PublicProfileIdentifier");
 
             migrationBuilder.DropTable(
                 name: "ServiceGalleryItems");

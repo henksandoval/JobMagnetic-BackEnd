@@ -16,6 +16,11 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
         await _dbSet.AddAsync(entity, cancellationToken).ConfigureAwait(false);
     }
 
+    public async Task CreateRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    {
+        await _dbSet.AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
+    }
+
     public ICommandRepository<TEntity> Update(TEntity entity)
     {
         _dbSet.Update(entity);

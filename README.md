@@ -91,7 +91,7 @@ The solution is organized into the following key projects, located under the `so
 
     ```bash
     # Create a new migration
-    dotnet ef migrations add InitialCreate --project sources/JobMagnet.Infrastructure --startup-project sources/JobMagnet.Host
+    dotnet ef migrations add InitialDb --project sources/JobMagnet.Infrastructure --startup-project sources/JobMagnet.Host
 
     # Apply migrations to the database
     dotnet ef database update --project sources/JobMagnet.Infrastructure --startup-project sources/JobMagnet.Host

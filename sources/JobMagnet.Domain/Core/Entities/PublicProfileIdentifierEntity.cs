@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Core.Enums;
 
@@ -14,18 +15,15 @@ public class PublicProfileIdentifierEntity : TrackableEntity<long>
     public long ProfileId { get; private set; }
     public long ViewCount { get; private set; }
 
-    public ProfileEntity ProfileEntity { get; init; } = null!;
-
     private PublicProfileIdentifierEntity() { }
 
     [SetsRequiredMembers]
-    public PublicProfileIdentifierEntity(ProfileEntity profileEntity, string slug)
+    internal PublicProfileIdentifierEntity(string slug, long profileEntityId)
     {
-        ArgumentNullException.ThrowIfNull(profileEntity, nameof(profileEntity));
-        ArgumentNullException.ThrowIfNull(slug, nameof(slug));
+        Guard.IsNotNullOrEmpty(slug);
+        Guard.IsGreaterThanOrEqualTo(profileEntityId, 0);
 
-        ProfileId = profileEntity.Id;
-        ProfileEntity = profileEntity;
+        ProfileId = profileEntityId;
         ProfileSlugUrl = slug;
         Type = LinkType.Primary;
         ViewCount = 0;

@@ -51,41 +51,6 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
         modelBuilder.Entity<TestimonialEntity>().ToTable("Testimonials");
         modelBuilder.Entity<WorkExperienceEntity>().ToTable("WorkExperiences");
 
-        modelBuilder.Entity<PublicProfileIdentifierEntity>(entity =>
-        {
-            entity.ToTable("PublicProfileIdentifiers")
-                .HasKey(publicProfile => publicProfile.Id);
-
-            entity
-                .Property(publicProfile => publicProfile.ProfileSlugUrl)
-                .IsRequired()
-                .HasMaxLength(PublicProfileIdentifierEntity.MaxNameLength);
-
-            entity
-                .Property(publicProfile => publicProfile.Type)
-                .IsRequired();
-
-            entity
-                .Property(publicProfile => publicProfile.ProfileId)
-                .IsRequired();
-
-            entity
-                .HasIndex(publicProfile => publicProfile.ProfileSlugUrl)
-                .HasDatabaseName("IX_PublicProfileIdentifier_Identifier")
-                .IsUnique();
-
-            entity.HasIndex(publicProfile => publicProfile.ProfileId)
-                .HasDatabaseName("IX_PublicProfileIdentifier_ProfileId")
-                .IsUnique(false);
-
-            entity
-                .HasOne(publicProfile => publicProfile.ProfileEntity)
-                .WithMany(profile => profile.PublicProfileIdentifiers)
-                .HasForeignKey(publicProfile => publicProfile.ProfileId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict);
-        });
-
         modelBuilder.Entity<WorkResponsibilityEntity>(entity =>
         {
             entity.ToTable("WorkResponsibilities")

@@ -11,7 +11,7 @@ public class SkillTypeAliasEntityTypeConfiguration : IEntityTypeConfiguration<Sk
         builder.HasKey(alias => alias.Id);
 
         builder.Property(alias => alias.Alias)
-            .HasMaxLength(50)
+            .HasMaxLength(SkillTypeAlias.MaxAliasLength)
             .IsRequired();
     }
 }

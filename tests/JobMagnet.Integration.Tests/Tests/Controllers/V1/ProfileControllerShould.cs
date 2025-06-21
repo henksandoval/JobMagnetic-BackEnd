@@ -256,19 +256,20 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     private async Task<PublicProfileIdentifierEntity> SetupPublicProfileAsync(ProfileEntity profile)
     {
         var slugGenerator = new Mock<IProfileSlugGenerator>();
+        const string slug = "alexander-gonzalez-6ca66d";
+        profile.AddPublicProfileIdentifier(slug);
         slugGenerator
             .Setup(sg => sg.GenerateProfileSlug(It.IsAny<ProfileEntity>()))
-            .Returns("alexander-gonzalez-6ca66d");
+            .Returns(slug);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository =
             scope.ServiceProvider.GetRequiredService<ICommandRepository<PublicProfileIdentifierEntity>>();
-        var publicProfile = new PublicProfileIdentifierEntity(profile, "alexander-gonzalez-6ca66d")
-        {
-            ProfileEntity = null!
-        };
-        await commandRepository.CreateAsync(publicProfile);
+
+        await commandRepository.CreateRangeAsync(profile.PublicProfileIdentifiers, CancellationToken.None);
         await commandRepository.SaveChangesAsync();
-        return publicProfile;
+
+        return profile.PublicProfileIdentifiers.FirstOrDefault() ??
+               throw new InvalidOperationException("Public profile identifier was not created.");
     }
 }

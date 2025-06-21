@@ -372,14 +372,13 @@ namespace JobMagnet.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProfileId")
-                        .HasDatabaseName("IX_PublicProfileIdentifier_ProfileId");
+                    b.HasIndex("ProfileId");
 
                     b.HasIndex("ProfileSlugUrl")
                         .IsUnique()
                         .HasDatabaseName("IX_PublicProfileIdentifier_Identifier");
 
-                    b.ToTable("PublicProfileIdentifiers", (string)null);
+                    b.ToTable("PublicProfileIdentifier");
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ResumeEntity", b =>
@@ -1060,13 +1059,11 @@ namespace JobMagnet.Infrastructure.Migrations
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.PublicProfileIdentifierEntity", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", "ProfileEntity")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", null)
                         .WithMany("PublicProfileIdentifiers")
                         .HasForeignKey("ProfileId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ProfileEntity");
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ResumeEntity", b =>

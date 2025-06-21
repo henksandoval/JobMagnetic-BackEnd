@@ -11,7 +11,7 @@ public class SkillTypeEntityTypeConfiguration : IEntityTypeConfiguration<SkillTy
         builder.HasKey(s => s.Id);
 
         builder.Property(s => s.Name)
-            .HasMaxLength(50)
+            .HasMaxLength(SkillType.MaxNameLength)
             .IsRequired();
 
         builder.Property(s => s.IconUrl)

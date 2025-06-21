@@ -6,6 +6,8 @@ namespace JobMagnet.Domain.Core.Entities.Skills;
 
 public class SkillType : SoftDeletableEntity<int>
 {
+    public const int MaxNameLength = 50;
+
     public string Name { get; private set; }
     public string IconUrl { get; private set; }
     public ushort CategoryId { get; private set; }
