@@ -46,7 +46,7 @@ public class SkillMapperShould
             mappedSkill.ProficiencyLevel.Should().Be(sourceSkill.ProficiencyLevel);
             mappedSkill.Rank.Should().Be(sourceSkill.Rank);
             mappedSkill.Name.Should().Be(sourceSkill.SkillType.Name);
-            mappedSkill.IconUrl.Should().Be(sourceSkill.SkillType.IconUrl);
+            mappedSkill.IconUrl.Should().Be(sourceSkill.SkillType.IconUrl.AbsoluteUri);
         }
     }
 

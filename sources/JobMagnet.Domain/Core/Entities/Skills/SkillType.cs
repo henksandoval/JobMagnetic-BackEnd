@@ -9,7 +9,7 @@ public class SkillType : SoftDeletableEntity<int>
     public const int MaxNameLength = 50;
 
     public string Name { get; private set; }
-    public string IconUrl { get; private set; }
+    public Uri IconUrl { get; private set; }
     public ushort CategoryId { get; private set; }
 
     public virtual IReadOnlyCollection<SkillTypeAlias> Aliases => _aliases.AsReadOnly();
@@ -29,7 +29,7 @@ public class SkillType : SoftDeletableEntity<int>
         Name = name;
         Category = category;
         CategoryId = category.Id;
-        IconUrl = iconUrl?.AbsoluteUri ?? string.Empty;
+        IconUrl = iconUrl!;
     }
 
     [SetsRequiredMembers]
@@ -65,11 +65,11 @@ public class SkillType : SoftDeletableEntity<int>
 
     public void UpdateIcons(Uri? newIconUrl)
     {
-        IconUrl = newIconUrl?.AbsoluteUri;
+        IconUrl = newIconUrl ?? throw new ArgumentNullException(nameof(newIconUrl), "Icon URL cannot be null.");
     }
 
     public void SetDefaultIcon()
     {
-        IconUrl = "https://jobmagnet.com/default-icon.png";
+        IconUrl = new Uri("https://jobmagnet.com/default-icon.png");
     }
 }
