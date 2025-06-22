@@ -29,21 +29,6 @@ public class ResumeMapperShould
     }
 
     [Fact]
-    public void MapResumeCommandToResumeEntityCorrectly()
-    {
-        // Given
-        var createCommand = _fixture.Create<ResumeCommand>();
-
-        // When
-        var entity = createCommand.ToEntity();
-
-        // Then
-        entity.Should().NotBeNull();
-        entity.Should().BeEquivalentTo(createCommand.ResumeData, options =>
-            options.ExcludingMissingMembers());
-    }
-
-    [Fact]
     public void MapResumeEntityToResumeUpdateCommandCorrectly()
     {
         // Given

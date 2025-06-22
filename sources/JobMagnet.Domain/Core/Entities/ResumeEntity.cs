@@ -55,6 +55,26 @@ public class ResumeEntity : SoftDeletableEntity<long>
         Address = address;
     }
 
+    public void UpdateGeneralInfo(
+        string title,
+        string suffix,
+        string jobTitle,
+        string about,
+        string summary,
+        string overview,
+        string address)
+    {
+        Guard.HasSizeLessThanOrEqualTo(jobTitle, MaxJobTitleLength);
+
+        Title = title;
+        Suffix = suffix;
+        JobTitle = jobTitle;
+        About = about;
+        Summary = summary;
+        Overview = overview;
+        Address = address;
+    }
+
     public void AddContactInfo(string value,
         ContactType contactType)
     {

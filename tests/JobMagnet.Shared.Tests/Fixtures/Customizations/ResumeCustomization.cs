@@ -9,15 +9,15 @@ public class ResumeCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Register(() =>
-            new ResumeEntity(TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.Prefix()),
-                "",
-                FixtureBuilder.Faker.Name.JobTitle(),
-                FixtureBuilder.Faker.Lorem.Paragraph(),
-                FixtureBuilder.Faker.Lorem.Paragraph(),
-                FixtureBuilder.Faker.Lorem.Paragraph(),
-                FixtureBuilder.Faker.Address.FullAddress())
-        );
+        fixture.Register(() => new ResumeEntity(
+            FixtureBuilder.Faker.Name.Prefix(),
+            "",
+            FixtureBuilder.Faker.Name.JobTitle(),
+            FixtureBuilder.Faker.Lorem.Paragraph(),
+            FixtureBuilder.Faker.Lorem.Paragraph(),
+            FixtureBuilder.Faker.Lorem.Paragraph(),
+            FixtureBuilder.Faker.Address.FullAddress()
+        ));
 
         fixture.Register(() =>
         {

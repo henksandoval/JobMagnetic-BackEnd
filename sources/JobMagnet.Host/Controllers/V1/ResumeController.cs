@@ -19,7 +19,17 @@ public class ResumeController(
     [ProducesResponseType(typeof(ResumeResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ResumeCommand createCommand, CancellationToken cancellationToken)
     {
-        var entity = createCommand.ToEntity();
+        var entity = new ResumeEntity(
+            createCommand.ResumeData.Title,
+            createCommand.ResumeData.Suffix,
+            createCommand.ResumeData.JobTitle,
+            createCommand.ResumeData.About,
+            createCommand.ResumeData.Summary,
+            createCommand.ResumeData.Overview,
+            createCommand.ResumeData.Address,
+            0,
+            createCommand.ResumeData.ProfileId
+        );
         await commandRepository.CreateAsync(entity, cancellationToken);
         await commandRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         var newRecord = entity.ToModel();
@@ -53,7 +63,17 @@ public class ResumeController(
         if (entity is null)
             return Results.NotFound();
 
-        entity.UpdateEntity(command);
+        var data = command.ResumeData;
+
+        entity.UpdateGeneralInfo(
+            data.Title,
+            data.Suffix,
+            data.JobTitle,
+            data.About,
+            data.Summary,
+            data.Overview,
+            data.Address
+        );
 
         await commandRepository
             .Update(entity)

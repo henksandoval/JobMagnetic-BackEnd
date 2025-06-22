@@ -16,19 +16,6 @@ public static class ResumeMapper
         TypeAdapterConfig<ResumeEntity, ResumeCommand>
             .NewConfig()
             .Map(dest => dest.ResumeData, src => src);
-
-        TypeAdapterConfig<ResumeCommand, ResumeEntity>
-            .NewConfig()
-            .ConstructUsing(src => new ResumeEntity(
-                src.ResumeData.Title,
-                src.ResumeData.Suffix,
-                src.ResumeData.JobTitle,
-                src.ResumeData.About,
-                src.ResumeData.Summary,
-                src.ResumeData.Overview,
-                src.ResumeData.Address,
-                0,
-                src.ResumeData.ProfileId));
     }
 
     public static ResumeResponse ToModel(this ResumeEntity entity)
@@ -36,18 +23,8 @@ public static class ResumeMapper
         return entity.Adapt<ResumeResponse>();
     }
 
-    public static ResumeEntity ToEntity(this ResumeCommand command)
-    {
-        return command.Adapt<ResumeEntity>();
-    }
-
     public static ResumeCommand ToUpdateRequest(this ResumeEntity entity)
     {
         return entity.Adapt<ResumeCommand>();
-    }
-
-    public static void UpdateEntity(this ResumeEntity entity, ResumeCommand command)
-    {
-        command.Adapt(entity);
     }
 }
