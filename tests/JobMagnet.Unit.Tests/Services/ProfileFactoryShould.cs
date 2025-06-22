@@ -104,7 +104,15 @@ public class ProfileFactoryShould
 
         // Then
         profile.Should().NotBeNull();
-        profile.Resume.Should().BeEquivalentTo(profileDto.Resume, options => options.ExcludingMissingMembers());
+        profile.Resume.Should().NotBeNull();
+        var resume = profile.Resume!;
+
+        resume.About.Should().Be(profileDto.Resume.About ?? string.Empty);
+        resume.Address.Should().Be(profileDto.Resume.Address ?? string.Empty);
+        resume.JobTitle.Should().Be(profileDto.Resume.JobTitle ?? string.Empty);
+        resume.Overview.Should().Be(profileDto.Resume.Overview ?? string.Empty);
+        resume.Suffix.Should().Be(profileDto.Resume.Suffix ?? string.Empty);
+        resume.Title.Should().Be(profileDto.Resume.Title ?? string.Empty);
     }
 
     [Fact(DisplayName = "Map contact info when the type exists")]
