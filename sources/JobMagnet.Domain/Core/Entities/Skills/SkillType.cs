@@ -63,4 +63,11 @@ public class SkillType : SoftDeletableEntity<int>
     {
         IconUrl = newIconUrl ?? throw new ArgumentNullException(nameof(newIconUrl), "Icon URL cannot be null.");
     }
+
+    public void SetCategory(SkillCategory category)
+    {
+        Guard.IsNotNull(category);
+
+        Category = category;
+    }
 }

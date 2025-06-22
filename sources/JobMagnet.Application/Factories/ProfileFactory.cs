@@ -59,13 +59,13 @@ public class ProfileFactory(
     private async Task<ResumeEntity> BuildResumeAsync(ResumeParseDto resumeDto, CancellationToken cancellationToken)
     {
         var resumeEntity = new ResumeEntity(
-            resumeDto.Title,
-            resumeDto.Suffix,
-            resumeDto.JobTitle,
-            resumeDto.About,
-            resumeDto.Summary,
-            resumeDto.Overview,
-            resumeDto.Address);
+            resumeDto.Title ?? string.Empty,
+            resumeDto.Suffix ?? string.Empty,
+            resumeDto.JobTitle ?? string.Empty,
+            resumeDto.About ?? string.Empty,
+            resumeDto.Summary ?? string.Empty,
+            resumeDto.Overview ?? string.Empty,
+            resumeDto.Address ?? string.Empty);
 
         foreach (var dto in resumeDto.ContactInfo.Where(info => !string.IsNullOrWhiteSpace(info.ContactType)))
         {

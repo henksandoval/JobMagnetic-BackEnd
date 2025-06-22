@@ -70,10 +70,21 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         var random = new Random();
         var addedSkillTypes = new HashSet<string>();
+        var addedSkillCategories = new Dictionary<string, SkillCategory>();
 
         while (_skillSet.Skills.Count < count)
         {
             var skillType = fixture.Create<SkillType>();
+
+            if (addedSkillCategories.TryGetValue(skillType.Category.Name, out var existingCategory))
+            {
+                skillType.SetCategory(existingCategory);
+            }
+            else
+            {
+                addedSkillCategories.Add(skillType.Category.Name, skillType.Category);
+            }
+
             var proficiencyLevel = (ushort) random.Next(1, 10);
 
             if (addedSkillTypes.Add(skillType.Name))

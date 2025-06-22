@@ -25,25 +25,17 @@ public class CvParserHandler(
 {
     public async Task<CreateProfileResponse> ParseAsync(CvParserCommand command, CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var profileEntity = await BuildProfileFromCvAsync(command, cancellationToken);
+        var profileEntity = await BuildProfileFromCvAsync(command, cancellationToken);
 
-            profileEntity.CreateAndAssignPublicIdentifier(slugGenerator);
+        profileEntity.CreateAndAssignPublicIdentifier(slugGenerator);
 
-            await profileRepository.CreateAsync(profileEntity, cancellationToken);
-            await profileRepository.SaveChangesAsync(cancellationToken);
+        await profileRepository.CreateAsync(profileEntity, cancellationToken);
+        await profileRepository.SaveChangesAsync(cancellationToken);
 
-            var userEmail = GetUserEmail(profileEntity);
-            var profileUrl = GetProfileSlugUrl(profileEntity);
+        var userEmail = GetUserEmail(profileEntity);
+        var profileUrl = GetProfileSlugUrl(profileEntity);
 
-            return new CreateProfileResponse(profileEntity.Id, userEmail, profileUrl);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+        return new CreateProfileResponse(profileEntity.Id, userEmail, profileUrl);
     }
 
     private async Task<ProfileEntity> BuildProfileFromCvAsync(CvParserCommand command, CancellationToken cancellationToken)
