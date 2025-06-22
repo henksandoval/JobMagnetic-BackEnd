@@ -17,6 +17,21 @@ public interface ISeeder
 
 public class Seeder(JobMagnetDbContext context) : ISeeder
 {
+    private const string? About = """
+                                  ¡Hello! I'm Johnson Brandon, a passionate web developer who loves creating dynamic, easy-to-use websites.
+                                  I have over 5 years of experience in the technology industry, working with a variety of clients to make their visions a reality.
+                                  """;
+
+    private const string? Summary = """
+                                    Developed and maintained web applications for various clients, focusing on front-end development and user experience.
+                                    Assisted in the development of websites and applications, learning best practices and improving coding skills.",
+                                    """;
+
+    private const string? Overview = """
+                                     In my free time I enjoy hiking, reading science fiction novels, and experimenting with new technologies.
+                                     I am always eager to learn new things and take on exciting challenges.",
+                                     """;
+
     public async Task RegisterMasterTablesAsync(CancellationToken cancellationToken)
     {
         if (context.ContactTypes.Any()) return;
@@ -83,27 +98,13 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
     {
         var contactTypeMap = await BuildContactTypesMapAsync(cancellationToken).ConfigureAwait(false);
 
-        var resume = new ResumeEntity
-        {
-            Id = 0,
-            JobTitle = "UI/UX Designer & Web Developer",
-            Title = "Mr.",
-            About = """
-                    ¡Hello! I'm Johnson Brandon, a passionate web developer who loves creating dynamic, easy-to-use websites.
-                    I have over 5 years of experience in the technology industry, working with a variety of clients to make their visions a reality.
-                    """,
-            Summary = """
-                      Developed and maintained web applications for various clients, focusing on front-end development and user experience.
-                      Assisted in the development of websites and applications, learning best practices and improving coding skills.",
-                      """,
-            Overview = """
-                       In my free time I enjoy hiking, reading science fiction novels, and experimenting with new technologies.
-                       I am always eager to learn new things and take on exciting challenges.",
-                       """,
-            Address = "123 Main St, Springfield, USA",
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty,
-        };
+        var resume = new ResumeEntity("Mr.",
+            "",
+            "UI/UX Designer & Web Developer",
+            About,
+            Summary,
+            Overview,
+            "123 Main St, Springfield, USA");
 
         foreach (var (value, contactTypeName) in ContactInfoCollection.Data)
         {
@@ -126,10 +127,10 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         var skillTypeMap = await BuildSkillTypesMapAsync(cancellationToken).ConfigureAwait(false);
 
         const string overview = """
-                         I am a passionate web developer with a strong background in front-end and back-end technologies.
-                         I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
-                         I am always eager to learn new technologies and improve my skills.
-                         """;
+                                I am a passionate web developer with a strong background in front-end and back-end technologies.
+                                I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
+                                I am always eager to learn new technologies and improve my skills.
+                                """;
         var skillSet = new SkillSet(overview, profile.Id);
 
         foreach (var (skillName, proficiencyLevel, rank) in SkillInfoCollection.Data)

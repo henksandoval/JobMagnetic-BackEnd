@@ -8,6 +8,7 @@ public interface IQueryRepository<TEntity, in TKey> where TEntity : class
     Task<IReadOnlyCollection<TEntity>> GetAllAsync();
     Task<IReadOnlyCollection<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
     Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
+    Task<TEntity> FirstAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
     Task<int> CountAsync();
     Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate);
 }

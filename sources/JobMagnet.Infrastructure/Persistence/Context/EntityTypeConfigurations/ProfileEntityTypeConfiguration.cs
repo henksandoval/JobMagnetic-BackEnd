@@ -10,6 +10,11 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<ProfileEn
     {
         builder.HasKey(p => p.Id);
 
+        builder.HasOne<ResumeEntity>(p => p.Resume)
+            .WithOne()
+            .HasForeignKey<ResumeEntity>(r => r.ProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasMany(p => p.PublicProfileIdentifiers)
             .WithOne()
             .HasForeignKey(identifier => identifier.ProfileId)

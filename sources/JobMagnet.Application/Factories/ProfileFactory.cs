@@ -2,6 +2,7 @@ using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Domain.Core.Entities.Skills;
+using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 
 namespace JobMagnet.Application.Factories;
@@ -13,7 +14,8 @@ public interface IProfileFactory
 
 public class ProfileFactory(
     IContactTypeResolverService contactTypeResolver,
-    ISkillTypeResolverService skillTypeResolverService) : IProfileFactory
+    ISkillTypeResolverService skillTypeResolverService,
+    IQueryRepository<SkillCategory, ushort> skillCategoryRepository) : IProfileFactory
 {
     public async Task<ProfileEntity> CreateProfileFromDtoAsync(ProfileParseDto profileDto,
         CancellationToken cancellationToken)
@@ -56,18 +58,14 @@ public class ProfileFactory(
 
     private async Task<ResumeEntity> BuildResumeAsync(ResumeParseDto resumeDto, CancellationToken cancellationToken)
     {
-        var resumeEntity = new ResumeEntity
-        {
-            Id = 0,
-            ProfileId = 0,
-            About = resumeDto.About!,
-            Overview = resumeDto.Overview!,
-            JobTitle = resumeDto.JobTitle!,
-            Address = resumeDto.Address!,
-            Suffix = resumeDto.Suffix!,
-            Summary = resumeDto.Summary!,
-            Title = resumeDto.Title!
-        };
+        var resumeEntity = new ResumeEntity(
+            resumeDto.Title,
+            resumeDto.Suffix,
+            resumeDto.JobTitle,
+            resumeDto.About,
+            resumeDto.Summary,
+            resumeDto.Overview,
+            resumeDto.Address);
 
         foreach (var dto in resumeDto.ContactInfo.Where(info => !string.IsNullOrWhiteSpace(info.ContactType)))
         {
@@ -159,14 +157,16 @@ public class ProfileFactory(
         CancellationToken cancellationToken)
     {
         var skillSetEntity = new SkillSet(skillSetDto.Overview!, 0);
+        var defaultCategory = await skillCategoryRepository
+            .FirstAsync(c => c.Name == SkillCategory.DefaultCategoryName, cancellationToken)
+            .ConfigureAwait(false);
 
         foreach (var skill in skillSetDto.Skills.Where(skill => !string.IsNullOrWhiteSpace(skill.Name)))
         {
-            var resolvedType = await skillTypeResolverService.ResolveAsync(skill.Name!, cancellationToken); //TODO: Add method by resolving skills by batch
+            var resolvedType = await skillTypeResolverService.ResolveAsync(skill.Name!, cancellationToken)
+                .ConfigureAwait(false); //TODO: Add method by resolving skills by batch
 
-            var skillType = resolvedType.HasValue ? resolvedType.Value : new SkillType(skill.Name!);
-            if (!resolvedType.HasValue)
-                skillType.SetDefaultIcon();
+            var skillType = resolvedType.HasValue ? resolvedType.Value : new SkillType(skill.Name!, defaultCategory);
 
             skillSetEntity.AddSkill(skill.Level.GetValueOrDefault(), skillType);
         }

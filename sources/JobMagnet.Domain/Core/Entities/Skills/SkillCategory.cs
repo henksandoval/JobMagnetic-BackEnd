@@ -1,20 +1,31 @@
 using System.Diagnostics.CodeAnalysis;
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 
 namespace JobMagnet.Domain.Core.Entities.Skills;
 
 public class SkillCategory : SoftDeletableEntity<ushort>
 {
+    private HashSet<SkillType> _skillTypes = [];
+    private const int MinNameLength = 2;
     public const int MaxNameLength = 50;
+    public const string DefaultCategoryName = "General";
 
     public string Name { get; private set; }
-    private SkillCategory() { }
+    public virtual IReadOnlyCollection<SkillType> SkillTypes => _skillTypes;
+
+    private SkillCategory()
+    {
+    }
 
     [SetsRequiredMembers]
-    public SkillCategory(string name)
+    public SkillCategory(string name, ushort id = 0)
     {
-        ArgumentNullException.ThrowIfNull(name);
+        Guard.IsNotNullOrWhiteSpace(name);
+        Guard.HasSizeGreaterThan(name, MinNameLength);
+        Guard.HasSizeLessThan(name, MaxNameLength);
 
+        Id = id;
         Name = name;
     }
 }

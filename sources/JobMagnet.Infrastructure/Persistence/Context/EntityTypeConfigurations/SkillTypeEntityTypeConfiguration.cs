@@ -20,7 +20,7 @@ public class SkillTypeEntityTypeConfiguration : IEntityTypeConfiguration<SkillTy
 
         builder
             .HasOne<SkillCategory>(type => type.Category)
-            .WithMany()
+            .WithMany(category => category.SkillTypes)
             .HasForeignKey(type => type.CategoryId)
             .IsRequired();
 

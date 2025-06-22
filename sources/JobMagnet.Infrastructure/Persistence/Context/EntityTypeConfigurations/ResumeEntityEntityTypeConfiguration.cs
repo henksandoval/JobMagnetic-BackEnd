@@ -10,8 +10,8 @@ public class ResumeEntityEntityTypeConfiguration : IEntityTypeConfiguration<Resu
     {
         builder.HasKey(e => e.Id);
 
-        builder.Property(r => r.Title)
-            .HasMaxLength(ResumeEntity.MaxTitleLength);
+        builder.Property(r => r.JobTitle)
+            .HasMaxLength(ResumeEntity.MaxJobTitleLength);
 
         builder.HasMany(r => r.ContactInfo)
             .WithOne()

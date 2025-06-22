@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Exceptions;
 
@@ -7,6 +8,7 @@ namespace JobMagnet.Domain.Core.Entities.Skills;
 public class SkillType : SoftDeletableEntity<int>
 {
     public const int MaxNameLength = 50;
+    private const string DefaultIconUri = "https://jobmagnet.com/default-icon.png";
 
     public string Name { get; private set; }
     public Uri IconUrl { get; private set; }
@@ -20,25 +22,19 @@ public class SkillType : SoftDeletableEntity<int>
     private SkillType() { }
 
     [SetsRequiredMembers]
-    public SkillType(int id, string name, SkillCategory category, Uri? iconUrl = null)
+    internal SkillType(string name, SkillCategory category, int id = 0, Uri? iconUrl = null)
     {
-        ArgumentNullException.ThrowIfNull(name);
-        ArgumentNullException.ThrowIfNull(category);
+        Guard.IsGreaterThanOrEqualTo(id, 0);
+        Guard.IsNotNullOrWhiteSpace(name);
+        Guard.HasSizeLessThanOrEqualTo(name, MaxNameLength);
+        Guard.IsNotNull(category);
+
+        iconUrl ??= new Uri(DefaultIconUri);
 
         Id = id;
         Name = name;
         Category = category;
-        CategoryId = category.Id;
-        IconUrl = iconUrl!;
-    }
-
-    [SetsRequiredMembers]
-    public SkillType(string name)
-    {
-        ArgumentNullException.ThrowIfNull(name);
-
-        Id = 0;
-        Name = name;
+        IconUrl = iconUrl;
     }
 
     public void AddAlias(string alias)
@@ -66,10 +62,5 @@ public class SkillType : SoftDeletableEntity<int>
     public void UpdateIcons(Uri? newIconUrl)
     {
         IconUrl = newIconUrl ?? throw new ArgumentNullException(nameof(newIconUrl), "Icon URL cannot be null.");
-    }
-
-    public void SetDefaultIcon()
-    {
-        IconUrl = new Uri("https://jobmagnet.com/default-icon.png");
     }
 }

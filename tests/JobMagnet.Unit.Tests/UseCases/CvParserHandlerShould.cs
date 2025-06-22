@@ -61,15 +61,16 @@ public class CvParserHandlerShould
             .Build();
 
         var contactInfoEmail = contactInfoRaw.FirstOrDefault(c => c.ContactType == "EMAIL");
-        var resumeEntity = new ResumeEntity { Id = 0 };
+        var resumeEntity = new ResumeEntity();
         var contactType = new ContactType(contactInfoEmail!.ContactType);
         resumeEntity.AddContactInfo(contactInfoEmail.Value!, contactType);
 
         var profileEntity = new ProfileEntity
         {
             Id = 0,
-            Resume = resumeEntity,
         };
+
+        profileEntity.AddResume(resumeEntity);
 
         _rawCvParserMock.Setup(p => p.ParseAsync(It.IsAny<Stream>()))
             .ReturnsAsync(profileRaw);

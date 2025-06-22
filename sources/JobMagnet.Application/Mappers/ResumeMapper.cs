@@ -19,7 +19,16 @@ public static class ResumeMapper
 
         TypeAdapterConfig<ResumeCommand, ResumeEntity>
             .NewConfig()
-            .Map(dest => dest, src => src.ResumeData);
+            .ConstructUsing(src => new ResumeEntity(
+                src.ResumeData.Title,
+                src.ResumeData.Suffix,
+                src.ResumeData.JobTitle,
+                src.ResumeData.About,
+                src.ResumeData.Summary,
+                src.ResumeData.Overview,
+                src.ResumeData.Address,
+                0,
+                src.ResumeData.ProfileId));
     }
 
     public static ResumeResponse ToModel(this ResumeEntity entity)

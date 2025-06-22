@@ -230,7 +230,6 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     private async Task<ProfileEntity> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
         var entity = new ProfileEntityBuilder(_fixture)

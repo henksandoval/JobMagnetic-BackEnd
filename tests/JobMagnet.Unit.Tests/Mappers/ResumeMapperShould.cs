@@ -64,7 +64,6 @@ public class ResumeMapperShould
         {
             e.Id,
             e.IsDeleted,
-            e.Profile,
             e.AddedAt,
             e.AddedBy,
             e.DeletedAt,

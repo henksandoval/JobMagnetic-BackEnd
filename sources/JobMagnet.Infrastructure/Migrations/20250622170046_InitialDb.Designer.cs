@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobMagnet.Infrastructure.Migrations
 {
     [DbContext(typeof(JobMagnetDbContext))]
-    [Migration("20250621213516_InitialDb")]
+    [Migration("20250622170046_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -399,6 +399,7 @@ namespace JobMagnet.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("About")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("AddedAt")
@@ -408,6 +409,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DeletedAt")
@@ -420,7 +422,9 @@ namespace JobMagnet.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("JobTitle")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModifiedAt")
                         .HasColumnType("datetime2");
@@ -429,20 +433,23 @@ namespace JobMagnet.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Overview")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("ProfileId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Suffix")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Summary")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -630,7 +637,20 @@ namespace JobMagnet.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("SkillCategories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IsDeleted = false,
+                            Name = "General"
+                        });
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Skills.SkillSet", b =>
@@ -1074,13 +1094,11 @@ namespace JobMagnet.Infrastructure.Migrations
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ResumeEntity", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", "Profile")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", null)
                         .WithOne("Resume")
                         .HasForeignKey("JobMagnet.Domain.Core.Entities.ResumeEntity", "ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ServiceEntity", b =>
@@ -1136,7 +1154,7 @@ namespace JobMagnet.Infrastructure.Migrations
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Skills.SkillType", b =>
                 {
                     b.HasOne("JobMagnet.Domain.Core.Entities.Skills.SkillCategory", "Category")
-                        .WithMany()
+                        .WithMany("SkillTypes")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1240,6 +1258,11 @@ namespace JobMagnet.Infrastructure.Migrations
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ServiceEntity", b =>
                 {
                     b.Navigation("GalleryItems");
+                });
+
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Skills.SkillCategory", b =>
+                {
+                    b.Navigation("SkillTypes");
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Skills.SkillSet", b =>

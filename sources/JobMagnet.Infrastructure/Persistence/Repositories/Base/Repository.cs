@@ -59,6 +59,11 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
         return await _dbSet.FirstOrDefaultAsync(predicate, cancellationToken).ConfigureAwait(false);
     }
 
+    public async Task<TEntity> FirstAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
+    {
+        return await _dbSet.FirstAsync(predicate, cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<int> CountAsync()
     {
         return await _dbSet.CountAsync().ConfigureAwait(false);

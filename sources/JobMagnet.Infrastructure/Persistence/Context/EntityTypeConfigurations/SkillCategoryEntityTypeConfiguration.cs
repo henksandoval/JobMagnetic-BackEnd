@@ -13,5 +13,15 @@ public class SkillCategoryEntityTypeConfiguration : IEntityTypeConfiguration<Ski
         builder.Property(c => c.Name)
             .HasMaxLength(SkillCategory.MaxNameLength)
             .IsRequired();
+
+        builder.HasIndex(c => c.Name)
+            .IsUnique();
+
+        builder.HasMany(c => c.SkillTypes)
+            .WithOne(type => type.Category)
+            .HasForeignKey(type => type.CategoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasData( new SkillCategory(SkillCategory.DefaultCategoryName, 1));
     }
 }

@@ -9,6 +9,7 @@ public class ContactType : SoftDeletableEntity<int>
 {
     public const int MaxNameLength = 20;
     public const int MaxIconClassLength = 20;
+    private const string? DefaultIconClass = "bx bx-link-alt";
 
     private readonly HashSet<ContactTypeAlias> _aliases = [];
     public string Name { get; private set; }
@@ -31,7 +32,7 @@ public class ContactType : SoftDeletableEntity<int>
 
         if (string.IsNullOrEmpty(iconClass) && iconUrl is null)
         {
-            IconClass = "bx bx-link-alt";
+            IconClass = DefaultIconClass;
         }
 
         IconClass = iconClass;

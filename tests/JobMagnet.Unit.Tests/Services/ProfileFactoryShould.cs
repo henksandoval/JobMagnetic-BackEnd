@@ -1,12 +1,13 @@
+using System.Linq.Expressions;
 using AutoFixture;
 using CSharpFunctionalExtensions;
 using FluentAssertions;
 using JobMagnet.Application.Factories;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Domain.Core.Entities.Skills;
+using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
@@ -21,15 +22,19 @@ public class ProfileFactoryShould
     private readonly ProfileFactory _profileFactory;
     private readonly Mock<IContactTypeResolverService> _contactTypeResolverMock;
     private readonly Mock<ISkillTypeResolverService> _skillTypeResolverMock;
+    private readonly Mock<IQueryRepository<SkillCategory, ushort>> _skillCategoryRepositoryMock;
 
     public ProfileFactoryShould()
     {
         _profileBuilder = new ProfileRawBuilder(_fixture);
         _skillTypeResolverMock = new Mock<ISkillTypeResolverService>();
         _contactTypeResolverMock = new Mock<IContactTypeResolverService>();
+        _skillCategoryRepositoryMock = new Mock<IQueryRepository<SkillCategory, ushort>>();
+
         _profileFactory = new ProfileFactory(
             _contactTypeResolverMock.Object,
-            _skillTypeResolverMock.Object);
+            _skillTypeResolverMock.Object,
+            _skillCategoryRepositoryMock.Object);
     }
 
     [Fact(DisplayName = "Map root properties from a simple DTO")]
@@ -106,113 +111,130 @@ public class ProfileFactoryShould
     public async Task MapContactInfo_WhenTypeExists_MapsCorrectly()
     {
         // Given
-        var emailType = new ContactType("Email", 0, "bx bx-envelope");
+        const string expectedTypeName = "Email";
+        const string expectedIconClass = "bx bx-envelope";
+        const string expectedValue = "test@test.com";
+
+        var emailType = new ContactType(expectedTypeName, 0, expectedIconClass);
 
         _contactTypeResolverMock
             .Setup(r => r.ResolveAsync(
-                It.Is<string>(s => s.Equals("Email", StringComparison.InvariantCultureIgnoreCase)),
+                It.Is<string>(s => s.Equals(expectedTypeName, StringComparison.InvariantCultureIgnoreCase)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(emailType));
 
-        var contacts = new[] { new ContactInfoRaw("EMAIL", "test@test.com") };
+        var contacts = new[] { new ContactInfoRaw(expectedTypeName.ToUpper(), expectedValue) };
         var profileDto = _profileBuilder
             .WithResume()
             .WithContactInfo(contacts.ToList())
             .Build()
             .ToProfileParseDto();
 
-        var resume = new ResumeEntity { Id = 0 };
-        resume.AddContactInfo("test@test.com", emailType);
-        var expectedContactInfo = resume.ContactInfo!.ToList();
-
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         // Then
-        var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
-        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options
-            .Excluding(entity => entity.Id)
-        );
+        profile.Resume.Should().NotBeNull();
+        profile.Resume!.ContactInfo.Should().NotBeNull();
+        profile.Resume!.ContactInfo.Should().HaveCount(1);
+
+        var actualContactInfo = profile.Resume!.ContactInfo!.First();
+        actualContactInfo.Value.Should().Be(expectedValue);
+        actualContactInfo.ContactType.Name.Should().Be(expectedTypeName);
+        actualContactInfo.ContactType.IconClass.Should().Be(expectedIconClass);
     }
 
     [Fact(DisplayName = "Map contact info when the type is an alias")]
     public async Task MapContactInfo_WhenTypeIsAlias_MapsToCorrectBaseType()
     {
         // Given
-        var phoneType = new ContactType("Phone", 0, "bx bx-mobile");
+        const string expectedTypeName = "Phone";
+        const string typeAlias = "Teléfono";
+        const string expectedIconClass = "bx bx-mobile";
+        const string expectedValue = "+58 412457824";
+
+        var phoneType = new ContactType(expectedTypeName, 0, expectedIconClass);
 
         _contactTypeResolverMock
-            .Setup(r => r.ResolveAsync("Teléfono", It.IsAny<CancellationToken>()))
+            .Setup(r => r.ResolveAsync(typeAlias, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(phoneType));
 
-        var contacts = new[] { new ContactInfoRaw("Teléfono", "+58 412457824") };
+        var contacts = new[] { new ContactInfoRaw(typeAlias, expectedValue) };
         var profileDto = _profileBuilder
             .WithResume()
             .WithContactInfo(contacts.ToList())
             .Build()
             .ToProfileParseDto();
 
-        var resume = new ResumeEntity { Id = 0 };
-        resume.AddContactInfo("+58 412457824", phoneType);
-        var expectedContactInfo = resume.ContactInfo!.ToList();
-
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         // Then
-        var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
-        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options
-            .Excluding(entity => entity.Id)
-        );
+        profile.Resume.Should().NotBeNull();
+        profile.Resume!.ContactInfo.Should().NotBeNull();
+        profile.Resume!.ContactInfo.Should().HaveCount(1);
+
+        var actualContactInfo = profile.Resume!.ContactInfo!.First();
+        actualContactInfo.Value.Should().Be(expectedValue);
+        actualContactInfo.ContactType.Name.Should().Be(expectedTypeName);
+        actualContactInfo.ContactType.IconClass.Should().Be(expectedIconClass);
     }
 
     [Fact(DisplayName = "Map contact info when the type does not exist")]
     public async Task MapContactInfo_WhenTypeDoesNotExist_CreatesAdHocTypeWithDefaultIcon()
     {
         // Given
+        const string unknownTypeName = "TypeDontExist";
+        const string unknownTypeValue = "Some value";
+
         _contactTypeResolverMock
-            .Setup(r => r.ResolveAsync("TypeDontExist", It.IsAny<CancellationToken>()))
+            .Setup(r => r.ResolveAsync(unknownTypeName, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe<ContactType>.None);
 
-        var contacts = new[] { new ContactInfoRaw("TypeDontExist", "Some value") };
+        var contacts = new[] { new ContactInfoRaw(unknownTypeName, unknownTypeValue) };
         var profileDto = _profileBuilder
             .WithResume()
             .WithContactInfo(contacts.ToList())
             .Build()
             .ToProfileParseDto();
 
-        var expectedAdHocType = new ContactType("TypeDontExist");
-        var resume = new ResumeEntity { Id = 0 };
-        resume.AddContactInfo("Some value", expectedAdHocType);
-        var expectedContactInfo = resume.ContactInfo!.ToList();
-
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         // Then
-        var actualContactInfo = profile.Resume!.ContactInfo!.ToList();
-        actualContactInfo.Should().BeEquivalentTo(expectedContactInfo, options => options
-            .Excluding(entity => entity.Id)
-        );
+        profile.Resume.Should().NotBeNull();
+        profile.Resume!.ContactInfo.Should().NotBeNull();
+        profile.Resume!.ContactInfo.Should().HaveCount(1);
+
+        var actualContactInfo = profile.Resume!.ContactInfo!.First();
+        actualContactInfo.Value.Should().Be(unknownTypeValue);
+        actualContactInfo.ContactType.Name.Should().Be(unknownTypeName);
     }
 
     [Fact(DisplayName = "Map multiple contact infos with mixed types")]
     public async Task MapContactInfo_WithMultipleItems_MapsAllCorrectly()
     {
         // Given
-        var emailType = new ContactType("Email", 0, "bx bx-envelope");
+        const string knownTypeName = "Email";
+        const string knownTypeIcon = "bx bx-envelope";
+        const string knownTypeValue = "test@test.com";
+
+        const string unknownTypeName = "TypeDontExist";
+        const string unknownTypeValue = "Some value";
+
+        var emailType = new ContactType(knownTypeName, 0, knownTypeIcon);
         _contactTypeResolverMock
-            .Setup(r => r.ResolveAsync("Email", It.IsAny<CancellationToken>()))
+            .Setup(r => r.ResolveAsync(knownTypeName, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(emailType));
 
         _contactTypeResolverMock
-            .Setup(r => r.ResolveAsync("TypeDontExist", It.IsAny<CancellationToken>()))
+            .Setup(r => r.ResolveAsync(unknownTypeName, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe<ContactType>.None);
 
         var contacts = new[]
         {
-            new ContactInfoRaw("Email", "test@test.com"),
-            new ContactInfoRaw("TypeDontExist", "Some value")
+            new ContactInfoRaw(knownTypeName, knownTypeValue),
+            new ContactInfoRaw(unknownTypeName, unknownTypeValue)
         };
         var profileDto = _profileBuilder
             .WithResume()
@@ -220,23 +242,32 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var expectedAdHocType = new ContactType("TypeDontExist");
-
-        var resume = new ResumeEntity { Id = 0 };
-        resume.AddContactInfo("Some value", expectedAdHocType);
-        resume.AddContactInfo("test@test.com", emailType);
-        var expectedContactInfo = resume.ContactInfo!.ToList();
-
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         // Then
-        var actualContactInfo = profile.Resume!.ContactInfo!.OrderBy(c => c.Value).ToList();
-        var orderedExpected = expectedContactInfo.OrderBy(c => c.Value).ToList();
-        actualContactInfo.Should().BeEquivalentTo(orderedExpected, options => options
-            .Excluding(entity => entity.Id)
-        );
+        profile.Resume.Should().NotBeNull();
+        profile.Resume!.ContactInfo.Should().NotBeNull();
+        profile.Resume!.ContactInfo.Should().HaveSameCount(contacts);
+
+        var emailContact = profile.Resume!.ContactInfo!.Single(c => c.ContactType.Name == knownTypeName);
+
+        emailContact.Should().NotBeNull();
+
+        emailContact.ContactType.Should().BeSameAs(emailType);
+        emailContact.ContactType.Name.Should().Be(knownTypeName);
+        emailContact.ContactType.IconClass.Should().Be(knownTypeIcon);
+
+        var adHocContact = profile.Resume!.ContactInfo!.Single(c => c.ContactType.Name == unknownTypeName);
+
+        adHocContact.Should().NotBeNull();
+
+        adHocContact.ContactType.Should().NotBeNull();
+        adHocContact.ContactType.Name.Should().Be(unknownTypeName);
+        adHocContact.ContactType.IconClass.Should().BeNullOrEmpty();
+        adHocContact.ContactType.Id.Should().Be(0);
     }
+
     #endregion
 
     #region SkillSet Mapping Tests
@@ -262,12 +293,10 @@ public class ProfileFactoryShould
     public async Task MapSkills_WhenTypeExists_MapsCorrectly()
     {
         // Given
-        var skills = new List<SkillRaw> { new ("C#", "10") };
-        var csharpSkill = new SkillType(
-            1,
-            "C#",
+        var skills = new List<SkillRaw> { new("C#", "10") };
+        var csharpSkill = new SkillType("C#",
             new SkillCategory("Programming"),
-            new Uri("https://example.com/csharp-icon.png"));
+            1, new Uri("https://example.com/csharp-icon.png"));
 
         _skillTypeResolverMock
             .Setup(r => r.ResolveAsync(
@@ -297,12 +326,10 @@ public class ProfileFactoryShould
     public async Task MapSkills_WhenTypeIsAlias_MapsToCorrectBaseType()
     {
         // Given
-        var skills = new List<SkillRaw> { new ("csharp", "10") };
-        var csharpSkill = new SkillType(
-            1,
-            "C#",
+        var skills = new List<SkillRaw> { new("csharp", "10") };
+        var csharpSkill = new SkillType("C#",
             new SkillCategory("Programming"),
-            new Uri("https://example.com/csharp-icon.png"));
+            1, new Uri("https://example.com/csharp-icon.png"));
 
         _skillTypeResolverMock
             .Setup(r => r.ResolveAsync("csharp", It.IsAny<CancellationToken>()))
@@ -330,14 +357,20 @@ public class ProfileFactoryShould
     public async Task MapSkills_WhenTypeDoesNotExist_CreatesAdHocTypeWithDefaultIcon()
     {
         // Given
-        var skills = new List<SkillRaw> { new ("TypeDontExist", "10") };
+        var defaultCategory = new SkillCategory("AdHoc");
+
+        var skills = new List<SkillRaw> { new("TypeDontExist", "10") };
 
         _skillTypeResolverMock
             .Setup(r => r.ResolveAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.None);
+        _skillCategoryRepositoryMock
+            .Setup(r => r.FirstAsync(
+                It.IsAny<Expression<Func<SkillCategory, bool>>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(defaultCategory);
 
-        var expectedAdHocType = new SkillType("TypeDontExist");
-        expectedAdHocType.SetDefaultIcon();
+        var expectedAdHocType = new SkillType("TypeDontExist", new SkillCategory("AdHoc"));
 
         var skillSet = new SkillSet("Test Overview", 1);
         skillSet.AddSkill(10, expectedAdHocType);
@@ -359,28 +392,39 @@ public class ProfileFactoryShould
         );
     }
 
-
     [Fact(DisplayName = "Map multiple skills with mixed types")]
     public async Task MapSkills_WithMultipleItems_MapsAllCorrectly()
     {
         // Given
-        var csharpSkill = new SkillType(
-            1,
-            "C#",
+        const string unknownSkill = "TypeDontExist";
+        const string knownSkill = "C#";
+        const string knownSkillAlias = "csharp";
+
+        var defaultCategory = new SkillCategory("AdHoc");
+        var csharpSkill = new SkillType(knownSkill,
             new SkillCategory("Programming"),
-            new Uri("https://example.com/csharp-icon.png"));
+            1, new Uri("https://example.com/csharp-icon.png"));
 
         _skillTypeResolverMock
-            .Setup(r => r.ResolveAsync(It.Is<string>("csharp", StringComparer.InvariantCulture), It.IsAny<CancellationToken>()))
+            .Setup(r => r.ResolveAsync(It.Is<string>(knownSkillAlias, StringComparer.InvariantCulture),
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(csharpSkill));
+        _skillTypeResolverMock
+            .Setup(r => r.ResolveAsync(unknownSkill, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Maybe<SkillType>.None);
 
-        var expectedAdHocType = new SkillType("TypeDontExist");
-        expectedAdHocType.SetDefaultIcon();
+        _skillCategoryRepositoryMock
+            .Setup(r => r.FirstAsync(
+                It.IsAny<Expression<Func<SkillCategory, bool>>>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(defaultCategory);
+
+        var expectedAdHocType = new SkillType(unknownSkill, defaultCategory);
 
         var skills = new[]
         {
-            new SkillRaw("csharp", "5"),
-            new SkillRaw("TypeDontExist", "2")
+            new SkillRaw(knownSkillAlias, "5"),
+            new SkillRaw(unknownSkill, "2")
         };
         var profileDto = _profileBuilder
             .WithSkillSet()

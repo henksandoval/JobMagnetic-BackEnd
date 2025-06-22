@@ -71,7 +71,6 @@ public class AdminControllerShould(
         canConnect.ShouldBeTrue();
     }
 
-
     [Fact(DisplayName = "Return 200 when Post seedMasterTables request is received")]
     public async Task SeedData_WhenPostSeedMasterTablesRequestIsReceivedIsAsync()
     {
