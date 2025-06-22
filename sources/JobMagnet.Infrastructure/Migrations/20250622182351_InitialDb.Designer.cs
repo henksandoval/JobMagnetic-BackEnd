@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobMagnet.Infrastructure.Migrations
 {
     [DbContext(typeof(JobMagnetDbContext))]
-    [Migration("20250622170046_InitialDb")]
+    [Migration("20250622182351_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -117,6 +117,197 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ContactTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bx-envelope",
+                            IsDeleted = false,
+                            Name = "Email"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bx-mobile",
+                            IsDeleted = false,
+                            Name = "Mobile Phone"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bx-phone",
+                            IsDeleted = false,
+                            Name = "Home Phone"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bx-phone-call",
+                            IsDeleted = false,
+                            Name = "Work Phone"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bx-globe",
+                            IsDeleted = false,
+                            Name = "Website"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-linkedin",
+                            IsDeleted = false,
+                            Name = "LinkedIn"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-github",
+                            IsDeleted = false,
+                            Name = "GitHub"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-twitter",
+                            IsDeleted = false,
+                            Name = "Twitter"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-facebook",
+                            IsDeleted = false,
+                            Name = "Facebook"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-instagram",
+                            IsDeleted = false,
+                            Name = "Instagram"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-youtube",
+                            IsDeleted = false,
+                            Name = "YouTube"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-whatsapp",
+                            IsDeleted = false,
+                            Name = "WhatsApp"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-telegram",
+                            IsDeleted = false,
+                            Name = "Telegram"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-snapchat",
+                            IsDeleted = false,
+                            Name = "Snapchat"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-pinterest",
+                            IsDeleted = false,
+                            Name = "Pinterest"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-skype",
+                            IsDeleted = false,
+                            Name = "Skype"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-discord",
+                            IsDeleted = false,
+                            Name = "Discord"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-twitch",
+                            IsDeleted = false,
+                            Name = "Twitch"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-tiktok",
+                            IsDeleted = false,
+                            Name = "TikTok"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-reddit",
+                            IsDeleted = false,
+                            Name = "Reddit"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IconClass = "bx bxl-vimeo",
+                            IsDeleted = false,
+                            Name = "Vimeo"
+                        });
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Contact.ContactTypeAlias", b =>
@@ -164,6 +355,215 @@ namespace JobMagnet.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("ContactAliases");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Correo Electrónico",
+                            ContactTypeId = 1,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "E-mail",
+                            ContactTypeId = 1,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Phone",
+                            ContactTypeId = 2,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Teléfonos",
+                            ContactTypeId = 2,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Teléfono Móvil",
+                            ContactTypeId = 2,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Celular",
+                            ContactTypeId = 2,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 7,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Móvil",
+                            ContactTypeId = 2,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 8,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Teléfono Fijo",
+                            ContactTypeId = 3,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 9,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Teléfono de Casa",
+                            ContactTypeId = 3,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 10,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Teléfono Casa",
+                            ContactTypeId = 3,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 11,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Teléfono Trabajo",
+                            ContactTypeId = 4,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 12,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Teléfono Oficina",
+                            ContactTypeId = 4,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 13,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Teléfono de Trabajo",
+                            ContactTypeId = 4,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 14,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Teléfono de Oficina",
+                            ContactTypeId = 4,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 15,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Web Site",
+                            ContactTypeId = 5,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 16,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Web-site",
+                            ContactTypeId = 5,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 17,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Sitio Web",
+                            ContactTypeId = 5,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 18,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Página Web",
+                            ContactTypeId = 5,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 19,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Blog",
+                            ContactTypeId = 5,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 20,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Portafolio",
+                            ContactTypeId = 5,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 21,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "X",
+                            ContactTypeId = 8,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 22,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Wasap",
+                            ContactTypeId = 12,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 23,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Whatsapp",
+                            ContactTypeId = 12,
+                            IsDeleted = false
+                        });
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.EducationEntity", b =>

@@ -1,4 +1,5 @@
 using JobMagnet.Domain.Core.Entities.Contact;
+using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -21,5 +22,7 @@ public class ContactTypeEntityTypeConfiguration : IEntityTypeConfiguration<Conta
             .WithOne()
             .HasForeignKey(a => a.ContactTypeId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasData(ContactTypesCollection.GetFlatContactData().ContactTypes);
     }
 }

@@ -33,6 +33,33 @@ public record ContactTypesCollection
 
     public int Count => _values.Count;
 
+    public static (List<ContactType> ContactTypes, List<ContactTypeAlias> Aliases) GetFlatContactData()
+    {
+        var contactTypesToSeed = new List<ContactType>();
+        var aliasesToSeed = new List<ContactTypeAlias>();
+
+        var sourceData = new ContactTypesCollection().GetContactTypesWithAliases();
+
+        ushort aliasIdCounter = 1;
+
+        foreach (var (typeIndex, type) in sourceData.Index())
+        {
+            var contactTypeId = (ushort)(typeIndex + 1);
+
+            var contactType = new ContactType(type.Name, contactTypeId, type.IconClass, type.IconUrl);
+            contactTypesToSeed.Add(contactType);
+
+            foreach (var aliasName in type.Aliases.Select(a => a.Alias))
+            {
+                var alias = new ContactTypeAlias(aliasName, contactTypeId, aliasIdCounter);
+                aliasesToSeed.Add(alias);
+                aliasIdCounter++;
+            }
+        }
+
+        return (contactTypesToSeed, aliasesToSeed);
+    }
+
     public ImmutableList<ContactType> GetContactTypesWithAliases()
     {
         var contactTypes = new List<ContactType>();

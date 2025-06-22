@@ -1,4 +1,5 @@
 using JobMagnet.Domain.Core.Entities.Contact;
+using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,5 +17,7 @@ public class ContactTypeAliasEntityTypeConfiguration : IEntityTypeConfiguration<
 
         builder.HasIndex(c => new { c.Alias, c.ContactTypeId })
             .IsUnique();
+
+        builder.HasData(ContactTypesCollection.GetFlatContactData().Aliases);
     }
 }
