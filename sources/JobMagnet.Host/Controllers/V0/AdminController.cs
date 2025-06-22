@@ -38,15 +38,6 @@ public class AdminController(
         return Ok();
     }
 
-    [HttpPost("seedMasterTables")]
-    public async Task<IResult> SeedMasterTables(CancellationToken cancellationToken)
-    {
-        if (dbContext.ContactTypes.Any()) throw new InvalidOperationException("Contact types are filled");
-
-        await seeder.RegisterMasterTablesAsync(cancellationToken);
-        return Results.Accepted();
-    }
-
     [HttpPost("seedProfile")]
     public async Task<IResult> SeedProfile(CancellationToken cancellationToken)
     {

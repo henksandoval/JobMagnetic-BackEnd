@@ -71,22 +71,6 @@ public class AdminControllerShould(
         canConnect.ShouldBeTrue();
     }
 
-    [Fact(DisplayName = "Return 200 when Post seedMasterTables request is received")]
-    public async Task SeedData_WhenPostSeedMasterTablesRequestIsReceivedIsAsync()
-    {
-        // Given
-        await using var scope = testFixture.GetProvider().CreateAsyncScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
-        await dbContext.Database.EnsureCreatedAsync();
-
-        // When
-        var response = await _httpClient.PostAsync($"{RequestUriController}/seedMasterTables", null);
-
-        // Then
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
-    }
-
     [Fact(DisplayName = "Return 200 when Post seedProfile request is received")]
     public async Task SeedData_WhenPostSeedProfileRequestIsReceivedIsAsync()
     {
@@ -94,10 +78,8 @@ public class AdminControllerShould(
         var cancellationToken = CancellationToken.None;
         await using var scope = testFixture.GetProvider().CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
-        var seeder = scope.ServiceProvider.GetRequiredService<ISeeder>();
         await dbContext.Database.EnsureCreatedAsync(cancellationToken);
         await testFixture.ResetDatabaseAsync();
-        await seeder.RegisterMasterTablesAsync(cancellationToken);
 
         // When
         var response = await _httpClient.PostAsync($"{RequestUriController}/seedProfile", null, cancellationToken);

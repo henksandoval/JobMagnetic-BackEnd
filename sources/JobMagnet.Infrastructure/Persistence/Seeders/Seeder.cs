@@ -11,7 +11,6 @@ namespace JobMagnet.Infrastructure.Persistence.Seeders;
 
 public interface ISeeder
 {
-    Task RegisterMasterTablesAsync(CancellationToken cancellationToken);
     Task RegisterProfileAsync(CancellationToken cancellationToken);
 }
 
@@ -31,18 +30,6 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
                                      In my free time I enjoy hiking, reading science fiction novels, and experimenting with new technologies.
                                      I am always eager to learn new things and take on exciting challenges.",
                                      """;
-
-    public async Task RegisterMasterTablesAsync(CancellationToken cancellationToken)
-    {
-        if (context.ContactTypes.Any()) return;
-
-        var contactTypesWithAliases = new ContactTypesCollection().GetContactTypesWithAliases();
-        var skillsWithAliases = new SkillTypesCollection().GetSkillTypesWithAliases();
-
-        await context.ContactTypes.AddRangeAsync(contactTypesWithAliases, cancellationToken);
-        await context.SkillTypes.AddRangeAsync(skillsWithAliases, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
-    }
 
     public async Task RegisterProfileAsync(CancellationToken cancellationToken)
     {
