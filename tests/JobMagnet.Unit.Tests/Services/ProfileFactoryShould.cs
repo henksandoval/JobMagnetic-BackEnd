@@ -5,6 +5,7 @@ using FluentAssertions;
 using JobMagnet.Application.Factories;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
+using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Domain.Ports.Repositories.Base;
@@ -54,20 +55,33 @@ public class ProfileFactoryShould
     }
 
     [Fact(DisplayName = "Map talents collection when the DTO provides them")]
-    public async Task MapTalents_WhenDtoProvidesThem()
+    public async Task CreateProfileFromDtoAsync_WhenDtoContainsTalents_ShouldCreateProfileWithCorrectTalentCollection()
     {
         // Given
+        var talentRaws  = new []{ 
+            new TalentRaw ("Liderazgo"),
+            new TalentRaw ("Proactividad"), 
+            new TalentRaw ("Análisis de Datos") 
+        };
         var profileDto = _profileBuilder
-            .WithTalents()
+            .WithTalents(talentRaws.ToList()) 
             .Build()
             .ToProfileParseDto();
-
+        var expectedProfile = new ProfileEntity { Id = 1 };
+        
+        foreach (var talentRaw in talentRaws)
+        {
+            expectedProfile.AddTalent(talentRaw.Description);
+        }
+        
         // When
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         // Then
         profile.Should().NotBeNull();
-        profile.Talents.Should().BeEquivalentTo(profileDto.Talents, options => options.ExcludingMissingMembers());
+        profile.Talents.Should().NotBeNull();
+        
+        profile.Talents.Should().BeEquivalentTo(expectedProfile.Talents, options => options);
     }
 
     [Fact(DisplayName = "Map testimonials collection when the DTO provides them")]
