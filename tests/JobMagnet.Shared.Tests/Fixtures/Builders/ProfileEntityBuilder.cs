@@ -39,12 +39,26 @@ public class ProfileEntityBuilder(IFixture fixture)
             throw new InvalidOperationException("Cannot add contact info without a resume. Call WithResume() first.");
         }
 
+        var addedContactInfo = new Dictionary<string, ContactType>();
+
         while (_resume.ContactInfo?.Count < count)
         {
-            var contactType = fixture.Create<ContactType>();
-            var value = GenerateContactDetails(contactType.Name);
+            var requestedContactType = fixture.Create<ContactType>();
+            ContactType contactTypeToAdd;
 
-            _resume.AddContactInfo(value, contactType);
+            if (addedContactInfo.TryGetValue(requestedContactType.Name, out var existingContactType))
+            {
+                contactTypeToAdd = existingContactType;
+            }
+            else
+            {
+                addedContactInfo.Add(requestedContactType.Name, requestedContactType);
+                contactTypeToAdd = requestedContactType;
+            }
+
+            var value = GenerateContactDetails(contactTypeToAdd.Name);
+
+            _resume.AddContactInfo(value, contactTypeToAdd);
         }
 
         return this;
