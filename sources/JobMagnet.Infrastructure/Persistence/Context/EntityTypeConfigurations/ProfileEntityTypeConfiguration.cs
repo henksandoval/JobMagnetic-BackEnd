@@ -1,4 +1,5 @@
 using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Core.Entities.Skills;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,6 +19,11 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<ProfileEn
         builder.HasMany(p => p.PublicProfileIdentifiers)
             .WithOne()
             .HasForeignKey(identifier => identifier.ProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(p => p.SkillSet)
+            .WithOne(s => s.Profile)
+            .HasForeignKey<SkillSet>(s => s.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
