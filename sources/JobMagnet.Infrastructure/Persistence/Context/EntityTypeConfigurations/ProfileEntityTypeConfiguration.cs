@@ -16,7 +16,7 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<ProfileEn
             .HasForeignKey<ResumeEntity>(r => r.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(p => p.SkillSet)
+        builder.HasOne<SkillSet>(p => p.SkillSet)
             .WithOne()
             .HasForeignKey<SkillSet>(s => s.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
