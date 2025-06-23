@@ -72,7 +72,7 @@ public class SkillMapperShould
         return e => new
         {
             e.Id,
-            SkillDetails = e.Skills, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy,
+            SkillDetails = e.Skills, e.IsDeleted, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy,
             e.LastModifiedAt, e.LastModifiedBy
         };
     }

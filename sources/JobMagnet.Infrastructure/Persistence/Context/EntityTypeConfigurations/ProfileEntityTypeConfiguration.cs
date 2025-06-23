@@ -16,14 +16,14 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<ProfileEn
             .HasForeignKey<ResumeEntity>(r => r.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasOne(p => p.SkillSet)
+            .WithOne()
+            .HasForeignKey<SkillSet>(s => s.ProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasMany(p => p.PublicProfileIdentifiers)
             .WithOne()
             .HasForeignKey(identifier => identifier.ProfileId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne(p => p.SkillSet)
-            .WithOne(s => s.Profile)
-            .HasForeignKey<SkillSet>(s => s.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

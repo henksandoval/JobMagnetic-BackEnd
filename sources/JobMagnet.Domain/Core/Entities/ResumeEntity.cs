@@ -19,7 +19,6 @@ public class ResumeEntity : SoftDeletableEntity<long>
     public string Overview { get; private set; }
     public string Suffix { get; private set; }
     public string Address { get; private set; }
-
     public long ProfileId { get; private set; }
 
     public virtual IReadOnlyCollection<ContactInfo>? ContactInfo => _contactInfo;

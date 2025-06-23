@@ -15,8 +15,6 @@ public class SkillSet : SoftDeletableEntity<long>
 
     public long ProfileId { get; private set; }
 
-    public virtual ProfileEntity Profile { get; private set; }
-
     private SkillSet() { }
 
     [SetsRequiredMembers]
