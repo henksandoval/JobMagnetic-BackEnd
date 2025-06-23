@@ -29,7 +29,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithContactInfo(int count = 5)
     {
-        if (count > new ContactTypesCollection().Count)
+        if (count > ContactTypeDataFactory.Count)
         {
             throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available contact types.");
         }

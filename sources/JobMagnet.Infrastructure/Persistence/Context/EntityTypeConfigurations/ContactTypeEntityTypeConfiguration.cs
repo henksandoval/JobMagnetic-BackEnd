@@ -26,6 +26,6 @@ public class ContactTypeEntityTypeConfiguration : IEntityTypeConfiguration<Conta
         builder.HasIndex(c => c.Name)
             .IsUnique();
 
-        builder.HasData(ContactTypesCollection.GetFlatContactData().ContactTypes);
+        builder.HasData(ContactTypeDataFactory.SeedData.Types);
     }
 }
