@@ -1,4 +1,5 @@
 using JobMagnet.Domain.Core.Entities.Skills;
+using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -22,6 +23,6 @@ public class SkillCategoryEntityTypeConfiguration : IEntityTypeConfiguration<Ski
             .HasForeignKey(type => type.CategoryId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasData( new SkillCategory(SkillCategory.DefaultCategoryName, 1));
+        builder.HasData(SkillDataFactory.SeedData.Categories);
     }
 }

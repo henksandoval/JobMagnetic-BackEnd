@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobMagnet.Infrastructure.Migrations
 {
     [DbContext(typeof(JobMagnetDbContext))]
-    [Migration("20250622182351_InitialDb")]
+    [Migration("20250623081417_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -115,6 +115,9 @@ namespace JobMagnet.Infrastructure.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("ContactTypes");
 
@@ -349,10 +352,10 @@ namespace JobMagnet.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ContactTypeId");
-
-                    b.HasIndex("Alias", "ContactTypeId")
+                    b.HasIndex("Alias")
                         .IsUnique();
+
+                    b.HasIndex("ContactTypeId");
 
                     b.ToTable("ContactAliases");
 
@@ -1050,6 +1053,14 @@ namespace JobMagnet.Infrastructure.Migrations
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IsDeleted = false,
                             Name = "General"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            IsDeleted = false,
+                            Name = "Software Development"
                         });
                 });
 
@@ -1143,6 +1154,148 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("SkillTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CategoryId = 2,
+                            IconUrl = "https://cdn.simpleicons.org/html5",
+                            IsDeleted = false,
+                            Name = "HTML"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CategoryId = 2,
+                            IconUrl = "https://cdn.simpleicons.org/css3",
+                            IsDeleted = false,
+                            Name = "CSS"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CategoryId = 2,
+                            IconUrl = "https://cdn.simpleicons.org/javascript",
+                            IsDeleted = false,
+                            Name = "JavaScript"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CategoryId = 2,
+                            IconUrl = "https://cdn.simpleicons.org/dotnet",
+                            IsDeleted = false,
+                            Name = "C#"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CategoryId = 2,
+                            IconUrl = "https://cdn.simpleicons.org/typescript",
+                            IsDeleted = false,
+                            Name = "TypeScript"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CategoryId = 2,
+                            IconUrl = "https://cdn.simpleicons.org/angular",
+                            IsDeleted = false,
+                            Name = "Angular"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CategoryId = 2,
+                            IconUrl = "https://cdn.simpleicons.org/postgresql",
+                            IsDeleted = false,
+                            Name = "PostgreSQL"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CategoryId = 2,
+                            IconUrl = "https://cdn.simpleicons.org/react",
+                            IsDeleted = false,
+                            Name = "React"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CategoryId = 2,
+                            IconUrl = "https://cdn.simpleicons.org/bootstrap",
+                            IsDeleted = false,
+                            Name = "Bootstrap"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CategoryId = 2,
+                            IconUrl = "https://cdn.simpleicons.org/vuedotjs",
+                            IsDeleted = false,
+                            Name = "Vue"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CategoryId = 2,
+                            IconUrl = "https://cdn.simpleicons.org/git",
+                            IsDeleted = false,
+                            Name = "Git"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CategoryId = 2,
+                            IconUrl = "https://cdn.simpleicons.org/blazor",
+                            IsDeleted = false,
+                            Name = "Blazor"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CategoryId = 2,
+                            IconUrl = "https://cdn.simpleicons.org/rabbitmq",
+                            IsDeleted = false,
+                            Name = "RabbitMQ"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CategoryId = 2,
+                            IconUrl = "https://cdn.simpleicons.org/docker",
+                            IsDeleted = false,
+                            Name = "Docker"
+                        });
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Skills.SkillTypeAlias", b =>
@@ -1184,9 +1337,59 @@ namespace JobMagnet.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Alias")
+                        .IsUnique();
+
                     b.HasIndex("SkillTypeId");
 
                     b.ToTable("SkillTypeAliases");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "JS",
+                            IsDeleted = false,
+                            SkillTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "TS",
+                            IsDeleted = false,
+                            SkillTypeId = 5
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Postgres",
+                            IsDeleted = false,
+                            SkillTypeId = 7
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Vue.js",
+                            IsDeleted = false,
+                            SkillTypeId = 10
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Alias = "Rabbit MQ",
+                            IsDeleted = false,
+                            SkillTypeId = 13
+                        });
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.SummaryEntity", b =>

@@ -1,4 +1,5 @@
 using JobMagnet.Domain.Core.Entities.Skills;
+using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -28,5 +29,7 @@ public class SkillTypeEntityTypeConfiguration : IEntityTypeConfiguration<SkillTy
             .WithOne()
             .HasForeignKey(alias => alias.SkillTypeId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasData(SkillDataFactory.SeedData.Types);
     }
 }

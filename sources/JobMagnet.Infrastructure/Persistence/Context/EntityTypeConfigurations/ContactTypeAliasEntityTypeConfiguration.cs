@@ -15,7 +15,7 @@ public class ContactTypeAliasEntityTypeConfiguration : IEntityTypeConfiguration<
             .IsRequired()
             .HasMaxLength(ContactTypeAlias.MaxAliasLength);
 
-        builder.HasIndex(c => new { c.Alias, c.ContactTypeId })
+        builder.HasIndex(c => c.Alias)
             .IsUnique();
 
         builder.HasData(ContactTypesCollection.GetFlatContactData().Aliases);

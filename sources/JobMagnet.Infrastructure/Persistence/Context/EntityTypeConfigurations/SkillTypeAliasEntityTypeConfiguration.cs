@@ -1,4 +1,5 @@
 using JobMagnet.Domain.Core.Entities.Skills;
+using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,5 +14,10 @@ public class SkillTypeAliasEntityTypeConfiguration : IEntityTypeConfiguration<Sk
         builder.Property(alias => alias.Alias)
             .HasMaxLength(SkillTypeAlias.MaxAliasLength)
             .IsRequired();
+
+        builder.HasIndex(alias => alias.Alias)
+            .IsUnique();
+
+        builder.HasData(SkillDataFactory.SeedData.Aliases);
     }
 }

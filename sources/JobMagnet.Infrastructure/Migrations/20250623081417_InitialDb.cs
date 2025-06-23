@@ -610,7 +610,11 @@ namespace JobMagnet.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "SkillCategories",
                 columns: new[] { "Id", "AddedAt", "AddedBy", "DeletedAt", "DeletedBy", "IsDeleted", "LastModifiedAt", "LastModifiedBy", "Name" },
-                values: new object[] { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("00000000-0000-0000-0000-000000000000"), null, null, false, null, null, "General" });
+                values: new object[,]
+                {
+                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("00000000-0000-0000-0000-000000000000"), null, null, false, null, null, "General" },
+                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("00000000-0000-0000-0000-000000000000"), null, null, false, null, null, "Software Development" }
+                });
 
             migrationBuilder.InsertData(
                 table: "ContactAliases",
@@ -642,10 +646,43 @@ namespace JobMagnet.Infrastructure.Migrations
                     { 23, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("00000000-0000-0000-0000-000000000000"), "Whatsapp", 12, null, null, false, null, null }
                 });
 
+            migrationBuilder.InsertData(
+                table: "SkillTypes",
+                columns: new[] { "Id", "AddedAt", "AddedBy", "CategoryId", "DeletedAt", "DeletedBy", "IconUrl", "IsDeleted", "LastModifiedAt", "LastModifiedBy", "Name" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), 2, null, null, "https://cdn.simpleicons.org/html5", false, null, null, "HTML" },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), 2, null, null, "https://cdn.simpleicons.org/css3", false, null, null, "CSS" },
+                    { 3, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), 2, null, null, "https://cdn.simpleicons.org/javascript", false, null, null, "JavaScript" },
+                    { 4, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), 2, null, null, "https://cdn.simpleicons.org/dotnet", false, null, null, "C#" },
+                    { 5, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), 2, null, null, "https://cdn.simpleicons.org/typescript", false, null, null, "TypeScript" },
+                    { 6, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), 2, null, null, "https://cdn.simpleicons.org/angular", false, null, null, "Angular" },
+                    { 7, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), 2, null, null, "https://cdn.simpleicons.org/postgresql", false, null, null, "PostgreSQL" },
+                    { 8, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), 2, null, null, "https://cdn.simpleicons.org/react", false, null, null, "React" },
+                    { 9, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), 2, null, null, "https://cdn.simpleicons.org/bootstrap", false, null, null, "Bootstrap" },
+                    { 10, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), 2, null, null, "https://cdn.simpleicons.org/vuedotjs", false, null, null, "Vue" },
+                    { 11, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), 2, null, null, "https://cdn.simpleicons.org/git", false, null, null, "Git" },
+                    { 12, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), 2, null, null, "https://cdn.simpleicons.org/blazor", false, null, null, "Blazor" },
+                    { 13, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), 2, null, null, "https://cdn.simpleicons.org/rabbitmq", false, null, null, "RabbitMQ" },
+                    { 14, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), 2, null, null, "https://cdn.simpleicons.org/docker", false, null, null, "Docker" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "SkillTypeAliases",
+                columns: new[] { "Id", "AddedAt", "AddedBy", "Alias", "DeletedAt", "DeletedBy", "IsDeleted", "LastModifiedAt", "LastModifiedBy", "SkillTypeId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), "JS", null, null, false, null, null, 3 },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), "TS", null, null, false, null, null, 5 },
+                    { 3, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), "Postgres", null, null, false, null, null, 7 },
+                    { 4, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), "Vue.js", null, null, false, null, null, 10 },
+                    { 5, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("00000000-0000-0000-0000-000000000000"), "Rabbit MQ", null, null, false, null, null, 13 }
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_ContactAliases_Alias_ContactTypeId",
+                name: "IX_ContactAliases_Alias",
                 table: "ContactAliases",
-                columns: new[] { "Alias", "ContactTypeId" },
+                column: "Alias",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -662,6 +699,12 @@ namespace JobMagnet.Infrastructure.Migrations
                 name: "IX_ContactInfo_ResumeId",
                 table: "ContactInfo",
                 column: "ResumeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContactTypes_Name",
+                table: "ContactTypes",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Educations_SummaryId",
@@ -721,6 +764,12 @@ namespace JobMagnet.Infrastructure.Migrations
                 name: "IX_SkillSets_ProfileId",
                 table: "SkillSets",
                 column: "ProfileId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SkillTypeAliases_Alias",
+                table: "SkillTypeAliases",
+                column: "Alias",
                 unique: true);
 
             migrationBuilder.CreateIndex(

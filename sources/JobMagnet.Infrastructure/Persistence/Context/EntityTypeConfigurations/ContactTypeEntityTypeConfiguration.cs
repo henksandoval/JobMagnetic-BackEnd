@@ -23,6 +23,9 @@ public class ContactTypeEntityTypeConfiguration : IEntityTypeConfiguration<Conta
             .HasForeignKey(a => a.ContactTypeId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasIndex(c => c.Name)
+            .IsUnique();
+
         builder.HasData(ContactTypesCollection.GetFlatContactData().ContactTypes);
     }
 }

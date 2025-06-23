@@ -10,6 +10,7 @@ public class SkillCategory : SoftDeletableEntity<ushort>
     private const int MinNameLength = 2;
     public const int MaxNameLength = 50;
     public const string DefaultCategoryName = "General";
+    public const ushort DefaultCategoryId = 1;
 
     public string Name { get; private set; }
     public virtual IReadOnlyCollection<SkillType> SkillTypes => _skillTypes;

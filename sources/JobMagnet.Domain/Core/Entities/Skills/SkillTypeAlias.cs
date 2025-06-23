@@ -15,11 +15,13 @@ public class SkillTypeAlias : SoftDeletableEntity<int>
     private SkillTypeAlias() {}
 
     [SetsRequiredMembers]
-    internal SkillTypeAlias(string alias, int skillTypeId)
+    internal SkillTypeAlias(string alias, int skillTypeId, int id = 0)
     {
         Guard.IsNotNullOrWhiteSpace(alias);
         Guard.IsGreaterThanOrEqualTo<int>(skillTypeId, 0);
+        Guard.IsGreaterThanOrEqualTo<int>(id, 0);
 
+        Id = id;
         Alias = alias;
         SkillTypeId = skillTypeId;
     }

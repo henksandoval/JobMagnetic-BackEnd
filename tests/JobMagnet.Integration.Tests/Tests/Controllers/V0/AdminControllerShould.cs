@@ -12,9 +12,9 @@ using ServicesCollection = JobMagnet.Infrastructure.Persistence.Seeders.Collecti
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V0;
 
 public class AdminControllerShould(
-    JobMagnetTestEmptyDatabaseSetupFixture testFixture,
+    JobMagnetTestSetupFixture testFixture,
     ITestOutputHelper testOutputHelper)
-    : IClassFixture<JobMagnetTestEmptyDatabaseSetupFixture>
+    : IClassFixture<JobMagnetTestSetupFixture>
 {
     private const string RequestUriController = "api/v0.1/admin";
     private readonly HttpClient _httpClient = testFixture.GetClient();
@@ -74,20 +74,14 @@ public class AdminControllerShould(
     [Fact(DisplayName = "Return 200 when Post seedProfile request is received")]
     public async Task SeedData_WhenPostSeedProfileRequestIsReceivedIsAsync()
     {
-        // Given
-        var cancellationToken = CancellationToken.None;
-        await using var scope = testFixture.GetProvider().CreateAsyncScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
-        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
-        await testFixture.ResetDatabaseAsync();
-
         // When
-        var response = await _httpClient.PostAsync($"{RequestUriController}/seedProfile", null, cancellationToken);
+        var response = await _httpClient.PostAsync($"{RequestUriController}/seedProfile", null, CancellationToken.None);
 
         // Then
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
 
+        await using var scope = testFixture.GetProvider().CreateAsyncScope();
         var profileQueryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
         var profile = await profileQueryRepository
             .WithResume()

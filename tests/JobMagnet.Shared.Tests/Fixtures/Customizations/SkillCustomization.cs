@@ -15,7 +15,7 @@ public class SkillCustomization : ICustomization
     {
         fixture.Customize<SkillType>(composer =>
             composer
-                .FromFactory(() => Faker.PickRandom(new SkillTypesCollection().GetSkillTypesWithAliases().ToList()))
+                .FromFactory(() => Faker.PickRandom(SkillDataFactory.GetDomainSkillTypes().ToList()))
                 .OmitAutoProperties()
         );
 

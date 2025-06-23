@@ -58,7 +58,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithSkills(int count = 5)
     {
-        if (count > new SkillTypesCollection().Count)
+        if (count > SkillDataFactory.Count)
         {
             throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available skill types.");
         }
