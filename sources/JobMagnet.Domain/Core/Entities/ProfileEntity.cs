@@ -47,17 +47,11 @@ public class ProfileEntity : SoftDeletableEntity<long>
         _publicProfileIdentifiers.Add(publicIdentifier);
     }
 
-    public void AddTalent(string talent)
+    public void AddTalent(string description)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(talent);
-
-        var talentEntity = new TalentEntity
-        {
-            Id = 0,
-            ProfileId = Id,
-            Description = talent
-        };
-
+        ArgumentException.ThrowIfNullOrWhiteSpace(description);
+        
+        var talentEntity = new TalentEntity(description, this.Id, this);
         Talents.Add(talentEntity);
     }
 
