@@ -55,7 +55,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Return the record and return 200 when GET request with valid Name is provided")]
     public async Task ReturnRecord_WhenValidNameProvidedAsync()
     {
-        // Given
+        // --- Given ---
         var entity = await SetupEntityAsync();
         var publicProfile = await SetupPublicProfileAsync(entity);
         var queryParameters = new Dictionary<string, string?>
@@ -65,10 +65,10 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         var requestUrl = QueryHelpers.AddQueryString(RequestUriController, queryParameters!);
 
-        // When
+        // --- When ---
         var response = await _httpClient.GetAsync(requestUrl);
 
-        // Then
+        // --- Then ---
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
@@ -93,15 +93,15 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Create a new record and return 201 when the POST request is valid")]
     public async Task ReturnCreatedAndPersistData_WhenRequestIsValidAsync()
     {
-        // Given
+        // --- Given ---
         await _testFixture.ResetDatabaseAsync();
         var createRequest = _fixture.Build<ProfileCommand>().Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
-        // When
+        // --- When ---
         var response = await _httpClient.PostAsync(RequestUriController, httpContent);
 
-        // Then
+        // --- Then ---
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
@@ -123,13 +123,13 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Return the record and return 200 when GET request with valid ID is provided")]
     public async Task ReturnRecord_WhenValidIdIsProvidedAsync()
     {
-        // Given
+        // --- Given ---
         var entity = await SetupEntityAsync();
 
-        // When
+        // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
 
-        // Then
+        // --- Then ---
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
@@ -141,13 +141,13 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Return 404 when GET request with invalid ID is provided")]
     public async Task ReturnNotFound_WhenInvalidIdIsProvidedAsync()
     {
-        // Given
+        // --- Given ---
         _ = await SetupEntityAsync();
 
-        // When
+        // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
 
-        // Then
+        // --- Then ---
         response.IsSuccessStatusCode.ShouldBeFalse();
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
@@ -155,15 +155,15 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Return 204 when a valid PUT request is provided")]
     public async Task ReturnNotContent_WhenReceivedValidPutRequestAsync()
     {
-        // Given
+        // --- Given ---
         var entity = await SetupEntityAsync();
         var updateRequest = _fixture.Build<ProfileCommand>()
             .Create();
 
-        // When
+        // --- When ---
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updateRequest);
 
-        // Then
+        // --- Then ---
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
@@ -177,14 +177,14 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Return 404 when a PUT request with invalid ID is provided")]
     public async Task ReturnNotFound_WhenPutRequestWithInvalidIdIsProvidedAsync()
     {
-        // Given
+        // --- Given ---
         await _testFixture.ResetDatabaseAsync();
         var updatedEntity = _fixture.Build<ProfileCommand>().Create();
 
-        // When
+        // --- When ---
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{InvalidId}", updatedEntity);
 
-        // Then
+        // --- Then ---
         response.IsSuccessStatusCode.ShouldBeFalse();
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
@@ -192,7 +192,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     [Fact(DisplayName = "Create a new profile and return 201 when a valid CV file is loaded")]
     public async Task ReturnCreatedAndPersistData_WhenIsValidCVFileAsync()
     {
-        // Given
+        // --- Given ---
         await _testFixture.ResetDatabaseAsync();
 
         const string fileName = "cv_laura_gomez.pdf";
@@ -206,10 +206,10 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         multipartContent.Add(fileStreamContent, "cvFile", fileName);
 
-        // When
+        // --- When ---
         var response = await _httpClient.PostAsync(RequestUriController + "/create-from-cv", multipartContent);
 
-        // Then
+        // --- Then ---
         response.EnsureSuccessStatusCode();
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
         var responseData = await response.Content.ReadFromJsonAsync<CreateProfileResponse>();

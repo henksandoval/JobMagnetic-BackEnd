@@ -14,13 +14,13 @@ public class SummaryMapperShould
     [Fact]
     public void MapSummaryEntityToSummaryModelCorrectly()
     {
-        // Given
+        // --- Given ---
         var entity = _fixture.Create<SummaryEntity>();
 
-        // When
+        // --- When ---
         var summaryModel = entity.ToModel();
 
-        // Then
+        // --- Then ---
         summaryModel.Should().NotBeNull();
         summaryModel.Id.Should().Be(entity.Id);
         summaryModel.SummaryData.Should().BeEquivalentTo(entity, options =>
@@ -34,13 +34,13 @@ public class SummaryMapperShould
     [Fact]
     public void MapSummaryEntityToSummaryUpdateCommandCorrectly()
     {
-        // Given
+        // --- Given ---
         var entity = _fixture.Create<SummaryEntity>();
 
-        // When
+        // --- When ---
         var updateCommand = entity.ToUpdateCommand();
 
-        // Then
+        // --- Then ---
         updateCommand.Should().NotBeNull();
         updateCommand.SummaryData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));

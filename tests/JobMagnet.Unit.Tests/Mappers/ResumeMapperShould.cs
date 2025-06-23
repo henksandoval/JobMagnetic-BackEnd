@@ -15,13 +15,13 @@ public class ResumeMapperShould
     [Fact]
     public void MapResumeEntityToResumeModelCorrectly()
     {
-        // Given
+        // --- Given ---
         var entity = _fixture.Create<ResumeEntity>();
 
-        // When
+        // --- When ---
         var resumeModel = entity.ToModel();
 
-        // Then
+        // --- Then ---
         resumeModel.Should().NotBeNull();
         resumeModel.Id.Should().Be(entity.Id);
         resumeModel.ResumeData.Should().BeEquivalentTo(entity, options =>
@@ -31,13 +31,13 @@ public class ResumeMapperShould
     [Fact]
     public void MapResumeEntityToResumeUpdateCommandCorrectly()
     {
-        // Given
+        // --- Given ---
         var entity = _fixture.Create<ResumeEntity>();
 
-        // When
+        // --- When ---
         var updateCommand = entity.ToUpdateRequest();
 
-        // Then
+        // --- Then ---
         updateCommand.Should().NotBeNull();
         updateCommand.ResumeData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));

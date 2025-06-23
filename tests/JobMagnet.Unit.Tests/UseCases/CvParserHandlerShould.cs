@@ -50,7 +50,7 @@ public class CvParserHandlerShould
     [Fact(DisplayName = "Resolve existing contact types, create new ones, and enrich profile within transaction")]
     public async Task ResolveExistingAndCreateNewContactTypesAndEnrichProfile()
     {
-        // Given
+        // --- Given ---
         var contactInfoRaw = PrepareContactInfoData();
 
         var profileRawBuilder = new ProfileRawBuilder(_fixture);
@@ -78,10 +78,10 @@ public class CvParserHandlerShould
         _profileFactoryMock.Setup(p => p.CreateProfileFromDtoAsync(It.IsAny<ProfileParseDto>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(profileEntity);
 
-        // WHEN
+        // --- When ---
         var result = await _handler.ParseAsync(new CvParserCommand(new MemoryStream(), "fileName", MediaTypeNames.Text.Plain));
 
-        // THEN
+        // --- Then ---
         _profileCommandRepositoryMock.Verify(
             repo => repo.CreateAsync(It.IsAny<ProfileEntity>(), It.IsAny<CancellationToken>()),
             Times.Once);
