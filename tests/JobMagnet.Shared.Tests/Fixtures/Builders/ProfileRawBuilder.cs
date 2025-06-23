@@ -73,9 +73,8 @@ public class ProfileRawBuilder
         return this;
     }
 
-    public ProfileRawBuilder WithTalents(int count = 5)
+    public ProfileRawBuilder WithTalents(List<TalentRaw> talents)
     {
-        var talents = _fixture.CreateMany<TalentRaw>(count).ToList();
         _instance = _instance with { Talents = talents };
         return this;
     }
