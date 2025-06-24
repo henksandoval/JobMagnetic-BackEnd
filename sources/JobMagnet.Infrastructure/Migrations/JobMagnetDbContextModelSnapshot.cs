@@ -1793,13 +1793,11 @@ namespace JobMagnet.Infrastructure.Migrations
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.TestimonialEntity", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", "Profile")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", null)
                         .WithMany("Testimonials")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.WorkExperienceEntity", b =>

@@ -210,7 +210,8 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         if (_testimonials.Count > 0)
         {
-            profile.Testimonials = _testimonials;
+            foreach (var item in _testimonials)
+                profile.AddTestimonial(item.Name, item.JobTitle, item.Feedback, item.PhotoUrl);
         }
 
         if (_portfolio.Count > 0)

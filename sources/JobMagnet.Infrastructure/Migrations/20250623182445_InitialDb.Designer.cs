@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobMagnet.Infrastructure.Migrations
 {
     [DbContext(typeof(JobMagnetDbContext))]
-    [Migration("20250623153300_InitialDb")]
+    [Migration("20250623182445_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -1796,13 +1796,11 @@ namespace JobMagnet.Infrastructure.Migrations
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.TestimonialEntity", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", "Profile")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", null)
                         .WithMany("Testimonials")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.WorkExperienceEntity", b =>

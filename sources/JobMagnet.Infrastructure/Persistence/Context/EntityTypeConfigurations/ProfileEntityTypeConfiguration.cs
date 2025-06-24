@@ -25,5 +25,10 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<ProfileEn
             .WithOne()
             .HasForeignKey(identifier => identifier.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(p => p.Testimonials)
+            .WithOne()
+            .HasForeignKey(t => t.ProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

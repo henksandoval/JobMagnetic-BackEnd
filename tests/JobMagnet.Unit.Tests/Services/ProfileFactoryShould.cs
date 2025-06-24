@@ -106,13 +106,14 @@ public class ProfileFactoryShould
         profile.Should().NotBeNull();
         profile.Resume.Should().NotBeNull();
         var resume = profile.Resume!;
+        var expectedResume = profileDto.Resume!;
 
-        resume.About.Should().Be(profileDto.Resume.About ?? string.Empty);
-        resume.Address.Should().Be(profileDto.Resume.Address ?? string.Empty);
-        resume.JobTitle.Should().Be(profileDto.Resume.JobTitle ?? string.Empty);
-        resume.Overview.Should().Be(profileDto.Resume.Overview ?? string.Empty);
-        resume.Suffix.Should().Be(profileDto.Resume.Suffix ?? string.Empty);
-        resume.Title.Should().Be(profileDto.Resume.Title ?? string.Empty);
+        resume.About.Should().Be(expectedResume.About ?? string.Empty);
+        resume.Address.Should().Be(expectedResume.Address ?? string.Empty);
+        resume.JobTitle.Should().Be(expectedResume.JobTitle ?? string.Empty);
+        resume.Overview.Should().Be(expectedResume.Overview ?? string.Empty);
+        resume.Suffix.Should().Be(expectedResume.Suffix ?? string.Empty);
+        resume.Title.Should().Be(expectedResume.Title ?? string.Empty);
     }
 
     [Fact(DisplayName = "Map contact info when the type exists")]

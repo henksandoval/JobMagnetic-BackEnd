@@ -22,7 +22,7 @@ public class ProfileFactory(
     {
         ArgumentNullException.ThrowIfNull(profileDto);
 
-        var profileEntity = new ProfileEntity
+        var profile = new ProfileEntity
         {
             Id = 0,
             FirstName = profileDto.FirstName,
@@ -37,23 +37,26 @@ public class ProfileFactory(
         var testimonials = BuildTestimonials(profileDto.Testimonials);
         var portfolio = BuildPortfolio(profileDto.PortfolioGallery);
 
-        profileEntity.AddTalents(talents);
-        profileEntity.AddTestimonials(testimonials);
-        profileEntity.AddPortfolioItems(portfolio);
+        profile.AddTalents(talents);
+
+        foreach (var item in testimonials)
+            profile.AddTestimonial(item.Name, item.JobTitle, item.Feedback, item.PhotoUrl);
+
+        profile.AddPortfolioItems(portfolio);
 
         if (profileDto.Resume is not null)
         {
             var resume = await BuildResumeAsync(profileDto.Resume, cancellationToken);
-            profileEntity.AddResume(resume);
+            profile.AddResume(resume);
         }
 
         if (profileDto.SkillSet is not null)
         {
             var skillSet = await BuildSkillSetAsync(profileDto.SkillSet, cancellationToken);
-            profileEntity.AddSkill(skillSet);
+            profile.AddSkill(skillSet);
         }
 
-        return profileEntity;
+        return profile;
     }
 
     private async Task<ResumeEntity> BuildResumeAsync(ResumeParseDto resumeDto, CancellationToken cancellationToken)
@@ -90,18 +93,15 @@ public class ProfileFactory(
         }).ToList();
     }
 
-    private List<TestimonialEntity> BuildTestimonials(List<TestimonialParseDto>? testimonialDtos)
+    private static List<TestimonialEntity> BuildTestimonials(List<TestimonialParseDto>? testimonials)
     {
-        if (testimonialDtos is null) return [];
+        if (testimonials is null) return [];
 
-        return testimonialDtos.Select(dto => new TestimonialEntity
-        {
-            Id = 0,
-            Name = dto.Name!,
-            Feedback = dto.Feedback!,
-            JobTitle = dto.JobTitle!,
-            PhotoUrl = dto.PhotoUrl!
-        }).ToList();
+        return testimonials.Select(dto => new TestimonialEntity(
+            dto.Name ?? string.Empty,
+            dto.JobTitle ?? string.Empty,
+            dto.Feedback ?? string.Empty,
+            dto.PhotoUrl ?? string.Empty)).ToList();
     }
 
     private List<PortfolioGalleryEntity> BuildPortfolio(List<PortfolioGalleryParseDto>? portfolioDtos)

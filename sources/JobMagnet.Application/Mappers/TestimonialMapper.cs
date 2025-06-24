@@ -11,16 +11,12 @@ public static class TestimonialMapper
     {
         TypeAdapterConfig<TestimonialCommand, TestimonialEntity>
             .NewConfig()
-            .Ignore(destination => destination.Id)
-            .Map(dest => dest, src => src.TestimonialData);
+            .Map(dest => dest, src => src.TestimonialData)
+            .MapToConstructor(true);
 
         TypeAdapterConfig<TestimonialEntity, TestimonialCommand>
             .NewConfig()
             .Map(dest => dest.TestimonialData, src => src);
-
-        TypeAdapterConfig<TestimonialCommand, TestimonialEntity>
-            .NewConfig()
-            .Map(dest => dest, src => src.TestimonialData);
 
         TypeAdapterConfig<TestimonialEntity, TestimonialResponse>
             .NewConfig()

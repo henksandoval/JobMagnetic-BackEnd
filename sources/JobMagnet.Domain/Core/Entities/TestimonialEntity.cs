@@ -1,17 +1,31 @@
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 
 namespace JobMagnet.Domain.Core.Entities;
 
-// ReSharper disable once ClassNeverInstantiated.Global
 public class TestimonialEntity : SoftDeletableEntity<long>
 {
-    public required string Name { get; set; }
-    public required string JobTitle { get; set; }
-    public string? PhotoUrl { get; set; }
-    public required string Feedback { get; set; }
+    public string Name { get; private set; }
+    public string JobTitle { get; private set; }
+    public string? PhotoUrl { get; private set; }
+    public string Feedback { get; private set; }
+    public long ProfileId { get; private set; }
 
-    [ForeignKey(nameof(Profile))] public long ProfileId { get; set; }
+    private TestimonialEntity() { }
 
-    public virtual ProfileEntity Profile { get; set; }
+    [SetsRequiredMembers]
+    public TestimonialEntity(string name, string jobTitle, string feedback, string? photoUrl = null, long profileId = 0)
+    {
+        Guard.IsNotNullOrWhiteSpace(name);
+        Guard.IsNotNullOrWhiteSpace(jobTitle);
+        Guard.IsNotNullOrWhiteSpace(feedback);
+        Guard.IsGreaterThanOrEqualTo(profileId, 0);
+
+        Name = name;
+        JobTitle = jobTitle;
+        Feedback = feedback;
+        ProfileId = profileId;
+        PhotoUrl = photoUrl;
+    }
 }
