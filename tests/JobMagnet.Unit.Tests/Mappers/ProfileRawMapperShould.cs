@@ -253,9 +253,8 @@ public class ProfileRawMapperShould
     public void MapTalentListCorrectly()
     {
         // --- Given ---
-        var taletnRaw = _fixture.CreateMany<TalentRaw>().ToList();
         var profileRaw = new ProfileRawBuilder(_fixture)
-            .WithTalents(taletnRaw)
+            .WithTalents()
             .Build();
 
         // --- When ---
