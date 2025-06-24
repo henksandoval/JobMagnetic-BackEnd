@@ -33,7 +33,7 @@ public class ProfileFactory(
             ProfileImageUrl = profileDto.ProfileImageUrl
         };
 
-        var talents = BuildTalents(profileEntity,profileDto.Talents);
+        var talents = BuildTalents(profile, profileDto.Talents);
         var testimonials = BuildTestimonials(profileDto.Testimonials);
         var portfolio = BuildPortfolio(profileDto.PortfolioGallery);
 
