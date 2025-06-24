@@ -99,9 +99,7 @@ public class ProfileFactory(
 
         return talentDtos
             .Select(dto => new TalentEntity(
-                dto.Description!,
-                profile.Id,
-                profile
+                dto.Description!
             ))
             .ToList();
     }
