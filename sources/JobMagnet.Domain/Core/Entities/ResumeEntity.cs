@@ -28,13 +28,13 @@ public class ResumeEntity : SoftDeletableEntity<long>
 
     [SetsRequiredMembers]
     public ResumeEntity(
-        string title = "",
-        string suffix = "",
-        string jobTitle = "",
-        string about = "",
-        string summary = "",
-        string overview = "",
-        string address= "",
+        string title,
+        string suffix,
+        string jobTitle,
+        string about,
+        string summary,
+        string overview,
+        string address,
         long id = 0,
         long profileId = 0)
     {

@@ -61,7 +61,7 @@ public class CvParserHandlerShould
             .Build();
 
         var contactInfoEmail = contactInfoRaw.FirstOrDefault(c => c.ContactType == "EMAIL");
-        var resumeEntity = new ResumeEntity();
+        var resumeEntity = _fixture.Create<ResumeEntity>();
         var contactType = new ContactType(contactInfoEmail!.ContactType);
         resumeEntity.AddContactInfo(contactInfoEmail.Value!, contactType);
 
