@@ -52,7 +52,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(description);
         
-        var talentEntity = new TalentEntity(description, this.Id, this);
+        var talentEntity = new TalentEntity(description, this.Id);
         Talents.Add(talentEntity);
     }
 
