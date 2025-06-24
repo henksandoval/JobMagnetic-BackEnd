@@ -55,18 +55,14 @@ public record PortfolioCollection
 
     public ImmutableList<PortfolioGalleryEntity> GetPortfolioGallery()
     {
-        return _values.Select(x => new PortfolioGalleryEntity
-        {
-            Id = 0,
-            ProfileId = _profileId,
-            Title = x.Title,
-            Description = x.Description,
-            UrlLink = x.UrlLink,
-            UrlImage = x.UrlImage,
-            Type = x.Type,
-            UrlVideo = x.UrlVideo,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        }).ToImmutableList();
+        return _values.Select(x => new PortfolioGalleryEntity(
+                x.Title,
+                x.Description,
+                x.UrlLink,
+                x.UrlImage,
+                x.UrlVideo ?? string.Empty,
+                x.Type,
+                _profileId))
+            .ToImmutableList();
     }
 }

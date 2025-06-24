@@ -61,7 +61,7 @@ public class PortfolioMapperShould
     {
         return e => new
         {
-            e.Id, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy, e.LastModifiedAt,
+            e.Id, e.IsDeleted, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy, e.LastModifiedAt,
             e.LastModifiedBy
         };
     }

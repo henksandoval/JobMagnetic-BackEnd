@@ -15,7 +15,8 @@ public static class PortfolioMapper
 
         TypeAdapterConfig<PortfolioCommand, PortfolioGalleryEntity>
             .NewConfig()
-            .Map(dest => dest, src => src.PortfolioData);
+            .Map(dest => dest, src => src.PortfolioData)
+            .MapToConstructor(true);
 
         TypeAdapterConfig<PortfolioGalleryEntity, PortfolioCommand>
             .NewConfig()

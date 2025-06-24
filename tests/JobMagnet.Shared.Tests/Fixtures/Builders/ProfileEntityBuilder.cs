@@ -216,7 +216,14 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         if (_portfolio.Count > 0)
         {
-            profile.PortfolioGallery = _portfolio;
+            foreach (var gallery in _portfolio)
+                profile.Portfolio.AddGallery(
+                    gallery.Title,
+                    gallery.Description,
+                    gallery.UrlLink,
+                    gallery.UrlImage,
+                    gallery.UrlVideo,
+                    gallery.Type);
         }
 
         if (_talents.Count > 0)

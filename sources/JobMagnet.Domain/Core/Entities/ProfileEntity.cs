@@ -11,6 +11,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
 {
     private readonly HashSet<PublicProfileIdentifierEntity> _publicProfileIdentifiers = [];
     private readonly HashSet<TestimonialEntity> _testimonials = [];
+    private readonly HashSet<PortfolioGalleryEntity> _portfolio = [];
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? ProfileImageUrl { get; set; }
@@ -23,16 +24,18 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public virtual ServiceEntity? Services { get; set; }
     public virtual SummaryEntity? Summary { get; set; }
     public SocialProof SocialProof { get; }
+    public Portfolio Portfolio { get; }
     public virtual ICollection<TalentEntity> Talents { get; set; } = new HashSet<TalentEntity>();
-    public virtual ICollection<PortfolioGalleryEntity> PortfolioGallery { get; set; } =
-        new HashSet<PortfolioGalleryEntity>();
+    public virtual IReadOnlyCollection<PortfolioGalleryEntity> PortfolioGallery => _portfolio;
     public virtual IReadOnlyCollection<TestimonialEntity> Testimonials => _testimonials;
     public virtual ICollection<PublicProfileIdentifierEntity> PublicProfileIdentifiers => _publicProfileIdentifiers;
 
     public ProfileEntity()
     {
         SocialProof = new SocialProof(this);
+        Portfolio = new Portfolio(this);
     }
+
 
     public void CreateAndAssignPublicIdentifier(IProfileSlugGenerator slugGenerator)
     {
@@ -104,21 +107,13 @@ public class ProfileEntity : SoftDeletableEntity<long>
         Services = service;
     }
 
-    public void AddPortfolioItem(PortfolioGalleryEntity item)
-    {
-        ArgumentNullException.ThrowIfNull(item);
-
-        PortfolioGallery.Add(item);
-    }
-
     internal void AddTestimonial(TestimonialEntity testimonial)
     {
         _testimonials.Add(testimonial);
     }
 
-    public void AddPortfolioItems(List<PortfolioGalleryEntity> portfolio)
+    internal void AddPortfolio(PortfolioGalleryEntity portfolio)
     {
-        foreach (var gallery in portfolio)
-            PortfolioGallery.Add(gallery);
+        _portfolio.Add(portfolio);
     }
 }

@@ -35,14 +35,21 @@ public class ProfileFactory(
 
         var talents = BuildTalents(profileDto.Talents);
         var testimonials = BuildTestimonials(profileDto.Testimonials);
-        var portfolio = BuildPortfolio(profileDto.PortfolioGallery);
+        var galleryItems = BuildPortfolio(profileDto.PortfolioGallery);
 
         profile.AddTalents(talents);
 
         foreach (var item in testimonials)
             profile.SocialProof.AddTestimonial(item.Name, item.JobTitle, item.Feedback, item.PhotoUrl);
 
-        profile.AddPortfolioItems(portfolio);
+        foreach (var item in galleryItems)
+            profile.Portfolio.AddGallery(
+                item.Description,
+                item.Title,
+                item.Type,
+                item.UrlImage,
+                item.UrlVideo,
+                item.Type);
 
         if (profileDto.Resume is not null)
         {
@@ -108,14 +115,14 @@ public class ProfileFactory(
     {
         if (portfolioDtos is null) return [];
 
-        return portfolioDtos.Select(dto => new PortfolioGalleryEntity
-        {
-            Id = 0,
-            Description = dto.Description!,
-            Title = dto.Title!,
-            Type = dto.Type!,
-            UrlImage = dto.UrlImage!
-        }).ToList();
+        return portfolioDtos.Select(dto => new PortfolioGalleryEntity(
+                dto.Title ?? string.Empty,
+                dto.Description ?? string.Empty,
+                dto.UrlLink ?? string.Empty,
+                dto.UrlImage ?? string.Empty,
+                dto.UrlVideo ?? string.Empty,
+                dto.Type ?? string.Empty))
+            .ToList();
     }
 
     private List<EducationEntity> BuildEducationHistory(List<EducationParseDto>? educationDtos)

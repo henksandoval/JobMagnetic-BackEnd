@@ -164,7 +164,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
     private static void AddPortfolio(ProfileEntity profile)
     {
         var portfolioItems = new PortfolioCollection().GetPortfolioGallery();
-        foreach (var item in portfolioItems) profile.AddPortfolioItem(item);
+        foreach (var item in portfolioItems) profile.AddPortfolio(item);
     }
 
     private static void AddTestimonials(ProfileEntity profile)
