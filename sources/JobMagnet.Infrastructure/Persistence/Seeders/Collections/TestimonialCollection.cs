@@ -10,7 +10,7 @@ public record TestimonialCollection
 
     private readonly IList<(string Name, string JobTitle, string PhotoUrl, string Feedback)> _values =
     [
-        ("Jane Smith", "Project Manager", "https://randomuser.me/api/portraits/women/28.jpg",
+        ("Jane Smith", "Portfolio Manager", "https://randomuser.me/api/portraits/women/28.jpg",
             "Brandon is a talented developer who consistently delivers high-quality work. His ability to understand client needs and translate them into functional designs is impressive."),
         ("Alice Johnson", "Software Engineer", "https://randomuser.me/api/portraits/women/82.jpg",
             "Working with Brandon has been a pleasure. He is always willing to go the extra mile to ensure the project is a success. His technical skills and creativity are top-notch."),

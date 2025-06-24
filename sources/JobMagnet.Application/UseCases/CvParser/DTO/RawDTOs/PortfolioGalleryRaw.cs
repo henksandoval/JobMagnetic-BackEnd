@@ -1,6 +1,6 @@
 namespace JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 
-public sealed record PortfolioGalleryRaw(
+public sealed record ProjectRaw(
     string? Title,
     string? Description,
     string? UrlLink,

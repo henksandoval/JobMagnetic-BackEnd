@@ -5,8 +5,7 @@ using JobMagnet.Domain.Exceptions;
 
 namespace JobMagnet.Domain.Core.Entities;
 
-// ReSharper disable once ClassNeverInstantiated.Global
-public class PortfolioGalleryEntity : SoftDeletableEntity<long>
+public class Project : SoftDeletableEntity<long>
 {
     public int Position { get; private set; }
     public string Title { get; private set; }
@@ -18,7 +17,7 @@ public class PortfolioGalleryEntity : SoftDeletableEntity<long>
     public long ProfileId { get; private set; }
 
     [SetsRequiredMembers]
-    public PortfolioGalleryEntity(string title, string description, string urlLink, string urlImage, string urlVideo, string type, long profileId = 0, long id = 0)
+    public Project(string title, string description, string urlLink, string urlImage, string urlVideo, string type, long profileId = 0, long id = 0)
     {
         Id = id;
         Title = title;

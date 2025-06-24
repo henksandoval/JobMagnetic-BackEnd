@@ -630,7 +630,7 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.ToTable("Educations", (string)null);
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.PortfolioGalleryEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ProjectEntity", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -1675,10 +1675,10 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Navigation("Summary");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.PortfolioGalleryEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ProjectEntity", b =>
                 {
                     b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", "Profile")
-                        .WithMany("PortfolioGallery")
+                        .WithMany("Project")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1832,7 +1832,7 @@ namespace JobMagnet.Infrastructure.Migrations
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ProfileEntity", b =>
                 {
-                    b.Navigation("PortfolioGallery");
+                    b.Navigation("Project");
 
                     b.Navigation("PublicProfileIdentifiers");
 

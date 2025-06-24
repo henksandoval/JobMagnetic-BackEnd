@@ -60,7 +60,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         await AddResumeAsync(profile, cancellationToken).ConfigureAwait(false);
         await AddSkills(profile, cancellationToken).ConfigureAwait(false);
         AddSummary(profile);
-        AddPortfolio(profile);
+        AddProject(profile);
         AddTestimonials(profile);
 
         return profile;
@@ -148,10 +148,10 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         profile.AddSummary(summary);
     }
 
-    private static void AddPortfolio(ProfileEntity profile)
+    private static void AddProject(ProfileEntity profile)
     {
-        var portfolioItems = new PortfolioCollection().GetPortfolioGallery();
-        foreach (var item in portfolioItems) profile.AddPortfolio(item);
+        var ProjectItems = new ProjectCollection().GetProjects();
+        foreach (var item in ProjectItems) profile.AddProjectToPortfolio(item);
     }
 
     private static void AddTestimonials(ProfileEntity profile)

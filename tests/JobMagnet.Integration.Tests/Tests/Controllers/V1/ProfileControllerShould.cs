@@ -34,7 +34,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     private const string InvalidId = "100";
     private const int ContactInfoCount = 3;
     private const int TalentsCount = 8;
-    private const int PortfolioCount = 3;
+    private const int ProjectCount = 3;
     private const int TestimonialsCount = 6;
     private const int EducationCount = 4;
     private const int WorkExperienceCount = 2;
@@ -85,7 +85,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         responseData.PersonalData.ShouldNotBeNull();
         responseData.PersonalData.SocialNetworks.Length.ShouldBe(ContactInfoCount);
         responseData.Testimonials!.Length.ShouldBe(TestimonialsCount);
-        responseData.PortfolioGallery!.Length.ShouldBe(PortfolioCount);
+        responseData.Project!.Length.ShouldBe(ProjectCount);
     }
 
     [Fact(DisplayName = "Create a new record and return 201 when the POST request is valid")]
@@ -234,7 +234,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
             .WithResume()
             .WithContactInfo(ContactInfoCount)
             .WithTalents(TalentsCount)
-            .WithPortfolio(PortfolioCount)
+            .WithProjects(ProjectCount)
             .WithSummary()
             .WithEducation(EducationCount)
             .WithWorkExperience(WorkExperienceCount)

@@ -6,7 +6,7 @@ namespace JobMagnet.Domain.Core.Entities;
 public class Portfolio
 {
     private readonly ProfileEntity _profile ;
-    private IReadOnlyCollection<PortfolioGalleryEntity> Gallery => _profile.PortfolioGallery;
+    private IReadOnlyCollection<Project> Projects => _profile.Projects;
 
     internal Portfolio(ProfileEntity profile)
     {
@@ -14,15 +14,15 @@ public class Portfolio
         _profile = profile;
     }
 
-    public void AddGallery(string title, string description, string urlLink, string urlImage, string urlVideo, string type)
+    public void AddProject(string title, string description, string urlLink, string urlImage, string urlVideo, string type)
     {
-        if (Gallery.Count >= 20)
+        if (Projects.Count >= 20)
         {
             throw new JobMagnetDomainException("Cannot add more than 20 testimonials.");
         }
 
-        var gallery = new PortfolioGalleryEntity( title, description, urlLink, urlImage, urlVideo, type, _profile.Id);
+        var project = new Project( title, description, urlLink, urlImage, urlVideo, type, _profile.Id);
 
-        _profile.AddPortfolio(gallery);
+        _profile.AddProjectToPortfolio(project);
     }
 }

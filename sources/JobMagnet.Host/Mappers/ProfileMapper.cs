@@ -27,15 +27,15 @@ public static class ProfileMapper
             .Map(dest => dest.Testimonials,
                 src => src.Testimonials.Select(t => t.Adapt<TestimonialsViewModel>()).ToArray(),
                 src => src.Testimonials.Any())
-            .Map(dest => dest.PortfolioGallery,
-                src => src.PortfolioGallery.Select(p => p.Adapt<PortfolioViewModel>()).ToArray(),
-                src => src.PortfolioGallery.Any())
+            .Map(dest => dest.Project,
+                src => src.Projects.Select(p => p.Adapt<ProjectViewModel>()).ToArray(),
+                src => src.Projects.Any())
             .Map(dest => dest.SkillSet, src => src.SkillSet.Adapt<SkillSetViewModel>(),
                 src => src.SkillSet != null && src.SkillSet.Skills.Count > 0)
             .Map(dest => dest.Summary, src => src.Summary.Adapt<SummaryViewModel>(),
                 src => src.Summary != null);
 
-        TypeAdapterConfig<PortfolioGalleryEntity, PortfolioViewModel>
+        TypeAdapterConfig<Project, ProjectViewModel>
             .NewConfig()
             .Map(dest => dest.Image, src => src.UrlImage)
             .Map(dest => dest.Link, src => src.UrlLink)

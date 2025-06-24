@@ -77,23 +77,23 @@ public class ProfileMapperShould
         result.Testimonials!.ShouldBeEquivalentTo(profileExpected.Testimonials);
     }
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when PortfolioGallery is defined")]
-    public void MapperProfileEntityToProfileViewModelWithPortfolioGallery()
+    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Portfolio is defined")]
+    public void MapperProfileEntityToProfileViewModelWithProject()
     {
         var profile = new ProfileEntityBuilder(_fixture)
-            .WithPortfolio()
+            .WithProjects()
             .Build();
 
         var profileExpected = new ProfileViewModel();
 
-        profileExpected = profileExpected with { PortfolioGallery = GetPortfolioViewModel(profile) };
+        profileExpected = profileExpected with { Project = GetProjectViewModel(profile) };
 
         var result = profile.ToViewModel();
 
         result.ShouldNotBeNull();
         result.ShouldBeOfType<ProfileViewModel>();
 
-        result.PortfolioGallery.ShouldBeEquivalentTo(profileExpected.PortfolioGallery);
+        result.Project.ShouldBeEquivalentTo(profileExpected.Project);
     }
 
     [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Skills are defined")]
@@ -117,7 +117,7 @@ public class ProfileMapperShould
     }
 
     [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when SummaryViewModel is defined")]
-    public void MapperProfileEntityToSummaryViewModelWithPortfolioGallery()
+    public void MapperProfileEntityToSummaryViewModelWithProject()
     {
         var profile = new ProfileEntityBuilder(_fixture)
             .WithSummary()
@@ -189,9 +189,9 @@ public class ProfileMapperShould
             .ToArray();
     }
 
-    private static PortfolioViewModel[]? GetPortfolioViewModel(ProfileEntity profile)
+    private static ProjectViewModel[]? GetProjectViewModel(ProfileEntity profile)
     {
-        return profile.PortfolioGallery.Select(p => new PortfolioViewModel(
+        return profile.Projects.Select(p => new ProjectViewModel(
                 p.Position,
                 p.Title,
                 p.Description,

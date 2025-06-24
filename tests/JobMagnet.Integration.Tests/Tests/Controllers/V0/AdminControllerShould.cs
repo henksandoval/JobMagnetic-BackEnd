@@ -86,7 +86,7 @@ public class AdminControllerShould(
             .WithTalents()
             .WithTestimonials()
             .WithSkills()
-            .WithPortfolioGallery()
+            .WithProject()
             .WhereCondition(x => x.Id == 1)
             .BuildFirstOrDefaultAsync();
 
@@ -96,6 +96,6 @@ public class AdminControllerShould(
         profile.SkillSet.Skills.Count.ShouldBe(SkillInfoCollection.Data.Count);
         profile.Talents.Count.ShouldBe(new TalentsCollection().GetTalents().Count);
         profile.Testimonials.Count.ShouldBe(new TestimonialCollection().GetTestimonials().Count);
-        profile.PortfolioGallery.Count.ShouldBe(new PortfolioCollection().GetPortfolioGallery().Count);
+        profile.Projects.Count.ShouldBe(new ProjectCollection().GetProjects().Count);
     }
 }

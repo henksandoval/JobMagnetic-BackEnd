@@ -14,7 +14,7 @@ public class ProfileEntityBuilder(IFixture fixture)
     private ResumeEntity _resume = null!;
     private SkillSet _skillSet = null!;
     private SummaryEntity _summary = null!;
-    private List<PortfolioGalleryEntity> _portfolio = [];
+    private List<Project> _projects = [];
     private List<TalentEntity> _talents = [];
     private List<TestimonialEntity> _testimonials = [];
     private static readonly Faker Faker = FixtureBuilder.Faker;
@@ -115,9 +115,9 @@ public class ProfileEntityBuilder(IFixture fixture)
         return this;
     }
 
-    public ProfileEntityBuilder WithPortfolio(int count = 5)
+    public ProfileEntityBuilder WithProjects(int count = 5)
     {
-        _portfolio = fixture.CreateMany<PortfolioGalleryEntity>(count).ToList();
+        _projects = fixture.CreateMany<Project>(count).ToList();
         return this;
     }
 
@@ -202,10 +202,10 @@ public class ProfileEntityBuilder(IFixture fixture)
                 profile.SocialProof.AddTestimonial(item.Name, item.JobTitle, item.Feedback, item.PhotoUrl);
         }
 
-        if (_portfolio.Count > 0)
+        if (_projects.Count > 0)
         {
-            foreach (var gallery in _portfolio)
-                profile.Portfolio.AddGallery(
+            foreach (var gallery in _projects)
+                profile.Portfolio.AddProject(
                     gallery.Title,
                     gallery.Description,
                     gallery.UrlLink,

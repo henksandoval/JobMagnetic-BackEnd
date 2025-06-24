@@ -4,7 +4,7 @@ using JobMagnet.Domain.Core.Entities;
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 // ReSharper disable once NotAccessedPositionalProperty.Global
-public record PortfolioCollection
+public record ProjectCollection
 {
     private readonly long _profileId;
 
@@ -48,14 +48,14 @@ public record PortfolioCollection
             "DOG")
     ];
 
-    public PortfolioCollection(long profileId = 0)
+    public ProjectCollection(long profileId = 0)
     {
         _profileId = profileId;
     }
 
-    public ImmutableList<PortfolioGalleryEntity> GetPortfolioGallery()
+    public ImmutableList<Project> GetProjects()
     {
-        return _values.Select(x => new PortfolioGalleryEntity(
+        return _values.Select(x => new Project(
                 x.Title,
                 x.Description,
                 x.UrlLink,

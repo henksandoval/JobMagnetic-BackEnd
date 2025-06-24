@@ -13,6 +13,6 @@ public interface IUnitOfWork
     ICommandRepository<SkillSet> SkillRepository { get; }
     ICommandRepository<SummaryEntity> SummaryRepository { get; }
     ICommandRepository<TalentEntity> TalentRepository { get; }
-    ICommandRepository<PortfolioGalleryEntity> PortfolioGalleryRepository { get; }
+    ICommandRepository<Project> ProjectRepository { get; }
     ICommandRepository<TestimonialEntity> TestimonialRepository { get; }
 }

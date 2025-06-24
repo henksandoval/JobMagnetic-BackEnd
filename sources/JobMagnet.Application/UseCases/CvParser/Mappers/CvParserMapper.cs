@@ -23,7 +23,7 @@ public static class CvParserMapper
             .NewConfig()
             .Map(dest => dest.BirthDate, src => src.BirthDate.ParseToDateOnly())
             .Map(dest => dest.Talents, src => MapTalents(src.Talents))
-            .Map(dest => dest.PortfolioGallery, src => MapPortfolioGallery(src.PortfolioGallery))
+            .Map(dest => dest.Project, src => MapProject(src.Project))
             .Map(dest => dest.Testimonials, src => MapTestimonial(src.Testimonials));
 
         TypeAdapterConfig<ResumeRaw, ResumeParseDto>
@@ -66,8 +66,8 @@ public static class CvParserMapper
     private static List<TestimonialParseDto> MapTestimonial(List<TestimonialRaw>? srcTestimonials) =>
         srcTestimonials == null ? [] : srcTestimonials.Adapt<List<TestimonialParseDto>>();
 
-    private static List<PortfolioGalleryParseDto> MapPortfolioGallery(List<PortfolioGalleryRaw>? srcPortfolio) =>
-        srcPortfolio == null ? [] : srcPortfolio.Adapt<List<PortfolioGalleryParseDto>>();
+    private static List<ProjectParseDto> MapProject(List<ProjectRaw>? srcProject) =>
+        srcProject == null ? [] : srcProject.Adapt<List<ProjectParseDto>>();
 
     private static List<TalentParseDto> MapTalents(IEnumerable<TalentRaw>? srcTalents) =>
         srcTalents == null ? [] : srcTalents.Adapt<List<TalentParseDto>>();

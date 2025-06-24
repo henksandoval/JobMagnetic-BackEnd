@@ -1,22 +1,22 @@
 using System.Linq.Expressions;
 using AutoFixture;
 using FluentAssertions;
-using JobMagnet.Application.Contracts.Commands.Portfolio;
+using JobMagnet.Application.Contracts.Commands.Project;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Shared.Tests.Fixtures;
 
 namespace JobMagnet.Unit.Tests.Mappers;
 
-public class PortfolioMapperShould
+public class ProjectMapperShould
 {
     private readonly IFixture _fixture = FixtureBuilder.Build();
 
     [Fact]
-    public void MapPortfolioEntityToPortfolioModelCorrectly()
+    public void MapProjectEntityToProjectModelCorrectly()
     {
         // --- Given ---
-        var entity = _fixture.Create<PortfolioGalleryEntity>();
+        var entity = _fixture.Create<Project>();
 
         // --- When ---
         var testimonialModel = entity.ToModel();
@@ -24,40 +24,40 @@ public class PortfolioMapperShould
         // --- Then ---
         testimonialModel.Should().NotBeNull();
         testimonialModel.Id.Should().Be(entity.Id);
-        testimonialModel.PortfolioData.Should().BeEquivalentTo(entity, options =>
+        testimonialModel.ProjectData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
     }
 
     [Fact]
-    public void MapPortfolioCreateCommandToPortfolioEntityCorrectly()
+    public void MapProjectCreateCommandToProjectEntityCorrectly()
     {
         // --- Given ---
-        var createCommand = _fixture.Create<PortfolioCommand>();
+        var createCommand = _fixture.Create<ProjectCommand>();
 
         // --- When ---
         var entity = createCommand.ToEntity();
 
         // --- Then ---
         entity.Should().NotBeNull();
-        entity.Should().BeEquivalentTo(createCommand.PortfolioData);
+        entity.Should().BeEquivalentTo(createCommand.ProjectData);
     }
 
     [Fact]
-    public void MapPortfolioEntityToPortfolioCommandCorrectly()
+    public void MapProjectEntityToProjectCommandCorrectly()
     {
         // --- Given ---
-        var entity = _fixture.Create<PortfolioGalleryEntity>();
+        var entity = _fixture.Create<Project>();
 
         // --- When ---
         var updateCommand = entity.ToUpdateRequest();
 
         // --- Then ---
         updateCommand.Should().NotBeNull();
-        updateCommand.PortfolioData.Should().BeEquivalentTo(entity, options =>
+        updateCommand.ProjectData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
     }
 
-    private static Expression<Func<PortfolioGalleryEntity, object>> GetExcludeEntityProperties()
+    private static Expression<Func<Project, object>> GetExcludeEntityProperties()
     {
         return e => new
         {

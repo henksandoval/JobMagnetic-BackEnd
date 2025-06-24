@@ -39,7 +39,7 @@ public class ProfileCustomization : ICustomization
                 .With(x => x.Services, (ServiceRaw?) null)
                 .With(x => x.SkillSet, (SkillSetRaw?) null)
                 .With(x => x.Talents, () => [])
-                .With(x => x.PortfolioGallery, () => [])
+                .With(x => x.Project, () => [])
                 .With(x => x.Testimonials, () => [])
                 .OmitAutoProperties()
         );

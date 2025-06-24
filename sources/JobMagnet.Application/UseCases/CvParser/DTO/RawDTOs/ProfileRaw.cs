@@ -12,5 +12,5 @@ public sealed record ProfileRaw(
     ServiceRaw? Services,
     SummaryRaw? Summary,
     List<TalentRaw>? Talents,
-    List<PortfolioGalleryRaw>? PortfolioGallery,
+    List<ProjectRaw>? Project,
     List<TestimonialRaw>? Testimonials);

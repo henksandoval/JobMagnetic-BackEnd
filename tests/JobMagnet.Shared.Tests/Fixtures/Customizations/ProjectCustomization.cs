@@ -4,15 +4,15 @@ using JobMagnet.Domain.Core.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
-public class PortfolioCustomization : ICustomization
+public class ProjectCustomization : ICustomization
 {
     private static int _autoIncrementId = 1;
 
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<PortfolioGalleryEntity>(composer =>
+        fixture.Customize<Project>(composer =>
             composer
-                .FromFactory(() => new PortfolioGalleryEntity(
+                .FromFactory(() => new Project(
                     FixtureBuilder.Faker.Company.CompanyName(),
                     FixtureBuilder.Faker.Lorem.Sentence(),
                     FixtureBuilder.Faker.Image.PicsumUrl(),
@@ -23,8 +23,8 @@ public class PortfolioCustomization : ICustomization
                 .OmitAutoProperties()
         );
 
-        fixture.Customize<PortfolioGalleryRaw>(composer =>
-            composer.FromFactory(() => new PortfolioGalleryRaw(
+        fixture.Customize<ProjectRaw>(composer =>
+            composer.FromFactory(() => new ProjectRaw(
                 FixtureBuilder.Faker.Company.CompanyName(),
                 FixtureBuilder.Faker.Lorem.Sentence(),
                 FixtureBuilder.Faker.Image.PicsumUrl(),

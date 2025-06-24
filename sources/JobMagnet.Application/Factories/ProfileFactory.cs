@@ -35,7 +35,7 @@ public class ProfileFactory(
 
         var talents = BuildTalents(profileDto.Talents);
         var testimonials = BuildTestimonials(profileDto.Testimonials);
-        var galleryItems = BuildPortfolio(profileDto.PortfolioGallery);
+        var galleryItems = BuildProjects(profileDto.Project);
 
         profile.AddTalents(talents);
 
@@ -43,7 +43,7 @@ public class ProfileFactory(
             profile.SocialProof.AddTestimonial(item.Name, item.JobTitle, item.Feedback, item.PhotoUrl);
 
         foreach (var item in galleryItems)
-            profile.Portfolio.AddGallery(
+            profile.Portfolio.AddProject(
                 item.Description,
                 item.Title,
                 item.Type,
@@ -111,11 +111,11 @@ public class ProfileFactory(
             dto.PhotoUrl ?? string.Empty)).ToList();
     }
 
-    private List<PortfolioGalleryEntity> BuildPortfolio(List<PortfolioGalleryParseDto>? portfolioDtos)
+    private List<Project> BuildProjects(List<ProjectParseDto>? projectDtos)
     {
-        if (portfolioDtos is null) return [];
+        if (projectDtos is null) return [];
 
-        return portfolioDtos.Select(dto => new PortfolioGalleryEntity(
+        return projectDtos.Select(dto => new Project(
                 dto.Title ?? string.Empty,
                 dto.Description ?? string.Empty,
                 dto.UrlLink ?? string.Empty,

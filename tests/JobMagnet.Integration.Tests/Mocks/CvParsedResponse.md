@@ -194,7 +194,7 @@
   "talents": [
 
   ],
-  "portfolioGallery": [
+  "Project": [
 
   ],
   "testimonials": [

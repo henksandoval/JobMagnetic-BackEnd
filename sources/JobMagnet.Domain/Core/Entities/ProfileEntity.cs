@@ -8,7 +8,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
 {
     private readonly HashSet<PublicProfileIdentifierEntity> _publicProfileIdentifiers = [];
     private readonly HashSet<TestimonialEntity> _testimonials = [];
-    private readonly HashSet<PortfolioGalleryEntity> _portfolio = [];
+    private readonly HashSet<Project> _projects = [];
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? ProfileImageUrl { get; set; }
@@ -23,7 +23,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public Portfolio Portfolio { get; }
     public VanityUrls VanityUrls { get; }
     public virtual ICollection<TalentEntity> Talents { get; set; } = new HashSet<TalentEntity>();
-    public virtual IReadOnlyCollection<PortfolioGalleryEntity> PortfolioGallery => _portfolio;
+    public virtual IReadOnlyCollection<Project> Projects => _projects;
     public virtual IReadOnlyCollection<TestimonialEntity> Testimonials => _testimonials;
     public virtual IReadOnlyCollection<PublicProfileIdentifierEntity> PublicProfileIdentifiers => _publicProfileIdentifiers;
 
@@ -58,14 +58,14 @@ public class ProfileEntity : SoftDeletableEntity<long>
 
     public void AddSkill(SkillSet skillSet)
     {
-        ArgumentNullException.ThrowIfNull(skillSet);
+        Guard.IsNotNull(skillSet);
 
         SkillSet = skillSet;
     }
 
     public void AddSummary(SummaryEntity summary)
     {
-        ArgumentNullException.ThrowIfNull(summary);
+        Guard.IsNotNull(summary);
 
         Summary = summary;
     }
@@ -82,9 +82,9 @@ public class ProfileEntity : SoftDeletableEntity<long>
         _testimonials.Add(testimonial);
     }
 
-    internal void AddPortfolio(PortfolioGalleryEntity portfolio)
+    internal void AddProjectToPortfolio(Project project)
     {
-        _portfolio.Add(portfolio);
+        _projects.Add(project);
     }
 
     internal void AddPublicProfileIdentifier(PublicProfileIdentifierEntity publicProfile)

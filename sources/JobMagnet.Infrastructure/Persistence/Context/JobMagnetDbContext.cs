@@ -22,7 +22,7 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
     public DbSet<ProfileEntity> Profiles { get; set; }
     public DbSet<PublicProfileIdentifierEntity> PublicProfileIdentifier { get; set; }
     public DbSet<EducationEntity> Educations { get; set; }
-    public DbSet<PortfolioGalleryEntity> PortfolioGalleries { get; set; }
+    public DbSet<Project> Projects { get; set; }
     public DbSet<TalentEntity> Talents { get; set; }
     public DbSet<ResumeEntity> Resumes { get; set; }
     public DbSet<SummaryEntity> Summaries { get; set; }
@@ -39,7 +39,6 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
                 .HasKey(profile => profile.Id);
         });
         modelBuilder.Entity<EducationEntity>().ToTable("Educations");
-        modelBuilder.Entity<PortfolioGalleryEntity>().ToTable("PorfolioGalleryItems");
         modelBuilder.Entity<TalentEntity>().ToTable("Talents");
         modelBuilder.Entity<ResumeEntity>().ToTable("Resumes");
         modelBuilder.Entity<SummaryEntity>().ToTable("Summaries");

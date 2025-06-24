@@ -1,6 +1,6 @@
 ﻿namespace JobMagnet.Host.ViewModels.Profile;
 
-public record PortfolioViewModel(
+public record ProjectViewModel(
     int Position,
     string Title,
     string Description,

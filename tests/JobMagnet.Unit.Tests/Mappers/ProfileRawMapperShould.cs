@@ -235,20 +235,20 @@ public class ProfileRawMapperShould
         result.Talents.Should().BeEquivalentTo(expectedTalents);
     }
 
-    [Fact(DisplayName = "Map PortfolioGalleryRaw list to PortfolioGalleryParseDto list")]
-    public void MapPortfolioGalleryListCorrectly()
+    [Fact(DisplayName = "Map ProjectRaw list to ProjectParseDto list")]
+    public void MapProjectListCorrectly()
     {
         // --- Given ---
         var profileRaw = new ProfileRawBuilder(_fixture)
-            .WithPortfolio()
+            .WithProjects()
             .Build();
 
         // --- When ---
         var result = profileRaw.ToProfileParseDto();
 
         // --- Then ---
-        var expectedPortfolio = profileRaw.PortfolioGallery
-            .Select(gallery => new PortfolioGalleryParseDto
+        var expectedProjects = profileRaw.Project
+            .Select(gallery => new ProjectParseDto
             {
                 Title = gallery.Title,
                 Description = gallery.Description,
@@ -257,7 +257,7 @@ public class ProfileRawMapperShould
                 UrlVideo = gallery.UrlVideo,
                 Type = gallery.Type
             }).ToList();
-        result.PortfolioGallery.Should().BeEquivalentTo(expectedPortfolio);
+        result.Project.Should().BeEquivalentTo(expectedProjects);
     }
 
     [Fact(DisplayName = "Map TestimonialRaw list to TestimonialParseDto list")]

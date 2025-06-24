@@ -80,10 +80,10 @@ public class ProfileRawBuilder
         return this;
     }
 
-    public ProfileRawBuilder WithPortfolio(int count = 5)
+    public ProfileRawBuilder WithProjects(int count = 5)
     {
-        var portfolioGallery = _fixture.CreateMany<PortfolioGalleryRaw>(count).ToList();
-        _instance = _instance with { PortfolioGallery = portfolioGallery };
+        var Project = _fixture.CreateMany<ProjectRaw>(count).ToList();
+        _instance = _instance with { Project = Project };
         return this;
     }
 

@@ -1,6 +1,6 @@
 ﻿namespace JobMagnet.Application.Contracts.Responses.Base;
 
-public sealed record PortfolioBase
+public sealed record ProjectBase
 {
     public long ProfileId { get; init; }
     public int Position { get; init; }

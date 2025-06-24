@@ -1,6 +1,6 @@
 namespace JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 
-public class PortfolioGalleryParseDto
+public class ProjectParseDto
 {
     public string? Title { get; set; }
     public string? Description { get; set; }

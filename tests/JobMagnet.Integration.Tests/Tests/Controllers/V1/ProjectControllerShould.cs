@@ -2,9 +2,9 @@
 using System.Net.Http.Json;
 using AutoFixture;
 using FluentAssertions;
-using JobMagnet.Application.Contracts.Commands.Portfolio;
+using JobMagnet.Application.Contracts.Commands.Project;
 using JobMagnet.Application.Contracts.Responses.Base;
-using JobMagnet.Application.Contracts.Responses.Portfolio;
+using JobMagnet.Application.Contracts.Responses.Project;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Integration.Tests.Fixtures;
@@ -17,15 +17,15 @@ using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
 
-public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture>
+public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 {
-    private const string RequestUriController = "api/v1/portfolio";
+    private const string RequestUriController = "api/v1/project";
     private const string InvalidId = "100";
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
 
-    public PortfolioControllerShould(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
+    public ProjectControllerShould(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
         _testFixture = testFixture;
         _httpClient = _testFixture.GetClient();
@@ -38,8 +38,8 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         // --- Given ---
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var createRequest = _fixture.Build<PortfolioCommand>()
-            .With(x => x.PortfolioData, GetPortfolioData(profileEntity.Id))
+        var createRequest = _fixture.Build<ProjectCommand>()
+            .With(x => x.ProjectData, GetProjectData(profileEntity.Id))
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
@@ -50,7 +50,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<PortfolioResponse>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<ProjectResponse>(response);
         responseData.ShouldNotBeNull();
 
         var locationHeader = response.Headers.Location!.ToString();
@@ -59,7 +59,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository =
-            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, long>>();
         var entityCreated = await queryRepository.GetByIdAsync(responseData.Id, CancellationToken.None);
 
         entityCreated.ShouldNotBeNull();
@@ -67,10 +67,10 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         );
     }
 
-    private PortfolioBase GetPortfolioData(long profileEntityId)
+    private ProjectBase GetProjectData(long profileEntityId)
     {
         return _fixture
-            .Build<PortfolioBase>()
+            .Build<ProjectBase>()
             .With(x => x.ProfileId, profileEntityId)
             .Create();
     }
@@ -88,7 +88,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<PortfolioResponse>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<ProjectResponse>(response);
         responseData.ShouldNotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
@@ -120,11 +120,11 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryPortfolioRepository =
-            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+        var queryProjectRepository =
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, long>>();
 
-        var portfolioEntity = await queryPortfolioRepository.GetByIdAsync(entity.Id, CancellationToken.None);
-        portfolioEntity.ShouldBeNull();
+        var ProjectEntity = await queryProjectRepository.GetByIdAsync(entity.Id, CancellationToken.None);
+        ProjectEntity.ShouldBeNull();
     }
 
     [Fact(DisplayName = "Return 404 when a DELETE request with invalid ID is provided")]
@@ -146,8 +146,8 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
     {
         // --- Given ---
         var entity = await SetupEntityAsync();
-        var updatedEntity = _fixture.Build<PortfolioCommand>()
-            .With(x => x.PortfolioData, GetPortfolioData(entity.Id))
+        var updatedEntity = _fixture.Build<ProjectCommand>()
+            .With(x => x.ProjectData, GetProjectData(entity.Id))
             .Create();
 
         // --- When ---
@@ -159,10 +159,10 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository =
-            scope.ServiceProvider.GetRequiredService<IQueryRepository<PortfolioGalleryEntity, long>>();
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, long>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
         dbEntity.ShouldNotBeNull();
-        dbEntity.Should().BeEquivalentTo(updatedEntity.PortfolioData);
+        dbEntity.Should().BeEquivalentTo(updatedEntity.ProjectData);
     }
 
     [Fact(DisplayName = "Return 404 when a PUT request with invalid ID is provided")]
@@ -170,7 +170,7 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
     {
         // --- Given ---
         await _testFixture.ResetDatabaseAsync();
-        var updatedEntity = _fixture.Build<PortfolioCommand>().Create();
+        var updatedEntity = _fixture.Build<ProjectCommand>().Create();
 
         // --- When ---
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{InvalidId}", updatedEntity);
@@ -186,30 +186,30 @@ public class PortfolioControllerShould : IClassFixture<JobMagnetTestSetupFixture
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
-        var entity = new ProfileEntityBuilder(_fixture).WithPortfolio().Build();
+        var entity = new ProfileEntityBuilder(_fixture).WithProjects().Build();
         await commandRepository.CreateAsync(entity);
         await commandRepository.SaveChangesAsync();
 
         return entity;
     }
 
-    private async Task<PortfolioGalleryEntity> SetupEntityAsync()
+    private async Task<Project> SetupEntityAsync()
     {
         await _testFixture.ResetDatabaseAsync();
         return await CreateAndPersistEntityAsync();
     }
 
-    private async Task<PortfolioGalleryEntity> CreateAndPersistEntityAsync()
+    private async Task<Project> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
         var entity = new ProfileEntityBuilder(_fixture)
-            .WithPortfolio()
+            .WithProjects()
             .Build();
         await commandRepository.CreateAsync(entity);
         await commandRepository.SaveChangesAsync();
 
-        return entity.PortfolioGallery.First();
+        return entity.Projects.First();
     }
 }

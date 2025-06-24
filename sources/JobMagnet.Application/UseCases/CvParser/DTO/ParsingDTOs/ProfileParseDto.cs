@@ -6,7 +6,7 @@ public class ProfileParseDto
     public SkillSetParseDto? SkillSet { get; set; }
     public SummaryParseDto? Summary { get; set; }
     public List<TalentParseDto> Talents { get; set; }
-    public List<PortfolioGalleryParseDto> PortfolioGallery { get; set; }
+    public List<ProjectParseDto> Project { get; set; }
     public List<TestimonialParseDto> Testimonials { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }

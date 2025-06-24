@@ -67,7 +67,7 @@ public static class StaticCustomizations
     [
         "Software Engineer",
         "Data Scientist",
-        "Project Manager",
+        "Portfolio Manager",
         "Marketing Specialist",
         "Graphic Designer",
         "Financial Analyst",

@@ -106,7 +106,7 @@ public class ProfileController(
             .WithResume()
             .WithSkills()
             .WithTalents()
-            .WithPortfolioGallery()
+            .WithProject()
             .WithSummary()
             .WithTestimonials()
             .BuildFirstOrDefaultAsync();
