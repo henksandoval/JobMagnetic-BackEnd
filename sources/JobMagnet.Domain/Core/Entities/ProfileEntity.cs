@@ -19,7 +19,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public string? MiddleName { get; set; }
     public string? SecondLastName { get; set; }
 
-    public virtual ResumeEntity? Resume { get; set; }
+    public virtual ResumeEntity? Resume { get; private set; }
     public virtual SkillSet? SkillSet { get; set; }
     public virtual ServiceEntity? Services { get; set; }
     public virtual SummaryEntity? Summary { get; set; }
@@ -61,13 +61,6 @@ public class ProfileEntity : SoftDeletableEntity<long>
             Talents.Add(talent);
     }
 
-    public void AddResume(ResumeEntity resume)
-    {
-        ArgumentNullException.ThrowIfNull(resume);
-
-        Resume = resume;
-    }
-
     public void AddSkill(SkillSet skillSet)
     {
         ArgumentNullException.ThrowIfNull(skillSet);
@@ -80,6 +73,13 @@ public class ProfileEntity : SoftDeletableEntity<long>
         ArgumentNullException.ThrowIfNull(summary);
 
         Summary = summary;
+    }
+
+    public void AddResume(ResumeEntity resume)
+    {
+        Guard.IsNotNull(resume);
+
+        Resume = resume;
     }
 
     public void AddService(ServiceEntity service)

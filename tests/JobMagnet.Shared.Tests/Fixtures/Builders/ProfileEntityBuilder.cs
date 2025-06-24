@@ -190,7 +190,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         if (_resume is not null)
         {
-            profile.Resume = _resume;
+            profile.AddResume(_resume);
         }
 
         if (_services is not null)
