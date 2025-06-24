@@ -30,5 +30,9 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<ProfileEn
             .WithOne()
             .HasForeignKey(t => t.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.Talents)
+            .WithOne()
+            .HasForeignKey(t => t.ProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
