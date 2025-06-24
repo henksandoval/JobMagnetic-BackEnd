@@ -170,37 +170,6 @@ public class ProfileRawMapperShould
         result.SkillSet.Should().BeEquivalentTo(expectedSkillDto);
     }
 
-    [Fact(DisplayName = "Map ServiceRaw to ServiceParseDto")]
-    public void MapServiceRawCorrectly()
-    {
-        // --- Given ---
-        var profileRaw = new ProfileRawBuilder(_fixture)
-            .WithServices()
-            .Build();
-
-        // --- When ---
-        var result = profileRaw.ToProfileParseDto();
-
-        // --- Then ---
-        result.Services.Should().NotBeNull();
-        var expectedServiceDto = new ServiceParseDto
-        {
-            Overview = profileRaw.Services!.Overview,
-            GalleryItems = profileRaw.Services.GalleryItems!
-                .Select(x => new GalleryItemParseDto
-                {
-                    Title = x.Title,
-                    Type = x.Type,
-                    Description = x.Description,
-                    UrlImage = x.UrlImage,
-                    UrlVideo = x.UrlVideo,
-                    UrlLink = x.UrlLink
-                })
-                .ToList()
-        };
-        result.Services.Should().BeEquivalentTo(expectedServiceDto);
-    }
-
     [Fact(DisplayName = "Map SummaryRaw (Introduction, Education, WorkExperience) to SummaryParseDto")]
     public void MapSummaryRawCorrectly()
     {

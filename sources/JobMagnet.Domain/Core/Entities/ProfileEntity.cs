@@ -18,7 +18,6 @@ public class ProfileEntity : SoftDeletableEntity<long>
 
     public virtual ResumeEntity? Resume { get; private set; }
     public virtual SkillSet? SkillSet { get; private set; }
-    public virtual ServiceEntity? Services { get; set; }
     public virtual SummaryEntity? Summary { get; set; }
     public SocialProof SocialProof { get; }
     public Portfolio Portfolio { get; }
@@ -76,13 +75,6 @@ public class ProfileEntity : SoftDeletableEntity<long>
         Guard.IsNotNull(resume);
 
         Resume = resume;
-    }
-
-    public void AddService(ServiceEntity service)
-    {
-        ArgumentNullException.ThrowIfNull(service);
-
-        Services = service;
     }
 
     internal void AddTestimonial(TestimonialEntity testimonial)

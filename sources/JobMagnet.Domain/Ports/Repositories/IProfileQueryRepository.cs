@@ -12,7 +12,6 @@ public interface IProfileQueryRepository : IQueryRepository<ProfileEntity, long>
     IProfileQueryRepository WithTalents();
     IProfileQueryRepository WithPortfolioGallery();
     IProfileQueryRepository WithSummary();
-    IProfileQueryRepository WithServices();
     IProfileQueryRepository WithTestimonials();
     Task<ProfileEntity?> BuildFirstOrDefaultAsync();
 }

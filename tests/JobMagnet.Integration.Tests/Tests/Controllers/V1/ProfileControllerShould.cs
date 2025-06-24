@@ -77,8 +77,6 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         responseData.ShouldBeAssignableTo<ProfileViewModel>();
 
         responseData.About.ShouldNotBeNull();
-        responseData.Service.ShouldNotBeNull();
-        responseData.Service.ServiceDetails.Length.ShouldBe(ServiceDetailsCount);
         responseData.SkillSet.ShouldNotBeNull();
         responseData.SkillSet.SkillDetails.Length.ShouldBe(SkillDetailsCount);
         responseData.Summary.ShouldNotBeNull();
@@ -240,7 +238,6 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
             .WithSummary()
             .WithEducation(EducationCount)
             .WithWorkExperience(WorkExperienceCount)
-            .WithServices()
             .WithSkillSet()
             .WithSkills(SkillDetailsCount)
             .WithTestimonials(TestimonialsCount)

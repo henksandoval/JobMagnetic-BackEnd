@@ -60,7 +60,6 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         await AddResumeAsync(profile, cancellationToken).ConfigureAwait(false);
         await AddSkills(profile, cancellationToken).ConfigureAwait(false);
         AddSummary(profile);
-        AddServices(profile);
         AddPortfolio(profile);
         AddTestimonials(profile);
 
@@ -147,18 +146,6 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
             WorkExperiences = new SummaryCollection().GetWorkExperience().ToList()
         };
         profile.AddSummary(summary);
-    }
-
-    private static void AddServices(ProfileEntity profile)
-    {
-        var service = new ServiceEntity
-        {
-            Id = 0,
-            Overview =
-                "I offer a wide range of web development services, including front-end and back-end development, UI/UX design, and more.",
-            GalleryItems = new ServiceCollection().GetServicesGallery().ToList()
-        };
-        profile.AddService(service);
     }
 
     private static void AddPortfolio(ProfileEntity profile)

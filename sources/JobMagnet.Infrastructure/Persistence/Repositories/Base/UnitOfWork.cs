@@ -16,7 +16,6 @@ public class UnitOfWork(JobMagnetDbContext dbContext, ILogger<UnitOfWork> logger
     private ICommandRepository<PublicProfileIdentifierEntity>? _publicProfileIdentifierRepository;
     private ICommandRepository<ResumeEntity>? _resumeRepository;
     private ICommandRepository<SkillSet>? _skillRepository;
-    private ICommandRepository<ServiceEntity>? _serviceRepository;
     private ICommandRepository<SummaryEntity>? _summaryRepository;
     private ICommandRepository<TalentEntity>? _talentRepository;
     private ICommandRepository<PortfolioGalleryEntity>? _portfolioGalleryRepository;
@@ -31,8 +30,6 @@ public class UnitOfWork(JobMagnetDbContext dbContext, ILogger<UnitOfWork> logger
         _resumeRepository ??= new Repository<ResumeEntity, long>(_dbContext);
     public ICommandRepository<SkillSet> SkillRepository =>
         _skillRepository ??= new Repository<SkillSet, long>(_dbContext);
-    public ICommandRepository<ServiceEntity> ServiceRepository =>
-        _serviceRepository ??= new Repository<ServiceEntity, long>(_dbContext);
     public ICommandRepository<SummaryEntity> SummaryRepository =>
         _summaryRepository ??= new Repository<SummaryEntity, long>(_dbContext);
     public ICommandRepository<TalentEntity> TalentRepository =>

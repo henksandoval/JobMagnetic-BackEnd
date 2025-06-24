@@ -77,25 +77,6 @@ public class ProfileMapperShould
         result.Testimonials!.ShouldBeEquivalentTo(profileExpected.Testimonials);
     }
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Service is defined")]
-    public void MapperProfileEntityToProfileViewModelWithService()
-    {
-        var profile = new ProfileEntityBuilder(_fixture)
-            .WithServices()
-            .Build();
-
-        var profileExpected = new ProfileViewModel();
-
-        profileExpected = profileExpected with { Service = GetServiceViewModel(profile) };
-
-        var result = profile.ToViewModel();
-
-        result.ShouldNotBeNull();
-        result.ShouldBeOfType<ProfileViewModel>();
-
-        result.Service!.ShouldBeEquivalentTo(profileExpected.Service);
-    }
-
     [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when PortfolioGallery is defined")]
     public void MapperProfileEntityToProfileViewModelWithPortfolioGallery()
     {
@@ -196,17 +177,6 @@ public class ProfileMapperShould
                 .FirstOrDefault(x => x.ContactType.Name == contactTypeName)
                 ?.Value ?? string.Empty;
         }
-    }
-
-    private static ServiceViewModel GetServiceViewModel(ProfileEntity profile)
-    {
-        var serviceDetails = profile.Services.GalleryItems.Select(g => new ServiceDetailsViewModel(
-                g.Title,
-                g.Description,
-                g.UrlImage))
-            .ToArray();
-
-        return new ServiceViewModel(profile.Services.Overview, serviceDetails);
     }
 
     private static TestimonialsViewModel[]? GetTestimonialViewModel(ProfileEntity profile)

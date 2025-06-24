@@ -38,10 +38,6 @@ public static class CvParserMapper
             .NewConfig()
             .Map(dest => dest.Level, src => Convert.ToUInt16(src.Level));
 
-        TypeAdapterConfig<ServiceRaw, ServiceParseDto>
-            .NewConfig()
-            .Map(dest => dest.GalleryItems, src => MapServices(src.GalleryItems));
-
         TypeAdapterConfig<SummaryRaw, SummaryParseDto>
             .NewConfig()
             .Map(dest => dest.Education, src => MapEducation(src.Education))
@@ -63,9 +59,6 @@ public static class CvParserMapper
 
     private static List<EducationParseDto> MapEducation(IEnumerable<EducationRaw>? srcEducation) =>
         srcEducation == null ? [] : srcEducation.Adapt<List<EducationParseDto>>();
-
-    private static List<GalleryItemParseDto> MapServices(ICollection<GalleryItemRaw>? srcGallery) =>
-        srcGallery == null ? [] : srcGallery.Adapt<List<GalleryItemParseDto>>();
 
     private static List<SkillParseDto> MapSkills(IEnumerable<SkillRaw>? srcSkills) =>
         srcSkills == null ? [] : srcSkills.Adapt<List<SkillParseDto>>();

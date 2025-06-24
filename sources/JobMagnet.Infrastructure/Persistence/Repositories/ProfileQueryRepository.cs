@@ -32,15 +32,6 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
         return this;
     }
 
-    public IProfileQueryRepository WithServices()
-    {
-        _query = _query
-            .Include(p => p.Services)
-            .ThenInclude(s => s.GalleryItems);
-
-        return this;
-    }
-
     public IProfileQueryRepository WithSummary()
     {
         _query = _query

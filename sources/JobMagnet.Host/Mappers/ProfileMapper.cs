@@ -32,8 +32,6 @@ public static class ProfileMapper
                 src => src.PortfolioGallery.Any())
             .Map(dest => dest.SkillSet, src => src.SkillSet.Adapt<SkillSetViewModel>(),
                 src => src.SkillSet != null && src.SkillSet.Skills.Count > 0)
-            .Map(dest => dest.Service, src => src.Services.Adapt<ServiceViewModel>(),
-                src => src.Services != null && src.Services.GalleryItems.Count > 0)
             .Map(dest => dest.Summary, src => src.Summary.Adapt<SummaryViewModel>(),
                 src => src.Summary != null);
 
@@ -42,12 +40,6 @@ public static class ProfileMapper
             .Map(dest => dest.Image, src => src.UrlImage)
             .Map(dest => dest.Link, src => src.UrlLink)
             .Map(dest => dest.Video, src => src.UrlVideo);
-
-        TypeAdapterConfig<ServiceGalleryItemEntity, ServiceDetailsViewModel>
-            .NewConfig()
-            .Map(dest => dest.BackgroundUrl, src => src.UrlImage)
-            .Map(dest => dest.Description, src => src.Description)
-            .Map(dest => dest.Name, src => src.Title);
 
         TypeAdapterConfig<TestimonialEntity, TestimonialsViewModel>
             .NewConfig()
@@ -66,11 +58,6 @@ public static class ProfileMapper
             .NewConfig()
             .Map(dest => dest.SkillDetails,
                 src => src.Skills.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
-
-        TypeAdapterConfig<ServiceEntity, ServiceViewModel>
-            .NewConfig()
-            .Map(dest => dest.ServiceDetails,
-                src => src.GalleryItems.Select(item => item.Adapt<ServiceDetailsViewModel>()).ToArray());
 
         TypeAdapterConfig<SummaryEntity, SummaryViewModel>
             .NewConfig()

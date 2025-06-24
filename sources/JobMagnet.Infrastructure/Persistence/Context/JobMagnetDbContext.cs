@@ -24,8 +24,6 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
     public DbSet<EducationEntity> Educations { get; set; }
     public DbSet<PortfolioGalleryEntity> PortfolioGalleries { get; set; }
     public DbSet<TalentEntity> Talents { get; set; }
-    public DbSet<ServiceEntity> Services { get; set; }
-    public DbSet<ServiceGalleryItemEntity> ServiceGalleries { get; set; }
     public DbSet<ResumeEntity> Resumes { get; set; }
     public DbSet<SummaryEntity> Summaries { get; set; }
     public DbSet<TestimonialEntity> Testimonials { get; set; }
@@ -43,8 +41,6 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
         modelBuilder.Entity<EducationEntity>().ToTable("Educations");
         modelBuilder.Entity<PortfolioGalleryEntity>().ToTable("PorfolioGalleryItems");
         modelBuilder.Entity<TalentEntity>().ToTable("Talents");
-        modelBuilder.Entity<ServiceEntity>().ToTable("Services");
-        modelBuilder.Entity<ServiceGalleryItemEntity>().ToTable("ServiceGalleryItems");
         modelBuilder.Entity<ResumeEntity>().ToTable("Resumes");
         modelBuilder.Entity<SummaryEntity>().ToTable("Summaries");
         modelBuilder.Entity<TestimonialEntity>().ToTable("Testimonials");

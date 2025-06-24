@@ -1,13 +1,11 @@
 ﻿using System.Net;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Infrastructure.Persistence.Context;
-using JobMagnet.Infrastructure.Persistence.Seeders;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using JobMagnet.Integration.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit.Abstractions;
-using ServicesCollection = JobMagnet.Infrastructure.Persistence.Seeders.Collections.ServiceCollection;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V0;
 
@@ -86,7 +84,6 @@ public class AdminControllerShould(
         var profile = await profileQueryRepository
             .WithResume()
             .WithTalents()
-            .WithServices()
             .WithTestimonials()
             .WithSkills()
             .WithPortfolioGallery()
@@ -98,8 +95,6 @@ public class AdminControllerShould(
         profile.Resume.ContactInfo.ShouldNotBeNull();
         profile.SkillSet.Skills.Count.ShouldBe(SkillInfoCollection.Data.Count);
         profile.Talents.Count.ShouldBe(new TalentsCollection().GetTalents().Count);
-        profile.Services.ShouldNotBeNull();
-        profile.Services.GalleryItems.Count.ShouldBe(new ServicesCollection().GetServicesGallery().Count);
         profile.Testimonials.Count.ShouldBe(new TestimonialCollection().GetTestimonials().Count);
         profile.PortfolioGallery.Count.ShouldBe(new PortfolioCollection().GetPortfolioGallery().Count);
     }

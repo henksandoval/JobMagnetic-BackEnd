@@ -8,6 +8,5 @@ public record ProfileViewModel(
     TitlesViewModel? Titles = null,
     SummaryViewModel? Summary = null,
     PortfolioViewModel[]? PortfolioGallery = null,
-    ServiceViewModel? Service = null,
     ContactViewModel? Contact = null
 );

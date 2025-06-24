@@ -11,7 +11,6 @@ public interface IUnitOfWork
     ICommandRepository<PublicProfileIdentifierEntity> PublicProfileIdentifierRepository { get; }
     ICommandRepository<ResumeEntity> ResumeRepository { get; }
     ICommandRepository<SkillSet> SkillRepository { get; }
-    ICommandRepository<ServiceEntity> ServiceRepository { get; }
     ICommandRepository<SummaryEntity> SummaryRepository { get; }
     ICommandRepository<TalentEntity> TalentRepository { get; }
     ICommandRepository<PortfolioGalleryEntity> PortfolioGalleryRepository { get; }

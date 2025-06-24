@@ -4,7 +4,6 @@ public class ProfileParseDto
 {
     public ResumeParseDto? Resume { get; set; }
     public SkillSetParseDto? SkillSet { get; set; }
-    public ServiceParseDto? Services { get; set; }
     public SummaryParseDto? Summary { get; set; }
     public List<TalentParseDto> Talents { get; set; }
     public List<PortfolioGalleryParseDto> PortfolioGallery { get; set; }

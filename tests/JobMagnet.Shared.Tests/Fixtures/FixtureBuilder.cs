@@ -32,10 +32,8 @@ public static class FixtureBuilder
             .Customize(new ResumeCustomization())
             .Customize(new SummaryCustomization())
             .Customize(new SkillDetailCustomization())
-            .Customize(new ServiceGalleryItemCustomization())
             .Customize(new WorkExperienceCustomization())
             .Customize(new TalentCustomization())
-            .Customize(new ServiceCustomization())
             .Customize(new SkillCustomization())
             .Customize(new TestimonialCustomization());
 

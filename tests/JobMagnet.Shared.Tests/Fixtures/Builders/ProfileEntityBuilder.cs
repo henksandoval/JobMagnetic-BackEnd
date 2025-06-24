@@ -12,7 +12,6 @@ public class ProfileEntityBuilder(IFixture fixture)
     private string? _firstName;
     private string? _lastName;
     private ResumeEntity _resume = null!;
-    private ServiceEntity _services = null!;
     private SkillSet _skillSet = null!;
     private SummaryEntity _summary = null!;
     private List<PortfolioGalleryEntity> _portfolio = [];
@@ -110,12 +109,6 @@ public class ProfileEntityBuilder(IFixture fixture)
         return this;
     }
 
-    public ProfileEntityBuilder WithServices()
-    {
-        _services = fixture.Create<ServiceEntity>();
-        return this;
-    }
-
     public ProfileEntityBuilder WithTalents(int count = 5)
     {
         _talents = fixture.CreateMany<TalentEntity>(count).ToList();
@@ -191,11 +184,6 @@ public class ProfileEntityBuilder(IFixture fixture)
         if (_resume is not null)
         {
             profile.AddResume(_resume);
-        }
-
-        if (_services is not null)
-        {
-            profile.Services = _services;
         }
 
         if (_summary is not null)
