@@ -61,10 +61,9 @@ public class ProfileMapperShould
     [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Testimonial is defined")]
     public void MapperProfileEntityToProfileViewModelWithTestimonials()
     {
-        var profileBuilder = new ProfileEntityBuilder(_fixture)
-            .WithTestimonials();
-
-        var profile = profileBuilder.Build();
+        var profile = new ProfileEntityBuilder(_fixture)
+            .WithTestimonials()
+            .Build();
 
         var profileExpected = new ProfileViewModel();
 
@@ -81,10 +80,9 @@ public class ProfileMapperShould
     [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Service is defined")]
     public void MapperProfileEntityToProfileViewModelWithService()
     {
-        var profileBuilder = new ProfileEntityBuilder(_fixture)
-            .WithServices();
-
-        var profile = profileBuilder.Build();
+        var profile = new ProfileEntityBuilder(_fixture)
+            .WithServices()
+            .Build();
 
         var profileExpected = new ProfileViewModel();
 
@@ -101,10 +99,9 @@ public class ProfileMapperShould
     [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when PortfolioGallery is defined")]
     public void MapperProfileEntityToProfileViewModelWithPortfolioGallery()
     {
-        var profileBuilder = new ProfileEntityBuilder(_fixture)
-            .WithPortfolio();
-
-        var profile = profileBuilder.Build();
+        var profile = new ProfileEntityBuilder(_fixture)
+            .WithPortfolio()
+            .Build();
 
         var profileExpected = new ProfileViewModel();
 
@@ -121,12 +118,10 @@ public class ProfileMapperShould
     [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Skills are defined")]
     public void MapperProfileEntityToProfileViewModelWithSkills()
     {
-        var profileBuilder =
-            new ProfileEntityBuilder(_fixture)
+        var profile = new ProfileEntityBuilder(_fixture)
             .WithSkillSet()
-            .WithSkills();
-
-        var profile = profileBuilder.Build();
+            .WithSkills()
+            .Build();
 
         var profileExpected = new ProfileViewModel();
 
@@ -143,10 +138,9 @@ public class ProfileMapperShould
     [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when SummaryViewModel is defined")]
     public void MapperProfileEntityToSummaryViewModelWithPortfolioGallery()
     {
-        var profileBuilder = new ProfileEntityBuilder(_fixture)
-            .WithSummary();
-
-        var profile = profileBuilder.Build();
+        var profile = new ProfileEntityBuilder(_fixture)
+            .WithSummary()
+            .Build();
 
         var profileExpected = new ProfileViewModel();
 

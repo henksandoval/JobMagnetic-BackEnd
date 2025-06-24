@@ -15,13 +15,13 @@ public class ServiceMapperShould
     [Fact]
     public void MapServiceEntityToServiceModelCorrectly()
     {
-        // Given
+        // --- Given ---
         var entity = _fixture.Create<ServiceEntity>();
 
-        // When
+        // --- When ---
         var serviceModel = entity.ToModel();
 
-        // Then
+        // --- Then ---
         serviceModel.Should().NotBeNull();
         serviceModel.Id.Should().Be(entity.Id);
         serviceModel.ServiceData.Should().BeEquivalentTo(entity, options =>
@@ -31,13 +31,13 @@ public class ServiceMapperShould
     [Fact]
     public void MapServiceCommandToServiceEntityCorrectly()
     {
-        // Given
+        // --- Given ---
         var createCommand = _fixture.Create<ServiceCommand>();
 
-        // When
+        // --- When ---
         var entity = createCommand.ToEntity();
 
-        // Then
+        // --- Then ---
         entity.Should().NotBeNull();
         entity.Should().BeEquivalentTo(createCommand.ServiceData);
     }
@@ -45,13 +45,13 @@ public class ServiceMapperShould
     [Fact]
     public void MapServiceEntityToServiceUpdateCommandCorrectly()
     {
-        // Given
+        // --- Given ---
         var entity = _fixture.Create<ServiceEntity>();
 
-        // When
+        // --- When ---
         var updateCommand = entity.ToUpdateCommand();
 
-        // Then
+        // --- Then ---
         updateCommand.Should().NotBeNull();
         updateCommand.ServiceData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));

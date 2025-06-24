@@ -14,7 +14,7 @@ public class ContactTypeCustomization : ICustomization
     {
         fixture.Customize<ContactType>(composer =>
             composer
-                .FromFactory(() => Faker.PickRandom(new ContactTypesCollection().GetContactTypesWithAliases().ToList()))
+                .FromFactory(() => Faker.PickRandom(ContactTypeDataFactory.GetDomainContactTypes().ToList()))
                 .OmitAutoProperties());
     }
 }

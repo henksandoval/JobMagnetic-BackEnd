@@ -15,13 +15,13 @@ public class PortfolioMapperShould
     [Fact]
     public void MapPortfolioEntityToPortfolioModelCorrectly()
     {
-        // Given
+        // --- Given ---
         var entity = _fixture.Create<PortfolioGalleryEntity>();
 
-        // When
+        // --- When ---
         var testimonialModel = entity.ToModel();
 
-        // Then
+        // --- Then ---
         testimonialModel.Should().NotBeNull();
         testimonialModel.Id.Should().Be(entity.Id);
         testimonialModel.PortfolioData.Should().BeEquivalentTo(entity, options =>
@@ -31,13 +31,13 @@ public class PortfolioMapperShould
     [Fact]
     public void MapPortfolioCreateCommandToPortfolioEntityCorrectly()
     {
-        // Given
+        // --- Given ---
         var createCommand = _fixture.Create<PortfolioCommand>();
 
-        // When
+        // --- When ---
         var entity = createCommand.ToEntity();
 
-        // Then
+        // --- Then ---
         entity.Should().NotBeNull();
         entity.Should().BeEquivalentTo(createCommand.PortfolioData);
     }
@@ -45,13 +45,13 @@ public class PortfolioMapperShould
     [Fact]
     public void MapPortfolioEntityToPortfolioCommandCorrectly()
     {
-        // Given
+        // --- Given ---
         var entity = _fixture.Create<PortfolioGalleryEntity>();
 
-        // When
+        // --- When ---
         var updateCommand = entity.ToUpdateRequest();
 
-        // Then
+        // --- Then ---
         updateCommand.Should().NotBeNull();
         updateCommand.PortfolioData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));

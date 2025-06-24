@@ -23,10 +23,10 @@ public class AdminControllerShould(
     [Fact(DisplayName = "Return 200 and Pong when GET ping request is called")]
     public async Task ReturnPong_WhenGetPingRequestAsync()
     {
-        // When
+        // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/ping");
 
-        // Then
+        // --- Then ---
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
@@ -38,17 +38,17 @@ public class AdminControllerShould(
     [Fact(DisplayName = "Delete and return 204 when DELETE request is received")]
     public async Task DestroyDatabase_WhenDeleteRequestIsReceivedIsAsync()
     {
-        // Given
+        // --- Given ---
         await using var scope = testFixture.GetProvider().CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
         await dbContext.Database.EnsureCreatedAsync();
         var canConnect = await dbContext.Database.CanConnectAsync();
         _testOutputHelper.WriteLine("Database connection status: {0}", canConnect);
 
-        // When
+        // --- When ---
         var response = await _httpClient.DeleteAsync($"{RequestUriController}");
 
-        // Then
+        // --- Then ---
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         canConnect = await dbContext.Database.CanConnectAsync();
@@ -58,10 +58,10 @@ public class AdminControllerShould(
     [Fact(DisplayName = "Create and return 200 when Post request is received")]
     public async Task CreateDatabase_WhenPostRequestIsReceivedIsAsync()
     {
-        // When
+        // --- When ---
         var response = await _httpClient.PostAsync($"{RequestUriController}", null);
 
-        // Then
+        // --- Then ---
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
@@ -74,10 +74,10 @@ public class AdminControllerShould(
     [Fact(DisplayName = "Return 200 when Post seedProfile request is received")]
     public async Task SeedData_WhenPostSeedProfileRequestIsReceivedIsAsync()
     {
-        // When
+        // --- When ---
         var response = await _httpClient.PostAsync($"{RequestUriController}/seedProfile", null, CancellationToken.None);
 
-        // Then
+        // --- Then ---
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
 

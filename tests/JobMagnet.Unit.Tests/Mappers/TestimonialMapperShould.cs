@@ -15,13 +15,13 @@ public class TestimonialMapperShould
     [Fact]
     public void MapTestimonialEntityToTestimonialModelCorrectly()
     {
-        // Given
+        // --- Given ---
         var entity = _fixture.Create<TestimonialEntity>();
 
-        // When
+        // --- When ---
         var testimonialModel = entity.ToModel();
 
-        // Then
+        // --- Then ---
         testimonialModel.Should().NotBeNull();
         testimonialModel.Id.Should().Be(entity.Id);
         testimonialModel.TestimonialData.Should().BeEquivalentTo(entity, options =>
@@ -31,13 +31,13 @@ public class TestimonialMapperShould
     [Fact]
     public void MapTestimonialCommandToTestimonialEntityCorrectly()
     {
-        // Given
+        // --- Given ---
         var createCommand = _fixture.Create<TestimonialCommand>();
 
-        // When
+        // --- When ---
         var entity = createCommand.ToEntity();
 
-        // Then
+        // --- Then ---
         entity.Should().NotBeNull();
         entity.Should().BeEquivalentTo(createCommand.TestimonialData);
     }
@@ -45,13 +45,13 @@ public class TestimonialMapperShould
     [Fact]
     public void MapTestimonialEntityToTestimonialUpdateCommandCorrectly()
     {
-        // Given
+        // --- Given ---
         var entity = _fixture.Create<TestimonialEntity>();
 
-        // When
+        // --- When ---
         var updateCommand = entity.ToUpdateCommand();
 
-        // Then
+        // --- Then ---
         updateCommand.Should().NotBeNull();
         updateCommand.TestimonialData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
@@ -61,7 +61,7 @@ public class TestimonialMapperShould
     {
         return e => new
         {
-            e.Id, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy, e.LastModifiedAt,
+            e.Id, e.IsDeleted, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy, e.LastModifiedAt,
             e.LastModifiedBy
         };
     }

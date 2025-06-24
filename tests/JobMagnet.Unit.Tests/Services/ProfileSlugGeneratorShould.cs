@@ -25,17 +25,17 @@ public partial class ProfileSlugGeneratorShould
     [InlineData("Ana", "Armas", "ana-armas")]
     public void GenerateCorrectSlugGivenNormalFirstAndLastName(string firstName, string? lastName, string expectedNamePart)
     {
-        // Given
+        // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
             .WithName(firstName)
             .WithLastName(lastName)
             .Build();
 
-        // When
+        // --- When ---
         var slug = _subject.GenerateProfileSlug(profile);
         var (namePart, suffix) = ExtractSlugParts(slug);
 
-        // Then
+        // --- Then ---
         AssertValidSlug(slug);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
@@ -45,17 +45,17 @@ public partial class ProfileSlugGeneratorShould
     [Fact]
     public void GenerateCorrectSlugGivenNameContainingSpecialCharsAndAccents()
     {
-        // Given
+        // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
             .WithName("María")
             .WithLastName("Ñíguez")
             .Build();
 
-        // When
+        // --- When ---
         var slug = _subject.GenerateProfileSlug(profile);
         var (namePart, suffix) = ExtractSlugParts(slug);
 
-        // Then
+        // --- Then ---
         AssertValidSlug(slug);
         namePart.Should().Be("maria-niguez");
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
@@ -64,17 +64,17 @@ public partial class ProfileSlugGeneratorShould
     [Fact]
     public void GenerateCorrectSlugGivenNameContainingSpecialCharsAccentsAndSpaces()
     {
-        // Given
+        // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
             .WithName("José María")
             .WithLastName("López-Ñíguez")
             .Build();
 
-        // When
+        // --- When ---
         var slug = _subject.GenerateProfileSlug(profile);
         var (namePart, suffix) = ExtractSlugParts(slug);
 
-        // Then
+        // --- Then ---
         AssertValidSlug(slug);
         namePart.Should().Be("jose-lopez");
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
@@ -86,17 +86,17 @@ public partial class ProfileSlugGeneratorShould
     [InlineData("Maria", "  ", "maria")]
     public void GenerateCorrectSlugGivenOnlyFirstName(string firstName, string? lastName, string expectedNamePart)
     {
-        // Given
+        // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
             .Build();
         profile.FirstName = firstName;
         profile.LastName = lastName;
 
-        // When
+        // --- When ---
         var slug = _subject.GenerateProfileSlug(profile);
         var (namePart, suffix) = ExtractSlugParts(slug);
 
-        // Then
+        // --- Then ---
         AssertValidSlug(slug);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
@@ -108,18 +108,18 @@ public partial class ProfileSlugGeneratorShould
     [InlineData("  ", "Fernández", "fernandez")]
     public void GenerateCorrectSlugGivenOnlyLastName(string? firstName, string lastName, string expectedNamePart)
     {
-        // Given
+        // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
             .Build();
 
         profile.FirstName = firstName;
         profile.LastName = lastName;
 
-        // When
+        // --- When ---
         var slug = _subject.GenerateProfileSlug(profile);
         var (namePart, suffix) = ExtractSlugParts(slug);
 
-        // Then
+        // --- Then ---
         AssertValidSlug(slug);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
@@ -131,17 +131,17 @@ public partial class ProfileSlugGeneratorShould
     [InlineData("  ", "  ", PublicProfileIdentifierEntity.DefaultSlug)]
     public void GenerateCorrectSlugGivenDefaultNamePartGivenNullOrEmptyNames(string? firstName, string? lastName, string expectedNamePart)
     {
-        // Given
+        // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
             .Build();
         profile.FirstName = firstName;
         profile.LastName = lastName;
 
-        // When
+        // --- When ---
         var slug = _subject.GenerateProfileSlug(profile);
         var (namePart, suffix) = ExtractSlugParts(slug);
 
-        // Then
+        // --- Then ---
         AssertValidSlug(slug);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
@@ -153,17 +153,17 @@ public partial class ProfileSlugGeneratorShould
     [InlineData("ana-sofia", "de-la-vega", "ana-vega")]
     public void GenerateSlugGivenNameContainingMultipleSpacesAndUnderscores(string firstName, string lastName, string expectedNamePart)
     {
-        // Given
+        // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
             .WithName(firstName)
             .WithLastName(lastName)
             .Build();
 
-        // When
+        // --- When ---
         var slug = _subject.GenerateProfileSlug(profile);
         var (namePart, suffix) = ExtractSlugParts(slug);
 
-        // Then
+        // --- Then ---
         AssertValidSlug(slug);
         namePart.Should().Be(expectedNamePart);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
@@ -172,17 +172,17 @@ public partial class ProfileSlugGeneratorShould
     [Fact]
     public void GenerateDefaultSlugGivenNameConsistingOnlyOfSpecialChars()
     {
-        // Given
+        // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
             .WithName("!@#$%")
             .WithLastName("^&*()")
             .Build();
 
-        // When
+        // --- When ---
         var slug = _subject.GenerateProfileSlug(profile);
         var (namePart, suffix) = ExtractSlugParts(slug);
 
-        // Then
+        // --- Then ---
         AssertValidSlug(slug);
         namePart.Should().Be(PublicProfileIdentifierEntity.DefaultSlug);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");

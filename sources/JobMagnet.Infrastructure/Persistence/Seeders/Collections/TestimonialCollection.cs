@@ -31,16 +31,13 @@ public record TestimonialCollection
     {
         return _values
             .Select(x => new TestimonialEntity
-            {
-                Id = 0,
-                ProfileId = _profileId,
-                Name = x.Name,
-                JobTitle = x.JobTitle,
-                PhotoUrl = x.PhotoUrl,
-                Feedback = x.Feedback,
-                AddedAt = DateTime.UtcNow,
-                AddedBy = Guid.Empty
-            })
+            (
+                x.Name,
+                x.JobTitle,
+                x.PhotoUrl,
+                x.Feedback,
+                _profileId
+            ))
             .ToImmutableList();
     }
 }

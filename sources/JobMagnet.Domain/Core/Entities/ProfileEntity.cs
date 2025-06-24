@@ -10,6 +10,7 @@ namespace JobMagnet.Domain.Core.Entities;
 public class ProfileEntity : SoftDeletableEntity<long>
 {
     private readonly HashSet<PublicProfileIdentifierEntity> _publicProfileIdentifiers = [];
+    private readonly HashSet<TestimonialEntity> _testimonials = [];
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? ProfileImageUrl { get; set; }
@@ -24,7 +25,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public virtual ICollection<TalentEntity> Talents { get; set; } = new HashSet<TalentEntity>();
     public virtual ICollection<PortfolioGalleryEntity> PortfolioGallery { get; set; } =
         new HashSet<PortfolioGalleryEntity>();
-    public virtual ICollection<TestimonialEntity> Testimonials { get; set; } = new HashSet<TestimonialEntity>();
+    public virtual IReadOnlyCollection<TestimonialEntity> Testimonials => _testimonials;
     public virtual ICollection<PublicProfileIdentifierEntity> PublicProfileIdentifiers => _publicProfileIdentifiers;
 
     public void CreateAndAssignPublicIdentifier(IProfileSlugGenerator slugGenerator)
@@ -98,17 +99,10 @@ public class ProfileEntity : SoftDeletableEntity<long>
         PortfolioGallery.Add(item);
     }
 
-    public void AddTestimonial(TestimonialEntity testimonial)
+    public void AddTestimonial(string name, string jobTitle, string feedback, string? photoUrl = null)
     {
-        ArgumentNullException.ThrowIfNull(testimonial);
-
-        Testimonials.Add(testimonial);
-    }
-
-    public void AddTestimonials(List<TestimonialEntity> testimonials)
-    {
-        foreach (var testimonial in testimonials)
-            Testimonials.Add(testimonial);
+        var testimonial = new TestimonialEntity(name, jobTitle, feedback, photoUrl, Id);
+        _testimonials.Add(testimonial);
     }
 
     public void AddPortfolioItems(List<PortfolioGalleryEntity> portfolio)

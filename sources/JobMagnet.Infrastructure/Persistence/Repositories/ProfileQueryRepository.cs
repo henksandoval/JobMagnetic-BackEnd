@@ -10,7 +10,6 @@ namespace JobMagnet.Infrastructure.Persistence.Repositories;
 public class ProfileQueryRepository(JobMagnetDbContext dbContext)
     : Repository<ProfileEntity, long>(dbContext), IProfileQueryRepository
 {
-    private readonly List<Expression<Func<ProfileEntity, ProfileEntity>>> _projections = [];
     private IQueryable<ProfileEntity> _query = dbContext.Profiles;
     private Expression<Func<ProfileEntity, bool>> _whereCondition = x => true;
 
@@ -56,89 +55,25 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
 
     public IProfileQueryRepository WithTalents()
     {
-        _projections.Add(p => new ProfileEntity
-        {
-            Id = p.Id,
-            FirstName = p.FirstName,
-            LastName = p.LastName,
-            MiddleName = p.MiddleName,
-            SecondLastName = p.SecondLastName,
-            ProfileImageUrl = p.ProfileImageUrl,
-            BirthDate = p.BirthDate,
-            Services = p.Services,
-            Talents = p.Talents.Where(t => !t.IsDeleted).Select(t => new TalentEntity
-            {
-                Id = t.Id,
-                Description = t.Description
-            }).ToList(),
-            PortfolioGallery = p.PortfolioGallery,
-            Resume = p.Resume,
-            SkillSet = p.SkillSet,
-            Summary = p.Summary,
-            Testimonials = p.Testimonials
-        });
+        _query = _query
+            .Include(p => p.Talents);
+
         return this;
     }
 
     public IProfileQueryRepository WithPortfolioGallery()
     {
-        _projections.Add(p => new ProfileEntity
-        {
-            Id = p.Id,
-            FirstName = p.FirstName,
-            LastName = p.LastName,
-            MiddleName = p.MiddleName,
-            SecondLastName = p.SecondLastName,
-            ProfileImageUrl = p.ProfileImageUrl,
-            BirthDate = p.BirthDate,
-            Services = p.Services,
-            Talents = p.Talents,
-            PortfolioGallery = p.PortfolioGallery.Where(portfolio => !portfolio.IsDeleted).Select(pg =>
-                new PortfolioGalleryEntity
-                {
-                    Id = pg.Id,
-                    Position = pg.Position,
-                    Title = pg.Title,
-                    Description = pg.Description,
-                    UrlImage = pg.UrlImage,
-                    UrlLink = pg.UrlLink,
-                    UrlVideo = pg.UrlVideo,
-                    Type = pg.Type
-                }).ToList(),
-            Resume = p.Resume,
-            SkillSet = p.SkillSet,
-            Summary = p.Summary,
-            Testimonials = p.Testimonials
-        });
+        _query = _query
+            .Include(p => p.PortfolioGallery);
+
         return this;
     }
 
     public IProfileQueryRepository WithTestimonials()
     {
-        _projections.Add(p => new ProfileEntity
-        {
-            Id = p.Id,
-            FirstName = p.FirstName,
-            LastName = p.LastName,
-            MiddleName = p.MiddleName,
-            SecondLastName = p.SecondLastName,
-            ProfileImageUrl = p.ProfileImageUrl,
-            BirthDate = p.BirthDate,
-            Services = p.Services,
-            Talents = p.Talents,
-            PortfolioGallery = p.PortfolioGallery,
-            Resume = p.Resume,
-            SkillSet = p.SkillSet,
-            Summary = p.Summary,
-            Testimonials = p.Testimonials.Where(t => !t.IsDeleted).Select(t => new TestimonialEntity
-            {
-                Id = t.Id,
-                Name = t.Name,
-                JobTitle = t.JobTitle,
-                Feedback = t.Feedback,
-                PhotoUrl = t.PhotoUrl
-            }).ToList()
-        });
+        _query = _query
+            .Include(p => p.Testimonials);
+
         return this;
     }
 
@@ -151,8 +86,6 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
     public async Task<ProfileEntity?> BuildFirstOrDefaultAsync()
     {
         var finalQuery = _query.AsNoTracking().AsSplitQuery();
-
-        finalQuery = _projections.Aggregate(finalQuery, (current, projection) => current.Select(projection));
 
         return await finalQuery
             .FirstOrDefaultAsync(_whereCondition)

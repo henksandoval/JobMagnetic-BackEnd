@@ -18,6 +18,6 @@ public class ContactTypeAliasEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.HasIndex(c => c.Alias)
             .IsUnique();
 
-        builder.HasData(ContactTypesCollection.GetFlatContactData().Aliases);
+        builder.HasData(ContactTypeDataFactory.SeedData.Aliases);
     }
 }

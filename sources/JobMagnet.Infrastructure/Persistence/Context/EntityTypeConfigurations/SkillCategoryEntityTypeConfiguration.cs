@@ -18,11 +18,6 @@ public class SkillCategoryEntityTypeConfiguration : IEntityTypeConfiguration<Ski
         builder.HasIndex(c => c.Name)
             .IsUnique();
 
-        builder.HasMany(c => c.SkillTypes)
-            .WithOne(type => type.Category)
-            .HasForeignKey(type => type.CategoryId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasData(SkillDataFactory.SeedData.Categories);
     }
 }

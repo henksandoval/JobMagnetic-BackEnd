@@ -5,7 +5,6 @@ using FluentAssertions;
 using JobMagnet.Application.Factories;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Domain.Ports.Repositories.Base;
@@ -41,15 +40,15 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map root properties from a simple DTO")]
     public async Task MapRootProperties_FromSimpleDto()
     {
-        // Given
+        // --- Given ---
         var profileDto = _profileBuilder
             .Build()
             .ToProfileParseDto();
 
-        // When
+        // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
-        // Then
+        // --- Then ---
         profile.Should().NotBeNull();
         profile.Should().BeEquivalentTo(profileDto, options => options.ExcludingMissingMembers());
     }
@@ -63,6 +62,7 @@ public class ProfileFactoryShould
             new TalentRaw ("Proactividad"), 
             new TalentRaw ("Análisis de Datos") 
         };
+        // --- Given ---
         var profileDto = _profileBuilder
             .WithTalents(talentRaws.ToList()) 
             .Build()
@@ -75,9 +75,11 @@ public class ProfileFactoryShould
         }
         
         // When
+
+        // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
-        // Then
+        // --- Then ---
         profile.Should().NotBeNull();
         profile.Talents.Should().NotBeNull();
         
@@ -87,16 +89,16 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map testimonials collection when the DTO provides them")]
     public async Task MapTestimonials_WhenDtoProvidesThem()
     {
-        // Given
+        // --- Given ---
         var profileDto = _profileBuilder
             .WithTestimonials()
             .Build()
             .ToProfileParseDto();
 
-        // When
+        // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
-        // Then
+        // --- Then ---
         profile.Should().NotBeNull();
         profile.Testimonials.Should()
             .BeEquivalentTo(profileDto.Testimonials, options => options.ExcludingMissingMembers());
@@ -107,32 +109,33 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map resume aggregation when the DTO provides them")]
     public async Task MapResume_WhenDtoProvidesThem()
     {
-        // Given
+        // --- Given ---
         var profileDto = _profileBuilder
             .WithResume()
             .Build()
             .ToProfileParseDto();
 
-        // When
+        // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
-        // Then
+        // --- Then ---
         profile.Should().NotBeNull();
         profile.Resume.Should().NotBeNull();
         var resume = profile.Resume!;
+        var expectedResume = profileDto.Resume!;
 
-        resume.About.Should().Be(profileDto.Resume.About ?? string.Empty);
-        resume.Address.Should().Be(profileDto.Resume.Address ?? string.Empty);
-        resume.JobTitle.Should().Be(profileDto.Resume.JobTitle ?? string.Empty);
-        resume.Overview.Should().Be(profileDto.Resume.Overview ?? string.Empty);
-        resume.Suffix.Should().Be(profileDto.Resume.Suffix ?? string.Empty);
-        resume.Title.Should().Be(profileDto.Resume.Title ?? string.Empty);
+        resume.About.Should().Be(expectedResume.About ?? string.Empty);
+        resume.Address.Should().Be(expectedResume.Address ?? string.Empty);
+        resume.JobTitle.Should().Be(expectedResume.JobTitle ?? string.Empty);
+        resume.Overview.Should().Be(expectedResume.Overview ?? string.Empty);
+        resume.Suffix.Should().Be(expectedResume.Suffix ?? string.Empty);
+        resume.Title.Should().Be(expectedResume.Title ?? string.Empty);
     }
 
     [Fact(DisplayName = "Map contact info when the type exists")]
     public async Task MapContactInfo_WhenTypeExists_MapsCorrectly()
     {
-        // Given
+        // --- Given ---
         const string expectedTypeName = "Email";
         const string expectedIconClass = "bx bx-envelope";
         const string expectedValue = "test@test.com";
@@ -152,10 +155,10 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        // When
+        // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
-        // Then
+        // --- Then ---
         profile.Resume.Should().NotBeNull();
         profile.Resume!.ContactInfo.Should().NotBeNull();
         profile.Resume!.ContactInfo.Should().HaveCount(1);
@@ -169,7 +172,7 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map contact info when the type is an alias")]
     public async Task MapContactInfo_WhenTypeIsAlias_MapsToCorrectBaseType()
     {
-        // Given
+        // --- Given ---
         const string expectedTypeName = "Phone";
         const string typeAlias = "Teléfono";
         const string expectedIconClass = "bx bx-mobile";
@@ -188,10 +191,10 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        // When
+        // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
-        // Then
+        // --- Then ---
         profile.Resume.Should().NotBeNull();
         profile.Resume!.ContactInfo.Should().NotBeNull();
         profile.Resume!.ContactInfo.Should().HaveCount(1);
@@ -205,7 +208,7 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map contact info when the type does not exist")]
     public async Task MapContactInfo_WhenTypeDoesNotExist_CreatesAdHocTypeWithDefaultIcon()
     {
-        // Given
+        // --- Given ---
         const string unknownTypeName = "TypeDontExist";
         const string unknownTypeValue = "Some value";
 
@@ -220,10 +223,10 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        // When
+        // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
-        // Then
+        // --- Then ---
         profile.Resume.Should().NotBeNull();
         profile.Resume!.ContactInfo.Should().NotBeNull();
         profile.Resume!.ContactInfo.Should().HaveCount(1);
@@ -236,7 +239,7 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map multiple contact infos with mixed types")]
     public async Task MapContactInfo_WithMultipleItems_MapsAllCorrectly()
     {
-        // Given
+        // --- Given ---
         const string knownTypeName = "Email";
         const string knownTypeIcon = "bx bx-envelope";
         const string knownTypeValue = "test@test.com";
@@ -264,10 +267,10 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        // When
+        // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
-        // Then
+        // --- Then ---
         profile.Resume.Should().NotBeNull();
         profile.Resume!.ContactInfo.Should().NotBeNull();
         profile.Resume!.ContactInfo.Should().HaveSameCount(contacts);
@@ -297,16 +300,16 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map SkillSet aggregation when the DTO provides them")]
     public async Task MapSkillSet_WhenDtoProvidesThem()
     {
-        // Given
+        // --- Given ---
         var profileDto = _profileBuilder
             .WithSkillSet()
             .Build()
             .ToProfileParseDto();
 
-        // When
+        // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
-        // Then
+        // --- Then ---
         profile.Should().NotBeNull();
         profile.SkillSet.Should().BeEquivalentTo(profileDto.SkillSet, options => options.ExcludingMissingMembers());
     }
@@ -314,7 +317,7 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map skills collection when the type exists")]
     public async Task MapSkills_WhenTypeExists_MapsCorrectly()
     {
-        // Given
+        // --- Given ---
         var skills = new List<SkillRaw> { new("C#", "10") };
         var csharpSkill = new SkillType("C#",
             new SkillCategory("Programming"),
@@ -336,10 +339,10 @@ public class ProfileFactoryShould
         skillSet.AddSkill(10, csharpSkill);
         var expectedSkill = skillSet.Skills.ToList();
 
-        // When
+        // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
-        // Then
+        // --- Then ---
         var currentSkills = profile.SkillSet!.Skills!.ToList();
         currentSkills.Should().BeEquivalentTo(expectedSkill, options => options);
     }
@@ -347,7 +350,7 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map skills collection when the type is an alias")]
     public async Task MapSkills_WhenTypeIsAlias_MapsToCorrectBaseType()
     {
-        // Given
+        // --- Given ---
         var skills = new List<SkillRaw> { new("csharp", "10") };
         var csharpSkill = new SkillType("C#",
             new SkillCategory("Programming"),
@@ -367,10 +370,10 @@ public class ProfileFactoryShould
         skillSet.AddSkill(10, csharpSkill);
         var expectedSkill = skillSet.Skills.ToList();
 
-        // When
+        // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
-        // Then
+        // --- Then ---
         var currentSkills = profile.SkillSet!.Skills!.ToList();
         currentSkills.Should().BeEquivalentTo(expectedSkill);
     }
@@ -378,7 +381,7 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map skills when the type does not exist")]
     public async Task MapSkills_WhenTypeDoesNotExist_CreatesAdHocTypeWithDefaultIcon()
     {
-        // Given
+        // --- Given ---
         var defaultCategory = new SkillCategory("AdHoc");
 
         var skills = new List<SkillRaw> { new("TypeDontExist", "10") };
@@ -404,10 +407,10 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        // When
+        // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
-        // Then
+        // --- Then ---
         var currentSkills = profile.SkillSet!.Skills!.ToList();
         currentSkills.Should().BeEquivalentTo(expectedSkill, options => options
             .Excluding(entity => entity.Id)
@@ -417,7 +420,7 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map multiple skills with mixed types")]
     public async Task MapSkills_WithMultipleItems_MapsAllCorrectly()
     {
-        // Given
+        // --- Given ---
         const string unknownSkill = "TypeDontExist";
         const string knownSkill = "C#";
         const string knownSkillAlias = "csharp";
@@ -459,10 +462,10 @@ public class ProfileFactoryShould
         skillSet.AddSkill(2, expectedAdHocType);
         var expectedSkills = skillSet.Skills.ToList();
 
-        // When
+        // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
-        // Then
+        // --- Then ---
         var currentSkills = profile.SkillSet!.Skills!.ToList();
         currentSkills.Should().BeEquivalentTo(expectedSkills, options => options
             .Excluding(entity => entity.Id)

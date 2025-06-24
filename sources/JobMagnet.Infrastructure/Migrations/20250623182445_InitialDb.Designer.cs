@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobMagnet.Infrastructure.Migrations
 {
     [DbContext(typeof(JobMagnetDbContext))]
-    [Migration("20250623081417_InitialDb")]
+    [Migration("20250623182445_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -125,7 +125,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bx-envelope",
                             IsDeleted = false,
@@ -134,7 +134,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bx-mobile",
                             IsDeleted = false,
@@ -143,7 +143,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bx-phone",
                             IsDeleted = false,
@@ -152,7 +152,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bx-phone-call",
                             IsDeleted = false,
@@ -161,7 +161,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 5,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bx-globe",
                             IsDeleted = false,
@@ -170,7 +170,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 6,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-linkedin",
                             IsDeleted = false,
@@ -179,7 +179,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 7,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-github",
                             IsDeleted = false,
@@ -188,7 +188,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 8,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-twitter",
                             IsDeleted = false,
@@ -197,7 +197,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 9,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-facebook",
                             IsDeleted = false,
@@ -206,7 +206,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 10,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-instagram",
                             IsDeleted = false,
@@ -215,7 +215,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 11,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-youtube",
                             IsDeleted = false,
@@ -224,7 +224,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 12,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-whatsapp",
                             IsDeleted = false,
@@ -233,7 +233,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 13,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-telegram",
                             IsDeleted = false,
@@ -242,7 +242,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 14,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-snapchat",
                             IsDeleted = false,
@@ -251,7 +251,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 15,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-pinterest",
                             IsDeleted = false,
@@ -260,7 +260,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 16,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-skype",
                             IsDeleted = false,
@@ -269,7 +269,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 17,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-discord",
                             IsDeleted = false,
@@ -278,7 +278,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 18,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-twitch",
                             IsDeleted = false,
@@ -287,7 +287,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 19,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-tiktok",
                             IsDeleted = false,
@@ -296,7 +296,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 20,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-reddit",
                             IsDeleted = false,
@@ -305,7 +305,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 21,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             IconClass = "bx bxl-vimeo",
                             IsDeleted = false,
@@ -363,7 +363,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Correo Electrónico",
                             ContactTypeId = 1,
@@ -372,7 +372,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "E-mail",
                             ContactTypeId = 1,
@@ -381,7 +381,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Phone",
                             ContactTypeId = 2,
@@ -390,7 +390,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 4,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Teléfonos",
                             ContactTypeId = 2,
@@ -399,7 +399,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 5,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Teléfono Móvil",
                             ContactTypeId = 2,
@@ -408,7 +408,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 6,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Celular",
                             ContactTypeId = 2,
@@ -417,7 +417,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 7,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Móvil",
                             ContactTypeId = 2,
@@ -426,7 +426,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 8,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Teléfono Fijo",
                             ContactTypeId = 3,
@@ -435,7 +435,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 9,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Teléfono de Casa",
                             ContactTypeId = 3,
@@ -444,7 +444,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 10,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Teléfono Casa",
                             ContactTypeId = 3,
@@ -453,7 +453,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 11,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Teléfono Trabajo",
                             ContactTypeId = 4,
@@ -462,7 +462,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 12,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Teléfono Oficina",
                             ContactTypeId = 4,
@@ -471,7 +471,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 13,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Teléfono de Trabajo",
                             ContactTypeId = 4,
@@ -480,7 +480,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 14,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Teléfono de Oficina",
                             ContactTypeId = 4,
@@ -489,7 +489,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 15,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Web Site",
                             ContactTypeId = 5,
@@ -498,7 +498,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 16,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Web-site",
                             ContactTypeId = 5,
@@ -507,7 +507,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 17,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Sitio Web",
                             ContactTypeId = 5,
@@ -516,7 +516,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 18,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Página Web",
                             ContactTypeId = 5,
@@ -525,7 +525,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 19,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Blog",
                             ContactTypeId = 5,
@@ -534,7 +534,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 20,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Portafolio",
                             ContactTypeId = 5,
@@ -543,7 +543,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 21,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "X",
                             ContactTypeId = 8,
@@ -552,7 +552,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 22,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Wasap",
                             ContactTypeId = 12,
@@ -561,7 +561,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         new
                         {
                             Id = 23,
-                            AddedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AddedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Alias = "Whatsapp",
                             ContactTypeId = 12,
@@ -1745,19 +1745,17 @@ namespace JobMagnet.Infrastructure.Migrations
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Skills.SkillSet", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", "Profile")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", null)
                         .WithOne("SkillSet")
                         .HasForeignKey("JobMagnet.Domain.Core.Entities.Skills.SkillSet", "ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Skills.SkillType", b =>
                 {
                     b.HasOne("JobMagnet.Domain.Core.Entities.Skills.SkillCategory", "Category")
-                        .WithMany("SkillTypes")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1798,13 +1796,11 @@ namespace JobMagnet.Infrastructure.Migrations
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.TestimonialEntity", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", "Profile")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", null)
                         .WithMany("Testimonials")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.WorkExperienceEntity", b =>
@@ -1861,11 +1857,6 @@ namespace JobMagnet.Infrastructure.Migrations
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ServiceEntity", b =>
                 {
                     b.Navigation("GalleryItems");
-                });
-
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Skills.SkillCategory", b =>
-                {
-                    b.Navigation("SkillTypes");
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Skills.SkillSet", b =>

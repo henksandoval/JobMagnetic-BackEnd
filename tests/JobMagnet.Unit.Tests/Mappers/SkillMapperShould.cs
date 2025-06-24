@@ -15,7 +15,7 @@ public class SkillMapperShould
     [Fact]
     public void MapSkillEntityToSkillResponseCorrectly()
     {
-        // Given
+        // --- Given ---
         var profileEntity = new ProfileEntityBuilder(_fixture)
             .WithSkillSet()
             .WithSkills()
@@ -24,11 +24,11 @@ public class SkillMapperShould
 
         var sourceSkills = entity.Skills.OrderBy(s => s.Rank).ToList();
 
-        // When
+        // --- When ---
         var skillModel = entity.ToResponse();
         var mappedSkills = skillModel.SkillData.Skills.OrderBy(s => s.Rank).ToList();
 
-        // Then
+        // --- Then ---
         skillModel.Should().NotBeNull();
         skillModel.Id.Should().Be(entity.Id);
 
@@ -53,13 +53,13 @@ public class SkillMapperShould
     [Fact]
     public void MapSkillEntityToSkillUpdateCommandCorrectly()
     {
-        // Given
+        // --- Given ---
         var entity = _fixture.Create<SkillSet>();
 
-        // When
+        // --- When ---
         var updateCommand = entity.ToUpdateCommand();
 
-        // Then
+        // --- Then ---
         updateCommand.Should().NotBeNull();
         updateCommand.SkillData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
@@ -72,7 +72,7 @@ public class SkillMapperShould
         return e => new
         {
             e.Id,
-            SkillDetails = e.Skills, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy,
+            SkillDetails = e.Skills, e.IsDeleted, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy,
             e.LastModifiedAt, e.LastModifiedBy
         };
     }

@@ -11,12 +11,12 @@ public class TestimonialCustomization : ICustomization
     {
         fixture.Customize<TestimonialEntity>(composer =>
             composer
-                .With(x => x.Id, 0)
-                .With(x => x.IsDeleted, false)
-                .Without(x => x.DeletedAt)
-                .Without(x => x.DeletedBy)
-                .Do(ApplyCommonProperties)
-                .Without(x => x.Profile)
+                .FromFactory(() => new TestimonialEntity(
+                    FixtureBuilder.Faker.Name.FullName(),
+                    FixtureBuilder.Faker.Name.JobTitle(),
+                    FixtureBuilder.Faker.Lorem.Paragraph(),
+                    TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Image.PicsumUrl())
+                ))
                 .OmitAutoProperties()
         );
 
@@ -28,13 +28,5 @@ public class TestimonialCustomization : ICustomization
                 TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Image.PicsumUrl())
             ))
         );
-    }
-
-    private static void ApplyCommonProperties(dynamic item)
-    {
-        item.Name = FixtureBuilder.Faker.Name.FullName();
-        item.JobTitle = FixtureBuilder.Faker.Name.JobTitle();
-        item.Feedback = FixtureBuilder.Faker.Lorem.Paragraph();
-        item.PhotoUrl = TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Image.PicsumUrl());
     }
 }
