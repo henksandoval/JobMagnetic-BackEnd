@@ -1,12 +1,9 @@
 ﻿using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Core.Entities.Skills;
-using JobMagnet.Domain.Core.Enums;
-using JobMagnet.Domain.Services;
 
 namespace JobMagnet.Domain.Core.Entities;
 
-// ReSharper disable once ClassNeverInstantiated.Global
 public class ProfileEntity : SoftDeletableEntity<long>
 {
     private readonly HashSet<PublicProfileIdentifierEntity> _publicProfileIdentifiers = [];
@@ -37,7 +34,6 @@ public class ProfileEntity : SoftDeletableEntity<long>
         Portfolio = new Portfolio(this);
         VanityUrls = new VanityUrls(this);
     }
-
 
     public void AddTalent(string talent)
     {
