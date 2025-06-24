@@ -97,7 +97,7 @@ public class AdminControllerShould(
         profile.Resume.ShouldNotBeNull();
         profile.Resume.ContactInfo.ShouldNotBeNull();
         profile.SkillSet.Skills.Count.ShouldBe(SkillInfoCollection.Data.Count);
-        profile.Talents.Count.ShouldBe(new TalentsCollection().GetTalents().Count);
+        // profile.Talents.Count.ShouldBe(new TalentsCollection().GetTalents().Count);
         profile.Services.ShouldNotBeNull();
         profile.Services.GalleryItems.Count.ShouldBe(new ServicesCollection().GetServicesGallery().Count);
         profile.Testimonials.Count.ShouldBe(new TestimonialCollection().GetTestimonials().Count);

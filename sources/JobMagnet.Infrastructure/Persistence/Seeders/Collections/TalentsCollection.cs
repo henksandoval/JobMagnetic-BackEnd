@@ -21,15 +21,15 @@ public record TalentsCollection
         _profileId = profileId;
     }
 
-    public ImmutableList<TalentEntity> GetTalents()
-    {
-        return _values.Select(talent => new TalentEntity
-        {
-            Id = 0,
-            Description = talent,
-            ProfileId = _profileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        }).ToImmutableList();
-    }
+    // public ImmutableList<TalentEntity> GetTalents()
+    // {
+    //     return _values.Select(talent => new TalentEntity
+    //     {
+    //         Id = 0,
+    //         Description = talent,
+    //         ProfileId = _profileId,
+    //         AddedAt = DateTime.Now,
+    //         AddedBy = Guid.Empty
+    //     }).ToImmutableList();
+    // }
 }
