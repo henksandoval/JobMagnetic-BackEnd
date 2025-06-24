@@ -57,26 +57,12 @@ public class ProfileFactoryShould
     [Fact(DisplayName = "Map talents collection when the DTO provides them")]
     public async Task CreateProfileFromDtoAsync_WhenDtoContainsTalents_ShouldCreateProfileWithCorrectTalentCollection()
     {
-        // Given
-        var talentRaws  = new []{ 
-            new TalentRaw ("Liderazgo"),
-            new TalentRaw ("Proactividad"), 
-            new TalentRaw ("Análisis de Datos") 
-        };
         // --- Given ---
         var profileDto = _profileBuilder
-            .WithTalents(talentRaws.ToList()) 
+            .WithTalents() 
             .Build()
             .ToProfileParseDto();
-        var expectedProfile = new ProfileEntity { Id = 1 };
         
-        foreach (var talentRaw in talentRaws)
-        {
-            expectedProfile.AddTalent(talentRaw.Description);
-        }
-        
-        // When
-
         // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
@@ -84,7 +70,7 @@ public class ProfileFactoryShould
         profile.Should().NotBeNull();
         profile.Talents.Should().NotBeNull();
         
-        profile.Talents.Should().BeEquivalentTo(expectedProfile.Talents, options => options);
+        profile.Talents.Should().BeEquivalentTo(profileDto.Talents, options => options);
     }
 
     [Fact(DisplayName = "Map testimonials collection when the DTO provides them")]
