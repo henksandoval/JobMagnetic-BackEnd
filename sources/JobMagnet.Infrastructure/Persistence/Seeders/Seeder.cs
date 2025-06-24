@@ -74,10 +74,10 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
     private static void AddTalents(ProfileEntity profile)
     {
-        List<string> talentsCollection = ["Creative", "Problem Solver", "Team Player", "Fast Learner"];
+        var talentsCollection = new TalentsCollection().GetTalents();
         foreach (var talent in talentsCollection)
         {
-            profile.AddTalent(talent);
+            profile.AddTalent(talent.Description);
         }
     }
 
