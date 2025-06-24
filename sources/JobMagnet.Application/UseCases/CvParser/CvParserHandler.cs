@@ -27,7 +27,7 @@ public class CvParserHandler(
     {
         var profileEntity = await BuildProfileFromCvAsync(command, cancellationToken);
 
-        profileEntity.CreateAndAssignPublicIdentifier(slugGenerator);
+        profileEntity.VanityUrls.CreateAndAssignPublicIdentifier(slugGenerator);
 
         await profileRepository.CreateAsync(profileEntity, cancellationToken);
         await profileRepository.SaveChangesAsync(cancellationToken);

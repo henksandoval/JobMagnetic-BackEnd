@@ -25,37 +25,19 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public virtual SummaryEntity? Summary { get; set; }
     public SocialProof SocialProof { get; }
     public Portfolio Portfolio { get; }
+    public VanityUrls VanityUrls { get; }
     public virtual ICollection<TalentEntity> Talents { get; set; } = new HashSet<TalentEntity>();
     public virtual IReadOnlyCollection<PortfolioGalleryEntity> PortfolioGallery => _portfolio;
     public virtual IReadOnlyCollection<TestimonialEntity> Testimonials => _testimonials;
-    public virtual ICollection<PublicProfileIdentifierEntity> PublicProfileIdentifiers => _publicProfileIdentifiers;
+    public virtual IReadOnlyCollection<PublicProfileIdentifierEntity> PublicProfileIdentifiers => _publicProfileIdentifiers;
 
     public ProfileEntity()
     {
         SocialProof = new SocialProof(this);
         Portfolio = new Portfolio(this);
+        VanityUrls = new VanityUrls(this);
     }
 
-
-    public void CreateAndAssignPublicIdentifier(IProfileSlugGenerator slugGenerator)
-    {
-        if (_publicProfileIdentifiers.Any(p => p.Type == LinkType.Primary))
-        {
-            return;
-        }
-
-        var generatedSlug = slugGenerator.GenerateProfileSlug(this);
-        AddPublicProfileIdentifier(generatedSlug);
-    }
-
-    public void AddPublicProfileIdentifier(string slug, LinkType type = LinkType.Primary)
-    {
-        Guard.IsNotNullOrEmpty(slug);
-
-        var publicIdentifier = new PublicProfileIdentifierEntity(slug, Id);
-
-        _publicProfileIdentifiers.Add(publicIdentifier);
-    }
 
     public void AddTalent(string talent)
     {
@@ -115,5 +97,10 @@ public class ProfileEntity : SoftDeletableEntity<long>
     internal void AddPortfolio(PortfolioGalleryEntity portfolio)
     {
         _portfolio.Add(portfolio);
+    }
+
+    internal void AddPublicProfileIdentifier(PublicProfileIdentifierEntity publicProfile)
+    {
+        _publicProfileIdentifiers.Add(publicProfile);
     }
 }

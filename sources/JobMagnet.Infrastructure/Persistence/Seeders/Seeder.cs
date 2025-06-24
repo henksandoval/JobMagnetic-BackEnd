@@ -69,7 +69,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
     private static void AddPublicIdentifier(ProfileEntity profile)
     {
-        profile.AddPublicProfileIdentifier("john-doe-1a2b3c");
+        profile.VanityUrls.AddPublicProfileIdentifier("john-doe-1a2b3c");
     }
 
     private static void AddTalents(ProfileEntity profile)

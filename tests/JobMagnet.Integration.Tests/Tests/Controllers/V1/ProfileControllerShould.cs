@@ -256,7 +256,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         var slugGenerator = new Mock<IProfileSlugGenerator>();
         const string slug = "alexander-gonzalez-6ca66d";
-        profile.AddPublicProfileIdentifier(slug);
+        profile.VanityUrls.AddPublicProfileIdentifier(slug);
         slugGenerator
             .Setup(sg => sg.GenerateProfileSlug(It.IsAny<ProfileEntity>()))
             .Returns(slug);

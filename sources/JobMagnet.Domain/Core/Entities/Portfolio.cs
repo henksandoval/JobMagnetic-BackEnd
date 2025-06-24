@@ -8,7 +8,7 @@ public class Portfolio
     private readonly ProfileEntity _profile ;
     private IReadOnlyCollection<PortfolioGalleryEntity> Gallery => _profile.PortfolioGallery;
 
-    public Portfolio(ProfileEntity profile)
+    internal Portfolio(ProfileEntity profile)
     {
         Guard.IsNotNull(profile);
         _profile = profile;

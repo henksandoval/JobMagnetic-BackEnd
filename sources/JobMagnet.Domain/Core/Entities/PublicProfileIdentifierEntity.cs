@@ -18,14 +18,15 @@ public class PublicProfileIdentifierEntity : TrackableEntity<long>
     private PublicProfileIdentifierEntity() { }
 
     [SetsRequiredMembers]
-    internal PublicProfileIdentifierEntity(string slug, long profileEntityId)
+    internal PublicProfileIdentifierEntity(string slug, long profileEntityId, LinkType linkType = LinkType.Primary, long id = 0)
     {
         Guard.IsNotNullOrEmpty(slug);
         Guard.IsGreaterThanOrEqualTo(profileEntityId, 0);
 
+        Id = id;
         ProfileId = profileEntityId;
         ProfileSlugUrl = slug;
-        Type = LinkType.Primary;
+        Type = linkType;
         ViewCount = 0;
     }
 }

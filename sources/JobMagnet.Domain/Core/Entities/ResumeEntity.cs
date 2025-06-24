@@ -5,7 +5,6 @@ using JobMagnet.Domain.Core.Entities.Contact;
 
 namespace JobMagnet.Domain.Core.Entities;
 
-// ReSharper disable once ClassNeverInstantiated.Global
 public class ResumeEntity : SoftDeletableEntity<long>
 {
     public const int MaxJobTitleLength = 100;
