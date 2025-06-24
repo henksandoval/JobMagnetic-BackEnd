@@ -205,7 +205,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         if (_skillSet is not null)
         {
-            profile.SkillSet = _skillSet;
+            profile.AddSkill(_skillSet);
         }
 
         if (_testimonials.Count > 0)
