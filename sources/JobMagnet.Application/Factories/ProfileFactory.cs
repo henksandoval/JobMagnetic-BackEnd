@@ -40,7 +40,7 @@ public class ProfileFactory(
         profile.AddTalents(talents);
 
         foreach (var item in testimonials)
-            profile.AddTestimonial(item.Name, item.JobTitle, item.Feedback, item.PhotoUrl);
+            profile.SocialProof.AddTestimonial(item.Name, item.JobTitle, item.Feedback, item.PhotoUrl);
 
         profile.AddPortfolioItems(portfolio);
 

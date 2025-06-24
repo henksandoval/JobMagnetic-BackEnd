@@ -22,11 +22,17 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public virtual SkillSet? SkillSet { get; set; }
     public virtual ServiceEntity? Services { get; set; }
     public virtual SummaryEntity? Summary { get; set; }
+    public SocialProof SocialProof { get; }
     public virtual ICollection<TalentEntity> Talents { get; set; } = new HashSet<TalentEntity>();
     public virtual ICollection<PortfolioGalleryEntity> PortfolioGallery { get; set; } =
         new HashSet<PortfolioGalleryEntity>();
     public virtual IReadOnlyCollection<TestimonialEntity> Testimonials => _testimonials;
     public virtual ICollection<PublicProfileIdentifierEntity> PublicProfileIdentifiers => _publicProfileIdentifiers;
+
+    public ProfileEntity()
+    {
+        SocialProof = new SocialProof(this);
+    }
 
     public void CreateAndAssignPublicIdentifier(IProfileSlugGenerator slugGenerator)
     {
@@ -105,9 +111,8 @@ public class ProfileEntity : SoftDeletableEntity<long>
         PortfolioGallery.Add(item);
     }
 
-    public void AddTestimonial(string name, string jobTitle, string feedback, string? photoUrl = null)
+    internal void AddTestimonial(TestimonialEntity testimonial)
     {
-        var testimonial = new TestimonialEntity(name, jobTitle, feedback, photoUrl, Id);
         _testimonials.Add(testimonial);
     }
 

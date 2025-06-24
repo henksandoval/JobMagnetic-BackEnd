@@ -171,7 +171,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
     {
         var testimonials = new TestimonialCollection().GetTestimonials();
         foreach (var item in testimonials)
-            profile.AddTestimonial(item.Name, item.JobTitle, item.Feedback, item.PhotoUrl);
+            profile.SocialProof.AddTestimonial(item.Name, item.JobTitle, item.Feedback, item.PhotoUrl);
     }
 
     private async Task<Dictionary<string, ContactType>> BuildContactTypesMapAsync(
