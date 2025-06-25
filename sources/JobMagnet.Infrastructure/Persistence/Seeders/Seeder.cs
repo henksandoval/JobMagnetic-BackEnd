@@ -137,14 +137,16 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
     private static void AddSummary(ProfileEntity profile)
     {
-        var summary = new SummaryEntity
-        {
-            Id = 0,
-            Introduction =
-                "Professional with experience in your area or profession, recognized for key skills. Committed to value or professional goal, seeking to contribute to the growth of company or industry.",
-            Education = new SummaryCollection().GetEducation().ToList(),
-            WorkExperiences = new SummaryCollection().GetWorkExperience().ToList()
-        };
+        var summary = new SummaryEntity(
+            "Professional with experience in your area or profession, recognized for key skills. Committed to value or professional goal, seeking to contribute to the growth of company or industry.",
+            profile.Id);
+
+        foreach (var education in new SummaryCollection().GetEducation().ToList())
+            summary.AddEducation(education);
+
+        foreach (var workExperience in new SummaryCollection().GetWorkExperience().ToList())
+            summary.AddWorkExperience(workExperience);
+
         profile.AddSummary(summary);
     }
 

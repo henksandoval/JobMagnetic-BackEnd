@@ -16,6 +16,11 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<ProfileEn
             .HasForeignKey<ResumeEntity>(r => r.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasOne<SummaryEntity>(p => p.Summary)
+            .WithOne()
+            .HasForeignKey<SummaryEntity>(s => s.ProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasOne<SkillSet>(p => p.SkillSet)
             .WithOne()
             .HasForeignKey<SkillSet>(s => s.ProfileId)
@@ -30,6 +35,7 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<ProfileEn
             .WithOne()
             .HasForeignKey(t => t.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasMany(p => p.Talents)
             .WithOne()
             .HasForeignKey(t => t.ProfileId)

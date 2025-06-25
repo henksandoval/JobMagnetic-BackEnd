@@ -23,8 +23,13 @@ public class SummaryEntityBuilder(IFixture fixture)
     public SummaryEntity Build()
     {
         var summary = fixture.Create<SummaryEntity>();
-        summary.Education = _education;
-        summary.WorkExperiences = _workExperiences;
+
+        foreach (var education in _education)
+            summary.AddEducation(education);
+
+        foreach (var workExperience in _workExperiences)
+            summary.AddWorkExperience(workExperience);
+
         return summary;
     }
 }

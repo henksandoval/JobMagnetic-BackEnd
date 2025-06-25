@@ -1,4 +1,5 @@
 ﻿using JobMagnet.Application.Contracts.Commands.Summary;
+using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Summary;
 using JobMagnet.Domain.Core.Entities;
 using Mapster;
@@ -25,40 +26,36 @@ public static class SummaryMapper
         TypeAdapterConfig<SummaryEntity, SummaryCommand>
             .NewConfig()
             .Map(dest => dest.SummaryData, src => src);
+
+        TypeAdapterConfig<EducationBase, EducationEntity>
+            .NewConfig()
+            .MapToConstructor(true);
+
+        TypeAdapterConfig<WorkExperienceBase, WorkExperienceEntity>
+            .NewConfig()
+            .MapToConstructor(true);
     }
 
     public static SummaryEntity ToEntity(this SummaryCommand command)
     {
         var data = command.SummaryData;
-        var entity = new SummaryEntity
+        var entity = new SummaryEntity(data!.Introduction!, data.ProfileId);
+
+        foreach (var educationBase in data.Education)
         {
-            Id = 0,
-            Introduction = data!.Introduction!,
-            ProfileId = data.ProfileId,
+            var education = educationBase.Adapt<EducationEntity>();
+            entity.AddEducation(education);
+        }
+
+        foreach (var experienceBase in data.WorkExperiences)
+        {
+            var workExperience = experienceBase.Adapt<WorkExperienceEntity>();
+
+            foreach (var description in experienceBase?.Responsibilities ?? [])
+                workExperience.AddResponsibility(new WorkResponsibilityEntity(description));
+
+            entity.AddWorkExperience(workExperience);
         };
-
-        entity.Education = data.Education.Select(e => new EducationEntity(
-                e.Degree ?? string.Empty,
-                e.InstitutionName ?? string.Empty,
-                e.InstitutionLocation ?? string.Empty,
-                e.StartDate,
-                e.EndDate,
-                e.Description ?? string.Empty,
-                entity.Id
-            )).ToList();
-
-        entity.WorkExperiences = data.WorkExperiences.Select(w => new WorkExperienceEntity
-        {
-            Id = w.Id,
-            Description = w.Description!,
-            JobTitle = w.JobTitle!,
-            CompanyName = w.CompanyName!,
-            CompanyLocation = w.CompanyLocation!,
-            StartDate = w.StartDate ?? DateTime.MinValue,
-            EndDate = w.EndDate,
-            SummaryId = entity.Id,
-            Responsibilities = w.Responsibilities.Select(description => new WorkResponsibilityEntity(description, w.Id)).ToList()
-        }).ToList();
 
         return entity;
     }

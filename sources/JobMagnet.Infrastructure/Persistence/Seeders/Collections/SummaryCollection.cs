@@ -102,25 +102,22 @@ public record SummaryCollection
     public WorkExperienceEntity[] GetWorkExperience()
     {
         return _value
-            .Select(x => new WorkExperienceEntity
+            .Select(item =>
             {
-                Id = 0,
-                JobTitle = x.JobTitle,
-                CompanyName = x.CompanyName,
-                CompanyLocation = x.CompanyLocation,
-                StartDate = x.StartDate,
-                EndDate = x.EndDate,
-                Responsibilities = x.Responsibilities
-                    .Select(description => new WorkResponsibilityEntity(description, 0)
-                    {
-                        AddedAt = DateTime.UtcNow,
-                        AddedBy = Guid.Empty
-                    })
-                    .ToList(),
-                SummaryId = _summaryId,
-                Description = x.Description,
-                AddedAt = DateTime.UtcNow,
-                AddedBy = Guid.Empty
+                var workExperience = new WorkExperienceEntity(
+                    item.JobTitle,
+                    item.CompanyName,
+                    item.CompanyLocation,
+                    item.StartDate,
+                    item.EndDate,
+                    item.Description,
+                    _summaryId
+                );
+
+                foreach (var description in item.Responsibilities)
+                    workExperience.AddResponsibility(new WorkResponsibilityEntity(description));
+
+                return workExperience;
             })
             .ToArray();
     }

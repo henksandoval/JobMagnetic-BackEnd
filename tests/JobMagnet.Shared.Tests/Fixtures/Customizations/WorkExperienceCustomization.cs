@@ -1,4 +1,6 @@
 ﻿using AutoFixture;
+using Bogus;
+using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Shared.Tests.Utils;
@@ -8,37 +10,72 @@ namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class WorkExperienceCustomization : ICustomization
 {
+    private static readonly Faker Faker = FixtureBuilder.Faker;
+
     public void Customize(IFixture fixture)
     {
         fixture.Customize<WorkExperienceEntity>(composer =>
             composer
-                .Without(x => x.Id)
-                .Do(ApplyCommonProperties)
+                .FromFactory(WorkExperienceFactory)
                 .OmitAutoProperties());
 
-        fixture.Register(() =>
-            new WorkExperienceRaw(
-                FixtureBuilder.Faker.PickRandom(StaticCustomizations.JobTitles),
-                FixtureBuilder.Faker.PickRandom(StaticCustomizations.CompanyNames),
-                FixtureBuilder.Faker.Address.FullAddress(),
-                FixtureBuilder.Faker.Date.Past(20, DateTime.Now.AddYears(-5)).ToDateOnly().ToString(),
-                TestUtilities
-                    .OptionalValue<DateTime?>(FixtureBuilder.Faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)), 75)
-                    ?.ToShortDateString() ?? string.Empty,
-                FixtureBuilder.Faker.PickRandom(StaticCustomizations.Descriptions),
-                []
-            )
-        );
+        fixture.Register(WorkExperienceRawFactory);
+        fixture.Register(WorkExperienceBaseFactory);
     }
 
-    private static void ApplyCommonProperties(dynamic item)
+    private static WorkExperienceEntity WorkExperienceFactory()
     {
-        item.JobTitle = FixtureBuilder.Faker.PickRandom(StaticCustomizations.JobTitles);
-        item.CompanyName = FixtureBuilder.Faker.PickRandom(StaticCustomizations.CompanyNames);
-        item.CompanyLocation = FixtureBuilder.Faker.Address.FullAddress();
-        item.StartDate = FixtureBuilder.Faker.Date.Past(20, DateTime.Now.AddYears(-5));
-        item.EndDate =
-            TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)));
-        item.Description = FixtureBuilder.Faker.PickRandom(StaticCustomizations.Descriptions);
+        var startDate = Faker.Date.Past(20, DateTime.Now.AddYears(-5));
+        var endDate = Faker.Date.Between(startDate, startDate.AddYears(5))
+            .OrNull(Faker, 0.25f);
+
+        var workExperience = new WorkExperienceEntity(
+            Faker.PickRandom(StaticCustomizations.JobTitles),
+            Faker.PickRandom(StaticCustomizations.CompanyNames),
+            Faker.Address.FullAddress(),
+            startDate,
+            endDate,
+            Faker.Lorem.Sentences()
+        );
+
+        return workExperience;
+    }
+
+    private static WorkExperienceRaw WorkExperienceRawFactory()
+    {
+        var startDate = Faker.Date.Past(20, DateTime.Now.AddYears(-5));
+        var endDate = Faker.Date.Between(startDate, startDate.AddYears(5))
+            .OrNull(Faker, 0.25f);
+
+        var workExperience = new WorkExperienceRaw(
+            Faker.PickRandom(StaticCustomizations.JobTitles),
+            Faker.PickRandom(StaticCustomizations.CompanyNames),
+            Faker.Address.FullAddress(),
+            startDate.ToDateOnly().ToString(),
+            endDate?.ToDateOnly().ToString() ?? string.Empty,
+            Faker.Lorem.Sentences(),
+            []
+        );
+
+        return workExperience;
+    }
+
+    private static WorkExperienceBase WorkExperienceBaseFactory()
+    {
+        var startDate = Faker.Date.Past(20, DateTime.Now.AddYears(-5));
+        var endDate = Faker.Date.Between(startDate, startDate.AddYears(5))
+            .OrNull(Faker, 0.25f);
+
+        var workExperience = new WorkExperienceBase(
+            Faker.PickRandom(StaticCustomizations.JobTitles),
+            Faker.PickRandom(StaticCustomizations.CompanyNames),
+            Faker.Address.FullAddress(),
+            startDate,
+            endDate,
+            Faker.Lorem.Sentences(),
+            []
+        );
+
+        return workExperience;
     }
 }

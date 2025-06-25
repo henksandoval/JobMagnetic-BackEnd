@@ -54,7 +54,7 @@ public class SummaryMapperShould
     {
         return e => new
         {
-            e.Id, e.Education, e.WorkExperiences, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt,
+            e.Id, e.Education, e.WorkExperiences, e.IsDeleted, e.AddedAt, e.AddedBy, e.DeletedAt,
             e.DeletedBy, e.LastModifiedAt, e.LastModifiedBy
         };
     }
@@ -72,7 +72,7 @@ public class SummaryMapperShould
     {
         return e => new
         {
-            e.Id, e.Summary, e.SummaryId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy, e.IsDeleted,
+            e.Id, e.SummaryId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy, e.IsDeleted,
             e.DeletedAt, e.DeletedBy
         };
     }
