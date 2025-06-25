@@ -13,18 +13,18 @@ public class TalentShowcase
         Guard.IsNotNull(profile);
         _profile = profile;
     }
-    public void AddTalent(string description, long id = 0)
+    public void AddTalent(string description)
     {
-        if (Talents.Count >= 10)
+        if (Talents.Count >= 20)
         {
-            throw new JobMagnetDomainException("Cannot add more than 10 talents.");
+            throw new JobMagnetDomainException("Cannot add more than 20 talents.");
         }
         if (Talents.Any(t => t.Description == description))
         {
             throw new JobMagnetDomainException("This talent already exists.");
         }
         
-        var talent = new TalentEntity(description, _profile.Id, id);
+        var talent = new TalentEntity(description, _profile.Id);
         
         _profile.AddTalent(talent);
     }
