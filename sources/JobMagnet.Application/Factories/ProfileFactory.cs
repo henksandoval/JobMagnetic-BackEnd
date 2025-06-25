@@ -37,8 +37,9 @@ public class ProfileFactory(
         var testimonials = BuildTestimonials(profileDto.Testimonials);
         var galleryItems = BuildProjects(profileDto.Project);
 
-        profile.AddTalents(talents);
-
+        foreach (var talent in talents)
+            profile.TalentShowcase.AddTalent(talent.Description);
+        
         foreach (var item in testimonials)
             profile.SocialProof.AddTestimonial(item.Name, item.JobTitle, item.Feedback, item.PhotoUrl);
 
