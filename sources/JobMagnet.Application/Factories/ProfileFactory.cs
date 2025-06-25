@@ -33,7 +33,7 @@ public class ProfileFactory(
             ProfileImageUrl = profileDto.ProfileImageUrl
         };
 
-        var talents = BuildTalents(profile, profileDto.Talents);
+        var talents = BuildTalents(profileDto.Talents);
         var testimonials = BuildTestimonials(profileDto.Testimonials);
         var galleryItems = BuildProjects(profileDto.Project);
 
@@ -89,7 +89,7 @@ public class ProfileFactory(
         return resumeEntity;
     }
 
-    private List<TalentEntity> BuildTalents(ProfileEntity profile,List<TalentParseDto>? talentDtos)
+    private List<TalentEntity> BuildTalents(List<TalentParseDto>? talentDtos)
     {
         if (talentDtos is null)
         {
