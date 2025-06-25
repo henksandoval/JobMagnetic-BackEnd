@@ -12,7 +12,9 @@ public class TestimonialEntity : SoftDeletableEntity<long>
     public string Feedback { get; private set; }
     public long ProfileId { get; private set; }
 
-    private TestimonialEntity() { }
+    private TestimonialEntity()
+    {
+    }
 
     [SetsRequiredMembers]
     public TestimonialEntity(string name, string jobTitle, string feedback, string? photoUrl = null, long profileId = 0)

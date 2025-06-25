@@ -5,7 +5,6 @@ using FluentAssertions;
 using JobMagnet.Application.Factories;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Domain.Ports.Repositories.Base;
@@ -18,12 +17,12 @@ namespace JobMagnet.Unit.Tests.Services;
 
 public class ProfileFactoryShould
 {
+    private readonly Mock<IContactTypeResolverService> _contactTypeResolverMock;
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly ProfileRawBuilder _profileBuilder;
     private readonly ProfileFactory _profileFactory;
-    private readonly Mock<IContactTypeResolverService> _contactTypeResolverMock;
-    private readonly Mock<ISkillTypeResolverService> _skillTypeResolverMock;
     private readonly Mock<IQueryRepository<SkillCategory, ushort>> _skillCategoryRepositoryMock;
+    private readonly Mock<ISkillTypeResolverService> _skillTypeResolverMock;
 
     public ProfileFactoryShould()
     {
@@ -59,17 +58,17 @@ public class ProfileFactoryShould
     {
         // --- Given ---
         var profileDto = _profileBuilder
-            .WithTalents() 
+            .WithTalents()
             .Build()
             .ToProfileParseDto();
-        
+
         // --- When ---
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         // --- Then ---
         profile.Should().NotBeNull();
         profile.Talents.Should().NotBeNull();
-        
+
         profile.Talents.Should().BeEquivalentTo(profileDto.Talents, options => options);
     }
 
@@ -458,5 +457,6 @@ public class ProfileFactoryShould
             .Excluding(entity => entity.Id)
         );
     }
+
     #endregion
 }

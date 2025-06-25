@@ -10,6 +10,8 @@ public class SkillType : SoftDeletableEntity<int>
     public const int MaxNameLength = 50;
     private const string DefaultIconUri = "https://jobmagnet.com/default-icon.png";
 
+    private readonly List<SkillTypeAlias> _aliases = [];
+
     public string Name { get; private set; }
     public Uri IconUrl { get; private set; }
     public ushort CategoryId { get; private set; }
@@ -17,9 +19,9 @@ public class SkillType : SoftDeletableEntity<int>
     public virtual IReadOnlyCollection<SkillTypeAlias> Aliases => _aliases.AsReadOnly();
     public virtual SkillCategory Category { get; private set; }
 
-    private readonly List<SkillTypeAlias> _aliases = [];
-
-    private SkillType() { }
+    private SkillType()
+    {
+    }
 
     [SetsRequiredMembers]
     internal SkillType(string name, SkillCategory category, int id = 0, Uri? iconUrl = null)
@@ -42,9 +44,7 @@ public class SkillType : SoftDeletableEntity<int>
         ArgumentException.ThrowIfNullOrWhiteSpace(alias);
 
         if (_aliases.Any(a => a.Alias.Equals(alias, StringComparison.OrdinalIgnoreCase)))
-        {
             throw new JobMagnetDomainException($"The alias ({alias}) already exists.");
-        }
 
         var newAlias = new SkillTypeAlias(alias, Id);
         _aliases.Add(newAlias);

@@ -13,8 +13,5 @@ public class JobMagnetJobMagnetDbContextFactory(
     ICurrentUserService currentUserService)
     : IJobMagnetDbContextFactory
 {
-    public JobMagnetDbContext CreateDbContext()
-    {
-        return new JobMagnetDbContext(options, currentUserService);
-    }
+    public JobMagnetDbContext CreateDbContext() => new(options, currentUserService);
 }

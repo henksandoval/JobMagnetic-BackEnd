@@ -13,19 +13,16 @@ namespace JobMagnet.Infrastructure.Extensions;
 
 internal static class PersistenceExtensions
 {
-    internal static IServiceCollection AddPersistence(this IServiceCollection services)
-    {
-        return services
+    internal static IServiceCollection AddPersistence(this IServiceCollection services) =>
+        services
             .AddTransient<IJobMagnetDbContextFactory, JobMagnetJobMagnetDbContextFactory>()
             .AddTransient<ISeeder, Seeder>()
             .AddScoped<IUnitOfWork, UnitOfWork>()
             .AddQueryRepositories()
             .AddCommandRepositories();
-    }
 
-    private static IServiceCollection AddQueryRepositories(this IServiceCollection services)
-    {
-        return services
+    private static IServiceCollection AddQueryRepositories(this IServiceCollection services) =>
+        services
             .AddTransient<IQueryRepository<ResumeEntity, long>, Repository<ResumeEntity, long>>()
             .AddTransient<IQueryRepository<PublicProfileIdentifierEntity, long>, Repository<PublicProfileIdentifierEntity, long>>()
             .AddTransient<IQueryRepository<ContactType, int>, Repository<ContactType, int>>()
@@ -41,11 +38,9 @@ internal static class PersistenceExtensions
             .AddTransient<IProfileQueryRepository, ProfileQueryRepository>()
             .AddTransient<ISkillQueryRepository, SkillQueryRepository>()
             .AddTransient<ISummaryQueryRepository, SummaryQueryRepository>();
-    }
 
-    private static IServiceCollection AddCommandRepositories(this IServiceCollection services)
-    {
-        return services
+    private static IServiceCollection AddCommandRepositories(this IServiceCollection services) =>
+        services
             .AddTransient<ICommandRepository<ProfileEntity>, Repository<ProfileEntity, long>>()
             .AddTransient<ICommandRepository<PublicProfileIdentifierEntity>, Repository<PublicProfileIdentifierEntity, long>>()
             .AddTransient<ICommandRepository<TalentEntity>, Repository<TalentEntity, long>>()
@@ -54,5 +49,4 @@ internal static class PersistenceExtensions
             .AddTransient<ICommandRepository<Project>, Repository<Project, long>>()
             .AddTransient<ICommandRepository<SkillSet>, Repository<SkillSet, long>>()
             .AddTransient<ICommandRepository<SummaryEntity>, Repository<SummaryEntity, long>>();
-    }
 }

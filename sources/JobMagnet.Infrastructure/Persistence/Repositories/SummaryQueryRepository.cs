@@ -23,10 +23,7 @@ public class SummaryQueryRepository(JobMagnetDbContext dbContext)
         return this;
     }
 
-    public async Task<IReadOnlyCollection<SummaryEntity>> GetAllWithIncludesAsync()
-    {
-        return await _query.ToListAsync().ConfigureAwait(false);
-    }
+    public async Task<IReadOnlyCollection<SummaryEntity>> GetAllWithIncludesAsync() => await _query.ToListAsync().ConfigureAwait(false);
 
     public async Task<SummaryEntity?> GetByIdWithIncludesAsync(long id)
     {

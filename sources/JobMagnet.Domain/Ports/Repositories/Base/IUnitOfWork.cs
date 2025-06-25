@@ -5,8 +5,6 @@ namespace JobMagnet.Domain.Ports.Repositories.Base;
 
 public interface IUnitOfWork
 {
-    Task ExecuteOperationInTransactionAsync(Func<Task> operation, CancellationToken cancellationToken = default);
-
     ICommandRepository<ProfileEntity> ProfileRepository { get; }
     ICommandRepository<PublicProfileIdentifierEntity> PublicProfileIdentifierRepository { get; }
     ICommandRepository<ResumeEntity> ResumeRepository { get; }
@@ -15,4 +13,5 @@ public interface IUnitOfWork
     ICommandRepository<TalentEntity> TalentRepository { get; }
     ICommandRepository<Project> ProjectRepository { get; }
     ICommandRepository<TestimonialEntity> TestimonialRepository { get; }
+    Task ExecuteOperationInTransactionAsync(Func<Task> operation, CancellationToken cancellationToken = default);
 }

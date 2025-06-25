@@ -21,15 +21,13 @@ namespace JobMagnet.Unit.Tests.UseCases;
 
 public class CvParserHandlerShould
 {
-    private readonly IFixture _fixture = FixtureBuilder.Build();
-    private readonly Mock<IRawCvParser> _rawCvParserMock;
-    private readonly Mock<IProfileSlugGenerator> _slugGeneratorMock;
     private readonly Mock<IContactTypeResolverService> _contactTypeResolverMock;
-    private readonly Mock<ISkillTypeResolverService> _skillTypeResolverMock;
+    private readonly IFixture _fixture = FixtureBuilder.Build();
+    private readonly CvParserHandler _handler;
     private readonly Mock<ICommandRepository<ProfileEntity>> _profileCommandRepositoryMock;
     private readonly Mock<IProfileFactory> _profileFactoryMock;
-
-    private readonly CvParserHandler _handler;
+    private readonly Mock<IRawCvParser> _rawCvParserMock;
+    private readonly Mock<IProfileSlugGenerator> _slugGeneratorMock;
 
     public CvParserHandlerShould()
     {
@@ -38,7 +36,6 @@ public class CvParserHandlerShould
         _slugGeneratorMock = new Mock<IProfileSlugGenerator>();
         _profileFactoryMock = new Mock<IProfileFactory>();
         _contactTypeResolverMock = new Mock<IContactTypeResolverService>();
-        _skillTypeResolverMock = new Mock<ISkillTypeResolverService>();
 
         _handler = new CvParserHandler(
             _rawCvParserMock.Object,
@@ -67,7 +64,7 @@ public class CvParserHandlerShould
 
         var profileEntity = new ProfileEntity
         {
-            Id = 0,
+            Id = 0
         };
 
         profileEntity.AddResume(resumeEntity);
@@ -114,11 +111,11 @@ public class CvParserHandlerShould
 
         var contactInfoRaw = new List<ContactInfoRaw>
         {
-            new("EMAIL", "test@test.com" ),
-            new("PHONE", "123456789" ),
+            new("EMAIL", "test@test.com"),
+            new("PHONE", "123456789"),
             new("LinkedIn", "linkedin.com/test"),
-            new ("Teléfono", "+58 412457824"),
-            new ("TypeDontExist", "Some value")
+            new("Teléfono", "+58 412457824"),
+            new("TypeDontExist", "Some value")
         };
         return contactInfoRaw;
     }

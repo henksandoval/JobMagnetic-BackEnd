@@ -17,10 +17,7 @@ public class SkillQueryRepository(JobMagnetDbContext dbContext)
         return this;
     }
 
-    public async Task<IReadOnlyCollection<SkillSet>> GetAllWithIncludesAsync()
-    {
-        return await _query.ToListAsync().ConfigureAwait(false);
-    }
+    public async Task<IReadOnlyCollection<SkillSet>> GetAllWithIncludesAsync() => await _query.ToListAsync().ConfigureAwait(false);
 
     public async Task<SkillSet?> GetByIdWithIncludesAsync(long id)
     {

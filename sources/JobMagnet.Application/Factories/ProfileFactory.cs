@@ -39,7 +39,7 @@ public class ProfileFactory(
 
         foreach (var talent in talents)
             profile.TalentShowcase.AddTalent(talent.Description);
-        
+
         foreach (var item in testimonials)
             profile.SocialProof.AddTestimonial(item.Name, item.JobTitle, item.Feedback, item.PhotoUrl);
 
@@ -92,18 +92,11 @@ public class ProfileFactory(
 
     private List<TalentEntity> BuildTalents(List<TalentParseDto>? talentDtos)
     {
-        if (talentDtos is null)
-        {
-            return new List<TalentEntity>();
-        }
+        if (talentDtos is null) return new List<TalentEntity>();
 
         foreach (var talentDto in talentDtos)
-        {
             if (string.IsNullOrWhiteSpace(talentDto.Description))
-            {
                 throw new ArgumentException("Talent description cannot be null or whitespace.", nameof(talentDtos));
-            }
-        }
 
         return talentDtos
             .Select(dto => new TalentEntity(
@@ -127,13 +120,15 @@ public class ProfileFactory(
     {
         if (projectDtos is null) return [];
 
-        return projectDtos.Select(dto => new Project(
+        return projectDtos.Select((dto, index) => new Project(
                 dto.Title ?? string.Empty,
                 dto.Description ?? string.Empty,
                 dto.UrlLink ?? string.Empty,
                 dto.UrlImage ?? string.Empty,
                 dto.UrlVideo ?? string.Empty,
-                dto.Type ?? string.Empty))
+                dto.Type ?? string.Empty,
+                ++index
+            ))
             .ToList();
     }
 

@@ -12,10 +12,7 @@ public static class CvParserMapper
         RegisterMaps();
     }
 
-    public static ProfileParseDto ToProfileParseDto(this ProfileRaw profileRaw)
-    {
-        return profileRaw.Adapt<ProfileParseDto>();
-    }
+    public static ProfileParseDto ToProfileParseDto(this ProfileRaw profileRaw) => profileRaw.Adapt<ProfileParseDto>();
 
     private static void RegisterMaps()
     {

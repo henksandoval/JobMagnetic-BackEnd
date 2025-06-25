@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
@@ -15,7 +14,9 @@ public class SkillSet : SoftDeletableEntity<long>
 
     public long ProfileId { get; private set; }
 
-    private SkillSet() { }
+    private SkillSet()
+    {
+    }
 
     [SetsRequiredMembers]
     public SkillSet(string overview, long profileId, long id = 0)
@@ -35,9 +36,7 @@ public class SkillSet : SoftDeletableEntity<long>
         Guard.IsNotNull(skillType);
 
         if (_skills.Any(s => s.SkillTypeId > 0 && s.SkillTypeId == skillType.Id))
-        {
             throw new JobMagnetDomainException($"Skill of type {skillType.Name} already exists in this skill set.");
-        }
 
         var newRank = (ushort)(_skills.Count + 1);
 
@@ -58,9 +57,7 @@ public class SkillSet : SoftDeletableEntity<long>
 
         var currentSkillIds = _skills.Select(s => s.Id).ToHashSet();
         if (!currentSkillIds.SetEquals(orderedSkillIds))
-        {
             throw new JobMagnetDomainException("The provided skill IDs do not match the current skills in this skill set.");
-        }
 
         var skillMap = _skills.ToDictionary(s => s.Id);
 

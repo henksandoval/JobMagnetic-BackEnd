@@ -10,7 +10,9 @@ public class WorkResponsibilityEntity : SoftDeletableEntity<long>
     public long WorkExperienceId { get; private set; }
     public string Description { get; private set; } = null!;
 
-    private WorkResponsibilityEntity() { }
+    private WorkResponsibilityEntity()
+    {
+    }
 
     [SetsRequiredMembers]
     internal WorkResponsibilityEntity(string description, long workExperienceId = 0, long id = 0)

@@ -97,8 +97,5 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
             }
     }
 
-    private Guid GetCurrentUserId()
-    {
-        return currentUserService.GetCurrentUserId() ?? Guid.Empty;
-    }
+    private Guid GetCurrentUserId() => currentUserService.GetCurrentUserId() ?? Guid.Empty;
 }

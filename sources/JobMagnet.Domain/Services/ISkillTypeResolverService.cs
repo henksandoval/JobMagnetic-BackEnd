@@ -18,22 +18,16 @@ public class SkillTypeResolverService(
     {
         var skillType = await skillTypeRepository
             .FirstOrDefaultAsync(c =>
-                c.Name.ToLower() == nameOrAlias.ToLower(),
+                    c.Name.ToLower() == nameOrAlias.ToLower(),
                 cancellationToken);
 
-        if (skillType is not null)
-        {
-            return Maybe.From(skillType);
-        }
+        if (skillType is not null) return Maybe.From(skillType);
 
         var alias = await skillTypeAliasRepository.FirstOrDefaultAsync(
             a => a.Alias.ToLower() == nameOrAlias.ToLower(),
             cancellationToken);
 
-        if (alias is null || !alias.SkillTypeExist)
-        {
-            return Maybe.None;
-        }
+        if (alias is null || !alias.SkillTypeExist) return Maybe.None;
 
         var finalSkillType = await skillTypeRepository.GetByIdAsync(alias.SkillTypeId, cancellationToken);
 

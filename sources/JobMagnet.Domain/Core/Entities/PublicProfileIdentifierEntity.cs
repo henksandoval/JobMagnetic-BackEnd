@@ -15,7 +15,9 @@ public class PublicProfileIdentifierEntity : TrackableEntity<long>
     public long ProfileId { get; private set; }
     public long ViewCount { get; private set; }
 
-    private PublicProfileIdentifierEntity() { }
+    private PublicProfileIdentifierEntity()
+    {
+    }
 
     [SetsRequiredMembers]
     internal PublicProfileIdentifierEntity(string slug, long profileEntityId, LinkType linkType = LinkType.Primary, long id = 0)

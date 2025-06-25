@@ -18,7 +18,8 @@ public class ProjectCustomization : ICustomization
                     FixtureBuilder.Faker.Image.PicsumUrl(),
                     FixtureBuilder.Faker.Image.PicsumUrl(),
                     FixtureBuilder.Faker.Image.PicsumUrl(),
-                    FixtureBuilder.Faker.Address.CountryCode()
+                    FixtureBuilder.Faker.Address.CountryCode(),
+                    _autoIncrementId++
                 ))
                 .OmitAutoProperties()
         );

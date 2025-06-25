@@ -30,10 +30,7 @@ public class ContactType : SoftDeletableEntity<int>
         Id = id;
         Name = name;
 
-        if (string.IsNullOrEmpty(iconClass) && iconUrl is null)
-        {
-            IconClass = DefaultIconClass;
-        }
+        if (string.IsNullOrEmpty(iconClass) && iconUrl is null) IconClass = DefaultIconClass;
 
         IconClass = iconClass;
         IconUrl = iconUrl;
@@ -44,11 +41,9 @@ public class ContactType : SoftDeletableEntity<int>
         ArgumentException.ThrowIfNullOrWhiteSpace(alias);
 
         if (_aliases.Any(a => a.Alias.Equals(alias, StringComparison.OrdinalIgnoreCase)))
-        {
             throw new JobMagnetDomainException($"The alias ({alias}) already exists.");
-        }
 
-        var newAlias = new ContactTypeAlias(alias, this.Id);
+        var newAlias = new ContactTypeAlias(alias, Id);
         _aliases.Add(newAlias);
     }
 
@@ -72,9 +67,7 @@ public class ContactType : SoftDeletableEntity<int>
     private void ValidateInvariants()
     {
         if (string.IsNullOrWhiteSpace(IconClass) && IconUrl is null)
-        {
             throw new JobMagnetDomainException(
                 $"A {nameof(ContactType)} must have either an {nameof(IconClass)} or an {nameof(IconUrl)}. Both cannot be empty.");
-        }
     }
 }

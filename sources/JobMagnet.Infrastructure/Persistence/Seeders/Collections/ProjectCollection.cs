@@ -55,13 +55,14 @@ public record ProjectCollection
 
     public ImmutableList<Project> GetProjects()
     {
-        return _values.Select(x => new Project(
+        return _values.Select((x, index) => new Project(
                 x.Title,
                 x.Description,
                 x.UrlLink,
                 x.UrlImage,
                 x.UrlVideo ?? string.Empty,
                 x.Type,
+                ++index,
                 _profileId))
             .ToImmutableList();
     }

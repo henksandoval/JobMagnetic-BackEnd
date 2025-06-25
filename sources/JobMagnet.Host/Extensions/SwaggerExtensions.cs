@@ -71,10 +71,8 @@ internal static class SwaggerExtensions
                 .Select(x => x.GroupName);
 
             foreach (var groupName in groupNames)
-            {
                 config.SwaggerEndpoint($"{swaggerSettings.Url}/swagger/{groupName}/swagger.json",
                     groupName.ToUpperInvariant());
-            }
 
             config.DocExpansion(DocExpansion.None);
             config.EnableTryItOutByDefault();

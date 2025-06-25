@@ -11,7 +11,9 @@ public class ContactInfo : SoftDeletableEntity<long>
     public long ResumeId { get; private set; }
     public virtual ContactType ContactType { get; private set; }
 
-    private ContactInfo() { }
+    private ContactInfo()
+    {
+    }
 
     [SetsRequiredMembers]
     internal ContactInfo(long id, string value, ContactType contactType, long resumeId)

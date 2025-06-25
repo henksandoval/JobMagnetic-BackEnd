@@ -14,7 +14,6 @@ using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Host.ViewModels.Profile;
-using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;

@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="UseCases\CvParser\DTO\" />
+        <Folder Include="UseCases\CvParser\DTO\"/>
     </ItemGroup>
 
 </Project>

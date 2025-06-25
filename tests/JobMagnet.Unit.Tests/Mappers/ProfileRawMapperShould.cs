@@ -1,7 +1,6 @@
 using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
-using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
@@ -197,7 +196,7 @@ public class ProfileRawMapperShould
                     Degree = education.Degree,
                     Description = education.Description,
                     StartDate = DateOnly.Parse(education.StartDate!),
-                    EndDate = string.IsNullOrEmpty(education.EndDate) ? null : DateOnly.Parse(education.EndDate!),
+                    EndDate = string.IsNullOrEmpty(education.EndDate) ? null : DateOnly.Parse(education.EndDate!)
                 }).ToList(),
             WorkExperiences = profileRaw.Summary.WorkExperiences!
                 .Select(work => new WorkExperienceParseDto

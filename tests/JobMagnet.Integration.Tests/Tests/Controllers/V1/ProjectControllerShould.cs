@@ -63,8 +63,7 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var entityCreated = await queryRepository.GetByIdAsync(responseData.Id, CancellationToken.None);
 
         entityCreated.ShouldNotBeNull();
-        entityCreated.ShouldSatisfyAllConditions(() => entityCreated.ProfileId.ShouldBe(profileEntity.Id)
-        );
+        entityCreated.ShouldSatisfyAllConditions(() => entityCreated.ProfileId.ShouldBe(profileEntity.Id));
     }
 
     private ProjectBase GetProjectData(long profileEntityId)

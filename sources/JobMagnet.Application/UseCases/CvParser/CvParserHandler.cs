@@ -41,10 +41,7 @@ public class CvParserHandler(
     private async Task<ProfileEntity> BuildProfileFromCvAsync(CvParserCommand command, CancellationToken cancellationToken)
     {
         var rawProfile = await cvParser.ParseAsync(command.Stream);
-        if (rawProfile.HasNoValue)
-        {
-            throw new JobMagnetApplicationException("Failed to parse the CV.");
-        }
+        if (rawProfile.HasNoValue) throw new JobMagnetApplicationException("Failed to parse the CV.");
 
         var profileParse = rawProfile.Value.ToProfileParseDto();
         return await profileFactory.CreateProfileFromDtoAsync(profileParse, cancellationToken);

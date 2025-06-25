@@ -1,7 +1,6 @@
 ﻿using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Core.Entities.Contact;
 using JobMagnet.Domain.Core.Entities.Skills;
-using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Infrastructure.Exceptions;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
@@ -74,10 +73,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
     private static void AddTalents(ProfileEntity profile)
     {
         var talentsCollection = new TalentsCollection().GetTalents();
-        foreach (var talent in talentsCollection)
-        {
-            profile.AddTalent(talent.Description);
-        }
+        foreach (var talent in talentsCollection) profile.AddTalent(talent.Description);
     }
 
     private async Task AddResumeAsync(ProfileEntity profile, CancellationToken cancellationToken)
@@ -93,17 +89,11 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
             "123 Main St, Springfield, USA");
 
         foreach (var (value, contactTypeName) in ContactInfoCollection.Data)
-        {
             if (contactTypeMap.TryGetValue(contactTypeName, out var contactType))
-            {
                 resume.AddContactInfo(value, contactType);
-            }
             else
-            {
                 throw new JobMagnetInfrastructureException(
                     $"Seeding error: Contact type '{contactTypeName}' not found in database.");
-            }
-        }
 
         profile.AddResume(resume);
     }
@@ -120,17 +110,11 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         var skillSet = new SkillSet(overview, profile.Id);
 
         foreach (var (skillName, proficiencyLevel, rank) in SkillInfoCollection.Data)
-        {
             if (skillTypeMap.TryGetValue(skillName, out var skillType))
-            {
                 skillSet.AddSkill(proficiencyLevel, skillType);
-            }
             else
-            {
                 throw new JobMagnetInfrastructureException(
                     $"Seeding error: Skill type '{skillName}' not found in database.");
-            }
-        }
 
         profile.AddSkill(skillSet);
     }
@@ -175,10 +159,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         foreach (var type in allTypes)
         {
             map[type.Name] = type;
-            foreach (var alias in type.Aliases)
-            {
-                map[alias.Alias] = type;
-            }
+            foreach (var alias in type.Aliases) map[alias.Alias] = type;
         }
 
         return map;
@@ -197,10 +178,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         foreach (var type in allTypes)
         {
             map[type.Name] = type;
-            foreach (var alias in type.Aliases)
-            {
-                map[alias.Alias] = type;
-            }
+            foreach (var alias in type.Aliases) map[alias.Alias] = type;
         }
 
         return map;

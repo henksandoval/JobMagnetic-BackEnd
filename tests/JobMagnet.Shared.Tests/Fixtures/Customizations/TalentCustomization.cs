@@ -12,7 +12,7 @@ public class TalentCustomization : ICustomization
             composer
                 .FromFactory(() => new TalentEntity(
                     FixtureBuilder.Faker.PickRandom(StaticCustomizations.Talents)
-            )).OmitAutoProperties()
+                )).OmitAutoProperties()
         );
 
         fixture.Customize<TalentRaw>(composer =>

@@ -17,6 +17,6 @@ public record SkillInfoCollection
         ("Git", 8, 12),
         ("Blazor", 7, 13),
         ("Rabbit MQ", 6, 14),
-        ("Docker", 8, 15),
+        ("Docker", 8, 15)
     ];
-};
+}

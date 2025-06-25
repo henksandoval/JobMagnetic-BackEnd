@@ -16,13 +16,7 @@ public static class DateExtensions
         return (ushort)age;
     }
 
-    public static DateOnly ToDateOnly(this DateTime dateTime)
-    {
-        return DateOnly.FromDateTime(dateTime);
-    }
+    public static DateOnly ToDateOnly(this DateTime dateTime) => DateOnly.FromDateTime(dateTime);
 
-    public static DateOnly ToDateOnly(this DateTime? dateTime)
-    {
-        return dateTime.HasValue ? DateOnly.FromDateTime(dateTime.Value) : default;
-    }
+    public static DateOnly ToDateOnly(this DateTime? dateTime) => dateTime.HasValue ? DateOnly.FromDateTime(dateTime.Value) : default;
 }

@@ -33,10 +33,8 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
         return this;
     }
 
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        return await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-    }
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
+        await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
     public async Task<TEntity?> GetByIdAsync(TKey id, CancellationToken cancellationToken)
     {
@@ -44,33 +42,18 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
         return entity;
     }
 
-    public async Task<IReadOnlyCollection<TEntity>> GetAllAsync()
-    {
-        return await _dbSet.ToListAsync().ConfigureAwait(false);
-    }
+    public async Task<IReadOnlyCollection<TEntity>> GetAllAsync() => await _dbSet.ToListAsync().ConfigureAwait(false);
 
-    public async Task<IReadOnlyCollection<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
-    {
-        return await _dbSet.Where(predicate).ToListAsync(cancellationToken).ConfigureAwait(false);
-    }
+    public async Task<IReadOnlyCollection<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken) =>
+        await _dbSet.Where(predicate).ToListAsync(cancellationToken).ConfigureAwait(false);
 
-    public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
-    {
-        return await _dbSet.FirstOrDefaultAsync(predicate, cancellationToken).ConfigureAwait(false);
-    }
+    public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken) =>
+        await _dbSet.FirstOrDefaultAsync(predicate, cancellationToken).ConfigureAwait(false);
 
-    public async Task<TEntity> FirstAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
-    {
-        return await _dbSet.FirstAsync(predicate, cancellationToken).ConfigureAwait(false);
-    }
+    public async Task<TEntity> FirstAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken) =>
+        await _dbSet.FirstAsync(predicate, cancellationToken).ConfigureAwait(false);
 
-    public async Task<int> CountAsync()
-    {
-        return await _dbSet.CountAsync().ConfigureAwait(false);
-    }
+    public async Task<int> CountAsync() => await _dbSet.CountAsync().ConfigureAwait(false);
 
-    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
-    {
-        return await _dbSet.AnyAsync(predicate).ConfigureAwait(false);
-    }
+    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate) => await _dbSet.AnyAsync(predicate).ConfigureAwait(false);
 }

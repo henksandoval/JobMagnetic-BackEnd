@@ -8,6 +8,16 @@ public class WorkExperienceEntity : SoftDeletableEntity<long>
 {
     private readonly HashSet<WorkResponsibilityEntity> _responsibilities = [];
 
+    public string JobTitle { get; private set; }
+    public string CompanyName { get; private set; }
+    public string CompanyLocation { get; private set; }
+    public DateTime StartDate { get; private set; }
+    public DateTime? EndDate { get; private set; }
+    public string Description { get; private set; }
+    public long SummaryId { get; private set; }
+
+    public virtual IReadOnlyCollection<WorkResponsibilityEntity> Responsibilities => _responsibilities;
+
     private WorkExperienceEntity()
     {
     }
@@ -42,16 +52,6 @@ public class WorkExperienceEntity : SoftDeletableEntity<long>
         EndDate = endDate;
         Description = description;
     }
-
-    public string JobTitle { get; private set; }
-    public string CompanyName { get; private set; }
-    public string CompanyLocation { get; private set; }
-    public DateTime StartDate { get; private set; }
-    public DateTime? EndDate { get; private set; }
-    public string Description { get; private set; }
-    public long SummaryId { get; private set; }
-
-    public virtual IReadOnlyCollection<WorkResponsibilityEntity> Responsibilities => _responsibilities;
 
     public void AddResponsibility(WorkResponsibilityEntity responsibility)
     {

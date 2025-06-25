@@ -17,14 +17,9 @@ public class SocialProof
 
     public void AddTestimonial(string name, string jobTitle, string feedback, string? photoUrl = null)
     {
-        if (Testimonials.Count >= 20)
-        {
-            throw new JobMagnetDomainException("Cannot add more than 20 testimonials.");
-        }
+        if (Testimonials.Count >= 20) throw new JobMagnetDomainException("Cannot add more than 20 testimonials.");
         if (Testimonials.Any(t => t.Name == name && t.Feedback == feedback))
-        {
             throw new JobMagnetDomainException("This exact testimonial already exists.");
-        }
 
         var testimonial = new TestimonialEntity(name, jobTitle, feedback, photoUrl, _profile.Id);
 

@@ -6,10 +6,10 @@ namespace JobMagnet.Domain.Core.Entities;
 
 public class ProfileEntity : SoftDeletableEntity<long>
 {
+    private readonly HashSet<Project> _projects = [];
     private readonly HashSet<PublicProfileIdentifierEntity> _publicProfileIdentifiers = [];
     private readonly HashSet<TalentEntity> _talents = [];
     private readonly HashSet<TestimonialEntity> _testimonials = [];
-    private readonly HashSet<Project> _projects = [];
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? ProfileImageUrl { get; set; }
@@ -40,11 +40,11 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public void AddTalent(string description)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(description);
-        
-        var talentEntity = new TalentEntity(description, this.Id);
+
+        var talentEntity = new TalentEntity(description, Id);
         _talents.Add(talentEntity);
     }
-    
+
     public void AddSkill(SkillSet skillSet)
     {
         Guard.IsNotNull(skillSet);

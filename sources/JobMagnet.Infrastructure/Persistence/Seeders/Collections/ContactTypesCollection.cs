@@ -5,14 +5,12 @@ namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 public static class ContactTypeDataFactory
 {
-    private record RawContactDefinition(string Name, string IconClass, string[] Aliases);
-
     private static readonly IReadOnlyList<RawContactDefinition> RawData =
     [
         new("Email", "bx bx-envelope", ["Correo Electrónico", "E-mail"]),
         new("Mobile Phone", "bx bx-mobile", ["Phone", "Teléfonos", "Teléfono Móvil", "Celular", "Móvil"]),
         new("Home Phone", "bx bx-phone", ["Teléfono Fijo", "Teléfono de Casa", "Teléfono Casa"]),
-        new("Work Phone", "bx bx-phone-call", [ "Teléfono Trabajo", "Teléfono Oficina", "Teléfono de Trabajo", "Teléfono de Oficina"]),
+        new("Work Phone", "bx bx-phone-call", ["Teléfono Trabajo", "Teléfono Oficina", "Teléfono de Trabajo", "Teléfono de Oficina"]),
         new("Website", "bx bx-globe", ["Web Site", "Web-site", "Sitio Web", "Página Web", "Blog", "Portafolio"]),
         new("LinkedIn", "bx bxl-linkedin", []),
         new("GitHub", "bx bxl-github", []),
@@ -31,13 +29,6 @@ public static class ContactTypeDataFactory
         new("Reddit", "bx bxl-reddit", []),
         new("Vimeo", "bx bxl-vimeo", [])
     ];
-
-    public record ContactTypeSeedData(int Id, string Name, string? IconClass, Uri? IconUrl, DateTime AddedAt, Guid AddedBy, bool IsDeleted = false);
-    public record ContactAliasSeedData(int Id, string Alias, int ContactTypeId, DateTime AddedAt, Guid AddedBy, bool IsDeleted = false);
-
-    public record SeedingData(
-        IReadOnlyCollection<ContactTypeSeedData> Types,
-        IReadOnlyCollection<ContactAliasSeedData> Aliases);
 
     public static SeedingData SeedData { get; } = GenerateSeedData();
     public static int Count => RawData.Count;
@@ -88,14 +79,21 @@ public static class ContactTypeDataFactory
         {
             var contactType = new ContactType(rawDef.Name, 0, rawDef.IconClass);
 
-            foreach (var alias in rawDef.Aliases)
-            {
-                contactType.AddAlias(alias);
-            }
+            foreach (var alias in rawDef.Aliases) contactType.AddAlias(alias);
 
             contactTypes.Add(contactType);
         }
 
         return contactTypes.ToImmutableList();
     }
+
+    private record RawContactDefinition(string Name, string IconClass, string[] Aliases);
+
+    public record ContactTypeSeedData(int Id, string Name, string? IconClass, Uri? IconUrl, DateTime AddedAt, Guid AddedBy, bool IsDeleted = false);
+
+    public record ContactAliasSeedData(int Id, string Alias, int ContactTypeId, DateTime AddedAt, Guid AddedBy, bool IsDeleted = false);
+
+    public record SeedingData(
+        IReadOnlyCollection<ContactTypeSeedData> Types,
+        IReadOnlyCollection<ContactAliasSeedData> Aliases);
 }

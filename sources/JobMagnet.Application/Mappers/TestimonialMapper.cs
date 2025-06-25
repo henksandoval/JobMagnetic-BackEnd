@@ -23,23 +23,14 @@ public static class TestimonialMapper
             .Map(dest => dest.TestimonialData, src => src);
     }
 
-    public static TestimonialResponse ToModel(this TestimonialEntity entity)
-    {
-        return entity.Adapt<TestimonialResponse>();
-    }
+    public static TestimonialResponse ToModel(this TestimonialEntity entity) => entity.Adapt<TestimonialResponse>();
 
-    public static TestimonialEntity ToEntity(this TestimonialCommand command)
-    {
-        return command.Adapt<TestimonialEntity>();
-    }
+    public static TestimonialEntity ToEntity(this TestimonialCommand command) => command.Adapt<TestimonialEntity>();
 
     public static void UpdateEntity(this TestimonialEntity entity, TestimonialCommand command)
     {
         command.Adapt(entity);
     }
 
-    public static TestimonialCommand ToUpdateCommand(this TestimonialEntity entity)
-    {
-        return entity.Adapt<TestimonialCommand>();
-    }
+    public static TestimonialCommand ToUpdateCommand(this TestimonialEntity entity) => entity.Adapt<TestimonialCommand>();
 }

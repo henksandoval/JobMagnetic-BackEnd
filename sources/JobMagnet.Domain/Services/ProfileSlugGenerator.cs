@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using JobMagnet.Domain.Core.Entities;
@@ -12,13 +13,6 @@ public interface IProfileSlugGenerator
 public partial class ProfileSlugGenerator : IProfileSlugGenerator
 {
     private static readonly char[] Delimiters = [' ', '-', '_'];
-
-    [GeneratedRegex(@"[\s_]+")]
-    private static partial Regex ConsecutiveWhitespaceOrUnderscoresRegex();
-    [GeneratedRegex("[^a-z0-9-]")]
-    private static partial Regex FindInvalidUrlSlugCharactersRegex();
-    [GeneratedRegex("-+")]
-    private static partial Regex MultipleDashRegex();
 
     public string GenerateProfileSlug(ProfileEntity profileEntity)
     {
@@ -40,6 +34,15 @@ public partial class ProfileSlugGenerator : IProfileSlugGenerator
         return $"{selectedNamePart}-{uniqueSuffix}";
     }
 
+    [GeneratedRegex(@"[\s_]+")]
+    private static partial Regex ConsecutiveWhitespaceOrUnderscoresRegex();
+
+    [GeneratedRegex("[^a-z0-9-]")]
+    private static partial Regex FindInvalidUrlSlugCharactersRegex();
+
+    [GeneratedRegex("-+")]
+    private static partial Regex MultipleDashRegex();
+
     private static string GenerateSlug(string rawFirstName, string rawLastName)
     {
         var firstNameHasValue = !string.IsNullOrEmpty(rawFirstName);
@@ -58,20 +61,14 @@ public partial class ProfileSlugGenerator : IProfileSlugGenerator
     {
         if (string.IsNullOrEmpty(input)) return string.Empty;
 
-        if (input.Length > maxLength)
-        {
-            input = input[..maxLength];
-        }
+        if (input.Length > maxLength) input = input[..maxLength];
 
         return input.TrimEnd('-');
     }
 
     private static string CleanStringForUrl(string input)
     {
-        if (string.IsNullOrWhiteSpace(input))
-        {
-            return string.Empty;
-        }
+        if (string.IsNullOrWhiteSpace(input)) return string.Empty;
 
         var result = input.ToLowerInvariant();
         result = ConsecutiveWhitespaceOrUnderscoresRegex().Replace(result, "-");
@@ -85,14 +82,11 @@ public partial class ProfileSlugGenerator : IProfileSlugGenerator
     private static string RemoveDiacritics(string text)
     {
         var normalizedString = text.Normalize(NormalizationForm.FormD);
-        var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
+        var stringBuilder = new StringBuilder(normalizedString.Length);
         foreach (var character in normalizedString)
         {
-            var unicodeCategory = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(character);
-            if (unicodeCategory != System.Globalization.UnicodeCategory.NonSpacingMark)
-            {
-                stringBuilder.Append(character);
-            }
+            var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(character);
+            if (unicodeCategory != UnicodeCategory.NonSpacingMark) stringBuilder.Append(character);
         }
 
         return stringBuilder.ToString().Normalize(NormalizationForm.FormC);

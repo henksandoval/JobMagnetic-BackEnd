@@ -21,12 +21,12 @@ public class SkillCustomization : ICustomization
 
         fixture.Register(() => new SkillSet(Faker.Lorem.Sentence(), 0));
 
-        fixture.Register(() => new SkillSetRaw(Faker.Lorem.Sentence(),[]));
+        fixture.Register(() => new SkillSetRaw(Faker.Lorem.Sentence(), []));
 
         fixture.Register(() =>
             new SkillRaw(
                 Faker.PickRandom(StaticCustomizations.Skills),
-                    Faker.Random.Int(1, 10).ToString()
+                Faker.Random.Int(1, 10).ToString()
             )
         );
 

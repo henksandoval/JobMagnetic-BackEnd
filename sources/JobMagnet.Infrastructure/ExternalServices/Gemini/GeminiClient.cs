@@ -23,6 +23,5 @@ public class GeminiClient(IOptions<GeminiSettings> options, ILogger<GeminiClient
 
         logger.LogError("Gemini API response is null.");
         return Maybe<ModelResponse>.None;
-
     }
 }

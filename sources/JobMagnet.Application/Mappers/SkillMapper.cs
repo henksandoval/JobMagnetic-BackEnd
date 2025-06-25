@@ -31,13 +31,7 @@ public static class SkillMapper
             .Map(dest => dest.SkillData, src => src);
     }
 
-    public static SkillResponse ToResponse(this SkillSet set)
-    {
-        return set.Adapt<SkillResponse>();
-    }
+    public static SkillResponse ToResponse(this SkillSet set) => set.Adapt<SkillResponse>();
 
-    public static SkillCommand ToUpdateCommand(this SkillSet set)
-    {
-        return set.Adapt<SkillCommand>();
-    }
+    public static SkillCommand ToUpdateCommand(this SkillSet set) => set.Adapt<SkillCommand>();
 }

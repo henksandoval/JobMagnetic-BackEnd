@@ -12,7 +12,9 @@ public class SkillTypeAlias : SoftDeletableEntity<int>
     public int SkillTypeId { get; private set; }
     public bool SkillTypeExist => Id > 0 && !IsDeleted;
 
-    private SkillTypeAlias() {}
+    private SkillTypeAlias()
+    {
+    }
 
     [SetsRequiredMembers]
     internal SkillTypeAlias(string alias, int skillTypeId, int id = 0)

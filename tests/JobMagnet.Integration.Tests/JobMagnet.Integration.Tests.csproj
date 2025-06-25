@@ -43,10 +43,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Mocks\CvParsedResponse.md" />
-      <EmbeddedResource Include="Mocks\CvParsedResponse.md">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </EmbeddedResource>
+        <None Remove="Mocks\CvParsedResponse.md"/>
+        <EmbeddedResource Include="Mocks\CvParsedResponse.md">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </EmbeddedResource>
     </ItemGroup>
 
 </Project>

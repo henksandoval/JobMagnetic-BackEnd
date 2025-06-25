@@ -5,8 +5,8 @@ namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
 public class ProfileRawBuilder
 {
-    private ProfileRaw _instance;
     private readonly IFixture _fixture;
+    private ProfileRaw _instance;
 
     public ProfileRawBuilder(IFixture fixture)
     {
@@ -28,10 +28,7 @@ public class ProfileRawBuilder
 
     public ProfileRawBuilder WithContactInfo(int count = 5)
     {
-        if (_instance.Resume == null)
-        {
-            throw new InvalidOperationException("Cannot add contact info without a resume. Call WithResume() first.");
-        }
+        if (_instance.Resume == null) throw new InvalidOperationException("Cannot add contact info without a resume. Call WithResume() first.");
 
         var contactInfo = _fixture.CreateMany<ContactInfoRaw>(count).ToList();
         return WithContactInfo(contactInfo);
@@ -58,7 +55,7 @@ public class ProfileRawBuilder
     public ProfileRawBuilder WithSkills(List<SkillRaw> skills)
     {
         var skillSet = _instance.SkillSet ??
-                         throw new InvalidOperationException("SkillSet must be set before adding contact info. Call WithSkillSet() first.");
+                       throw new InvalidOperationException("SkillSet must be set before adding contact info. Call WithSkillSet() first.");
         var skillSetRaw = skillSet with { Skills = skills };
 
         _instance = _instance with { SkillSet = skillSetRaw };
@@ -117,8 +114,5 @@ public class ProfileRawBuilder
         return this;
     }
 
-    public ProfileRaw Build()
-    {
-        return _instance;
-    }
+    public ProfileRaw Build() => _instance;
 }

@@ -55,20 +55,16 @@ public static class SummaryMapper
                 workExperience.AddResponsibility(new WorkResponsibilityEntity(description));
 
             entity.AddWorkExperience(workExperience);
-        };
+        }
+
+        ;
 
         return entity;
     }
 
-    public static SummaryResponse ToModel(this SummaryEntity entity)
-    {
-        return entity.Adapt<SummaryResponse>();
-    }
+    public static SummaryResponse ToModel(this SummaryEntity entity) => entity.Adapt<SummaryResponse>();
 
-    public static SummaryCommand ToUpdateCommand(this SummaryEntity entity)
-    {
-        return entity.Adapt<SummaryCommand>();
-    }
+    public static SummaryCommand ToUpdateCommand(this SummaryEntity entity) => entity.Adapt<SummaryCommand>();
 
     public static void UpdateEntity(this SummaryEntity entity, SummaryCommand command)
     {

@@ -12,15 +12,9 @@ public static class ProfileMapper
         ConfigMapper();
     }
 
-    public static ProfileEntity ToEntity(this ProfileCommand createCommand)
-    {
-        return createCommand.Adapt<ProfileEntity>();
-    }
+    public static ProfileEntity ToEntity(this ProfileCommand createCommand) => createCommand.Adapt<ProfileEntity>();
 
-    public static ProfileResponse ToModel(this ProfileEntity entity)
-    {
-        return entity.Adapt<ProfileResponse>();
-    }
+    public static ProfileResponse ToModel(this ProfileEntity entity) => entity.Adapt<ProfileResponse>();
 
     public static void UpdateEntity(this ProfileEntity entity, ProfileCommand command)
     {

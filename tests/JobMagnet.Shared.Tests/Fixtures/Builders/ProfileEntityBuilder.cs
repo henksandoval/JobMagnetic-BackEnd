@@ -9,15 +9,15 @@ namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
 public class ProfileEntityBuilder(IFixture fixture)
 {
+    private static readonly Faker Faker = FixtureBuilder.Faker;
     private string? _firstName;
     private string? _lastName;
+    private List<Project> _projects = [];
     private ResumeEntity _resume = null!;
     private SkillSet _skillSet = null!;
     private SummaryEntity _summary = null!;
-    private List<Project> _projects = [];
     private List<TalentEntity> _talents = [];
     private List<TestimonialEntity> _testimonials = [];
-    private static readonly Faker Faker = FixtureBuilder.Faker;
 
 
     public ProfileEntityBuilder WithResume()
@@ -29,14 +29,9 @@ public class ProfileEntityBuilder(IFixture fixture)
     public ProfileEntityBuilder WithContactInfo(int count = 5)
     {
         if (count > ContactTypeDataFactory.Count)
-        {
             throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available contact types.");
-        }
 
-        if (_resume == null)
-        {
-            throw new InvalidOperationException("Cannot add contact info without a resume. Call WithResume() first.");
-        }
+        if (_resume == null) throw new InvalidOperationException("Cannot add contact info without a resume. Call WithResume() first.");
 
         var addedContactInfo = new Dictionary<string, ContactType>();
 
@@ -72,14 +67,9 @@ public class ProfileEntityBuilder(IFixture fixture)
     public ProfileEntityBuilder WithSkills(int count = 5)
     {
         if (count > SkillDataFactory.Count)
-        {
             throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available skill types.");
-        }
 
-        if (_skillSet == null)
-        {
-            throw new InvalidOperationException("Cannot add skills without a skill set. Call WithSkillSet() first.");
-        }
+        if (_skillSet == null) throw new InvalidOperationException("Cannot add skills without a skill set. Call WithSkillSet() first.");
 
         var random = new Random();
         var addedSkillTypes = new HashSet<string>();
@@ -90,20 +80,13 @@ public class ProfileEntityBuilder(IFixture fixture)
             var skillType = fixture.Create<SkillType>();
 
             if (addedSkillCategories.TryGetValue(skillType.Category.Name, out var existingCategory))
-            {
                 skillType.SetCategory(existingCategory);
-            }
             else
-            {
                 addedSkillCategories.Add(skillType.Category.Name, skillType.Category);
-            }
 
-            var proficiencyLevel = (ushort) random.Next(1, 10);
+            var proficiencyLevel = (ushort)random.Next(1, 10);
 
-            if (addedSkillTypes.Add(skillType.Name))
-            {
-                _skillSet.AddSkill(proficiencyLevel, skillType);
-            }
+            if (addedSkillTypes.Add(skillType.Name)) _skillSet.AddSkill(proficiencyLevel, skillType);
         }
 
         return this;
@@ -135,10 +118,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithEducation(int count = 5)
     {
-        if (_summary == null)
-        {
-            throw new InvalidOperationException("Cannot add contact info without a summary. Call WithSummary() first.");
-        }
+        if (_summary == null) throw new InvalidOperationException("Cannot add contact info without a summary. Call WithSummary() first.");
 
         foreach (var education in fixture.CreateMany<EducationEntity>(count).ToList())
             _summary.AddEducation(education);
@@ -148,10 +128,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithWorkExperience(int count = 5)
     {
-        if (_summary == null)
-        {
-            throw new InvalidOperationException("Cannot add contact info without a summary. Call WithSummary() first.");
-        }
+        if (_summary == null) throw new InvalidOperationException("Cannot add contact info without a summary. Call WithSummary() first.");
 
         foreach (var workExperience in fixture.CreateMany<WorkExperienceEntity>(count).ToList())
             _summary.AddWorkExperience(workExperience);
@@ -181,39 +158,21 @@ public class ProfileEntityBuilder(IFixture fixture)
     {
         var profile = fixture.Create<ProfileEntity>();
 
-        if (_firstName is not null)
-        {
-            profile.FirstName = _firstName;
-        }
+        if (_firstName is not null) profile.FirstName = _firstName;
 
-        if (_lastName is not null)
-        {
-            profile.LastName = _lastName;
-        }
+        if (_lastName is not null) profile.LastName = _lastName;
 
-        if (_resume is not null)
-        {
-            profile.AddResume(_resume);
-        }
+        if (_resume is not null) profile.AddResume(_resume);
 
-        if (_summary is not null)
-        {
-            profile.AddSummary(_summary);
-        }
+        if (_summary is not null) profile.AddSummary(_summary);
 
-        if (_skillSet is not null)
-        {
-            profile.AddSkill(_skillSet);
-        }
+        if (_skillSet is not null) profile.AddSkill(_skillSet);
 
         if (_testimonials.Count > 0)
-        {
             foreach (var item in _testimonials)
                 profile.SocialProof.AddTestimonial(item.Name, item.JobTitle, item.Feedback, item.PhotoUrl);
-        }
 
         if (_projects.Count > 0)
-        {
             foreach (var gallery in _projects)
                 profile.Portfolio.AddProject(
                     gallery.Title,
@@ -222,13 +181,10 @@ public class ProfileEntityBuilder(IFixture fixture)
                     gallery.UrlImage,
                     gallery.UrlVideo,
                     gallery.Type);
-        }
 
         if (_talents.Count > 0)
-        {
             foreach (var talent in _talents)
                 profile.TalentShowcase.AddTalent(talent.Description);
-        }
 
         return profile;
     }

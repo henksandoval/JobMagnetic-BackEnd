@@ -9,12 +9,10 @@ namespace JobMagnet.Infrastructure.Extensions;
 public static class InfrastructureExtensions
 {
     public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        return services
+        IConfiguration configuration) =>
+        services
             .AddSharedDependencies()
             .AddTransient<IRawCvParser, GeminiCvParser>()
             .AddPersistence()
             .AddGemini(configuration);
-    }
 }

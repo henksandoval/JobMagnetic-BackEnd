@@ -11,7 +11,7 @@ namespace JobMagnet.Unit.Tests.Services;
 public partial class ProfileSlugGeneratorShould
 {
     private readonly IFixture _fixture = FixtureBuilder.Build();
-    private readonly ProfileSlugGenerator _subject = new ();
+    private readonly ProfileSlugGenerator _subject = new();
 
     [GeneratedRegex("^(.*)-([a-z0-9]{6})$")]
     private static partial Regex PatternWithSixCharAlphanumericSuffixRegex();
@@ -198,21 +198,12 @@ public partial class ProfileSlugGeneratorShould
 
     private static (string NamePart, string Suffix) ExtractSlugParts(string slug)
     {
-        if (string.IsNullOrEmpty(slug))
-        {
-            return (string.Empty, string.Empty);
-        }
+        if (string.IsNullOrEmpty(slug)) return (string.Empty, string.Empty);
 
         var match = PatternWithSixCharAlphanumericSuffixRegex().Match(slug);
-        if (match is { Success: true, Groups.Count: 3 })
-        {
-            return (match.Groups[1].Value, match.Groups[2].Value);
-        }
+        if (match is { Success: true, Groups.Count: 3 }) return (match.Groups[1].Value, match.Groups[2].Value);
 
-        if (slug.Length <= 6 && LowercaseAlphanumericStringRegex().IsMatch(slug))
-        {
-            return (string.Empty, slug);
-        }
+        if (slug.Length <= 6 && LowercaseAlphanumericStringRegex().IsMatch(slug)) return (string.Empty, slug);
 
         var lastDash = slug.LastIndexOf('-');
         if (lastDash > 0 && slug.Length - 1 - lastDash == 6)

@@ -11,7 +11,9 @@ public class ContactTypeAlias : SoftDeletableEntity<int>
     public int ContactTypeId { get; private set; }
     public bool ContactTypeExist => Id > 0 && !IsDeleted;
 
-    private ContactTypeAlias() {}
+    private ContactTypeAlias()
+    {
+    }
 
     [SetsRequiredMembers]
     internal ContactTypeAlias(string alias, int contactTypeId, int id = 0)

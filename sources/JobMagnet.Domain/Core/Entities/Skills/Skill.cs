@@ -12,7 +12,9 @@ public class Skill : TrackableEntity<long>
     public int SkillTypeId { get; private set; }
     public virtual SkillType SkillType { get; private set; }
 
-    private Skill() { }
+    private Skill()
+    {
+    }
 
     [SetsRequiredMembers]
     internal Skill(ushort proficiencyLevel, ushort rank, SkillType skillType, long skillSetId, long id = 0)

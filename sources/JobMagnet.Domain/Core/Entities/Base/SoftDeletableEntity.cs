@@ -10,10 +10,7 @@ public abstract class SoftDeletableEntity<TId> : TrackableEntity<TId>, ISoftDele
 
     public virtual void Delete(Guid? deletedBy = null)
     {
-        if (IsDeleted)
-        {
-            return;
-        }
+        if (IsDeleted) return;
 
         IsDeleted = true;
         DeletedAt = DateTime.UtcNow;
@@ -24,10 +21,7 @@ public abstract class SoftDeletableEntity<TId> : TrackableEntity<TId>, ISoftDele
 
     public virtual void Restore()
     {
-        if (!IsDeleted)
-        {
-            return;
-        }
+        if (!IsDeleted) return;
 
         IsDeleted = false;
         DeletedAt = null;

@@ -15,10 +15,7 @@ public class VanityUrls
 
     public void CreateAndAssignPublicIdentifier(IProfileSlugGenerator slugGenerator)
     {
-        if (_profile.PublicProfileIdentifiers.Any(p => p.Type == LinkType.Primary))
-        {
-            return;
-        }
+        if (_profile.PublicProfileIdentifiers.Any(p => p.Type == LinkType.Primary)) return;
 
         var generatedSlug = slugGenerator.GenerateProfileSlug(_profile);
         AddPublicProfileIdentifier(generatedSlug);

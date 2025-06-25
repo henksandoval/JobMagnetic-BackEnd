@@ -2,10 +2,7 @@ namespace JobMagnet.Host.Middleware;
 
 public static class LoguerRespuestaHTTPMiddlewareExtensions
 {
-    public static IApplicationBuilder UseLoguearRespuestaHttp(this IApplicationBuilder app)
-    {
-        return app.UseMiddleware<LoguearRespuestaHTTPMiddleware>();
-    }
+    public static IApplicationBuilder UseLoguearRespuestaHttp(this IApplicationBuilder app) => app.UseMiddleware<LoguearRespuestaHTTPMiddleware>();
 }
 
 public class LoguearRespuestaHTTPMiddleware

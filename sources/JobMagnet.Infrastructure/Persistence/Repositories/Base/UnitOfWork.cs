@@ -13,12 +13,12 @@ public class UnitOfWork(JobMagnetDbContext dbContext, ILogger<UnitOfWork> logger
     private readonly ILogger<UnitOfWork> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     private ICommandRepository<ProfileEntity>? _profileRepository;
+    private ICommandRepository<Project>? _projectRepository;
     private ICommandRepository<PublicProfileIdentifierEntity>? _publicProfileIdentifierRepository;
     private ICommandRepository<ResumeEntity>? _resumeRepository;
     private ICommandRepository<SkillSet>? _skillRepository;
     private ICommandRepository<SummaryEntity>? _summaryRepository;
     private ICommandRepository<TalentEntity>? _talentRepository;
-    private ICommandRepository<Project>? _projectRepository;
     private ICommandRepository<TestimonialEntity>? _testimonialRepository;
 
     public ICommandRepository<ProfileEntity> ProfileRepository =>
@@ -26,16 +26,22 @@ public class UnitOfWork(JobMagnetDbContext dbContext, ILogger<UnitOfWork> logger
 
     public ICommandRepository<PublicProfileIdentifierEntity> PublicProfileIdentifierRepository =>
         _publicProfileIdentifierRepository ??= new Repository<PublicProfileIdentifierEntity, long>(_dbContext);
+
     public ICommandRepository<ResumeEntity> ResumeRepository =>
         _resumeRepository ??= new Repository<ResumeEntity, long>(_dbContext);
+
     public ICommandRepository<SkillSet> SkillRepository =>
         _skillRepository ??= new Repository<SkillSet, long>(_dbContext);
+
     public ICommandRepository<SummaryEntity> SummaryRepository =>
         _summaryRepository ??= new Repository<SummaryEntity, long>(_dbContext);
+
     public ICommandRepository<TalentEntity> TalentRepository =>
         _talentRepository ??= new Repository<TalentEntity, long>(_dbContext);
+
     public ICommandRepository<Project> ProjectRepository =>
         _projectRepository ??= new Repository<Project, long>(_dbContext);
+
     public ICommandRepository<TestimonialEntity> TestimonialRepository =>
         _testimonialRepository ??= new Repository<TestimonialEntity, long>(_dbContext);
 
@@ -60,7 +66,8 @@ public class UnitOfWork(JobMagnetDbContext dbContext, ILogger<UnitOfWork> logger
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred during transactional operation for transaction {TransactionId}. Rolling back.", transaction.TransactionId);
+                _logger.LogError(ex, "Error occurred during transactional operation for transaction {TransactionId}. Rolling back.",
+                    transaction.TransactionId);
                 await transaction.RollbackAsync(cancellationToken);
                 _logger.LogInformation("Transaction {TransactionId} rolled back.", transaction.TransactionId);
                 throw;

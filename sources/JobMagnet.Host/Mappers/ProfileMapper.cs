@@ -13,10 +13,7 @@ public static class ProfileMapper
         ConfigMapper();
     }
 
-    public static ProfileViewModel ToViewModel(this ProfileEntity entity)
-    {
-        return entity.Adapt<ProfileViewModel>();
-    }
+    public static ProfileViewModel ToViewModel(this ProfileEntity entity) => entity.Adapt<ProfileViewModel>();
 
     private static void ConfigMapper()
     {

@@ -5,8 +5,6 @@ namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 public static class SkillDataFactory
 {
-    private record RawSkillDefinition(string Name, string Uri, string CategoryName, string[] Aliases);
-
     private static readonly IReadOnlyList<RawSkillDefinition> RawData =
     [
         new("HTML", "https://cdn.simpleicons.org/html5", "Software Development", []),
@@ -29,22 +27,6 @@ public static class SkillDataFactory
 
     public static int Count => RawData.Count;
 
-    public record CategorySeedData(ushort Id, string Name, DateTime AddedAt, Guid AddedBy, bool IsDeleted = false);
-    public record TypeSeedData(
-        int Id,
-        string Name,
-        Uri IconUrl,
-        ushort CategoryId,
-        DateTime AddedAt,
-        Guid AddedBy,
-        bool IsDeleted = false);
-    public record AliasSeedData(int Id, string Alias, int SkillTypeId, DateTime AddedAt, Guid AddedBy, bool IsDeleted = false);
-
-    public record SeedingData(
-        IReadOnlyCollection<SkillCategory> Categories,
-        IReadOnlyCollection<TypeSeedData> Types,
-        IReadOnlyCollection<AliasSeedData> Aliases);
-
     private static SeedingData GenerateSeedData()
     {
         var seedTimestamp = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -66,11 +48,11 @@ public static class SkillDataFactory
             if (!categories.TryGetValue(rawDef.CategoryName, out var category))
             {
                 categoryIdCounter++;
-                categories.Add(rawDef.CategoryName, new SkillCategory(rawDef.CategoryName, (ushort) categoryIdCounter));
+                categories.Add(rawDef.CategoryName, new SkillCategory(rawDef.CategoryName, (ushort)categoryIdCounter));
             }
 
             var typeId = typeIdCounter++;
-            types.Add(new TypeSeedData(typeId, rawDef.Name, new Uri(rawDef.Uri), (ushort) categoryIdCounter, seedTimestamp, systemUserId));
+            types.Add(new TypeSeedData(typeId, rawDef.Name, new Uri(rawDef.Uri), (ushort)categoryIdCounter, seedTimestamp, systemUserId));
 
             aliases.AddRange(rawDef.Aliases.Select(aliasName =>
                 new AliasSeedData(aliasIdCounter++, aliasName, typeId, seedTimestamp, systemUserId))
@@ -95,14 +77,31 @@ public static class SkillDataFactory
 
             var skill = new SkillType(rawDef.Name, category, 0, new Uri(rawDef.Uri));
 
-            foreach (var alias in rawDef.Aliases)
-            {
-                skill.AddAlias(alias);
-            }
+            foreach (var alias in rawDef.Aliases) skill.AddAlias(alias);
 
             skills.Add(skill);
         }
 
         return skills.ToImmutableList();
     }
+
+    private record RawSkillDefinition(string Name, string Uri, string CategoryName, string[] Aliases);
+
+    public record CategorySeedData(ushort Id, string Name, DateTime AddedAt, Guid AddedBy, bool IsDeleted = false);
+
+    public record TypeSeedData(
+        int Id,
+        string Name,
+        Uri IconUrl,
+        ushort CategoryId,
+        DateTime AddedAt,
+        Guid AddedBy,
+        bool IsDeleted = false);
+
+    public record AliasSeedData(int Id, string Alias, int SkillTypeId, DateTime AddedAt, Guid AddedBy, bool IsDeleted = false);
+
+    public record SeedingData(
+        IReadOnlyCollection<SkillCategory> Categories,
+        IReadOnlyCollection<TypeSeedData> Types,
+        IReadOnlyCollection<AliasSeedData> Aliases);
 }

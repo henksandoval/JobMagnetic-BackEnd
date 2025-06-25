@@ -18,13 +18,7 @@ public static class ResumeMapper
             .Map(dest => dest.ResumeData, src => src);
     }
 
-    public static ResumeResponse ToModel(this ResumeEntity entity)
-    {
-        return entity.Adapt<ResumeResponse>();
-    }
+    public static ResumeResponse ToModel(this ResumeEntity entity) => entity.Adapt<ResumeResponse>();
 
-    public static ResumeCommand ToUpdateRequest(this ResumeEntity entity)
-    {
-        return entity.Adapt<ResumeCommand>();
-    }
+    public static ResumeCommand ToUpdateRequest(this ResumeEntity entity) => entity.Adapt<ResumeCommand>();
 }

@@ -23,20 +23,11 @@ public static class ProjectMapper
             .Map(dest => dest.ProjectData, src => src);
     }
 
-    public static Project ToEntity(this ProjectCommand command)
-    {
-        return command.Adapt<Project>();
-    }
+    public static Project ToEntity(this ProjectCommand command) => command.Adapt<Project>();
 
-    public static ProjectResponse ToModel(this Project project)
-    {
-        return project.Adapt<ProjectResponse>();
-    }
+    public static ProjectResponse ToModel(this Project project) => project.Adapt<ProjectResponse>();
 
-    public static ProjectCommand ToUpdateRequest(this Project project)
-    {
-        return project.Adapt<ProjectCommand>();
-    }
+    public static ProjectCommand ToUpdateRequest(this Project project) => project.Adapt<ProjectCommand>();
 
     public static void UpdateEntity(this Project project, ProjectCommand updateCommand)
     {
