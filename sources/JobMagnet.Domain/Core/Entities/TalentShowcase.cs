@@ -23,6 +23,7 @@ public class TalentShowcase
         {
             throw new JobMagnetDomainException("This talent already exists.");
         }
+        
         var talent = new TalentEntity(description, _profile.Id);
         
         _profile.AddTalent(talent.Description);
