@@ -44,15 +44,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
         var talentEntity = new TalentEntity(description, this.Id);
         _talents.Add(talentEntity);
     }
-
-    public void AddTalents(List<TalentEntity> talents)
-    {
-        ArgumentNullException.ThrowIfNull(talents);
-
-        foreach (var talent in talents)
-            _talents.Add(talent);
-    }
-
+    
     public void AddSkill(SkillSet skillSet)
     {
         Guard.IsNotNull(skillSet);
