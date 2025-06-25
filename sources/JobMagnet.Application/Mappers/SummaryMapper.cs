@@ -37,17 +37,15 @@ public static class SummaryMapper
             ProfileId = data.ProfileId,
         };
 
-        entity.Education = data.Education.Select(e => new EducationEntity
-        {
-            Id = e.Id ?? 0,
-            Description = e.Description!,
-            Degree = e.Degree!,
-            InstitutionName = e.InstitutionName!,
-            InstitutionLocation = e.InstitutionLocation!,
-            StartDate = e.StartDate,
-            EndDate = e.EndDate,
-            SummaryId = entity.Id
-        }).ToList();
+        entity.Education = data.Education.Select(e => new EducationEntity(
+                e.Degree ?? string.Empty,
+                e.InstitutionName ?? string.Empty,
+                e.InstitutionLocation ?? string.Empty,
+                e.StartDate,
+                e.EndDate,
+                e.Description ?? string.Empty,
+                entity.Id
+            )).ToList();
 
         entity.WorkExperiences = data.WorkExperiences.Select(w => new WorkExperienceEntity
         {

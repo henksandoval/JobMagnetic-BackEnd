@@ -63,7 +63,7 @@ public class SummaryMapperShould
     {
         return e => new
         {
-            e.Id, e.Summary, e.SummaryId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy, e.IsDeleted,
+            e.Id, e.SummaryId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy, e.IsDeleted,
             e.DeletedAt, e.DeletedBy
         };
     }

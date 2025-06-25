@@ -88,20 +88,15 @@ public record SummaryCollection
     public EducationEntity[] GetEducation()
     {
         return _values
-            .Select(x => new EducationEntity
-            {
-                Id = 0,
-                Degree = x.Degree,
-                InstitutionName = x.InstitutionName,
-                InstitutionLocation = x.InstitutionLocation,
-                StartDate = x.StartDate,
-                EndDate = x.EndDate,
-                SummaryId = _summaryId,
-                Description = x.Description,
-                AddedAt = DateTime.UtcNow,
-                AddedBy = Guid.Empty
-            })
-            .ToArray();
+            .Select(x => new EducationEntity(
+                x.Degree,
+                x.InstitutionName,
+                x.InstitutionLocation,
+                x.StartDate,
+                x.EndDate,
+                x.Description,
+                _summaryId
+            )).ToArray();
     }
 
     public WorkExperienceEntity[] GetWorkExperience()

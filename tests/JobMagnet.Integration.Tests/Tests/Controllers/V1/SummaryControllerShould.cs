@@ -4,6 +4,7 @@ using FluentAssertions;
 using JobMagnet.Application.Contracts.Commands.Summary;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Summary;
+using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
@@ -38,7 +39,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // --- Given ---
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
-        var educationCollection = _fixture.Build<EducationBase>().With(x => x.Id, 0).CreateMany(3).ToList();
+        var educationCollection = _fixture.CreateMany<EducationBase>(3).ToList();
         var workExperienceCollection = _fixture.Build<WorkExperienceBase>().With(x => x.Id, 0).CreateMany(3).ToList();
         var summaryBase = _fixture.Build<SummaryBase>()
             .With(x => x.ProfileId, profileEntity.Id)

@@ -128,14 +128,14 @@ public class ProfileFactory(
     private List<EducationEntity> BuildEducationHistory(List<EducationParseDto>? educationDtos)
     {
         if (educationDtos is null) return [];
-        return educationDtos.Select(dto => new EducationEntity
-        {
-            Id = 0,
-            Degree = dto.Degree!,
-            InstitutionName = dto.InstitutionName ?? string.Empty,
-            StartDate = ToDateTimeOrDefault(dto.StartDate),
-            EndDate = ToNullableDateTime(dto.EndDate)
-        }).ToList();
+        return educationDtos.Select(dto => new EducationEntity(
+            dto.Degree ?? string.Empty,
+            dto.InstitutionName ?? string.Empty,
+            dto.InstitutionLocation ?? string.Empty,
+            ToDateTimeOrDefault(dto.StartDate),
+            ToNullableDateTime(dto.EndDate),
+            dto.Description ?? string.Empty
+        )).ToList();
     }
 
     private List<WorkExperienceEntity> BuildWorkExperience(List<WorkExperienceParseDto>? experienceDtos)

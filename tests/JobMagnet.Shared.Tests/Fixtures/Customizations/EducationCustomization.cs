@@ -1,4 +1,6 @@
 using AutoFixture;
+using Bogus;
+using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Shared.Tests.Utils;
@@ -8,36 +10,69 @@ namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class EducationCustomization : ICustomization
 {
+    private static readonly Faker Faker = FixtureBuilder.Faker;
+
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<EducationEntity>(composer =>
-            composer
-                .Without(x => x.Id)
-                .Do(ApplyCommonProperties)
-                .OmitAutoProperties());
+        fixture.Customize<EducationEntity>(composer => composer
+            .FromFactory(EducationFactory)
+            .OmitAutoProperties());
 
-        fixture.Register(() =>
-            new EducationRaw(
-                FixtureBuilder.Faker.PickRandom(StaticCustomizations.Degrees),
-                FixtureBuilder.Faker.PickRandom(StaticCustomizations.Universities),
-                FixtureBuilder.Faker.Address.FullAddress(),
-                FixtureBuilder.Faker.Lorem.Sentences(),
-                FixtureBuilder.Faker.Date.Past(20, DateTime.Now.AddYears(-5)).ToDateOnly().ToString(),
-                TestUtilities.OptionalValue<DateTime?>(
-                    FixtureBuilder.Faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)), 80
-                )?.ToShortDateString() ?? string.Empty
-            )
-        );
+        fixture.Register(EducationRawFactory);
+        fixture.Register(EducationBaseFactory);
     }
 
-    private static void ApplyCommonProperties(dynamic item)
+    private static EducationEntity EducationFactory()
     {
-        item.Degree = FixtureBuilder.Faker.PickRandom(StaticCustomizations.Degrees);
-        item.InstitutionName = FixtureBuilder.Faker.PickRandom(StaticCustomizations.Universities);
-        item.InstitutionLocation = FixtureBuilder.Faker.Address.FullAddress();
-        item.StartDate = FixtureBuilder.Faker.Date.Past(20, DateTime.Now.AddYears(-5));
-        item.EndDate =
-            TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Date.Past(20, DateTime.Now.AddYears(-5)));
-        item.Description = FixtureBuilder.Faker.Lorem.Sentences();
+        var startDate = Faker.Date.Past(20, DateTime.Now.AddYears(-5));
+        var endDate = Faker.Date.Between(startDate, startDate.AddYears(5))
+            .OrNull(Faker, 0.25f);
+
+        var education = new EducationEntity(
+            Faker.PickRandom(StaticCustomizations.Degrees),
+            Faker.PickRandom(StaticCustomizations.Universities),
+            Faker.Address.FullAddress(),
+            startDate,
+            endDate,
+            Faker.Lorem.Sentences()
+        );
+
+        return education;
+    }
+
+    private static EducationRaw EducationRawFactory()
+    {
+        var startDate = Faker.Date.Past(20, DateTime.Now.AddYears(-5));
+        var endDate = Faker.Date.Between(startDate, startDate.AddYears(5))
+            .OrNull(Faker, 0.25f);
+
+        var education = new EducationRaw(
+            Faker.PickRandom(StaticCustomizations.Degrees),
+            Faker.PickRandom(StaticCustomizations.Universities),
+            Faker.Address.FullAddress(),
+            Faker.Lorem.Sentences(),
+            startDate.ToDateOnly().ToString(),
+            endDate?.ToDateOnly().ToString() ?? string.Empty
+        );
+
+        return education;
+    }
+
+    private static EducationBase EducationBaseFactory()
+    {
+        var startDate = Faker.Date.Past(20, DateTime.Now.AddYears(-5));
+        var endDate = Faker.Date.Between(startDate, startDate.AddYears(5))
+            .OrNull(Faker, 0.25f);
+
+        var education = new EducationBase(
+            Faker.PickRandom(StaticCustomizations.Degrees),
+            Faker.PickRandom(StaticCustomizations.Universities),
+            Faker.Address.FullAddress(),
+            Faker.Lorem.Sentences(),
+            startDate,
+            endDate
+        );
+
+        return education;
     }
 }

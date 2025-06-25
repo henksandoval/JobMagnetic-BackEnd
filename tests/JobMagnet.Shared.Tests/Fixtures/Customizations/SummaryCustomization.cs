@@ -32,7 +32,6 @@ public class SummaryCustomization : ICustomization
     {
         item.Profile = FixtureBuilder.Build().Create<ProfileEntity>();
         item.Introduction = FixtureBuilder.Faker.Lorem.Paragraph();
-        item.Education = FixtureBuilder.Build().CreateMany<EducationEntity>().ToList();
         item.WorkExperiences = FixtureBuilder.Build().CreateMany<WorkExperienceEntity>().ToList();
     }
 }
