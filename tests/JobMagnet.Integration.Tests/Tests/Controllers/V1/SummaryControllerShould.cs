@@ -40,7 +40,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
         var educationCollection = _fixture.CreateMany<EducationBase>(3).ToList();
-        var workExperienceCollection = _fixture.Build<WorkExperienceBase>().With(x => x.Id, 0).CreateMany(3).ToList();
+        var workExperienceCollection = _fixture.CreateMany<WorkExperienceBase>(3).ToList();
         var summaryBase = _fixture.Build<SummaryBase>()
             .With(x => x.ProfileId, profileEntity.Id)
             .With(x => x.Education, educationCollection)
@@ -71,6 +71,10 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var entityCreated = await queryRepository.GetByIdWithIncludesAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
+        entityCreated.Education.ShouldNotBeNull();
+        entityCreated.WorkExperiences.ShouldNotBeNull();
+        entityCreated.Education.ShouldBeSameAs(entityCreated.Education);
+        entityCreated.WorkExperiences.ShouldBeSameAs(entityCreated.WorkExperiences);
     }
 
     [Fact(DisplayName = "Return the record and return 200 when GET request with valid ID is provided")]
@@ -157,14 +161,17 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         return entity;
     }
 
-    private async Task<SummaryEntity> CreateAndPersistEntityAsync(SummaryEntity entity)
+    private async Task<SummaryEntity> CreateAndPersistEntityAsync(SummaryEntity summary)
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<SummaryEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
 
+        var entity = new ProfileEntityBuilder(_fixture)
+            .WithSummary(summary)
+            .Build();
         await commandRepository.CreateAsync(entity);
         await commandRepository.SaveChangesAsync();
 
-        return entity;
+        return entity.Summary!;
     }
 }

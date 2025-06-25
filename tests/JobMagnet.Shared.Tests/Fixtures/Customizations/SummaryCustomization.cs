@@ -10,12 +10,9 @@ public class SummaryCustomization : ICustomization
     {
         fixture.Customize<SummaryEntity>(composer =>
             composer
-                .With(x => x.Id, 0)
-                .With(x => x.ProfileId, 0)
-                .With(x => x.IsDeleted, false)
-                .Without(x => x.DeletedAt)
-                .Without(x => x.DeletedBy)
-                .Do(ApplyCommonProperties)
+                .FromFactory(() => new SummaryEntity(
+                    FixtureBuilder.Faker.Lorem.Paragraph()
+                ))
                 .OmitAutoProperties()
         );
 
@@ -26,12 +23,5 @@ public class SummaryCustomization : ICustomization
                 []
             )
         );
-    }
-
-    private static void ApplyCommonProperties(dynamic item)
-    {
-        item.Profile = FixtureBuilder.Build().Create<ProfileEntity>();
-        item.Introduction = FixtureBuilder.Faker.Lorem.Paragraph();
-        item.WorkExperiences = FixtureBuilder.Build().CreateMany<WorkExperienceEntity>().ToList();
     }
 }

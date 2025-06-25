@@ -127,6 +127,12 @@ public class ProfileEntityBuilder(IFixture fixture)
         return this;
     }
 
+    public ProfileEntityBuilder WithSummary(SummaryEntity summary)
+    {
+        _summary = summary;
+        return this;
+    }
+
     public ProfileEntityBuilder WithEducation(int count = 5)
     {
         if (_summary == null)

@@ -1,4 +1,5 @@
 ﻿using JobMagnet.Application.Contracts.Commands.Summary;
+using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Summary;
 using JobMagnet.Domain.Core.Entities;
 using Mapster;
@@ -25,6 +26,14 @@ public static class SummaryMapper
         TypeAdapterConfig<SummaryEntity, SummaryCommand>
             .NewConfig()
             .Map(dest => dest.SummaryData, src => src);
+
+        TypeAdapterConfig<EducationBase, EducationEntity>
+            .NewConfig()
+            .MapToConstructor(true);
+
+        TypeAdapterConfig<WorkExperienceBase, WorkExperienceEntity>
+            .NewConfig()
+            .MapToConstructor(true);
     }
 
     public static SummaryEntity ToEntity(this SummaryCommand command)
@@ -37,27 +46,17 @@ public static class SummaryMapper
             ProfileId = data.ProfileId,
         };
 
-        entity.Education = data.Education.Select(e => new EducationEntity(
-                e.Degree ?? string.Empty,
-                e.InstitutionName ?? string.Empty,
-                e.InstitutionLocation ?? string.Empty,
-                e.StartDate,
-                e.EndDate,
-                e.Description ?? string.Empty,
-                entity.Id
-            )).ToList();
+        entity.Education = data.Education.Select(e => e.Adapt<EducationEntity>()).ToList();
 
-        entity.WorkExperiences = data.WorkExperiences.Select(w => new WorkExperienceEntity
+        entity.WorkExperiences = data.WorkExperiences.Select(w =>
         {
-            Id = w.Id,
-            Description = w.Description!,
-            JobTitle = w.JobTitle!,
-            CompanyName = w.CompanyName!,
-            CompanyLocation = w.CompanyLocation!,
-            StartDate = w.StartDate ?? DateTime.MinValue,
-            EndDate = w.EndDate,
-            SummaryId = entity.Id,
-            Responsibilities = w.Responsibilities.Select(description => new WorkResponsibilityEntity(description, w.Id)).ToList()
+            var workExperience = w.Adapt<WorkExperienceEntity>();
+            if (w.Responsibilities == null) return workExperience;
+
+            foreach (var description in w.Responsibilities)
+                workExperience.AddResponsibility(new WorkResponsibilityEntity(description));
+
+            return workExperience;
         }).ToList();
 
         return entity;

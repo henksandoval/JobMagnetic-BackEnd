@@ -152,13 +152,14 @@ public class ProfileFactory(
     private List<WorkExperienceEntity> BuildWorkExperience(List<WorkExperienceParseDto>? experienceDtos)
     {
         if (experienceDtos is null) return [];
-        return experienceDtos.Select(dto => new WorkExperienceEntity
-        {
-            Id = 0,
-            CompanyName = dto.CompanyName ?? string.Empty,
-            StartDate = ToDateTimeOrDefault(dto.StartDate),
-            EndDate = ToNullableDateTime(dto.EndDate)
-        }).ToList();
+        return experienceDtos.Select(dto => new WorkExperienceEntity(
+            dto.JobTitle ?? string.Empty,
+            dto.CompanyName ?? string.Empty,
+            dto.CompanyLocation ?? string.Empty,
+            ToDateTimeOrDefault(dto.StartDate),
+            ToNullableDateTime(dto.EndDate),
+            dto.Description ?? string.Empty
+        )).ToList();
     }
 
     private SummaryEntity? BuildSummary(SummaryParseDto? summaryDto)
