@@ -33,7 +33,7 @@ public class ProfileFactory(
             ProfileImageUrl = profileDto.ProfileImageUrl
         };
 
-        var talents = BuildTalents(profileDto.Talents);
+        var talents = BuildTalents(profile, profileDto.Talents);
         var testimonials = BuildTestimonials(profileDto.Testimonials);
         var galleryItems = BuildProjects(profileDto.Project);
 
@@ -89,15 +89,26 @@ public class ProfileFactory(
         return resumeEntity;
     }
 
-    private List<TalentEntity> BuildTalents(List<TalentParseDto>? talentDtos)
+    private List<TalentEntity> BuildTalents(ProfileEntity profile,List<TalentParseDto>? talentDtos)
     {
-        if (talentDtos is null) return [];
-
-        return talentDtos.Select(dto => new TalentEntity
+        if (talentDtos is null)
         {
-            Id = 0,
-            Description = dto.Description!
-        }).ToList();
+            return new List<TalentEntity>();
+        }
+
+        foreach (var talentDto in talentDtos)
+        {
+            if (string.IsNullOrWhiteSpace(talentDto.Description))
+            {
+                throw new ArgumentException("Talent description cannot be null or whitespace.", nameof(talentDtos));
+            }
+        }
+
+        return talentDtos
+            .Select(dto => new TalentEntity(
+                dto.Description!
+            ))
+            .ToList();
     }
 
     private static List<TestimonialEntity> BuildTestimonials(List<TestimonialParseDto>? testimonials)

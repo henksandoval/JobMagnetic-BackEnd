@@ -30,6 +30,7 @@ internal static class PersistenceExtensions
             .AddTransient<IQueryRepository<PublicProfileIdentifierEntity, long>, Repository<PublicProfileIdentifierEntity, long>>()
             .AddTransient<IQueryRepository<ContactType, int>, Repository<ContactType, int>>()
             .AddTransient<IQueryRepository<ContactTypeAlias, int>, Repository<ContactTypeAlias, int>>()
+            .AddTransient<IQueryRepository<TalentEntity, long>, Repository<TalentEntity, long>>()
             .AddTransient<IQueryRepository<TestimonialEntity, long>, Repository<TestimonialEntity, long>>()
             .AddTransient<IQueryRepository<SkillCategory, ushort>, Repository<SkillCategory, ushort>>()
             .AddTransient<IQueryRepository<SkillType, int>, Repository<SkillType, int>>()
@@ -47,6 +48,7 @@ internal static class PersistenceExtensions
         return services
             .AddTransient<ICommandRepository<ProfileEntity>, Repository<ProfileEntity, long>>()
             .AddTransient<ICommandRepository<PublicProfileIdentifierEntity>, Repository<PublicProfileIdentifierEntity, long>>()
+            .AddTransient<ICommandRepository<TalentEntity>, Repository<TalentEntity, long>>()
             .AddTransient<ICommandRepository<ResumeEntity>, Repository<ResumeEntity, long>>()
             .AddTransient<ICommandRepository<TestimonialEntity>, Repository<TestimonialEntity, long>>()
             .AddTransient<ICommandRepository<Project>, Repository<Project, long>>()
