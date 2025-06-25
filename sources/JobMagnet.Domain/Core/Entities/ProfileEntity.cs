@@ -7,6 +7,7 @@ namespace JobMagnet.Domain.Core.Entities;
 public class ProfileEntity : SoftDeletableEntity<long>
 {
     private readonly HashSet<PublicProfileIdentifierEntity> _publicProfileIdentifiers = [];
+    private readonly HashSet<TalentEntity> _talents = [];
     private readonly HashSet<TestimonialEntity> _testimonials = [];
     private readonly HashSet<Project> _projects = [];
     public string? FirstName { get; set; }
@@ -22,7 +23,8 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public SocialProof SocialProof { get; }
     public Portfolio Portfolio { get; }
     public VanityUrls VanityUrls { get; }
-    public virtual ICollection<TalentEntity> Talents { get; set; } = new HashSet<TalentEntity>();
+    public TalentShowcase TalentShowcase { get; }
+    public virtual IReadOnlyCollection<TalentEntity> Talents => _talents;
     public virtual IReadOnlyCollection<Project> Projects => _projects;
     public virtual IReadOnlyCollection<TestimonialEntity> Testimonials => _testimonials;
     public virtual IReadOnlyCollection<PublicProfileIdentifierEntity> PublicProfileIdentifiers => _publicProfileIdentifiers;
@@ -32,6 +34,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
         SocialProof = new SocialProof(this);
         Portfolio = new Portfolio(this);
         VanityUrls = new VanityUrls(this);
+        TalentShowcase = new TalentShowcase(this);
     }
 
     public void AddTalent(string description)
@@ -39,7 +42,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
         ArgumentException.ThrowIfNullOrWhiteSpace(description);
         
         var talentEntity = new TalentEntity(description, this.Id);
-        Talents.Add(talentEntity);
+        _talents.Add(talentEntity);
     }
 
     public void AddTalents(List<TalentEntity> talents)
@@ -47,7 +50,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
         ArgumentNullException.ThrowIfNull(talents);
 
         foreach (var talent in talents)
-            Talents.Add(talent);
+            _talents.Add(talent);
     }
 
     public void AddSkill(SkillSet skillSet)
