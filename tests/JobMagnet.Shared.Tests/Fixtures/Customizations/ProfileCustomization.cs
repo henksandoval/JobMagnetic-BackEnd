@@ -21,7 +21,6 @@ public class ProfileCustomization : ICustomization
                 .With(x => x.SecondLastName, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.LastName()))
                 .Without(x => x.DeletedAt)
                 .Without(x => x.DeletedBy)
-                .Without(x => x.Talents)
                 .Without(x => x.Summary)
                 .OmitAutoProperties()
         );
