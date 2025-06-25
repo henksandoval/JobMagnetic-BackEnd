@@ -57,10 +57,7 @@ public static class SummaryMapper
             StartDate = w.StartDate ?? DateTime.MinValue,
             EndDate = w.EndDate,
             SummaryId = entity.Id,
-            Responsibilities = w.Responsibilities.Select(description => new WorkResponsibilityEntity(
-                w.Id,
-                description
-            )).ToList()
+            Responsibilities = w.Responsibilities.Select(description => new WorkResponsibilityEntity(description, w.Id)).ToList()
         }).ToList();
 
         return entity;

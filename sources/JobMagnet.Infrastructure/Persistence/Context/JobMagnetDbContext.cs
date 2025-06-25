@@ -32,36 +32,8 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ProfileEntity>(entity =>
-        {
-            entity
-                .ToTable("Profiles")
-                .HasKey(profile => profile.Id);
-        });
-        modelBuilder.Entity<EducationEntity>().ToTable("Educations");
         modelBuilder.Entity<TalentEntity>().ToTable("Talents");
-        modelBuilder.Entity<ResumeEntity>().ToTable("Resumes");
         modelBuilder.Entity<SummaryEntity>().ToTable("Summaries");
-        modelBuilder.Entity<TestimonialEntity>().ToTable("Testimonials");
-        modelBuilder.Entity<WorkExperienceEntity>().ToTable("WorkExperiences");
-
-        modelBuilder.Entity<WorkResponsibilityEntity>(entity =>
-        {
-            entity.ToTable("WorkResponsibilities")
-                .HasKey(workResponsibility => workResponsibility.Id);
-
-            entity
-                .Property(workResponsibility => workResponsibility.Description)
-                .IsRequired()
-                .HasMaxLength(WorkResponsibilityEntity.MaxDescriptionLength);
-
-            entity
-                .HasOne(workResponsibility => workResponsibility.WorkExperience)
-                .WithMany(workExperience => workExperience.Responsibilities)
-                .HasForeignKey(workResponsibility => workResponsibility.WorkExperienceId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Cascade);
-        });
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }

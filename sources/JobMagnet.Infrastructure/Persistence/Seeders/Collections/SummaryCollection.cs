@@ -111,7 +111,7 @@ public record SummaryCollection
                 StartDate = x.StartDate,
                 EndDate = x.EndDate,
                 Responsibilities = x.Responsibilities
-                    .Select(description => new WorkResponsibilityEntity(0, description)
+                    .Select(description => new WorkResponsibilityEntity(description, 0)
                     {
                         AddedAt = DateTime.UtcNow,
                         AddedBy = Guid.Empty
