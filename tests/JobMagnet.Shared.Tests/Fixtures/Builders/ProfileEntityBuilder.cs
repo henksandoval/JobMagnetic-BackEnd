@@ -216,7 +216,8 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         if (_talents.Count > 0)
         {
-            profile.Talents = _talents;
+            foreach (var talent in _talents)
+                profile.TalentShowcase.AddTalent(talent.Description);
         }
 
         return profile;
