@@ -15,19 +15,7 @@ public record TalentsCollection
         new ("Problem Solver"),
         new ("Detail Oriented"),
         new ("Excellent Communicator"),
-        new ("Adaptable"),
-        new ("Analytical Thinker"),
-        new ("Innovative"),
-        new ("Self-Motivated"),
-        new ("Collaborative"),
-        new ("Time Management"),
-        new ("Critical Thinking"),
-        new ("Leadership Skills"),
-        new ("Technical Proficiency"),
-        new ("Project Management"),
-        new ("Customer Focused"),
-        new ("Team Player"),
-        new ("Fast Learner"),
+        new ("Adaptable")
     ];
 
     public TalentsCollection(long profileId = 0)
