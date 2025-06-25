@@ -140,7 +140,9 @@ public class ProfileEntityBuilder(IFixture fixture)
             throw new InvalidOperationException("Cannot add contact info without a summary. Call WithSummary() first.");
         }
 
-        _summary.Education = fixture.CreateMany<EducationEntity>(count).ToList();
+        foreach (var education in fixture.CreateMany<EducationEntity>(count).ToList())
+            _summary.AddEducation(education);
+
         return this;
     }
 
@@ -151,7 +153,9 @@ public class ProfileEntityBuilder(IFixture fixture)
             throw new InvalidOperationException("Cannot add contact info without a summary. Call WithSummary() first.");
         }
 
-        _summary.WorkExperiences = fixture.CreateMany<WorkExperienceEntity>(count).ToList();
+        foreach (var workExperience in fixture.CreateMany<WorkExperienceEntity>(count).ToList())
+            _summary.AddWorkExperience(workExperience);
+
         return this;
     }
 
@@ -194,7 +198,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         if (_summary is not null)
         {
-            profile.Summary = _summary;
+            profile.AddSummary(_summary);
         }
 
         if (_skillSet is not null)

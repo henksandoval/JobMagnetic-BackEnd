@@ -22,7 +22,6 @@ public class ProfileCustomization : ICustomization
                 .Without(x => x.DeletedAt)
                 .Without(x => x.DeletedBy)
                 .Without(x => x.Talents)
-                .Without(x => x.Summary)
                 .OmitAutoProperties()
         );
 

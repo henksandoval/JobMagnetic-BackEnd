@@ -166,10 +166,7 @@ public class ProfileFactory(
     {
         if (summaryDto is null) return null;
 
-        return new SummaryEntity {
-            Id = 0,
-            Introduction = summaryDto.Introduction ?? string.Empty
-        };
+        return new SummaryEntity(summaryDto.Introduction ?? string.Empty);
     }
 
     private async Task<SkillSet> BuildSkillSetAsync(SkillSetParseDto skillSetDto,

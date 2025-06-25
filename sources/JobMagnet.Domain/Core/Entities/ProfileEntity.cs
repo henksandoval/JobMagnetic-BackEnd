@@ -18,7 +18,7 @@ public class ProfileEntity : SoftDeletableEntity<long>
 
     public virtual ResumeEntity? Resume { get; private set; }
     public virtual SkillSet? SkillSet { get; private set; }
-    public virtual SummaryEntity? Summary { get; set; }
+    public virtual SummaryEntity? Summary { get; private set; }
     public SocialProof SocialProof { get; }
     public Portfolio Portfolio { get; }
     public VanityUrls VanityUrls { get; }

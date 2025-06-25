@@ -39,25 +39,23 @@ public static class SummaryMapper
     public static SummaryEntity ToEntity(this SummaryCommand command)
     {
         var data = command.SummaryData;
-        var entity = new SummaryEntity
+        var entity = new SummaryEntity(data!.Introduction!, data.ProfileId);
+
+        foreach (var educationBase in data.Education)
         {
-            Id = 0,
-            Introduction = data!.Introduction!,
-            ProfileId = data.ProfileId,
-        };
+            var education = educationBase.Adapt<EducationEntity>();
+            entity.AddEducation(education);
+        }
 
-        entity.Education = data.Education.Select(e => e.Adapt<EducationEntity>()).ToList();
-
-        entity.WorkExperiences = data.WorkExperiences.Select(w =>
+        foreach (var experienceBase in data.WorkExperiences)
         {
-            var workExperience = w.Adapt<WorkExperienceEntity>();
-            if (w.Responsibilities == null) return workExperience;
+            var workExperience = experienceBase.Adapt<WorkExperienceEntity>();
 
-            foreach (var description in w.Responsibilities)
+            foreach (var description in experienceBase?.Responsibilities ?? [])
                 workExperience.AddResponsibility(new WorkResponsibilityEntity(description));
 
-            return workExperience;
-        }).ToList();
+            entity.AddWorkExperience(workExperience);
+        };
 
         return entity;
     }

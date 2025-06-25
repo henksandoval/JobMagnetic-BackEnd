@@ -8,17 +8,15 @@ namespace JobMagnet.Domain.Core.Entities;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class SummaryEntity : SoftDeletableEntity<long>
 {
-    public string Introduction { get; set; }
-    public virtual ICollection<EducationEntity> Education { get; set; } = new HashSet<EducationEntity>();
+    private readonly HashSet<EducationEntity> _educationHistory = [];
+    private readonly HashSet<WorkExperienceEntity> _workExperiences = [];
 
-    public virtual ICollection<WorkExperienceEntity> WorkExperiences { get; set; } =
-        new HashSet<WorkExperienceEntity>();
+    public string Introduction { get; private set; }
+    public long ProfileId { get; private set; }
+    public virtual IReadOnlyCollection<EducationEntity> Education => _educationHistory;
+    public virtual IReadOnlyCollection<WorkExperienceEntity> WorkExperiences => _workExperiences;
 
-    [ForeignKey(nameof(Profile))] public long ProfileId { get; set; }
-
-    public virtual ProfileEntity Profile { get; set; }
-
-    public SummaryEntity()
+    private SummaryEntity()
     {
     }
 
@@ -32,5 +30,19 @@ public class SummaryEntity : SoftDeletableEntity<long>
         Id = id;
         ProfileId = profileId;
         Introduction = introduction;
+    }
+
+    public void AddEducation(EducationEntity education)
+    {
+        Guard.IsNotNull(education);
+
+        _educationHistory.Add(education);
+    }
+
+    public void AddWorkExperience(WorkExperienceEntity workExperience)
+    {
+        Guard.IsNotNull(workExperience);
+
+        _workExperiences.Add(workExperience);
     }
 }
