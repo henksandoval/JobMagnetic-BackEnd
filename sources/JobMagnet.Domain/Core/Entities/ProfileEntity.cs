@@ -37,11 +37,8 @@ public class ProfileEntity : SoftDeletableEntity<long>
         TalentShowcase = new TalentShowcase(this);
     }
 
-    public void AddTalent(string description)
+    public void AddTalent(TalentEntity talentEntity)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(description);
-
-        var talentEntity = new TalentEntity(description, Id);
         _talents.Add(talentEntity);
     }
 

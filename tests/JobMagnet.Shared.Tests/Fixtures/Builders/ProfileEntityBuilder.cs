@@ -94,7 +94,10 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithTalents(int count = 5)
     {
-        _talents = fixture.CreateMany<TalentEntity>(count).ToList();
+        while (_talents?.Count < count)
+        {
+            _talents = fixture.CreateMany<TalentEntity>(count).ToList();
+        }
         return this;
     }
 
@@ -182,9 +185,9 @@ public class ProfileEntityBuilder(IFixture fixture)
                     gallery.UrlVideo,
                     gallery.Type);
 
-        if (_talents.Count > 0)
-            foreach (var talent in _talents)
-                profile.TalentShowcase.AddTalent(talent.Description);
+        if (_talents.Count > 0) return profile;
+        foreach (var talent in _talents)
+            profile.TalentShowcase.AddTalent(talent.Description);
 
         return profile;
     }

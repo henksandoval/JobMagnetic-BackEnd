@@ -73,7 +73,8 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
     private static void AddTalents(ProfileEntity profile)
     {
         var talentsCollection = new TalentsCollection().GetTalents();
-        foreach (var talent in talentsCollection) profile.AddTalent(talent.Description);
+        foreach (var talent in talentsCollection)
+            profile.TalentShowcase.AddTalent(talent.Description);
     }
 
     private async Task AddResumeAsync(ProfileEntity profile, CancellationToken cancellationToken)

@@ -21,6 +21,6 @@ public class TalentShowcase
 
         var talent = new TalentEntity(description, _profile.Id);
 
-        _profile.AddTalent(talent.Description);
+        _profile.AddTalent(talent);
     }
 }

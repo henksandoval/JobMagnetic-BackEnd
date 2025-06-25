@@ -12,11 +12,11 @@ public record TalentsCollection
 
     private readonly IList<Talents> _values =
     [
-        new("Creative"),
-        new("Problem Solver"),
-        new("Detail Oriented"),
-        new("Excellent Communicator"),
-        new("Adaptable")
+        new ("Strategic Thinker"),
+        new ("Inspirational Leader"),
+        new ("Team Player"),
+        new ("Proactive"),
+        new ("Resilient")
     ];
 
     public TalentsCollection(long profileId = 0)
