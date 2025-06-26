@@ -3,9 +3,9 @@ using JobMagnet.Application.Services;
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Core.Entities.Base.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

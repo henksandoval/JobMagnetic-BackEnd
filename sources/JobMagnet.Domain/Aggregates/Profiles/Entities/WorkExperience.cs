@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Core.Entities.Base;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;

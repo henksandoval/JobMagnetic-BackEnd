@@ -1,5 +1,5 @@
 ﻿using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
