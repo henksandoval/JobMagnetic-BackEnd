@@ -7,14 +7,14 @@ namespace JobMagnet.Domain.Core.Entities;
 
 public class Project : SoftDeletableEntity<long>
 {
-    public int Position { get; }
-    public string Title { get; }
-    public string Description { get; }
-    public string UrlLink { get; }
-    public string UrlImage { get; }
-    public string UrlVideo { get; }
-    public string Type { get; }
-    public long ProfileId { get; }
+    public int Position { get; private set; }
+    public string Title { get; private set; }
+    public string Description { get; private set; }
+    public string UrlLink { get; private set; }
+    public string UrlImage { get; private set; }
+    public string UrlVideo { get; private set; }
+    public string Type { get; private set; }
+    public long ProfileId { get; private set; }
 
     private Project()
     {
