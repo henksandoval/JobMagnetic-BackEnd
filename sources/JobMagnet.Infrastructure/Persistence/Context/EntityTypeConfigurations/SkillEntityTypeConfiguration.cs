@@ -1,4 +1,4 @@
-using JobMagnet.Domain.Core.Entities.Skills;
+using JobMagnet.Domain.Aggregates.Skills;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

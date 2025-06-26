@@ -2,7 +2,7 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 
-namespace JobMagnet.Domain.Core.Entities;
+namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public class Talent : SoftDeletableEntity<long>
 {

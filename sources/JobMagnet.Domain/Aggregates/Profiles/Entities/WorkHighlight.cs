@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 
-namespace JobMagnet.Domain.Core.Entities;
+namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public class WorkHighlight
 {

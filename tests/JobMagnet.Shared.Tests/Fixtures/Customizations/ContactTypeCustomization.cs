@@ -1,6 +1,6 @@
 using AutoFixture;
 using Bogus;
-using JobMagnet.Domain.Core.Entities.Contact;
+using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;

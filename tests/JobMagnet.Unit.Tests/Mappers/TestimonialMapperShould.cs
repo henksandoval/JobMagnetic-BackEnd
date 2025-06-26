@@ -3,6 +3,7 @@ using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Application.Contracts.Commands.Testimonial;
 using JobMagnet.Application.Mappers;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Shared.Tests.Fixtures;
 

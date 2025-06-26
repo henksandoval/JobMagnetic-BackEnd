@@ -1,4 +1,5 @@
-using JobMagnet.Domain.Core.Entities.Contact;
+using JobMagnet.Domain.Aggregates.Contact;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

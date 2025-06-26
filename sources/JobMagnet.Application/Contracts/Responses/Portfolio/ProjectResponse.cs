@@ -1,6 +1,6 @@
 ﻿using JobMagnet.Application.Contracts.Responses.Base;
 
-namespace JobMagnet.Application.Contracts.Responses.Project;
+namespace JobMagnet.Application.Contracts.Responses.Portfolio;
 
 public sealed record ProjectResponse : IIdentifierBase<long>
 {

@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 
-namespace JobMagnet.Domain.Core.Entities.Contact;
+namespace JobMagnet.Domain.Aggregates.Contact;
 
 public class ContactTypeAlias : SoftDeletableEntity<int>
 {

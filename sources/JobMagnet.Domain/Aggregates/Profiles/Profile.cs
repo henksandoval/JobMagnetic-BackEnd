@@ -1,9 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Core.Entities.Base;
-using JobMagnet.Domain.Core.Entities.Skills;
 
-namespace JobMagnet.Domain.Core.Entities;
+namespace JobMagnet.Domain.Aggregates.Profiles;
 
 public class Profile : SoftDeletableEntity<long>
 {

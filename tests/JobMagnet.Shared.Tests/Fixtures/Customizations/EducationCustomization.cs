@@ -2,6 +2,7 @@ using AutoFixture;
 using Bogus;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Shared.Utils;
 

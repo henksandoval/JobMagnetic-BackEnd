@@ -1,8 +1,9 @@
 using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Domain.Services;
 
-namespace JobMagnet.Domain.Core.Entities;
+namespace JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 
 public class VanityUrls
 {

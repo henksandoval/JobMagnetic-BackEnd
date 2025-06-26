@@ -2,6 +2,7 @@
 using JobMagnet.Application.Contracts.Commands.Summary;
 using JobMagnet.Application.Contracts.Responses.Summary;
 using JobMagnet.Application.Mappers;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;

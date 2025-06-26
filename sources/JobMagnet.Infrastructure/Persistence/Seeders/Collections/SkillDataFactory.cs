@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using JobMagnet.Domain.Core.Entities.Skills;
+using JobMagnet.Domain.Aggregates.Skills.Entities;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 

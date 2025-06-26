@@ -1,5 +1,5 @@
 using CSharpFunctionalExtensions;
-using JobMagnet.Domain.Core.Entities.Contact;
+using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Ports.Repositories.Base;
 
 namespace JobMagnet.Domain.Services;

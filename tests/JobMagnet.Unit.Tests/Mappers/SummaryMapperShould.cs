@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Application.Mappers;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Shared.Tests.Fixtures;
 

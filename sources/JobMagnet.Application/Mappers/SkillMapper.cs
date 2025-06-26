@@ -1,7 +1,8 @@
 ﻿using JobMagnet.Application.Contracts.Commands.Skill;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Skill;
-using JobMagnet.Domain.Core.Entities.Skills;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Skills;
 using Mapster;
 
 namespace JobMagnet.Application.Mappers;

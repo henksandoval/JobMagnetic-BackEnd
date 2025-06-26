@@ -2,6 +2,7 @@
 using JobMagnet.Application.Contracts.Commands.Testimonial;
 using JobMagnet.Application.Contracts.Responses.Testimonial;
 using JobMagnet.Application.Mappers;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Host.Controllers.Base;

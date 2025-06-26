@@ -1,9 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Core.Entities.Base;
-using JobMagnet.Domain.Core.Entities.Contact;
 
-namespace JobMagnet.Domain.Core.Entities;
+namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public class Headline : SoftDeletableEntity<long>
 {

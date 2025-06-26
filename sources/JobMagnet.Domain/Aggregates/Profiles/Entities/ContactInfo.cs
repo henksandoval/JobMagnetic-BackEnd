@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Core.Entities.Base;
 
-namespace JobMagnet.Domain.Core.Entities.Contact;
+namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public class ContactInfo : SoftDeletableEntity<long>
 {

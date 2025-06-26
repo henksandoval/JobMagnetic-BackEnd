@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Infrastructure.Persistence.Context;

@@ -1,7 +1,9 @@
 using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
+using JobMagnet.Domain.Aggregates.Contact;
+using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Core.Entities.Contact;
-using JobMagnet.Domain.Core.Entities.Skills;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 

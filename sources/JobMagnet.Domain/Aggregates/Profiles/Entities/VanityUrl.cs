@@ -3,7 +3,7 @@ using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Core.Enums;
 
-namespace JobMagnet.Domain.Core.Entities;
+namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public class VanityUrl : TrackableEntity<long>
 {

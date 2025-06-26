@@ -1,6 +1,8 @@
-﻿using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Core.Entities.Contact;
-using JobMagnet.Domain.Core.Entities.Skills;
+﻿using JobMagnet.Domain.Aggregates.Contact;
+using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Skills.Entities;
+using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Infrastructure.Exceptions;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;

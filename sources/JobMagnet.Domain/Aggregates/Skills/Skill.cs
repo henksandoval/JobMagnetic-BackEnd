@@ -1,8 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Domain.Core.Entities.Base;
 
-namespace JobMagnet.Domain.Core.Entities.Skills;
+namespace JobMagnet.Domain.Aggregates.Skills;
 
 public class Skill : TrackableEntity<long>
 {

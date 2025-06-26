@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 
-namespace JobMagnet.Domain.Core.Entities.Skills;
+namespace JobMagnet.Domain.Aggregates.Skills.Entities;
 
 public class SkillCategory : SoftDeletableEntity<ushort>
 {

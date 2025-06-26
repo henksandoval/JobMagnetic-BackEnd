@@ -4,6 +4,7 @@ using JobMagnet.Application.UseCases.CvParser.Commands;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Application.UseCases.CvParser.Responses;
+using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Domain.Ports.Repositories.Base;

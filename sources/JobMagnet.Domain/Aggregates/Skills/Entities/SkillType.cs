@@ -3,7 +3,7 @@ using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Exceptions;
 
-namespace JobMagnet.Domain.Core.Entities.Skills;
+namespace JobMagnet.Domain.Aggregates.Skills.Entities;
 
 public class SkillType : SoftDeletableEntity<int>
 {

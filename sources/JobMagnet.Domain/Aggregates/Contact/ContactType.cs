@@ -3,7 +3,7 @@ using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Exceptions;
 
-namespace JobMagnet.Domain.Core.Entities.Contact;
+namespace JobMagnet.Domain.Aggregates.Contact;
 
 public class ContactType : SoftDeletableEntity<int>
 {
