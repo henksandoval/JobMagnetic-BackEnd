@@ -22,8 +22,8 @@ public class ProfileMapperShould
             .WithContactInfo();
 
         var profile = profileBuilder.Build();
-        profile.SecondLastName = string.Empty;
-        profile.MiddleName = string.Empty;
+        profile.ChangeMiddleName(string.Empty);
+        profile.ChangeSecondLastName(string.Empty);
 
         var profileExpected = new ProfileViewModel();
 

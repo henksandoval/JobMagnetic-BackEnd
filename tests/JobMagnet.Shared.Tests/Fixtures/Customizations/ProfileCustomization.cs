@@ -11,16 +11,14 @@ public class ProfileCustomization : ICustomization
     {
         fixture.Customize<ProfileEntity>(composer =>
             composer
-                .With(x => x.Id, 0)
-                .With(x => x.IsDeleted, false)
-                .With(x => x.FirstName, FixtureBuilder.Faker.Name.FirstName())
-                .With(x => x.LastName, FixtureBuilder.Faker.Name.LastName())
-                .With(x => x.BirthDate, DateOnly.FromDateTime(FixtureBuilder.Faker.Date.Past(30)))
-                .With(x => x.ProfileImageUrl, FixtureBuilder.Faker.Image.PicsumUrl())
-                .With(x => x.MiddleName, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.FirstName()))
-                .With(x => x.SecondLastName, TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.LastName()))
-                .Without(x => x.DeletedAt)
-                .Without(x => x.DeletedBy)
+                .FromFactory(() => new ProfileEntity(
+                    FixtureBuilder.Faker.Name.FirstName(),
+                    FixtureBuilder.Faker.Name.LastName(),
+                    FixtureBuilder.Faker.Image.PicsumUrl(200, 200),
+                    DateOnly.FromDateTime(FixtureBuilder.Faker.Date.Past(30)),
+                    TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.FirstName()),
+                    TestUtilities.OptionalValue(FixtureBuilder.Faker, f => f.Name.LastName()
+                )))
                 .OmitAutoProperties()
         );
 

@@ -29,6 +29,7 @@ public static class ProfileMapper
 
         TypeAdapterConfig<ProfileCommand, ProfileEntity>
             .NewConfig()
-            .Map(dest => dest, src => src.ProfileData);
+            .Map(dest => dest, src => src.ProfileData)
+            .MapToConstructor(true);
     }
 }

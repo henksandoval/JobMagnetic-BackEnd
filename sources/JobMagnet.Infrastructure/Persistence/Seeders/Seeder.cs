@@ -43,16 +43,11 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
     private async Task<ProfileEntity> BuildSampleProfileAsync(CancellationToken cancellationToken)
     {
-        var profile = new ProfileEntity
-        {
-            Id = 0,
-            FirstName = "John",
-            LastName = "Doe",
-            BirthDate = new DateOnly(1990, 04, 01),
-            ProfileImageUrl = "https://bootstrapmade.com/content/demo/MyResume/assets/img/profile-img.jpg",
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        };
+        var profile = new ProfileEntity(
+            "John",
+            "Doe",
+            "https://bootstrapmade.com/content/demo/MyResume/assets/img/profile-img.jpg",
+            new DateOnly(1990, 04, 01));
 
         AddPublicIdentifier(profile);
         AddTalents(profile);

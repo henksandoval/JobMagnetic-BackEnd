@@ -8,6 +8,10 @@ public class SocialProof
     private readonly ProfileEntity _profile;
     private IReadOnlyCollection<TestimonialEntity> Testimonials => _profile.Testimonials;
 
+    private SocialProof()
+    {
+    }
+
     internal SocialProof(ProfileEntity profile)
     {
         Guard.IsNotNull(profile);

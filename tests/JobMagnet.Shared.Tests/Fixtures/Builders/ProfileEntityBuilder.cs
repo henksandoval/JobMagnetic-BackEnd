@@ -161,9 +161,9 @@ public class ProfileEntityBuilder(IFixture fixture)
     {
         var profile = fixture.Create<ProfileEntity>();
 
-        if (_firstName is not null) profile.FirstName = _firstName;
+        if (_firstName is not null) profile.ChangeFirstName(_firstName);
 
-        if (_lastName is not null) profile.LastName = _lastName;
+        if (_lastName is not null) profile.ChangeLastName(_lastName);
 
         if (_resume is not null) profile.AddResume(_resume);
 

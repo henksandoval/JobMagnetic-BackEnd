@@ -62,10 +62,7 @@ public class CvParserHandlerShould
         var contactType = new ContactType(contactInfoEmail!.ContactType);
         resumeEntity.AddContactInfo(contactInfoEmail.Value!, contactType);
 
-        var profileEntity = new ProfileEntity
-        {
-            Id = 0
-        };
+        var profileEntity = new ProfileEntity(profileRaw.FirstName, profileRaw.LastName);
 
         profileEntity.AddResume(resumeEntity);
 

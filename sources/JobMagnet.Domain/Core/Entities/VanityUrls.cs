@@ -8,6 +8,10 @@ public class VanityUrls
 {
     private readonly ProfileEntity _profile;
 
+    private VanityUrls()
+    {
+    }
+
     internal VanityUrls(ProfileEntity profile)
     {
         _profile = profile;

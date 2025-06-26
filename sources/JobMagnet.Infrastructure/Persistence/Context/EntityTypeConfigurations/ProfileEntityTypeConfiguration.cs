@@ -26,19 +26,28 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<ProfileEn
             .HasForeignKey<SkillSet>(s => s.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.Ignore(p => p.VanityUrls);
         builder.HasMany(p => p.PublicProfileIdentifiers)
             .WithOne()
             .HasForeignKey(identifier => identifier.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.Ignore(p => p.SocialProof);
         builder.HasMany(p => p.Testimonials)
             .WithOne()
             .HasForeignKey(t => t.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.Ignore(p => p.TalentShowcase);
         builder.HasMany(p => p.Talents)
             .WithOne()
             .HasForeignKey(t => t.ProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Ignore(p => p.Portfolio);
+        builder.HasMany(p => p.Projects)
+            .WithOne()
+            .HasForeignKey(p => p.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

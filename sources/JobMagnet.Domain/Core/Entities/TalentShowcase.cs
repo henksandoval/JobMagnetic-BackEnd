@@ -8,6 +8,10 @@ public class TalentShowcase
     private readonly ProfileEntity _profile;
     private IReadOnlyCollection<TalentEntity> Talents => _profile.Talents;
 
+    private TalentShowcase()
+    {
+    }
+
     internal TalentShowcase(ProfileEntity profile)
     {
         Guard.IsNotNull(profile);

@@ -23,15 +23,14 @@ public class ProfileFactory(
         ArgumentNullException.ThrowIfNull(profileDto);
 
         var profile = new ProfileEntity
-        {
-            Id = 0,
-            FirstName = profileDto.FirstName,
-            SecondLastName = profileDto.SecondLastName,
-            LastName = profileDto.LastName,
-            MiddleName = profileDto.MiddleName,
-            BirthDate = profileDto.BirthDate,
-            ProfileImageUrl = profileDto.ProfileImageUrl
-        };
+        (
+            profileDto.FirstName,
+            profileDto.LastName,
+            profileDto.ProfileImageUrl,
+            profileDto.BirthDate,
+            profileDto.MiddleName,
+            profileDto.SecondLastName
+        );
 
         var talents = BuildTalents(profileDto.Talents);
         var testimonials = BuildTestimonials(profileDto.Testimonials);

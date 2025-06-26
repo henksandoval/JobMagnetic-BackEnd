@@ -8,6 +8,10 @@ public class Portfolio
     private readonly ProfileEntity _profile;
     private IReadOnlyCollection<Project> Projects => _profile.Projects;
 
+    private Portfolio()
+    {
+    }
+
     internal Portfolio(ProfileEntity profile)
     {
         Guard.IsNotNull(profile);
