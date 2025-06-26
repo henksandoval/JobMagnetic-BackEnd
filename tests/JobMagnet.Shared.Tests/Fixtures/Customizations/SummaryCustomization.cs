@@ -8,9 +8,9 @@ public class SummaryCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<SummaryEntity>(composer =>
+        fixture.Customize<ProfessionalSummary>(composer =>
             composer
-                .FromFactory(() => new SummaryEntity(
+                .FromFactory(() => new ProfessionalSummary(
                     FixtureBuilder.Faker.Lorem.Paragraph()
                 ))
                 .OmitAutoProperties()

@@ -18,7 +18,7 @@ public interface ICvParserHandler
 
 public class CvParserHandler(
     IRawCvParser cvParser,
-    ICommandRepository<ProfileEntity> profileRepository,
+    ICommandRepository<Profile> profileRepository,
     IProfileSlugGenerator slugGenerator,
     IProfileFactory profileFactory)
     : ICvParserHandler
@@ -27,7 +27,7 @@ public class CvParserHandler(
     {
         var profileEntity = await BuildProfileFromCvAsync(command, cancellationToken);
 
-        profileEntity.VanityUrls.CreateAndAssignPublicIdentifier(slugGenerator);
+        profileEntity.LinkManager.CreateAndAssignPublicIdentifier(slugGenerator);
 
         await profileRepository.CreateAsync(profileEntity, cancellationToken);
         await profileRepository.SaveChangesAsync(cancellationToken);
@@ -38,7 +38,7 @@ public class CvParserHandler(
         return new CreateProfileResponse(profileEntity.Id, userEmail, profileUrl);
     }
 
-    private async Task<ProfileEntity> BuildProfileFromCvAsync(CvParserCommand command, CancellationToken cancellationToken)
+    private async Task<Profile> BuildProfileFromCvAsync(CvParserCommand command, CancellationToken cancellationToken)
     {
         var rawProfile = await cvParser.ParseAsync(command.Stream);
         if (rawProfile.HasNoValue) throw new JobMagnetApplicationException("Failed to parse the CV.");
@@ -47,17 +47,17 @@ public class CvParserHandler(
         return await profileFactory.CreateProfileFromDtoAsync(profileParse, cancellationToken);
     }
 
-    private static string GetUserEmail(ProfileEntity profileEntity)
+    private static string GetUserEmail(Profile profile)
     {
-        var userEmail = profileEntity.Resume?.ContactInfo?
+        var userEmail = profile.Resume?.ContactInfo?
                             .FirstOrDefault(x => x.ContactType.Name.Equals("Email", StringComparison.OrdinalIgnoreCase))?
                             .Value
                         ?? string.Empty;
         return userEmail;
     }
 
-    private static string GetProfileSlugUrl(ProfileEntity profileEntity)
+    private static string GetProfileSlugUrl(Profile profile)
     {
-        return profileEntity.PublicProfileIdentifiers!.SingleOrDefault(x => x.Type == LinkType.Primary)!.ProfileSlugUrl;
+        return profile.VanityUrls!.SingleOrDefault(x => x.Type == LinkType.Primary)!.ProfileSlugUrl;
     }
 }

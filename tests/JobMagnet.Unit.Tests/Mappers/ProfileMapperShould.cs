@@ -13,7 +13,7 @@ public class ProfileMapperShould
 {
     private readonly IFixture _fixture = FixtureBuilder.Build();
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when PersonalData is defined")]
+    [Fact(DisplayName = "Map Profile to ProfileViewModel when PersonalData is defined")]
     public void MapperProfileEntityToProfileViewModelWithPersonalData()
     {
         var profileBuilder = new ProfileEntityBuilder(_fixture)
@@ -37,7 +37,7 @@ public class ProfileMapperShould
         result.PersonalData!.ShouldBeEquivalentTo(profileExpected.PersonalData);
     }
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when About is defined")]
+    [Fact(DisplayName = "Map Profile to ProfileViewModel when About is defined")]
     public void MapperProfileEntityToProfileViewModelWithAbout()
     {
         var profileBuilder = new ProfileEntityBuilder(_fixture)
@@ -58,7 +58,7 @@ public class ProfileMapperShould
         result.About!.ShouldBeEquivalentTo(profileExpected.About);
     }
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Testimonial is defined")]
+    [Fact(DisplayName = "Map Profile to ProfileViewModel when Testimonial is defined")]
     public void MapperProfileEntityToProfileViewModelWithTestimonials()
     {
         var profile = new ProfileEntityBuilder(_fixture)
@@ -77,7 +77,7 @@ public class ProfileMapperShould
         result.Testimonials!.ShouldBeEquivalentTo(profileExpected.Testimonials);
     }
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Portfolio is defined")]
+    [Fact(DisplayName = "Map Profile to ProfileViewModel when Portfolio is defined")]
     public void MapperProfileEntityToProfileViewModelWithProject()
     {
         var profile = new ProfileEntityBuilder(_fixture)
@@ -96,7 +96,7 @@ public class ProfileMapperShould
         result.Project.ShouldBeEquivalentTo(profileExpected.Project);
     }
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Skills are defined")]
+    [Fact(DisplayName = "Map Profile to ProfileViewModel when Skills are defined")]
     public void MapperProfileEntityToProfileViewModelWithSkills()
     {
         var profile = new ProfileEntityBuilder(_fixture)
@@ -116,7 +116,7 @@ public class ProfileMapperShould
         result.SkillSet!.ShouldBeEquivalentTo(profileExpected.SkillSet);
     }
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when SummaryViewModel is defined")]
+    [Fact(DisplayName = "Map Profile to ProfileViewModel when SummaryViewModel is defined")]
     public void MapperProfileEntityToSummaryViewModelWithProject()
     {
         var profile = new ProfileEntityBuilder(_fixture)
@@ -135,7 +135,7 @@ public class ProfileMapperShould
         result.Summary.ShouldBeEquivalentTo(profileExpected.Summary);
     }
 
-    private static PersonalDataViewModel GetPersonalDataViewModel(ProfileEntity entity)
+    private static PersonalDataViewModel GetPersonalDataViewModel(Profile entity)
     {
         return new PersonalDataViewModel(
             $"{entity.FirstName} {entity.LastName}",
@@ -149,7 +149,7 @@ public class ProfileMapperShould
         );
     }
 
-    private static AboutViewModel GetAboutViewModel(ProfileEntity entity)
+    private static AboutViewModel GetAboutViewModel(Profile entity)
     {
         var webSite = GetContactValue("Website");
         var email = GetContactValue("Email");
@@ -179,7 +179,7 @@ public class ProfileMapperShould
         }
     }
 
-    private static TestimonialsViewModel[]? GetTestimonialViewModel(ProfileEntity profile)
+    private static TestimonialsViewModel[]? GetTestimonialViewModel(Profile profile)
     {
         return profile.Testimonials.Select(t => new TestimonialsViewModel(
                 t.Name,
@@ -189,7 +189,7 @@ public class ProfileMapperShould
             .ToArray();
     }
 
-    private static ProjectViewModel[]? GetProjectViewModel(ProfileEntity profile)
+    private static ProjectViewModel[]? GetProjectViewModel(Profile profile)
     {
         return profile.Projects.Select(p => new ProjectViewModel(
                 p.Position,
@@ -202,7 +202,7 @@ public class ProfileMapperShould
             .ToArray();
     }
 
-    private static SkillSetViewModel GetSkillViewModel(ProfileEntity profile)
+    private static SkillSetViewModel GetSkillViewModel(Profile profile)
     {
         var skills = profile.SkillSet.Skills
             .Select(skill => new SkillDetailsViewModel(skill.SkillType.Name, skill.SkillType.IconUrl.AbsoluteUri, skill.Rank))
@@ -211,9 +211,9 @@ public class ProfileMapperShould
         return new SkillSetViewModel(profile.SkillSet.Overview!, skills);
     }
 
-    private static SummaryViewModel GetSummaryViewModel(ProfileEntity profile)
+    private static SummaryViewModel GetSummaryViewModel(Profile profile)
     {
-        var education = profile.Summary.Education
+        var education = profile.ProfessionalSummary.Education
             .Select(e => new AcademicBackgroundViewModel(
                 e.Degree,
                 e.StartDate.ToString("yyyy-MM-dd"),
@@ -221,7 +221,7 @@ public class ProfileMapperShould
                 e.Description))
             .ToArray();
 
-        var workExperiences = profile.Summary.WorkExperiences
+        var workExperiences = profile.ProfessionalSummary.WorkExperiences
             .Select(w => new PositionViewModel(
                 w.JobTitle,
                 w.StartDate.ToString("yyyy-MM-dd"),
@@ -231,7 +231,7 @@ public class ProfileMapperShould
             .ToArray();
 
         return new SummaryViewModel(
-            profile.Summary.Introduction,
+            profile.ProfessionalSummary.Introduction,
             new EducationViewModel(education),
             new WorkExperienceViewModel(workExperiences));
     }

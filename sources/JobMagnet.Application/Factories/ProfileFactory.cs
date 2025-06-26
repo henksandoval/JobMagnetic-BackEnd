@@ -9,7 +9,7 @@ namespace JobMagnet.Application.Factories;
 
 public interface IProfileFactory
 {
-    Task<ProfileEntity> CreateProfileFromDtoAsync(ProfileParseDto profileDto, CancellationToken cancellationToken);
+    Task<Profile> CreateProfileFromDtoAsync(ProfileParseDto profileDto, CancellationToken cancellationToken);
 }
 
 public class ProfileFactory(
@@ -17,12 +17,12 @@ public class ProfileFactory(
     ISkillTypeResolverService skillTypeResolverService,
     IQueryRepository<SkillCategory, ushort> skillCategoryRepository) : IProfileFactory
 {
-    public async Task<ProfileEntity> CreateProfileFromDtoAsync(ProfileParseDto profileDto,
+    public async Task<Profile> CreateProfileFromDtoAsync(ProfileParseDto profileDto,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(profileDto);
 
-        var profile = new ProfileEntity
+        var profile = new Profile
         (
             profileDto.FirstName,
             profileDto.LastName,
@@ -66,9 +66,9 @@ public class ProfileFactory(
         return profile;
     }
 
-    private async Task<ResumeEntity> BuildResumeAsync(ResumeParseDto resumeDto, CancellationToken cancellationToken)
+    private async Task<Resume> BuildResumeAsync(ResumeParseDto resumeDto, CancellationToken cancellationToken)
     {
-        var resumeEntity = new ResumeEntity(
+        var resumeEntity = new Resume(
             resumeDto.Title ?? string.Empty,
             resumeDto.Suffix ?? string.Empty,
             resumeDto.JobTitle ?? string.Empty,
@@ -89,26 +89,26 @@ public class ProfileFactory(
         return resumeEntity;
     }
 
-    private List<TalentEntity> BuildTalents(List<TalentParseDto>? talentDtos)
+    private List<Talent> BuildTalents(List<TalentParseDto>? talentDtos)
     {
-        if (talentDtos is null) return new List<TalentEntity>();
+        if (talentDtos is null) return new List<Talent>();
 
         foreach (var talentDto in talentDtos)
             if (string.IsNullOrWhiteSpace(talentDto.Description))
                 throw new ArgumentException("Talent description cannot be null or whitespace.", nameof(talentDtos));
 
         return talentDtos
-            .Select(dto => new TalentEntity(
+            .Select(dto => new Talent(
                 dto.Description!
             ))
             .ToList();
     }
 
-    private static List<TestimonialEntity> BuildTestimonials(List<TestimonialParseDto>? testimonials)
+    private static List<Testimonial> BuildTestimonials(List<TestimonialParseDto>? testimonials)
     {
         if (testimonials is null) return [];
 
-        return testimonials.Select(dto => new TestimonialEntity(
+        return testimonials.Select(dto => new Testimonial(
             dto.Name ?? string.Empty,
             dto.JobTitle ?? string.Empty,
             dto.Feedback ?? string.Empty,
@@ -157,11 +157,11 @@ public class ProfileFactory(
         )).ToList();
     }
 
-    private SummaryEntity? BuildSummary(SummaryParseDto? summaryDto)
+    private ProfessionalSummary? BuildSummary(SummaryParseDto? summaryDto)
     {
         if (summaryDto is null) return null;
 
-        return new SummaryEntity(summaryDto.Introduction ?? string.Empty);
+        return new ProfessionalSummary(summaryDto.Introduction ?? string.Empty);
     }
 
     private async Task<SkillSet> BuildSkillSetAsync(SkillSetParseDto skillSetDto,

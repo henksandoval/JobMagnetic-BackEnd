@@ -20,9 +20,9 @@ public class SummaryEntityBuilder(IFixture fixture)
         return this;
     }
 
-    public SummaryEntity Build()
+    public ProfessionalSummary Build()
     {
-        var summary = fixture.Create<SummaryEntity>();
+        var summary = fixture.Create<ProfessionalSummary>();
 
         foreach (var education in _education)
             summary.AddEducation(education);

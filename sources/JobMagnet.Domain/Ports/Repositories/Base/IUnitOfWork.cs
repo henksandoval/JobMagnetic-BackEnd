@@ -5,13 +5,13 @@ namespace JobMagnet.Domain.Ports.Repositories.Base;
 
 public interface IUnitOfWork
 {
-    ICommandRepository<ProfileEntity> ProfileRepository { get; }
-    ICommandRepository<PublicProfileIdentifierEntity> PublicProfileIdentifierRepository { get; }
-    ICommandRepository<ResumeEntity> ResumeRepository { get; }
+    ICommandRepository<Profile> ProfileRepository { get; }
+    ICommandRepository<VanityUrl> PublicProfileIdentifierRepository { get; }
+    ICommandRepository<Resume> ResumeRepository { get; }
     ICommandRepository<SkillSet> SkillRepository { get; }
-    ICommandRepository<SummaryEntity> SummaryRepository { get; }
-    ICommandRepository<TalentEntity> TalentRepository { get; }
+    ICommandRepository<ProfessionalSummary> SummaryRepository { get; }
+    ICommandRepository<Talent> TalentRepository { get; }
     ICommandRepository<Project> ProjectRepository { get; }
-    ICommandRepository<TestimonialEntity> TestimonialRepository { get; }
+    ICommandRepository<Testimonial> TestimonialRepository { get; }
     Task ExecuteOperationInTransactionAsync(Func<Task> operation, CancellationToken cancellationToken = default);
 }

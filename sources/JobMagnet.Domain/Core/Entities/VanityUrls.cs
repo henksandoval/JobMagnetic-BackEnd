@@ -6,20 +6,20 @@ namespace JobMagnet.Domain.Core.Entities;
 
 public class VanityUrls
 {
-    private readonly ProfileEntity _profile;
+    private readonly Profile _profile;
 
     private VanityUrls()
     {
     }
 
-    internal VanityUrls(ProfileEntity profile)
+    internal VanityUrls(Profile profile)
     {
         _profile = profile;
     }
 
     public void CreateAndAssignPublicIdentifier(IProfileSlugGenerator slugGenerator)
     {
-        if (_profile.PublicProfileIdentifiers.Any(p => p.Type == LinkType.Primary)) return;
+        if (_profile.VanityUrls.Any(p => p.Type == LinkType.Primary)) return;
 
         var generatedSlug = slugGenerator.GenerateProfileSlug(_profile);
         AddPublicProfileIdentifier(generatedSlug);
@@ -29,7 +29,7 @@ public class VanityUrls
     {
         Guard.IsNotNullOrEmpty(slug);
 
-        var publicIdentifier = new PublicProfileIdentifierEntity(slug, _profile.Id, type);
+        var publicIdentifier = new VanityUrl(slug, _profile.Id, type);
 
         _profile.AddPublicProfileIdentifier(publicIdentifier);
     }

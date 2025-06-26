@@ -13,11 +13,11 @@ public static class ProfileMapper
         ConfigMapper();
     }
 
-    public static ProfileViewModel ToViewModel(this ProfileEntity entity) => entity.Adapt<ProfileViewModel>();
+    public static ProfileViewModel ToViewModel(this Profile entity) => entity.Adapt<ProfileViewModel>();
 
     private static void ConfigMapper()
     {
-        TypeAdapterConfig<ProfileEntity, ProfileViewModel>
+        TypeAdapterConfig<Profile, ProfileViewModel>
             .NewConfig()
             .Map(dest => dest.PersonalData, src => PersonalDataViewModelMap(src))
             .Map(dest => dest.About, src => src.Adapt<AboutViewModel>())
@@ -29,8 +29,8 @@ public static class ProfileMapper
                 src => src.Projects.Any())
             .Map(dest => dest.SkillSet, src => src.SkillSet.Adapt<SkillSetViewModel>(),
                 src => src.SkillSet != null && src.SkillSet.Skills.Count > 0)
-            .Map(dest => dest.Summary, src => src.Summary.Adapt<SummaryViewModel>(),
-                src => src.Summary != null);
+            .Map(dest => dest.Summary, src => src.ProfessionalSummary.Adapt<SummaryViewModel>(),
+                src => src.ProfessionalSummary != null);
 
         TypeAdapterConfig<Project, ProjectViewModel>
             .NewConfig()
@@ -38,11 +38,11 @@ public static class ProfileMapper
             .Map(dest => dest.Link, src => src.UrlLink)
             .Map(dest => dest.Video, src => src.UrlVideo);
 
-        TypeAdapterConfig<TestimonialEntity, TestimonialsViewModel>
+        TypeAdapterConfig<Testimonial, TestimonialsViewModel>
             .NewConfig()
             .Map(dest => dest.Testimonial, src => src.Feedback);
 
-        TypeAdapterConfig<ProfileEntity, AboutViewModel>
+        TypeAdapterConfig<Profile, AboutViewModel>
             .NewConfig()
             .Map(dest => dest, src => AboutViewModelMap(src));
 
@@ -56,15 +56,15 @@ public static class ProfileMapper
             .Map(dest => dest.SkillDetails,
                 src => src.Skills.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
 
-        TypeAdapterConfig<SummaryEntity, SummaryViewModel>
+        TypeAdapterConfig<ProfessionalSummary, SummaryViewModel>
             .NewConfig()
             .Map(dest => dest.Education, src => EducationViewModelMap(src))
             .Map(dest => dest.WorkExperience, src => WorkExperienceViewModelMap(src));
     }
 
-    private static AboutViewModel AboutViewModelMap(ProfileEntity entity)
+    private static AboutViewModel AboutViewModelMap(Profile entity)
     {
-        ArgumentException.ThrowIfNullOrEmpty(nameof(ProfileEntity), "ProfileEntity cannot be null.");
+        ArgumentException.ThrowIfNullOrEmpty(nameof(Profile), "Profile cannot be null.");
 
         var viewModel = new AboutViewModel(
             entity.ProfileImageUrl ?? string.Empty,
@@ -84,7 +84,7 @@ public static class ProfileMapper
         return viewModel;
     }
 
-    private static EducationViewModel EducationViewModelMap(SummaryEntity src)
+    private static EducationViewModel EducationViewModelMap(ProfessionalSummary src)
     {
         var academicBackground = src.Education?.Select(e => new AcademicBackgroundViewModel(
             e.Degree,
@@ -96,7 +96,7 @@ public static class ProfileMapper
         return new EducationViewModel(academicBackground);
     }
 
-    private static WorkExperienceViewModel WorkExperienceViewModelMap(SummaryEntity src)
+    private static WorkExperienceViewModel WorkExperienceViewModelMap(ProfessionalSummary src)
     {
         var workExperienceList = src.WorkExperiences?.Select(work =>
             {
@@ -114,7 +114,7 @@ public static class ProfileMapper
         return new WorkExperienceViewModel(workExperienceList);
     }
 
-    private static PersonalDataViewModel PersonalDataViewModelMap(ProfileEntity src)
+    private static PersonalDataViewModel PersonalDataViewModelMap(Profile src)
     {
         var socialNetworks = src.Resume?.ContactInfo?.Select(c => new SocialNetworksViewModel(
                 c.ContactType.Name,
@@ -132,13 +132,13 @@ public static class ProfileMapper
         );
     }
 
-    private static string GetFullName(ProfileEntity entity)
+    private static string GetFullName(Profile entity)
     {
         return string.Join(" ", new[] { entity.FirstName, entity.MiddleName, entity.LastName, entity.SecondLastName }
             .Where(x => !string.IsNullOrWhiteSpace(x)));
     }
 
-    private static string GetContactValue(ProfileEntity entity, string contactTypeName)
+    private static string GetContactValue(Profile entity, string contactTypeName)
     {
         return entity.Resume?.ContactInfo?
             .FirstOrDefault(c => string.Equals(c.ContactType.Name, contactTypeName, StringComparison.OrdinalIgnoreCase))

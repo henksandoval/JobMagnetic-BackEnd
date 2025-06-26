@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobMagnet.Infrastructure.Persistence.Context.EntityTypeConfigurations;
 
-public class SummaryEntityTypeConfiguration : IEntityTypeConfiguration<SummaryEntity>
+public class SummaryEntityTypeConfiguration : IEntityTypeConfiguration<ProfessionalSummary>
 {
-    public void Configure(EntityTypeBuilder<SummaryEntity> builder)
+    public void Configure(EntityTypeBuilder<ProfessionalSummary> builder)
     {
         builder.HasKey(x => x.Id);
 

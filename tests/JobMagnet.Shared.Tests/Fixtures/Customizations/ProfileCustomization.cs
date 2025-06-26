@@ -9,9 +9,9 @@ public class ProfileCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<ProfileEntity>(composer =>
+        fixture.Customize<Profile>(composer =>
             composer
-                .FromFactory(() => new ProfileEntity(
+                .FromFactory(() => new Profile(
                     FixtureBuilder.Faker.Name.FirstName(),
                     FixtureBuilder.Faker.Name.LastName(),
                     FixtureBuilder.Faker.Image.PicsumUrl(200, 200),

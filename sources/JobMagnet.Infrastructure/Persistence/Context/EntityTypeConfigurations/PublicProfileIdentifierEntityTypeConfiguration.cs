@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobMagnet.Infrastructure.Persistence.Context.EntityTypeConfigurations;
 
-public class PublicProfileIdentifierEntityTypeConfiguration : IEntityTypeConfiguration<PublicProfileIdentifierEntity>
+public class PublicProfileIdentifierEntityTypeConfiguration : IEntityTypeConfiguration<VanityUrl>
 {
-    public void Configure(EntityTypeBuilder<PublicProfileIdentifierEntity> builder)
+    public void Configure(EntityTypeBuilder<VanityUrl> builder)
     {
         builder.HasKey(x => x.Id);
 
@@ -18,7 +18,7 @@ public class PublicProfileIdentifierEntityTypeConfiguration : IEntityTypeConfigu
             .IsRequired();
 
         builder.Property(x => x.ProfileSlugUrl)
-            .HasMaxLength(PublicProfileIdentifierEntity.MaxNameLength)
+            .HasMaxLength(VanityUrl.MaxNameLength)
             .IsRequired();
     }
 }

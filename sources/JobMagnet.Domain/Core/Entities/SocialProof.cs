@@ -5,14 +5,14 @@ namespace JobMagnet.Domain.Core.Entities;
 
 public class SocialProof
 {
-    private readonly ProfileEntity _profile;
-    private IReadOnlyCollection<TestimonialEntity> Testimonials => _profile.Testimonials;
+    private readonly Profile _profile;
+    private IReadOnlyCollection<Testimonial> Testimonials => _profile.Testimonials;
 
     private SocialProof()
     {
     }
 
-    internal SocialProof(ProfileEntity profile)
+    internal SocialProof(Profile profile)
     {
         Guard.IsNotNull(profile);
 
@@ -25,7 +25,7 @@ public class SocialProof
         if (Testimonials.Any(t => t.Name == name && t.Feedback == feedback))
             throw new JobMagnetDomainException("This exact testimonial already exists.");
 
-        var testimonial = new TestimonialEntity(name, jobTitle, feedback, photoUrl, _profile.Id);
+        var testimonial = new Testimonial(name, jobTitle, feedback, photoUrl, _profile.Id);
 
         _profile.AddTestimonial(testimonial);
     }

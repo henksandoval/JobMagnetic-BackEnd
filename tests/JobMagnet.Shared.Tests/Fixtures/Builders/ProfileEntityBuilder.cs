@@ -13,16 +13,16 @@ public class ProfileEntityBuilder(IFixture fixture)
     private string? _firstName;
     private string? _lastName;
     private List<Project> _projects = [];
-    private ResumeEntity _resume = null!;
+    private Resume _resume = null!;
     private SkillSet _skillSet = null!;
-    private SummaryEntity _summary = null!;
-    private List<TalentEntity> _talents = [];
-    private List<TestimonialEntity> _testimonials = [];
+    private ProfessionalSummary _professionalSummary = null!;
+    private List<Talent> _talents = [];
+    private List<Testimonial> _testimonials = [];
 
 
     public ProfileEntityBuilder WithResume()
     {
-        _resume = fixture.Create<ResumeEntity>();
+        _resume = fixture.Create<Resume>();
         return this;
     }
 
@@ -96,7 +96,7 @@ public class ProfileEntityBuilder(IFixture fixture)
     {
         while (_talents?.Count < count)
         {
-            _talents = fixture.CreateMany<TalentEntity>(count).ToList();
+            _talents = fixture.CreateMany<Talent>(count).ToList();
         }
         return this;
     }
@@ -109,39 +109,39 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithSummary()
     {
-        _summary = fixture.Create<SummaryEntity>();
+        _professionalSummary = fixture.Create<ProfessionalSummary>();
         return this;
     }
 
-    public ProfileEntityBuilder WithSummary(SummaryEntity summary)
+    public ProfileEntityBuilder WithSummary(ProfessionalSummary professionalSummary)
     {
-        _summary = summary;
+        _professionalSummary = professionalSummary;
         return this;
     }
 
     public ProfileEntityBuilder WithEducation(int count = 5)
     {
-        if (_summary == null) throw new InvalidOperationException("Cannot add contact info without a summary. Call WithSummary() first.");
+        if (_professionalSummary == null) throw new InvalidOperationException("Cannot add contact info without a professionalSummary. Call WithSummary() first.");
 
         foreach (var education in fixture.CreateMany<EducationEntity>(count).ToList())
-            _summary.AddEducation(education);
+            _professionalSummary.AddEducation(education);
 
         return this;
     }
 
     public ProfileEntityBuilder WithWorkExperience(int count = 5)
     {
-        if (_summary == null) throw new InvalidOperationException("Cannot add contact info without a summary. Call WithSummary() first.");
+        if (_professionalSummary == null) throw new InvalidOperationException("Cannot add contact info without a professionalSummary. Call WithSummary() first.");
 
         foreach (var workExperience in fixture.CreateMany<WorkExperienceEntity>(count).ToList())
-            _summary.AddWorkExperience(workExperience);
+            _professionalSummary.AddWorkExperience(workExperience);
 
         return this;
     }
 
     public ProfileEntityBuilder WithTestimonials(int count = 5)
     {
-        _testimonials = fixture.CreateMany<TestimonialEntity>(count).ToList();
+        _testimonials = fixture.CreateMany<Testimonial>(count).ToList();
         return this;
     }
 
@@ -157,9 +157,9 @@ public class ProfileEntityBuilder(IFixture fixture)
         return this;
     }
 
-    public ProfileEntity Build()
+    public Profile Build()
     {
-        var profile = fixture.Create<ProfileEntity>();
+        var profile = fixture.Create<Profile>();
 
         if (_firstName is not null) profile.ChangeFirstName(_firstName);
 
@@ -167,7 +167,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         if (_resume is not null) profile.AddResume(_resume);
 
-        if (_summary is not null) profile.AddSummary(_summary);
+        if (_professionalSummary is not null) profile.AddSummary(_professionalSummary);
 
         if (_skillSet is not null) profile.AddSkill(_skillSet);
 

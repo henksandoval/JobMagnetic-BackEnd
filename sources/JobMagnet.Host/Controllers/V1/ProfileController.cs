@@ -21,8 +21,8 @@ public class ProfileController(
     ICvParserHandler cvParser,
     ILogger<ProfileController> logger,
     IProfileQueryRepository queryRepository,
-    IQueryRepository<PublicProfileIdentifierEntity, long> publicProfileRepository,
-    ICommandRepository<ProfileEntity> commandRepository) : BaseController<ProfileController>(logger)
+    IQueryRepository<VanityUrl, long> publicProfileRepository,
+    ICommandRepository<Profile> commandRepository) : BaseController<ProfileController>(logger)
 {
     [HttpPost]
     [ProducesResponseType(typeof(ProfileResponse), StatusCodes.Status201Created)]

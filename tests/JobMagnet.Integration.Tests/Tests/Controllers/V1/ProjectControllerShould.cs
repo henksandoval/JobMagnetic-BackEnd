@@ -179,11 +179,11 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    private async Task<ProfileEntity> SetupProfileEntityAsync()
+    private async Task<Profile> SetupProfileEntityAsync()
     {
         await _testFixture.ResetDatabaseAsync();
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<Profile>>();
 
         var entity = new ProfileEntityBuilder(_fixture).WithProjects().Build();
         await commandRepository.CreateAsync(entity);
@@ -201,7 +201,7 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     private async Task<Project> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<Profile>>();
 
         var entity = new ProfileEntityBuilder(_fixture)
             .WithProjects()

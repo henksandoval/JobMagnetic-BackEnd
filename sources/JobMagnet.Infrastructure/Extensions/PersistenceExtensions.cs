@@ -23,30 +23,30 @@ internal static class PersistenceExtensions
 
     private static IServiceCollection AddQueryRepositories(this IServiceCollection services) =>
         services
-            .AddTransient<IQueryRepository<ResumeEntity, long>, Repository<ResumeEntity, long>>()
-            .AddTransient<IQueryRepository<PublicProfileIdentifierEntity, long>, Repository<PublicProfileIdentifierEntity, long>>()
+            .AddTransient<IQueryRepository<Resume, long>, Repository<Resume, long>>()
+            .AddTransient<IQueryRepository<VanityUrl, long>, Repository<VanityUrl, long>>()
             .AddTransient<IQueryRepository<ContactType, int>, Repository<ContactType, int>>()
             .AddTransient<IQueryRepository<ContactTypeAlias, int>, Repository<ContactTypeAlias, int>>()
-            .AddTransient<IQueryRepository<TalentEntity, long>, Repository<TalentEntity, long>>()
-            .AddTransient<IQueryRepository<TestimonialEntity, long>, Repository<TestimonialEntity, long>>()
+            .AddTransient<IQueryRepository<Talent, long>, Repository<Talent, long>>()
+            .AddTransient<IQueryRepository<Testimonial, long>, Repository<Testimonial, long>>()
             .AddTransient<IQueryRepository<SkillCategory, ushort>, Repository<SkillCategory, ushort>>()
             .AddTransient<IQueryRepository<SkillType, int>, Repository<SkillType, int>>()
             .AddTransient<IQueryRepository<SkillTypeAlias, int>, Repository<SkillTypeAlias, int>>()
             .AddTransient<IQueryRepository<Project, long>, Repository<Project, long>>()
             .AddTransient<IQueryRepository<Skill, long>, Repository<Skill, long>>()
-            .AddTransient<IQueryRepository<SummaryEntity, long>, Repository<SummaryEntity, long>>()
+            .AddTransient<IQueryRepository<ProfessionalSummary, long>, Repository<ProfessionalSummary, long>>()
             .AddTransient<IProfileQueryRepository, ProfileQueryRepository>()
             .AddTransient<ISkillQueryRepository, SkillQueryRepository>()
             .AddTransient<ISummaryQueryRepository, SummaryQueryRepository>();
 
     private static IServiceCollection AddCommandRepositories(this IServiceCollection services) =>
         services
-            .AddTransient<ICommandRepository<ProfileEntity>, Repository<ProfileEntity, long>>()
-            .AddTransient<ICommandRepository<PublicProfileIdentifierEntity>, Repository<PublicProfileIdentifierEntity, long>>()
-            .AddTransient<ICommandRepository<TalentEntity>, Repository<TalentEntity, long>>()
-            .AddTransient<ICommandRepository<ResumeEntity>, Repository<ResumeEntity, long>>()
-            .AddTransient<ICommandRepository<TestimonialEntity>, Repository<TestimonialEntity, long>>()
+            .AddTransient<ICommandRepository<Profile>, Repository<Profile, long>>()
+            .AddTransient<ICommandRepository<VanityUrl>, Repository<VanityUrl, long>>()
+            .AddTransient<ICommandRepository<Talent>, Repository<Talent, long>>()
+            .AddTransient<ICommandRepository<Resume>, Repository<Resume, long>>()
+            .AddTransient<ICommandRepository<Testimonial>, Repository<Testimonial, long>>()
             .AddTransient<ICommandRepository<Project>, Repository<Project, long>>()
             .AddTransient<ICommandRepository<SkillSet>, Repository<SkillSet, long>>()
-            .AddTransient<ICommandRepository<SummaryEntity>, Repository<SummaryEntity, long>>();
+            .AddTransient<ICommandRepository<ProfessionalSummary>, Repository<ProfessionalSummary, long>>();
 }

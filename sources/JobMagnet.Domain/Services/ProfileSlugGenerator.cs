@@ -7,19 +7,19 @@ namespace JobMagnet.Domain.Services;
 
 public interface IProfileSlugGenerator
 {
-    string GenerateProfileSlug(ProfileEntity profileEntity);
+    string GenerateProfileSlug(Profile profile);
 }
 
 public partial class ProfileSlugGenerator : IProfileSlugGenerator
 {
     private static readonly char[] Delimiters = [' ', '-', '_'];
 
-    public string GenerateProfileSlug(ProfileEntity profileEntity)
+    public string GenerateProfileSlug(Profile profile)
     {
-        ArgumentNullException.ThrowIfNull(profileEntity, nameof(profileEntity));
+        ArgumentNullException.ThrowIfNull(profile, nameof(profile));
 
-        var rawFirstName = GetFirstSignificantWord(profileEntity.FirstName);
-        var rawLastName = GetFirstSignificantWord(profileEntity.LastName);
+        var rawFirstName = GetFirstSignificantWord(profile.FirstName);
+        var rawLastName = GetFirstSignificantWord(profile.LastName);
 
         rawFirstName = CleanStringForUrl(rawFirstName);
         rawLastName = CleanStringForUrl(rawLastName);
@@ -27,7 +27,7 @@ public partial class ProfileSlugGenerator : IProfileSlugGenerator
         var initialSlug = GenerateSlug(rawFirstName, rawLastName);
 
         var uniqueSuffix = Guid.NewGuid().ToString("N")[..6];
-        var maxBaseLength = PublicProfileIdentifierEntity.MaxNameLength - (uniqueSuffix.Length + 1);
+        var maxBaseLength = VanityUrl.MaxNameLength - (uniqueSuffix.Length + 1);
 
         var selectedNamePart = TruncateAndTrim(initialSlug, maxBaseLength);
 
@@ -53,7 +53,7 @@ public partial class ProfileSlugGenerator : IProfileSlugGenerator
             (true, true) => $"{rawFirstName}-{rawLastName}",
             (true, false) => rawFirstName,
             (false, true) => rawLastName,
-            (false, false) => PublicProfileIdentifierEntity.DefaultSlug
+            (false, false) => VanityUrl.DefaultSlug
         };
     }
 

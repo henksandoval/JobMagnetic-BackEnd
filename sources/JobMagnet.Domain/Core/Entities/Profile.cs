@@ -5,12 +5,12 @@ using JobMagnet.Domain.Core.Entities.Skills;
 
 namespace JobMagnet.Domain.Core.Entities;
 
-public class ProfileEntity : SoftDeletableEntity<long>
+public class Profile : SoftDeletableEntity<long>
 {
     private readonly HashSet<Project> _projects = [];
-    private readonly HashSet<PublicProfileIdentifierEntity> _publicProfileIdentifiers = [];
-    private readonly HashSet<TalentEntity> _talents = [];
-    private readonly HashSet<TestimonialEntity> _testimonials = [];
+    private readonly HashSet<VanityUrl> _vanityUrls = [];
+    private readonly HashSet<Talent> _talents = [];
+    private readonly HashSet<Testimonial> _testimonials = [];
     public string? FirstName { get; private set; }
     public string? LastName { get; private set; }
     public string? ProfileImageUrl { get; private set; }
@@ -18,25 +18,25 @@ public class ProfileEntity : SoftDeletableEntity<long>
     public string? MiddleName { get; private set; }
     public string? SecondLastName { get; private set; }
 
-    public virtual ResumeEntity? Resume { get; private set; }
+    public virtual Resume? Resume { get; private set; }
     public virtual SkillSet? SkillSet { get; private set; }
-    public virtual SummaryEntity? Summary { get; private set; }
+    public virtual ProfessionalSummary? ProfessionalSummary { get; private set; }
     public SocialProof SocialProof { get; private set; }
     public Portfolio Portfolio { get; private set; }
-    public VanityUrls VanityUrls { get; private set; }
+    public VanityUrls LinkManager { get; private set; }
     public TalentShowcase TalentShowcase { get; private set; }
-    public virtual IReadOnlyCollection<TalentEntity> Talents => _talents;
+    public virtual IReadOnlyCollection<Talent> Talents => _talents;
     public virtual IReadOnlyCollection<Project> Projects => _projects;
-    public virtual IReadOnlyCollection<TestimonialEntity> Testimonials => _testimonials;
-    public virtual IReadOnlyCollection<PublicProfileIdentifierEntity> PublicProfileIdentifiers => _publicProfileIdentifiers;
+    public virtual IReadOnlyCollection<Testimonial> Testimonials => _testimonials;
+    public virtual IReadOnlyCollection<VanityUrl> VanityUrls => _vanityUrls;
 
-    private ProfileEntity()
+    private Profile()
     {
         InitializeEncapsulatedCollector();
     }
 
     [SetsRequiredMembers]
-    public ProfileEntity(
+    public Profile(
         string? firstName,
         string? lastName,
         string? profileImageUrl = null,
@@ -84,9 +84,9 @@ public class ProfileEntity : SoftDeletableEntity<long>
         SecondLastName = secondLastName;
     }
 
-    public void AddTalent(TalentEntity talentEntity)
+    public void AddTalent(Talent talent)
     {
-        _talents.Add(talentEntity);
+        _talents.Add(talent);
     }
 
     public void AddSkill(SkillSet skillSet)
@@ -96,21 +96,21 @@ public class ProfileEntity : SoftDeletableEntity<long>
         SkillSet = skillSet;
     }
 
-    public void AddSummary(SummaryEntity summary)
+    public void AddSummary(ProfessionalSummary professionalSummary)
     {
-        Guard.IsNotNull(summary);
+        Guard.IsNotNull(professionalSummary);
 
-        Summary = summary;
+        ProfessionalSummary = professionalSummary;
     }
 
-    public void AddResume(ResumeEntity resume)
+    public void AddResume(Resume resume)
     {
         Guard.IsNotNull(resume);
 
         Resume = resume;
     }
 
-    internal void AddTestimonial(TestimonialEntity testimonial)
+    internal void AddTestimonial(Testimonial testimonial)
     {
         _testimonials.Add(testimonial);
     }
@@ -120,16 +120,16 @@ public class ProfileEntity : SoftDeletableEntity<long>
         _projects.Add(project);
     }
 
-    internal void AddPublicProfileIdentifier(PublicProfileIdentifierEntity publicProfile)
+    internal void AddPublicProfileIdentifier(VanityUrl publicProfile)
     {
-        _publicProfileIdentifiers.Add(publicProfile);
+        _vanityUrls.Add(publicProfile);
     }
 
     private void InitializeEncapsulatedCollector()
     {
         SocialProof = new SocialProof(this);
         Portfolio = new Portfolio(this);
-        VanityUrls = new VanityUrls(this);
+        LinkManager = new VanityUrls(this);
         TalentShowcase = new TalentShowcase(this);
     }
 }

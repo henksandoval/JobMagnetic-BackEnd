@@ -5,14 +5,14 @@ namespace JobMagnet.Domain.Core.Entities;
 
 public class Portfolio
 {
-    private readonly ProfileEntity _profile;
+    private readonly Profile _profile;
     private IReadOnlyCollection<Project> Projects => _profile.Projects;
 
     private Portfolio()
     {
     }
 
-    internal Portfolio(ProfileEntity profile)
+    internal Portfolio(Profile profile)
     {
         Guard.IsNotNull(profile);
         _profile = profile;

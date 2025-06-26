@@ -41,9 +41,9 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    private async Task<ProfileEntity> BuildSampleProfileAsync(CancellationToken cancellationToken)
+    private async Task<Profile> BuildSampleProfileAsync(CancellationToken cancellationToken)
     {
-        var profile = new ProfileEntity(
+        var profile = new Profile(
             "John",
             "Doe",
             "https://bootstrapmade.com/content/demo/MyResume/assets/img/profile-img.jpg",
@@ -60,23 +60,23 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         return profile;
     }
 
-    private static void AddPublicIdentifier(ProfileEntity profile)
+    private static void AddPublicIdentifier(Profile profile)
     {
-        profile.VanityUrls.AddPublicProfileIdentifier("john-doe-1a2b3c");
+        profile.LinkManager.AddPublicProfileIdentifier("john-doe-1a2b3c");
     }
 
-    private static void AddTalents(ProfileEntity profile)
+    private static void AddTalents(Profile profile)
     {
         var talentsCollection = new TalentsCollection().GetTalents();
         foreach (var talent in talentsCollection)
             profile.TalentShowcase.AddTalent(talent.Description);
     }
 
-    private async Task AddResumeAsync(ProfileEntity profile, CancellationToken cancellationToken)
+    private async Task AddResumeAsync(Profile profile, CancellationToken cancellationToken)
     {
         var contactTypeMap = await BuildContactTypesMapAsync(cancellationToken).ConfigureAwait(false);
 
-        var resume = new ResumeEntity("Mr.",
+        var resume = new Resume("Mr.",
             "",
             "UI/UX Designer & Web Developer",
             About,
@@ -94,7 +94,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         profile.AddResume(resume);
     }
 
-    private async Task AddSkills(ProfileEntity profile, CancellationToken cancellationToken)
+    private async Task AddSkills(Profile profile, CancellationToken cancellationToken)
     {
         var skillTypeMap = await BuildSkillTypesMapAsync(cancellationToken).ConfigureAwait(false);
 
@@ -115,9 +115,9 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         profile.AddSkill(skillSet);
     }
 
-    private static void AddSummary(ProfileEntity profile)
+    private static void AddSummary(Profile profile)
     {
-        var summary = new SummaryEntity(
+        var summary = new ProfessionalSummary(
             "Professional with experience in your area or profession, recognized for key skills. Committed to value or professional goal, seeking to contribute to the growth of company or industry.",
             profile.Id);
 
@@ -130,13 +130,13 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
         profile.AddSummary(summary);
     }
 
-    private static void AddProject(ProfileEntity profile)
+    private static void AddProject(Profile profile)
     {
         var ProjectItems = new ProjectCollection().GetProjects();
         foreach (var item in ProjectItems) profile.AddProjectToPortfolio(item);
     }
 
-    private static void AddTestimonials(ProfileEntity profile)
+    private static void AddTestimonials(Profile profile)
     {
         var testimonials = new TestimonialCollection().GetTestimonials();
         foreach (var item in testimonials)

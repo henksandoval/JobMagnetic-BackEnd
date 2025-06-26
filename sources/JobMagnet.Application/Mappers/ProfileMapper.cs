@@ -12,22 +12,22 @@ public static class ProfileMapper
         ConfigMapper();
     }
 
-    public static ProfileEntity ToEntity(this ProfileCommand createCommand) => createCommand.Adapt<ProfileEntity>();
+    public static Profile ToEntity(this ProfileCommand createCommand) => createCommand.Adapt<Profile>();
 
-    public static ProfileResponse ToModel(this ProfileEntity entity) => entity.Adapt<ProfileResponse>();
+    public static ProfileResponse ToModel(this Profile entity) => entity.Adapt<ProfileResponse>();
 
-    public static void UpdateEntity(this ProfileEntity entity, ProfileCommand command)
+    public static void UpdateEntity(this Profile entity, ProfileCommand command)
     {
         command.Adapt(entity);
     }
 
     private static void ConfigMapper()
     {
-        TypeAdapterConfig<ProfileEntity, ProfileCommand>
+        TypeAdapterConfig<Profile, ProfileCommand>
             .NewConfig()
             .Map(dest => dest.ProfileData, src => src);
 
-        TypeAdapterConfig<ProfileCommand, ProfileEntity>
+        TypeAdapterConfig<ProfileCommand, Profile>
             .NewConfig()
             .Map(dest => dest, src => src.ProfileData)
             .MapToConstructor(true);

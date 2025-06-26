@@ -10,20 +10,20 @@ public static class SummaryMapper
 {
     static SummaryMapper()
     {
-        TypeAdapterConfig<SummaryEntity, SummaryResponse>
+        TypeAdapterConfig<ProfessionalSummary, SummaryResponse>
             .NewConfig()
             .Map(dest => dest.SummaryData, src => src);
 
-        TypeAdapterConfig<SummaryCommand, SummaryEntity>
+        TypeAdapterConfig<SummaryCommand, ProfessionalSummary>
             .NewConfig()
             .Map(dest => dest, src => src.SummaryData)
             .Ignore(dest => dest.Id);
 
-        TypeAdapterConfig<SummaryCommand, SummaryEntity>
+        TypeAdapterConfig<SummaryCommand, ProfessionalSummary>
             .NewConfig()
             .Map(dest => dest, src => src.SummaryData);
 
-        TypeAdapterConfig<SummaryEntity, SummaryCommand>
+        TypeAdapterConfig<ProfessionalSummary, SummaryCommand>
             .NewConfig()
             .Map(dest => dest.SummaryData, src => src);
 
@@ -36,10 +36,10 @@ public static class SummaryMapper
             .MapToConstructor(true);
     }
 
-    public static SummaryEntity ToEntity(this SummaryCommand command)
+    public static ProfessionalSummary ToEntity(this SummaryCommand command)
     {
         var data = command.SummaryData;
-        var entity = new SummaryEntity(data!.Introduction!, data.ProfileId);
+        var entity = new ProfessionalSummary(data!.Introduction!, data.ProfileId);
 
         foreach (var educationBase in data.Education)
         {
@@ -62,11 +62,11 @@ public static class SummaryMapper
         return entity;
     }
 
-    public static SummaryResponse ToModel(this SummaryEntity entity) => entity.Adapt<SummaryResponse>();
+    public static SummaryResponse ToModel(this ProfessionalSummary entity) => entity.Adapt<SummaryResponse>();
 
-    public static SummaryCommand ToUpdateCommand(this SummaryEntity entity) => entity.Adapt<SummaryCommand>();
+    public static SummaryCommand ToUpdateCommand(this ProfessionalSummary entity) => entity.Adapt<SummaryCommand>();
 
-    public static void UpdateEntity(this SummaryEntity entity, SummaryCommand command)
+    public static void UpdateEntity(this ProfessionalSummary entity, SummaryCommand command)
     {
         command.Adapt(entity);
     }

@@ -27,10 +27,10 @@ public record TestimonialCollection
         _profileId = profileId;
     }
 
-    public ImmutableList<TestimonialEntity> GetTestimonials()
+    public ImmutableList<Testimonial> GetTestimonials()
     {
         return _values
-            .Select(x => new TestimonialEntity
+            .Select(x => new Testimonial
             (
                 x.Name,
                 x.JobTitle,

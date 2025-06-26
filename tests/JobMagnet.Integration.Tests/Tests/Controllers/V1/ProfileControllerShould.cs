@@ -219,16 +219,16 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         responseData.ProfileUrl.Should().StartWith("laura-gomez-");
     }
 
-    private async Task<ProfileEntity> SetupEntityAsync()
+    private async Task<Profile> SetupEntityAsync()
     {
         await _testFixture.ResetDatabaseAsync();
         return await CreateAndPersistEntityAsync();
     }
 
-    private async Task<ProfileEntity> CreateAndPersistEntityAsync()
+    private async Task<Profile> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<Profile>>();
 
         var entity = new ProfileEntityBuilder(_fixture)
             .WithResume()
@@ -249,23 +249,23 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         return entity;
     }
 
-    private async Task<PublicProfileIdentifierEntity> SetupPublicProfileAsync(ProfileEntity profile)
+    private async Task<VanityUrl> SetupPublicProfileAsync(Profile profile)
     {
         var slugGenerator = new Mock<IProfileSlugGenerator>();
         const string slug = "alexander-gonzalez-6ca66d";
-        profile.VanityUrls.AddPublicProfileIdentifier(slug);
+        profile.LinkManager.AddPublicProfileIdentifier(slug);
         slugGenerator
-            .Setup(sg => sg.GenerateProfileSlug(It.IsAny<ProfileEntity>()))
+            .Setup(sg => sg.GenerateProfileSlug(It.IsAny<Profile>()))
             .Returns(slug);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository =
-            scope.ServiceProvider.GetRequiredService<ICommandRepository<PublicProfileIdentifierEntity>>();
+            scope.ServiceProvider.GetRequiredService<ICommandRepository<VanityUrl>>();
 
-        await commandRepository.CreateRangeAsync(profile.PublicProfileIdentifiers, CancellationToken.None);
+        await commandRepository.CreateRangeAsync(profile.VanityUrls, CancellationToken.None);
         await commandRepository.SaveChangesAsync();
 
-        return profile.PublicProfileIdentifiers.FirstOrDefault() ??
+        return profile.VanityUrls.FirstOrDefault() ??
                throw new InvalidOperationException("Public profile identifier was not created.");
     }
 }

@@ -10,9 +10,9 @@ public class TalentCustomization : ICustomization
     private static readonly Faker Faker = FixtureBuilder.Faker;
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<TalentEntity>(composer =>
+        fixture.Customize<Talent>(composer =>
             composer
-                .FromFactory(() => new TalentEntity(
+                .FromFactory(() => new Talent(
                     Faker.PickRandom(StaticCustomizations.Talents)
             )).OmitAutoProperties()
         );

@@ -5,20 +5,20 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobMagnet.Infrastructure.Persistence.Context.EntityTypeConfigurations;
 
-public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<ProfileEntity>
+public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<Profile>
 {
-    public void Configure(EntityTypeBuilder<ProfileEntity> builder)
+    public void Configure(EntityTypeBuilder<Profile> builder)
     {
         builder.HasKey(p => p.Id);
 
-        builder.HasOne<ResumeEntity>(p => p.Resume)
+        builder.HasOne<Resume>(p => p.Resume)
             .WithOne()
-            .HasForeignKey<ResumeEntity>(r => r.ProfileId)
+            .HasForeignKey<Resume>(r => r.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne<SummaryEntity>(p => p.Summary)
+        builder.HasOne<ProfessionalSummary>(p => p.ProfessionalSummary)
             .WithOne()
-            .HasForeignKey<SummaryEntity>(s => s.ProfileId)
+            .HasForeignKey<ProfessionalSummary>(s => s.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne<SkillSet>(p => p.SkillSet)
@@ -26,8 +26,8 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<ProfileEn
             .HasForeignKey<SkillSet>(s => s.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Ignore(p => p.VanityUrls);
-        builder.HasMany(p => p.PublicProfileIdentifiers)
+        builder.Ignore(p => p.LinkManager);
+        builder.HasMany(p => p.VanityUrls)
             .WithOne()
             .HasForeignKey(identifier => identifier.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);

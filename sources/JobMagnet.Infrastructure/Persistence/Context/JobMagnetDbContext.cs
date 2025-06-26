@@ -19,21 +19,21 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
     public DbSet<ContactInfo> ContactInfo { get; set; }
     public DbSet<ContactType> ContactTypes { get; set; }
     public DbSet<ContactTypeAlias> ContactAliases { get; set; }
-    public DbSet<ProfileEntity> Profiles { get; set; }
-    public DbSet<PublicProfileIdentifierEntity> PublicProfileIdentifier { get; set; }
+    public DbSet<Profile> Profiles { get; set; }
+    public DbSet<VanityUrl> PublicProfileIdentifier { get; set; }
     public DbSet<EducationEntity> Educations { get; set; }
     public DbSet<Project> Projects { get; set; }
-    public DbSet<TalentEntity> Talents { get; set; }
-    public DbSet<ResumeEntity> Resumes { get; set; }
-    public DbSet<SummaryEntity> Summaries { get; set; }
-    public DbSet<TestimonialEntity> Testimonials { get; set; }
+    public DbSet<Talent> Talents { get; set; }
+    public DbSet<Resume> Resumes { get; set; }
+    public DbSet<ProfessionalSummary> Summaries { get; set; }
+    public DbSet<Testimonial> Testimonials { get; set; }
     public DbSet<WorkExperienceEntity> WorkExperiences { get; set; }
     public DbSet<WorkResponsibilityEntity> WorkResponsibilities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<TalentEntity>().ToTable("Talents");
-        modelBuilder.Entity<SummaryEntity>().ToTable("Summaries");
+        modelBuilder.Entity<Talent>().ToTable("Talents");
+        modelBuilder.Entity<ProfessionalSummary>().ToTable("Summaries");
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }

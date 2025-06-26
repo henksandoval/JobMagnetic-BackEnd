@@ -9,9 +9,9 @@ public class TestimonialCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<TestimonialEntity>(composer =>
+        fixture.Customize<Testimonial>(composer =>
             composer
-                .FromFactory(() => new TestimonialEntity(
+                .FromFactory(() => new Testimonial(
                     FixtureBuilder.Faker.Name.FullName(),
                     FixtureBuilder.Faker.Name.JobTitle(),
                     FixtureBuilder.Faker.Lorem.Paragraph(),

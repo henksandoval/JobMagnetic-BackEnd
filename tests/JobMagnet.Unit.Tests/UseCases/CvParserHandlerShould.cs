@@ -24,7 +24,7 @@ public class CvParserHandlerShould
     private readonly Mock<IContactTypeResolverService> _contactTypeResolverMock;
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly CvParserHandler _handler;
-    private readonly Mock<ICommandRepository<ProfileEntity>> _profileCommandRepositoryMock;
+    private readonly Mock<ICommandRepository<Profile>> _profileCommandRepositoryMock;
     private readonly Mock<IProfileFactory> _profileFactoryMock;
     private readonly Mock<IRawCvParser> _rawCvParserMock;
     private readonly Mock<IProfileSlugGenerator> _slugGeneratorMock;
@@ -32,7 +32,7 @@ public class CvParserHandlerShould
     public CvParserHandlerShould()
     {
         _rawCvParserMock = new Mock<IRawCvParser>();
-        _profileCommandRepositoryMock = new Mock<ICommandRepository<ProfileEntity>>();
+        _profileCommandRepositoryMock = new Mock<ICommandRepository<Profile>>();
         _slugGeneratorMock = new Mock<IProfileSlugGenerator>();
         _profileFactoryMock = new Mock<IProfileFactory>();
         _contactTypeResolverMock = new Mock<IContactTypeResolverService>();
@@ -58,17 +58,17 @@ public class CvParserHandlerShould
             .Build();
 
         var contactInfoEmail = contactInfoRaw.FirstOrDefault(c => c.ContactType == "EMAIL");
-        var resumeEntity = _fixture.Create<ResumeEntity>();
+        var resumeEntity = _fixture.Create<Resume>();
         var contactType = new ContactType(contactInfoEmail!.ContactType);
         resumeEntity.AddContactInfo(contactInfoEmail.Value!, contactType);
 
-        var profileEntity = new ProfileEntity(profileRaw.FirstName, profileRaw.LastName);
+        var profileEntity = new Profile(profileRaw.FirstName, profileRaw.LastName);
 
         profileEntity.AddResume(resumeEntity);
 
         _rawCvParserMock.Setup(p => p.ParseAsync(It.IsAny<Stream>()))
             .ReturnsAsync(profileRaw);
-        _slugGeneratorMock.Setup(g => g.GenerateProfileSlug(It.IsAny<ProfileEntity>())).Returns("test-slug");
+        _slugGeneratorMock.Setup(g => g.GenerateProfileSlug(It.IsAny<Profile>())).Returns("test-slug");
         _profileFactoryMock.Setup(p => p.CreateProfileFromDtoAsync(It.IsAny<ProfileParseDto>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(profileEntity);
 
@@ -77,7 +77,7 @@ public class CvParserHandlerShould
 
         // --- Then ---
         _profileCommandRepositoryMock.Verify(
-            repo => repo.CreateAsync(It.IsAny<ProfileEntity>(), It.IsAny<CancellationToken>()),
+            repo => repo.CreateAsync(It.IsAny<Profile>(), It.IsAny<CancellationToken>()),
             Times.Once);
 
         result.ShouldNotBeNull();

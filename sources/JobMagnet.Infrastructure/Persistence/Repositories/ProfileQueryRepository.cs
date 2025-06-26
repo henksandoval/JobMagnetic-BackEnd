@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore;
 namespace JobMagnet.Infrastructure.Persistence.Repositories;
 
 public class ProfileQueryRepository(JobMagnetDbContext dbContext)
-    : Repository<ProfileEntity, long>(dbContext), IProfileQueryRepository
+    : Repository<Profile, long>(dbContext), IProfileQueryRepository
 {
-    private IQueryable<ProfileEntity> _query = dbContext.Profiles;
-    private Expression<Func<ProfileEntity, bool>> _whereCondition = x => true;
+    private IQueryable<Profile> _query = dbContext.Profiles;
+    private Expression<Func<Profile, bool>> _whereCondition = x => true;
 
     public IProfileQueryRepository WithResume()
     {
@@ -35,10 +35,10 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
     public IProfileQueryRepository WithSummary()
     {
         _query = _query
-            .Include(p => p.Summary)
+            .Include(p => p.ProfessionalSummary)
             .ThenInclude(p => p.Education);
         _query = _query
-            .Include(p => p.Summary)
+            .Include(p => p.ProfessionalSummary)
             .ThenInclude(p => p.WorkExperiences)
             .ThenInclude(p => p.Responsibilities);
         return this;
@@ -68,13 +68,13 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
         return this;
     }
 
-    public IProfileQueryRepository WhereCondition(Expression<Func<ProfileEntity, bool>> expression)
+    public IProfileQueryRepository WhereCondition(Expression<Func<Profile, bool>> expression)
     {
         _whereCondition = expression;
         return this;
     }
 
-    public async Task<ProfileEntity?> BuildFirstOrDefaultAsync()
+    public async Task<Profile?> BuildFirstOrDefaultAsync()
     {
         var finalQuery = _query.AsNoTracking().AsSplitQuery();
 

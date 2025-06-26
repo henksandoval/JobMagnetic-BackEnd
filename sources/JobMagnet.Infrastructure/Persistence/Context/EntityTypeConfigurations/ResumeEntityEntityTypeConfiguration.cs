@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobMagnet.Infrastructure.Persistence.Context.EntityTypeConfigurations;
 
-public class ResumeEntityEntityTypeConfiguration : IEntityTypeConfiguration<ResumeEntity>
+public class ResumeEntityEntityTypeConfiguration : IEntityTypeConfiguration<Resume>
 {
-    public void Configure(EntityTypeBuilder<ResumeEntity> builder)
+    public void Configure(EntityTypeBuilder<Resume> builder)
     {
         builder.HasKey(e => e.Id);
 
         builder.Property(r => r.JobTitle)
-            .HasMaxLength(ResumeEntity.MaxJobTitleLength);
+            .HasMaxLength(Resume.MaxJobTitleLength);
 
         builder.HasMany(r => r.ContactInfo)
             .WithOne()

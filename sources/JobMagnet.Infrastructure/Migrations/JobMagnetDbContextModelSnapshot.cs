@@ -693,7 +693,7 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.ToTable("PorfolioGalleryItems", (string)null);
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ProfileEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Profile", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -745,7 +745,7 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.ToTable("Profiles", (string)null);
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.PublicProfileIdentifierEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.VanityUrl", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -790,7 +790,7 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.ToTable("PublicProfileIdentifier");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ResumeEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Resume", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -843,7 +843,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Summary")
+                    b.Property<string>("ProfessionalSummary")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -1389,7 +1389,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.SummaryEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ProfessionalSummary", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -1433,7 +1433,7 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.ToTable("Summaries", (string)null);
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.TalentEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Talent", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -1476,7 +1476,7 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.ToTable("Talents", (string)null);
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.TestimonialEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Testimonial", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -1643,7 +1643,7 @@ namespace JobMagnet.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ResumeEntity", null)
+                    b.HasOne("JobMagnet.Domain.Core.Entities.Resume", null)
                         .WithMany("ContactInfo")
                         .HasForeignKey("ResumeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1663,18 +1663,18 @@ namespace JobMagnet.Infrastructure.Migrations
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.EducationEntity", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.SummaryEntity", "Summary")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfessionalSummary", "ProfessionalSummary")
                         .WithMany("Education")
                         .HasForeignKey("SummaryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Summary");
+                    b.Navigation("ProfessionalSummary");
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ProjectEntity", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", "Profile")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.Profile", "Profile")
                         .WithMany("Portfolio")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1683,27 +1683,27 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Navigation("Profile");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.PublicProfileIdentifierEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.VanityUrl", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", null)
+                    b.HasOne("JobMagnet.Domain.Core.Entities.Profile", null)
                         .WithMany("PublicProfileIdentifiers")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ResumeEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Resume", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", null)
+                    b.HasOne("JobMagnet.Domain.Core.Entities.Profile", null)
                         .WithOne("Resume")
-                        .HasForeignKey("JobMagnet.Domain.Core.Entities.ResumeEntity", "ProfileId")
+                        .HasForeignKey("JobMagnet.Domain.Core.Entities.Resume", "ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ServiceEntity", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", "Profile")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.Profile", "Profile")
                         .WithOne("Services")
                         .HasForeignKey("JobMagnet.Domain.Core.Entities.ServiceEntity", "ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1742,7 +1742,7 @@ namespace JobMagnet.Infrastructure.Migrations
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Skills.SkillSet", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", null)
+                    b.HasOne("JobMagnet.Domain.Core.Entities.Profile", null)
                         .WithOne("SkillSet")
                         .HasForeignKey("JobMagnet.Domain.Core.Entities.Skills.SkillSet", "ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1769,20 +1769,20 @@ namespace JobMagnet.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.SummaryEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ProfessionalSummary", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", "Profile")
-                        .WithOne("Summary")
-                        .HasForeignKey("JobMagnet.Domain.Core.Entities.SummaryEntity", "ProfileId")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.Profile", "Profile")
+                        .WithOne("ProfessionalSummary")
+                        .HasForeignKey("JobMagnet.Domain.Core.Entities.ProfessionalSummary", "ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Profile");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.TalentEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Talent", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", "Profile")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.Profile", "Profile")
                         .WithMany("Talents")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1791,9 +1791,9 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Navigation("Profile");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.TestimonialEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Testimonial", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfileEntity", null)
+                    b.HasOne("JobMagnet.Domain.Core.Entities.Profile", null)
                         .WithMany("Testimonials")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1802,13 +1802,13 @@ namespace JobMagnet.Infrastructure.Migrations
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.WorkExperienceEntity", b =>
                 {
-                    b.HasOne("JobMagnet.Domain.Core.Entities.SummaryEntity", "Summary")
+                    b.HasOne("JobMagnet.Domain.Core.Entities.ProfessionalSummary", "ProfessionalSummary")
                         .WithMany("WorkExperiences")
                         .HasForeignKey("SummaryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Summary");
+                    b.Navigation("ProfessionalSummary");
                 });
 
             modelBuilder.Entity("JobMagnet.Domain.Core.Entities.WorkResponsibilityEntity", b =>
@@ -1827,7 +1827,7 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Navigation("Aliases");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ProfileEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Profile", b =>
                 {
                     b.Navigation("Portfolio");
 
@@ -1839,14 +1839,14 @@ namespace JobMagnet.Infrastructure.Migrations
 
                     b.Navigation("SkillSet");
 
-                    b.Navigation("Summary");
+                    b.Navigation("ProfessionalSummary");
 
                     b.Navigation("Talents");
 
                     b.Navigation("Testimonials");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ResumeEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.Resume", b =>
                 {
                     b.Navigation("ContactInfo");
                 });
@@ -1866,7 +1866,7 @@ namespace JobMagnet.Infrastructure.Migrations
                     b.Navigation("Aliases");
                 });
 
-            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.SummaryEntity", b =>
+            modelBuilder.Entity("JobMagnet.Domain.Core.Entities.ProfessionalSummary", b =>
                 {
                     b.Navigation("Education");
 

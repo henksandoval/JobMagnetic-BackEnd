@@ -4,14 +4,14 @@ using JobMagnet.Domain.Ports.Repositories.Base;
 
 namespace JobMagnet.Domain.Ports.Repositories;
 
-public interface IProfileQueryRepository : IQueryRepository<ProfileEntity, long>
+public interface IProfileQueryRepository : IQueryRepository<Profile, long>
 {
-    IProfileQueryRepository WhereCondition(Expression<Func<ProfileEntity, bool>> expression);
+    IProfileQueryRepository WhereCondition(Expression<Func<Profile, bool>> expression);
     IProfileQueryRepository WithResume();
     IProfileQueryRepository WithSkills();
     IProfileQueryRepository WithTalents();
     IProfileQueryRepository WithProject();
     IProfileQueryRepository WithSummary();
     IProfileQueryRepository WithTestimonials();
-    Task<ProfileEntity?> BuildFirstOrDefaultAsync();
+    Task<Profile?> BuildFirstOrDefaultAsync();
 }

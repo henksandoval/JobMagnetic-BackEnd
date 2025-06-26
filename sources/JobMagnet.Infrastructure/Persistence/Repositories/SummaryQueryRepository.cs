@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 namespace JobMagnet.Infrastructure.Persistence.Repositories;
 
 public class SummaryQueryRepository(JobMagnetDbContext dbContext)
-    : Repository<SummaryEntity, long>(dbContext), ISummaryQueryRepository
+    : Repository<ProfessionalSummary, long>(dbContext), ISummaryQueryRepository
 {
-    private IQueryable<SummaryEntity> _query = dbContext.Set<SummaryEntity>();
+    private IQueryable<ProfessionalSummary> _query = dbContext.Set<ProfessionalSummary>();
 
     public ISummaryQueryRepository IncludeWorkExperience()
     {
@@ -23,9 +23,9 @@ public class SummaryQueryRepository(JobMagnetDbContext dbContext)
         return this;
     }
 
-    public async Task<IReadOnlyCollection<SummaryEntity>> GetAllWithIncludesAsync() => await _query.ToListAsync().ConfigureAwait(false);
+    public async Task<IReadOnlyCollection<ProfessionalSummary>> GetAllWithIncludesAsync() => await _query.ToListAsync().ConfigureAwait(false);
 
-    public async Task<SummaryEntity?> GetByIdWithIncludesAsync(long id)
+    public async Task<ProfessionalSummary?> GetByIdWithIncludesAsync(long id)
     {
         return await _query.FirstOrDefaultAsync(p => p.Id == id).ConfigureAwait(false);
     }

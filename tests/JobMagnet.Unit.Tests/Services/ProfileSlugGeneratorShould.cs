@@ -126,9 +126,9 @@ public partial class ProfileSlugGeneratorShould
     }
 
     [Theory]
-    [InlineData(null, null, PublicProfileIdentifierEntity.DefaultSlug)]
-    [InlineData("", "", PublicProfileIdentifierEntity.DefaultSlug)]
-    [InlineData("  ", "  ", PublicProfileIdentifierEntity.DefaultSlug)]
+    [InlineData(null, null, VanityUrl.DefaultSlug)]
+    [InlineData("", "", VanityUrl.DefaultSlug)]
+    [InlineData("  ", "  ", VanityUrl.DefaultSlug)]
     public void GenerateCorrectSlugGivenDefaultNamePartGivenNullOrEmptyNames(string? firstName, string? lastName, string expectedNamePart)
     {
         // --- Given ---
@@ -184,14 +184,14 @@ public partial class ProfileSlugGeneratorShould
 
         // --- Then ---
         AssertValidSlug(slug);
-        namePart.Should().Be(PublicProfileIdentifierEntity.DefaultSlug);
+        namePart.Should().Be(VanityUrl.DefaultSlug);
         suffix.Should().HaveLength(6).And.MatchRegex("^[a-z0-9]{6}$");
     }
 
     private static void AssertValidSlug(string slug)
     {
         slug.Should().NotBeNullOrEmpty();
-        slug.Length.Should().BeLessThanOrEqualTo(PublicProfileIdentifierEntity.MaxNameLength);
+        slug.Length.Should().BeLessThanOrEqualTo(VanityUrl.MaxNameLength);
         slug.Should().MatchRegex("^[a-z0-9-]+$");
         slug.Should().NotContain("--").And.NotStartWith("-").And.NotEndWith("-");
     }

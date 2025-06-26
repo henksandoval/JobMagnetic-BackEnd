@@ -5,7 +5,7 @@ using JobMagnet.Domain.Core.Entities.Base;
 namespace JobMagnet.Domain.Core.Entities;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class SummaryEntity : SoftDeletableEntity<long>
+public class ProfessionalSummary : SoftDeletableEntity<long>
 {
     private readonly HashSet<EducationEntity> _educationHistory = [];
     private readonly HashSet<WorkExperienceEntity> _workExperiences = [];
@@ -15,12 +15,12 @@ public class SummaryEntity : SoftDeletableEntity<long>
     public virtual IReadOnlyCollection<EducationEntity> Education => _educationHistory;
     public virtual IReadOnlyCollection<WorkExperienceEntity> WorkExperiences => _workExperiences;
 
-    private SummaryEntity()
+    private ProfessionalSummary()
     {
     }
 
     [SetsRequiredMembers]
-    public SummaryEntity(string introduction, long profileId = 0, long id = 0)
+    public ProfessionalSummary(string introduction, long profileId = 0, long id = 0)
     {
         Guard.IsGreaterThanOrEqualTo(id, 0);
         Guard.IsGreaterThanOrEqualTo(profileId, 0);

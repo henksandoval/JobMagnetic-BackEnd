@@ -19,7 +19,7 @@ namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
 
 public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 {
-    private const string RequestUriController = "api/v1/Summary";
+    private const string RequestUriController = "api/v1/ProfessionalSummary";
     private const string InvalidId = "100";
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly HttpClient _httpClient;
@@ -80,7 +80,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ReturnRecord_WhenValidIdIsProvidedAsync()
     {
         // --- Given ---
-        var entity = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
+        var entity = await SetupEntityAsync(() => _fixture.Create<ProfessionalSummary>());
 
         // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
@@ -98,7 +98,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ReturnNotFound_WhenInvalidIdIsProvidedAsync()
     {
         // --- Given ---
-        _ = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
+        _ = await SetupEntityAsync(() => _fixture.Create<ProfessionalSummary>());
 
         // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
@@ -112,7 +112,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task DeleteRecord_WhenDeleteRequestIsReceivedAsync()
     {
         // --- Given ---
-        var entity = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
+        var entity = await SetupEntityAsync(() => _fixture.Create<ProfessionalSummary>());
 
         // --- When ---
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{entity.Id}");
@@ -130,7 +130,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
     {
         // --- Given ---
-        _ = await SetupEntityAsync(() => _fixture.Create<SummaryEntity>());
+        _ = await SetupEntityAsync(() => _fixture.Create<ProfessionalSummary>());
 
         // --- When ---
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{InvalidId}");
@@ -140,18 +140,18 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    private async Task<SummaryEntity> SetupEntityAsync(Func<SummaryEntity> entityBuilder)
+    private async Task<ProfessionalSummary> SetupEntityAsync(Func<ProfessionalSummary> entityBuilder)
     {
         var summaryEntity = entityBuilder();
         await _testFixture.ResetDatabaseAsync();
         return await CreateAndPersistEntityAsync(summaryEntity);
     }
 
-    private async Task<ProfileEntity> SetupProfileEntityAsync()
+    private async Task<Profile> SetupProfileEntityAsync()
     {
         await _testFixture.ResetDatabaseAsync();
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<Profile>>();
 
         var entity = new ProfileEntityBuilder(_fixture).Build();
         await commandRepository.CreateAsync(entity);
@@ -160,17 +160,17 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         return entity;
     }
 
-    private async Task<SummaryEntity> CreateAndPersistEntityAsync(SummaryEntity summary)
+    private async Task<ProfessionalSummary> CreateAndPersistEntityAsync(ProfessionalSummary professionalSummary)
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<Profile>>();
 
         var entity = new ProfileEntityBuilder(_fixture)
-            .WithSummary(summary)
+            .WithSummary(professionalSummary)
             .Build();
         await commandRepository.CreateAsync(entity);
         await commandRepository.SaveChangesAsync();
 
-        return entity.Summary!;
+        return entity.ProfessionalSummary!;
     }
 }

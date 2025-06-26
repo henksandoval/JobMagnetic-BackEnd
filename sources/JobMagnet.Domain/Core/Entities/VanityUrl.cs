@@ -5,7 +5,7 @@ using JobMagnet.Domain.Core.Enums;
 
 namespace JobMagnet.Domain.Core.Entities;
 
-public class PublicProfileIdentifierEntity : TrackableEntity<long>
+public class VanityUrl : TrackableEntity<long>
 {
     public const int MaxNameLength = 25;
     public const string DefaultSlug = "profile";
@@ -15,12 +15,12 @@ public class PublicProfileIdentifierEntity : TrackableEntity<long>
     public long ProfileId { get; private set; }
     public long ViewCount { get; private set; }
 
-    private PublicProfileIdentifierEntity()
+    private VanityUrl()
     {
     }
 
     [SetsRequiredMembers]
-    internal PublicProfileIdentifierEntity(string slug, long profileEntityId, LinkType linkType = LinkType.Primary, long id = 0)
+    internal VanityUrl(string slug, long profileEntityId, LinkType linkType = LinkType.Primary, long id = 0)
     {
         Guard.IsNotNullOrEmpty(slug);
         Guard.IsGreaterThanOrEqualTo(profileEntityId, 0);

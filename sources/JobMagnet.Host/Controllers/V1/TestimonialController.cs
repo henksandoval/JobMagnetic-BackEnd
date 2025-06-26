@@ -12,8 +12,8 @@ namespace JobMagnet.Host.Controllers.V1;
 [ApiVersion("1")]
 public class TestimonialController(
     ILogger<TestimonialController> logger,
-    IQueryRepository<TestimonialEntity, long> queryRepository,
-    ICommandRepository<TestimonialEntity> commandRepository) : BaseController<TestimonialController>(logger)
+    IQueryRepository<Testimonial, long> queryRepository,
+    ICommandRepository<Testimonial> commandRepository) : BaseController<TestimonialController>(logger)
 {
     [HttpGet("{id:long}", Name = nameof(GetTestimonialByIdAsync))]
     [ProducesResponseType(typeof(TestimonialResponse), StatusCodes.Status200OK)]

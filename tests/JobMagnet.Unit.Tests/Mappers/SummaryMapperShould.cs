@@ -15,7 +15,7 @@ public class SummaryMapperShould
     public void MapSummaryEntityToSummaryModelCorrectly()
     {
         // --- Given ---
-        var entity = _fixture.Create<SummaryEntity>();
+        var entity = _fixture.Create<ProfessionalSummary>();
 
         // --- When ---
         var summaryModel = entity.ToModel();
@@ -35,7 +35,7 @@ public class SummaryMapperShould
     public void MapSummaryEntityToSummaryUpdateCommandCorrectly()
     {
         // --- Given ---
-        var entity = _fixture.Create<SummaryEntity>();
+        var entity = _fixture.Create<ProfessionalSummary>();
 
         // --- When ---
         var updateCommand = entity.ToUpdateCommand();
@@ -50,7 +50,7 @@ public class SummaryMapperShould
             options.Excluding(GetExcludeWorkExperienceEntityProperties()));
     }
 
-    private static Expression<Func<SummaryEntity, object>> GetExcludeEntityProperties()
+    private static Expression<Func<ProfessionalSummary, object>> GetExcludeEntityProperties()
     {
         return e => new
         {

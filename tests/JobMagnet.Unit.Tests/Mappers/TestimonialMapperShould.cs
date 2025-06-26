@@ -16,7 +16,7 @@ public class TestimonialMapperShould
     public void MapTestimonialEntityToTestimonialModelCorrectly()
     {
         // --- Given ---
-        var entity = _fixture.Create<TestimonialEntity>();
+        var entity = _fixture.Create<Testimonial>();
 
         // --- When ---
         var testimonialModel = entity.ToModel();
@@ -46,7 +46,7 @@ public class TestimonialMapperShould
     public void MapTestimonialEntityToTestimonialUpdateCommandCorrectly()
     {
         // --- Given ---
-        var entity = _fixture.Create<TestimonialEntity>();
+        var entity = _fixture.Create<Testimonial>();
 
         // --- When ---
         var updateCommand = entity.ToUpdateCommand();
@@ -57,7 +57,7 @@ public class TestimonialMapperShould
             options.Excluding(GetExcludeEntityProperties()));
     }
 
-    private static Expression<Func<TestimonialEntity, object>> GetExcludeEntityProperties()
+    private static Expression<Func<Testimonial, object>> GetExcludeEntityProperties()
     {
         return e => new
         {

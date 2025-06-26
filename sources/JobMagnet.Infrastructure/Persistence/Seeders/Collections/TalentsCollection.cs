@@ -24,9 +24,9 @@ public record TalentsCollection
         _profileId = profileId;
     }
 
-    public ImmutableList<TalentEntity> GetTalents()
+    public ImmutableList<Talent> GetTalents()
     {
-        return _values.Select(talent => new TalentEntity
+        return _values.Select(talent => new Talent
         (
             talent.Description,
             _profileId
