@@ -9,7 +9,7 @@ public class ResumeCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Register(() => new Resume(
+        fixture.Register(() => new Headline(
             FixtureBuilder.Faker.Name.Prefix(),
             "",
             FixtureBuilder.Faker.Name.JobTitle(),

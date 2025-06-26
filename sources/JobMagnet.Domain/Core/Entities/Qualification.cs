@@ -4,7 +4,7 @@ using JobMagnet.Domain.Core.Entities.Base;
 
 namespace JobMagnet.Domain.Core.Entities;
 
-public class EducationEntity : SoftDeletableEntity<long>
+public class Qualification : SoftDeletableEntity<long>
 {
     public string Degree { get; private set; }
     public string InstitutionName { get; private set; }
@@ -15,7 +15,7 @@ public class EducationEntity : SoftDeletableEntity<long>
     public long SummaryId { get; private set; }
 
     [SetsRequiredMembers]
-    public EducationEntity(string degree, string institutionName, string institutionLocation, DateTime startDate, DateTime? endDate,
+    public Qualification(string degree, string institutionName, string institutionLocation, DateTime startDate, DateTime? endDate,
         string description, long summaryId = 0, long id = 0)
     {
         Guard.IsGreaterThanOrEqualTo(id, 0);

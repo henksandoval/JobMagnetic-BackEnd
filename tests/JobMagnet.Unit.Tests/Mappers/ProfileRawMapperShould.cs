@@ -170,7 +170,7 @@ public class ProfileRawMapperShould
         result.SkillSet.Should().BeEquivalentTo(expectedSkillDto);
     }
 
-    [Fact(DisplayName = "Map SummaryRaw (Introduction, Education, WorkExperience) to SummaryParseDto")]
+    [Fact(DisplayName = "Map SummaryRaw (Introduction, Qualifications, WorkExperience) to SummaryParseDto")]
     public void MapSummaryRawCorrectly()
     {
         // --- Given ---

@@ -3,10 +3,10 @@ using JobMagnet.Domain.Ports.Repositories.Base;
 
 namespace JobMagnet.Domain.Ports.Repositories;
 
-public interface ISummaryQueryRepository : IQueryRepository<ProfessionalSummary, long>
+public interface ISummaryQueryRepository : IQueryRepository<CareerHistory, long>
 {
-    Task<IReadOnlyCollection<ProfessionalSummary>> GetAllWithIncludesAsync();
-    Task<ProfessionalSummary?> GetByIdWithIncludesAsync(long id);
+    Task<IReadOnlyCollection<CareerHistory>> GetAllWithIncludesAsync();
+    Task<CareerHistory?> GetByIdWithIncludesAsync(long id);
     ISummaryQueryRepository IncludeWorkExperience();
     ISummaryQueryRepository IncludeEducation();
 }

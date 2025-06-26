@@ -8,9 +8,9 @@ public class SummaryCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<ProfessionalSummary>(composer =>
+        fixture.Customize<CareerHistory>(composer =>
             composer
-                .FromFactory(() => new ProfessionalSummary(
+                .FromFactory(() => new CareerHistory(
                     FixtureBuilder.Faker.Lorem.Paragraph()
                 ))
                 .OmitAutoProperties()

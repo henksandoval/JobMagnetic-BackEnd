@@ -9,16 +9,16 @@ public static class ResumeMapper
 {
     static ResumeMapper()
     {
-        TypeAdapterConfig<Resume, ResumeResponse>
+        TypeAdapterConfig<Headline, ResumeResponse>
             .NewConfig()
             .Map(dest => dest.ResumeData, src => src);
 
-        TypeAdapterConfig<Resume, ResumeCommand>
+        TypeAdapterConfig<Headline, ResumeCommand>
             .NewConfig()
             .Map(dest => dest.ResumeData, src => src);
     }
 
-    public static ResumeResponse ToModel(this Resume entity) => entity.Adapt<ResumeResponse>();
+    public static ResumeResponse ToModel(this Headline entity) => entity.Adapt<ResumeResponse>();
 
-    public static ResumeCommand ToUpdateRequest(this Resume entity) => entity.Adapt<ResumeCommand>();
+    public static ResumeCommand ToUpdateRequest(this Headline entity) => entity.Adapt<ResumeCommand>();
 }

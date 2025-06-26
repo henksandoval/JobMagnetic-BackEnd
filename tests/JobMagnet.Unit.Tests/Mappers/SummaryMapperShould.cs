@@ -15,7 +15,7 @@ public class SummaryMapperShould
     public void MapSummaryEntityToSummaryModelCorrectly()
     {
         // --- Given ---
-        var entity = _fixture.Create<ProfessionalSummary>();
+        var entity = _fixture.Create<CareerHistory>();
 
         // --- When ---
         var summaryModel = entity.ToModel();
@@ -25,7 +25,7 @@ public class SummaryMapperShould
         summaryModel.Id.Should().Be(entity.Id);
         summaryModel.SummaryData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
-        summaryModel.SummaryData.Education.Should().BeEquivalentTo(entity.Education, options =>
+        summaryModel.SummaryData.Education.Should().BeEquivalentTo(entity.Qualifications, options =>
             options.Excluding(GetExcludeEducationEntityProperties()));
         summaryModel.SummaryData.WorkExperiences.Should().BeEquivalentTo(entity.WorkExperiences, options =>
             options.Excluding(GetExcludeWorkExperienceEntityProperties()));
@@ -35,7 +35,7 @@ public class SummaryMapperShould
     public void MapSummaryEntityToSummaryUpdateCommandCorrectly()
     {
         // --- Given ---
-        var entity = _fixture.Create<ProfessionalSummary>();
+        var entity = _fixture.Create<CareerHistory>();
 
         // --- When ---
         var updateCommand = entity.ToUpdateCommand();
@@ -44,22 +44,23 @@ public class SummaryMapperShould
         updateCommand.Should().NotBeNull();
         updateCommand.SummaryData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
-        updateCommand.SummaryData.Education.Should().BeEquivalentTo(entity.Education, options =>
+        updateCommand.SummaryData.Education.Should().BeEquivalentTo(entity.Qualifications, options =>
             options.Excluding(GetExcludeEducationEntityProperties()));
         updateCommand.SummaryData.WorkExperiences.Should().BeEquivalentTo(entity.WorkExperiences, options =>
             options.Excluding(GetExcludeWorkExperienceEntityProperties()));
     }
 
-    private static Expression<Func<ProfessionalSummary, object>> GetExcludeEntityProperties()
+    private static Expression<Func<CareerHistory, object>> GetExcludeEntityProperties()
     {
         return e => new
         {
-            e.Id, e.Education, e.WorkExperiences, e.IsDeleted, e.AddedAt, e.AddedBy, e.DeletedAt,
+            e.Id,
+            Education = e.Qualifications, e.WorkExperiences, e.IsDeleted, e.AddedAt, e.AddedBy, e.DeletedAt,
             e.DeletedBy, e.LastModifiedAt, e.LastModifiedBy
         };
     }
 
-    private static Expression<Func<EducationEntity, object>> GetExcludeEducationEntityProperties()
+    private static Expression<Func<Qualification, object>> GetExcludeEducationEntityProperties()
     {
         return e => new
         {
@@ -68,7 +69,7 @@ public class SummaryMapperShould
         };
     }
 
-    private static Expression<Func<WorkExperienceEntity, object>> GetExcludeWorkExperienceEntityProperties()
+    private static Expression<Func<WorkExperience, object>> GetExcludeWorkExperienceEntityProperties()
     {
         return e => new
         {

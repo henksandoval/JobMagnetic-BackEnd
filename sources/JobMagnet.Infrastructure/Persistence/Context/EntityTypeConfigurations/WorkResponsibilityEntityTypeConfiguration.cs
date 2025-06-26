@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobMagnet.Infrastructure.Persistence.Context.EntityTypeConfigurations;
 
-public class WorkResponsibilityEntityTypeConfiguration : IEntityTypeConfiguration<WorkResponsibilityEntity>
+public class WorkResponsibilityEntityTypeConfiguration : IEntityTypeConfiguration<WorkResponsibility>
 {
-    public void Configure(EntityTypeBuilder<WorkResponsibilityEntity> builder)
+    public void Configure(EntityTypeBuilder<WorkResponsibility> builder)
     {
         builder.HasKey(r => r.Id);
 
         builder.Property(r => r.Description)
             .IsRequired()
-            .HasMaxLength(WorkResponsibilityEntity.MaxDescriptionLength);
+            .HasMaxLength(WorkResponsibility.MaxDescriptionLength);
     }
 }

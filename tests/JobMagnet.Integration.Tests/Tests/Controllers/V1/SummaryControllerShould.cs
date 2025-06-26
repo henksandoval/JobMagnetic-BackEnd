@@ -19,7 +19,7 @@ namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
 
 public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 {
-    private const string RequestUriController = "api/v1/ProfessionalSummary";
+    private const string RequestUriController = "api/v1/CareerHistory";
     private const string InvalidId = "100";
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly HttpClient _httpClient;
@@ -70,9 +70,9 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var entityCreated = await queryRepository.GetByIdWithIncludesAsync(responseData.Id);
 
         entityCreated.ShouldNotBeNull();
-        entityCreated.Education.ShouldNotBeNull();
+        entityCreated.Qualifications.ShouldNotBeNull();
         entityCreated.WorkExperiences.ShouldNotBeNull();
-        entityCreated.Education.ShouldBeSameAs(entityCreated.Education);
+        entityCreated.Qualifications.ShouldBeSameAs(entityCreated.Qualifications);
         entityCreated.WorkExperiences.ShouldBeSameAs(entityCreated.WorkExperiences);
     }
 
@@ -80,7 +80,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ReturnRecord_WhenValidIdIsProvidedAsync()
     {
         // --- Given ---
-        var entity = await SetupEntityAsync(() => _fixture.Create<ProfessionalSummary>());
+        var entity = await SetupEntityAsync(() => _fixture.Create<CareerHistory>());
 
         // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
@@ -98,7 +98,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ReturnNotFound_WhenInvalidIdIsProvidedAsync()
     {
         // --- Given ---
-        _ = await SetupEntityAsync(() => _fixture.Create<ProfessionalSummary>());
+        _ = await SetupEntityAsync(() => _fixture.Create<CareerHistory>());
 
         // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
@@ -112,7 +112,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task DeleteRecord_WhenDeleteRequestIsReceivedAsync()
     {
         // --- Given ---
-        var entity = await SetupEntityAsync(() => _fixture.Create<ProfessionalSummary>());
+        var entity = await SetupEntityAsync(() => _fixture.Create<CareerHistory>());
 
         // --- When ---
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{entity.Id}");
@@ -130,7 +130,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ReturnNotFound_WhenDeleteRequestWithInvalidIdIsProvidedAsync()
     {
         // --- Given ---
-        _ = await SetupEntityAsync(() => _fixture.Create<ProfessionalSummary>());
+        _ = await SetupEntityAsync(() => _fixture.Create<CareerHistory>());
 
         // --- When ---
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{InvalidId}");
@@ -140,7 +140,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    private async Task<ProfessionalSummary> SetupEntityAsync(Func<ProfessionalSummary> entityBuilder)
+    private async Task<CareerHistory> SetupEntityAsync(Func<CareerHistory> entityBuilder)
     {
         var summaryEntity = entityBuilder();
         await _testFixture.ResetDatabaseAsync();
@@ -160,13 +160,13 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         return entity;
     }
 
-    private async Task<ProfessionalSummary> CreateAndPersistEntityAsync(ProfessionalSummary professionalSummary)
+    private async Task<CareerHistory> CreateAndPersistEntityAsync(CareerHistory careerHistory)
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<Profile>>();
 
         var entity = new ProfileEntityBuilder(_fixture)
-            .WithSummary(professionalSummary)
+            .WithSummary(careerHistory)
             .Build();
         await commandRepository.CreateAsync(entity);
         await commandRepository.SaveChangesAsync();

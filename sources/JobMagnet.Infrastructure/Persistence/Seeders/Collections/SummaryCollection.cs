@@ -85,10 +85,10 @@ public record SummaryCollection
         _summaryId = summaryId;
     }
 
-    public EducationEntity[] GetEducation()
+    public Qualification[] GetEducation()
     {
         return _values
-            .Select(x => new EducationEntity(
+            .Select(x => new Qualification(
                 x.Degree,
                 x.InstitutionName,
                 x.InstitutionLocation,
@@ -99,12 +99,12 @@ public record SummaryCollection
             )).ToArray();
     }
 
-    public WorkExperienceEntity[] GetWorkExperience()
+    public WorkExperience[] GetWorkExperience()
     {
         return _value
             .Select(item =>
             {
-                var workExperience = new WorkExperienceEntity(
+                var workExperience = new WorkExperience(
                     item.JobTitle,
                     item.CompanyName,
                     item.CompanyLocation,
@@ -115,7 +115,7 @@ public record SummaryCollection
                 );
 
                 foreach (var description in item.Responsibilities)
-                    workExperience.AddResponsibility(new WorkResponsibilityEntity(description));
+                    workExperience.AddResponsibility(new WorkResponsibility(description));
 
                 return workExperience;
             })

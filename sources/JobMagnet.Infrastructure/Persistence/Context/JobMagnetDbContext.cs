@@ -21,19 +21,19 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
     public DbSet<ContactTypeAlias> ContactAliases { get; set; }
     public DbSet<Profile> Profiles { get; set; }
     public DbSet<VanityUrl> PublicProfileIdentifier { get; set; }
-    public DbSet<EducationEntity> Educations { get; set; }
+    public DbSet<Qualification> Educations { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<Talent> Talents { get; set; }
-    public DbSet<Resume> Resumes { get; set; }
-    public DbSet<ProfessionalSummary> Summaries { get; set; }
+    public DbSet<Headline> Resumes { get; set; }
+    public DbSet<CareerHistory> Summaries { get; set; }
     public DbSet<Testimonial> Testimonials { get; set; }
-    public DbSet<WorkExperienceEntity> WorkExperiences { get; set; }
-    public DbSet<WorkResponsibilityEntity> WorkResponsibilities { get; set; }
+    public DbSet<WorkExperience> WorkExperiences { get; set; }
+    public DbSet<WorkResponsibility> WorkResponsibilities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Talent>().ToTable("Talents");
-        modelBuilder.Entity<ProfessionalSummary>().ToTable("Summaries");
+        modelBuilder.Entity<CareerHistory>().ToTable("Summaries");
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }

@@ -37,7 +37,7 @@ public class ProfileRawBuilder
     public ProfileRawBuilder WithContactInfo(List<ContactInfoRaw> contactInfo)
     {
         var resumeBase = _instance.Resume ??
-                         throw new InvalidOperationException("Resume must be set before adding contact info. Call WithResume() first.");
+                         throw new InvalidOperationException("Headline must be set before adding contact info. Call WithResume() first.");
         var updatedResume = resumeBase with { ContactInfo = contactInfo };
 
         _instance = _instance with { Resume = updatedResume };

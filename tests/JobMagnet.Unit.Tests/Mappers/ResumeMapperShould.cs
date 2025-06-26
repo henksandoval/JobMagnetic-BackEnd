@@ -15,7 +15,7 @@ public class ResumeMapperShould
     public void MapResumeEntityToResumeModelCorrectly()
     {
         // --- Given ---
-        var entity = _fixture.Create<Resume>();
+        var entity = _fixture.Create<Headline>();
 
         // --- When ---
         var resumeModel = entity.ToModel();
@@ -31,7 +31,7 @@ public class ResumeMapperShould
     public void MapResumeEntityToResumeUpdateCommandCorrectly()
     {
         // --- Given ---
-        var entity = _fixture.Create<Resume>();
+        var entity = _fixture.Create<Headline>();
 
         // --- When ---
         var updateCommand = entity.ToUpdateRequest();
@@ -42,7 +42,7 @@ public class ResumeMapperShould
             options.Excluding(GetExcludeEntityProperties()));
     }
 
-    private static Expression<Func<Resume, object>> GetExcludeEntityProperties()
+    private static Expression<Func<Headline, object>> GetExcludeEntityProperties()
     {
         return e => new
         {

@@ -5,7 +5,7 @@ using JobMagnet.Domain.Core.Entities.Contact;
 
 namespace JobMagnet.Domain.Core.Entities;
 
-public class Resume : SoftDeletableEntity<long>
+public class Headline : SoftDeletableEntity<long>
 {
     public const int MaxJobTitleLength = 100;
 
@@ -22,12 +22,12 @@ public class Resume : SoftDeletableEntity<long>
 
     public virtual IReadOnlyCollection<ContactInfo>? ContactInfo => _contactInfo;
 
-    private Resume()
+    private Headline()
     {
     }
 
     [SetsRequiredMembers]
-    public Resume(
+    public Headline(
         string title,
         string suffix,
         string jobTitle,

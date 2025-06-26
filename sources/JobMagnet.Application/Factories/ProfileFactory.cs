@@ -66,9 +66,9 @@ public class ProfileFactory(
         return profile;
     }
 
-    private async Task<Resume> BuildResumeAsync(ResumeParseDto resumeDto, CancellationToken cancellationToken)
+    private async Task<Headline> BuildResumeAsync(ResumeParseDto resumeDto, CancellationToken cancellationToken)
     {
-        var resumeEntity = new Resume(
+        var resumeEntity = new Headline(
             resumeDto.Title ?? string.Empty,
             resumeDto.Suffix ?? string.Empty,
             resumeDto.JobTitle ?? string.Empty,
@@ -131,10 +131,10 @@ public class ProfileFactory(
             .ToList();
     }
 
-    private List<EducationEntity> BuildEducationHistory(List<EducationParseDto>? educationDtos)
+    private List<Qualification> BuildEducationHistory(List<EducationParseDto>? educationDtos)
     {
         if (educationDtos is null) return [];
-        return educationDtos.Select(dto => new EducationEntity(
+        return educationDtos.Select(dto => new Qualification(
             dto.Degree ?? string.Empty,
             dto.InstitutionName ?? string.Empty,
             dto.InstitutionLocation ?? string.Empty,
@@ -144,10 +144,10 @@ public class ProfileFactory(
         )).ToList();
     }
 
-    private List<WorkExperienceEntity> BuildWorkExperience(List<WorkExperienceParseDto>? experienceDtos)
+    private List<WorkExperience> BuildWorkExperience(List<WorkExperienceParseDto>? experienceDtos)
     {
         if (experienceDtos is null) return [];
-        return experienceDtos.Select(dto => new WorkExperienceEntity(
+        return experienceDtos.Select(dto => new WorkExperience(
             dto.JobTitle ?? string.Empty,
             dto.CompanyName ?? string.Empty,
             dto.CompanyLocation ?? string.Empty,
@@ -157,11 +157,11 @@ public class ProfileFactory(
         )).ToList();
     }
 
-    private ProfessionalSummary? BuildSummary(SummaryParseDto? summaryDto)
+    private CareerHistory? BuildSummary(SummaryParseDto? summaryDto)
     {
         if (summaryDto is null) return null;
 
-        return new ProfessionalSummary(summaryDto.Introduction ?? string.Empty);
+        return new CareerHistory(summaryDto.Introduction ?? string.Empty);
     }
 
     private async Task<SkillSet> BuildSkillSetAsync(SkillSetParseDto skillSetDto,

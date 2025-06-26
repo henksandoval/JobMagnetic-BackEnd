@@ -12,14 +12,14 @@ namespace JobMagnet.Host.Controllers.V1;
 [ApiVersion("1")]
 public class ResumeController(
     ILogger<ResumeController> logger,
-    IQueryRepository<Resume, long> queryRepository,
-    ICommandRepository<Resume> commandRepository) : BaseController<ResumeController>(logger)
+    IQueryRepository<Headline, long> queryRepository,
+    ICommandRepository<Headline> commandRepository) : BaseController<ResumeController>(logger)
 {
     [HttpPost]
     [ProducesResponseType(typeof(ResumeResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ResumeCommand createCommand, CancellationToken cancellationToken)
     {
-        var entity = new Resume(
+        var entity = new Headline(
             createCommand.ResumeData.Title,
             createCommand.ResumeData.Suffix,
             createCommand.ResumeData.JobTitle,

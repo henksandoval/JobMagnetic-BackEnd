@@ -56,7 +56,7 @@ public static class ProfileMapper
             .Map(dest => dest.SkillDetails,
                 src => src.Skills.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
 
-        TypeAdapterConfig<ProfessionalSummary, SummaryViewModel>
+        TypeAdapterConfig<CareerHistory, SummaryViewModel>
             .NewConfig()
             .Map(dest => dest.Education, src => EducationViewModelMap(src))
             .Map(dest => dest.WorkExperience, src => WorkExperienceViewModelMap(src));
@@ -84,9 +84,9 @@ public static class ProfileMapper
         return viewModel;
     }
 
-    private static EducationViewModel EducationViewModelMap(ProfessionalSummary src)
+    private static EducationViewModel EducationViewModelMap(CareerHistory src)
     {
-        var academicBackground = src.Education?.Select(e => new AcademicBackgroundViewModel(
+        var academicBackground = src.Qualifications?.Select(e => new AcademicBackgroundViewModel(
             e.Degree,
             e.StartDate.ToString("yyyy-MM-dd"),
             e.InstitutionName,
@@ -96,7 +96,7 @@ public static class ProfileMapper
         return new EducationViewModel(academicBackground);
     }
 
-    private static WorkExperienceViewModel WorkExperienceViewModelMap(ProfessionalSummary src)
+    private static WorkExperienceViewModel WorkExperienceViewModelMap(CareerHistory src)
     {
         var workExperienceList = src.WorkExperiences?.Select(work =>
             {

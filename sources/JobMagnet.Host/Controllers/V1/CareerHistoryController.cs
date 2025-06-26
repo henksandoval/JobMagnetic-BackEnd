@@ -11,10 +11,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobMagnet.Host.Controllers.V1;
 
 [ApiVersion("1")]
-public class ProfessionalSummaryController(
-    ILogger<ProfessionalSummaryController> logger,
+public class CareerHistoryController(
+    ILogger<CareerHistoryController> logger,
     ISummaryQueryRepository queryRepository,
-    ICommandRepository<ProfessionalSummary> commandRepository) : BaseController<ProfessionalSummaryController>(logger)
+    ICommandRepository<CareerHistory> commandRepository) : BaseController<CareerHistoryController>(logger)
 {
     [HttpPost]
     [ProducesResponseType(typeof(SummaryResponse), StatusCodes.Status201Created)]

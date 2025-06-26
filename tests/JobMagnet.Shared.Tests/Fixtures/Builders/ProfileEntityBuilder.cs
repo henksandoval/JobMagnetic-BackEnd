@@ -13,16 +13,16 @@ public class ProfileEntityBuilder(IFixture fixture)
     private string? _firstName;
     private string? _lastName;
     private List<Project> _projects = [];
-    private Resume _resume = null!;
+    private Headline _headline = null!;
     private SkillSet _skillSet = null!;
-    private ProfessionalSummary _professionalSummary = null!;
+    private CareerHistory _careerHistory = null!;
     private List<Talent> _talents = [];
     private List<Testimonial> _testimonials = [];
 
 
     public ProfileEntityBuilder WithResume()
     {
-        _resume = fixture.Create<Resume>();
+        _headline = fixture.Create<Headline>();
         return this;
     }
 
@@ -31,11 +31,11 @@ public class ProfileEntityBuilder(IFixture fixture)
         if (count > ContactTypeDataFactory.Count)
             throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available contact types.");
 
-        if (_resume == null) throw new InvalidOperationException("Cannot add contact info without a resume. Call WithResume() first.");
+        if (_headline == null) throw new InvalidOperationException("Cannot add contact info without a headline. Call WithResume() first.");
 
         var addedContactInfo = new Dictionary<string, ContactType>();
 
-        while (_resume.ContactInfo?.Count < count)
+        while (_headline.ContactInfo?.Count < count)
         {
             var requestedContactType = fixture.Create<ContactType>();
             ContactType contactTypeToAdd;
@@ -52,7 +52,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
             var value = GenerateContactDetails(contactTypeToAdd.Name);
 
-            _resume.AddContactInfo(value, contactTypeToAdd);
+            _headline.AddContactInfo(value, contactTypeToAdd);
         }
 
         return this;
@@ -109,32 +109,32 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithSummary()
     {
-        _professionalSummary = fixture.Create<ProfessionalSummary>();
+        _careerHistory = fixture.Create<CareerHistory>();
         return this;
     }
 
-    public ProfileEntityBuilder WithSummary(ProfessionalSummary professionalSummary)
+    public ProfileEntityBuilder WithSummary(CareerHistory careerHistory)
     {
-        _professionalSummary = professionalSummary;
+        _careerHistory = careerHistory;
         return this;
     }
 
     public ProfileEntityBuilder WithEducation(int count = 5)
     {
-        if (_professionalSummary == null) throw new InvalidOperationException("Cannot add contact info without a professionalSummary. Call WithSummary() first.");
+        if (_careerHistory == null) throw new InvalidOperationException("Cannot add contact info without a careerHistory. Call WithSummary() first.");
 
-        foreach (var education in fixture.CreateMany<EducationEntity>(count).ToList())
-            _professionalSummary.AddEducation(education);
+        foreach (var education in fixture.CreateMany<Qualification>(count).ToList())
+            _careerHistory.AddEducation(education);
 
         return this;
     }
 
     public ProfileEntityBuilder WithWorkExperience(int count = 5)
     {
-        if (_professionalSummary == null) throw new InvalidOperationException("Cannot add contact info without a professionalSummary. Call WithSummary() first.");
+        if (_careerHistory == null) throw new InvalidOperationException("Cannot add contact info without a careerHistory. Call WithSummary() first.");
 
-        foreach (var workExperience in fixture.CreateMany<WorkExperienceEntity>(count).ToList())
-            _professionalSummary.AddWorkExperience(workExperience);
+        foreach (var workExperience in fixture.CreateMany<WorkExperience>(count).ToList())
+            _careerHistory.AddWorkExperience(workExperience);
 
         return this;
     }
@@ -165,9 +165,9 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         if (_lastName is not null) profile.ChangeLastName(_lastName);
 
-        if (_resume is not null) profile.AddResume(_resume);
+        if (_headline is not null) profile.AddResume(_headline);
 
-        if (_professionalSummary is not null) profile.AddSummary(_professionalSummary);
+        if (_careerHistory is not null) profile.AddSummary(_careerHistory);
 
         if (_skillSet is not null) profile.AddSkill(_skillSet);
 

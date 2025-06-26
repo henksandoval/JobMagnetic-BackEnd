@@ -10,49 +10,49 @@ public static class SummaryMapper
 {
     static SummaryMapper()
     {
-        TypeAdapterConfig<ProfessionalSummary, SummaryResponse>
+        TypeAdapterConfig<CareerHistory, SummaryResponse>
             .NewConfig()
             .Map(dest => dest.SummaryData, src => src);
 
-        TypeAdapterConfig<SummaryCommand, ProfessionalSummary>
+        TypeAdapterConfig<SummaryCommand, CareerHistory>
             .NewConfig()
             .Map(dest => dest, src => src.SummaryData)
             .Ignore(dest => dest.Id);
 
-        TypeAdapterConfig<SummaryCommand, ProfessionalSummary>
+        TypeAdapterConfig<SummaryCommand, CareerHistory>
             .NewConfig()
             .Map(dest => dest, src => src.SummaryData);
 
-        TypeAdapterConfig<ProfessionalSummary, SummaryCommand>
+        TypeAdapterConfig<CareerHistory, SummaryCommand>
             .NewConfig()
             .Map(dest => dest.SummaryData, src => src);
 
-        TypeAdapterConfig<EducationBase, EducationEntity>
+        TypeAdapterConfig<EducationBase, Qualification>
             .NewConfig()
             .MapToConstructor(true);
 
-        TypeAdapterConfig<WorkExperienceBase, WorkExperienceEntity>
+        TypeAdapterConfig<WorkExperienceBase, WorkExperience>
             .NewConfig()
             .MapToConstructor(true);
     }
 
-    public static ProfessionalSummary ToEntity(this SummaryCommand command)
+    public static CareerHistory ToEntity(this SummaryCommand command)
     {
         var data = command.SummaryData;
-        var entity = new ProfessionalSummary(data!.Introduction!, data.ProfileId);
+        var entity = new CareerHistory(data!.Introduction!, data.ProfileId);
 
         foreach (var educationBase in data.Education)
         {
-            var education = educationBase.Adapt<EducationEntity>();
+            var education = educationBase.Adapt<Qualification>();
             entity.AddEducation(education);
         }
 
         foreach (var experienceBase in data.WorkExperiences)
         {
-            var workExperience = experienceBase.Adapt<WorkExperienceEntity>();
+            var workExperience = experienceBase.Adapt<WorkExperience>();
 
             foreach (var description in experienceBase?.Responsibilities ?? [])
-                workExperience.AddResponsibility(new WorkResponsibilityEntity(description));
+                workExperience.AddResponsibility(new WorkResponsibility(description));
 
             entity.AddWorkExperience(workExperience);
         }
@@ -62,11 +62,11 @@ public static class SummaryMapper
         return entity;
     }
 
-    public static SummaryResponse ToModel(this ProfessionalSummary entity) => entity.Adapt<SummaryResponse>();
+    public static SummaryResponse ToModel(this CareerHistory entity) => entity.Adapt<SummaryResponse>();
 
-    public static SummaryCommand ToUpdateCommand(this ProfessionalSummary entity) => entity.Adapt<SummaryCommand>();
+    public static SummaryCommand ToUpdateCommand(this CareerHistory entity) => entity.Adapt<SummaryCommand>();
 
-    public static void UpdateEntity(this ProfessionalSummary entity, SummaryCommand command)
+    public static void UpdateEntity(this CareerHistory entity, SummaryCommand command)
     {
         command.Adapt(entity);
     }

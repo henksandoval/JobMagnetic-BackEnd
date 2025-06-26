@@ -15,9 +15,9 @@ public class UnitOfWork(JobMagnetDbContext dbContext, ILogger<UnitOfWork> logger
     private ICommandRepository<Profile>? _profileRepository;
     private ICommandRepository<Project>? _projectRepository;
     private ICommandRepository<VanityUrl>? _publicProfileIdentifierRepository;
-    private ICommandRepository<Resume>? _resumeRepository;
+    private ICommandRepository<Headline>? _resumeRepository;
     private ICommandRepository<SkillSet>? _skillRepository;
-    private ICommandRepository<ProfessionalSummary>? _summaryRepository;
+    private ICommandRepository<CareerHistory>? _summaryRepository;
     private ICommandRepository<Talent>? _talentRepository;
     private ICommandRepository<Testimonial>? _testimonialRepository;
 
@@ -27,14 +27,14 @@ public class UnitOfWork(JobMagnetDbContext dbContext, ILogger<UnitOfWork> logger
     public ICommandRepository<VanityUrl> PublicProfileIdentifierRepository =>
         _publicProfileIdentifierRepository ??= new Repository<VanityUrl, long>(_dbContext);
 
-    public ICommandRepository<Resume> ResumeRepository =>
-        _resumeRepository ??= new Repository<Resume, long>(_dbContext);
+    public ICommandRepository<Headline> ResumeRepository =>
+        _resumeRepository ??= new Repository<Headline, long>(_dbContext);
 
     public ICommandRepository<SkillSet> SkillRepository =>
         _skillRepository ??= new Repository<SkillSet, long>(_dbContext);
 
-    public ICommandRepository<ProfessionalSummary> SummaryRepository =>
-        _summaryRepository ??= new Repository<ProfessionalSummary, long>(_dbContext);
+    public ICommandRepository<CareerHistory> SummaryRepository =>
+        _summaryRepository ??= new Repository<CareerHistory, long>(_dbContext);
 
     public ICommandRepository<Talent> TalentRepository =>
         _talentRepository ??= new Repository<Talent, long>(_dbContext);

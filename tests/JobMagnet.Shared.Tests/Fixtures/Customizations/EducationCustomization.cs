@@ -13,7 +13,7 @@ public class EducationCustomization : ICustomization
 
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<EducationEntity>(composer => composer
+        fixture.Customize<Qualification>(composer => composer
             .FromFactory(EducationFactory)
             .OmitAutoProperties());
 
@@ -21,13 +21,13 @@ public class EducationCustomization : ICustomization
         fixture.Register(EducationBaseFactory);
     }
 
-    private static EducationEntity EducationFactory()
+    private static Qualification EducationFactory()
     {
         var startDate = Faker.Date.Past(20, DateTime.Now.AddYears(-5));
         var endDate = Faker.Date.Between(startDate, startDate.AddYears(5))
             .OrNull(Faker, 0.25f);
 
-        var education = new EducationEntity(
+        var education = new Qualification(
             Faker.PickRandom(StaticCustomizations.Degrees),
             Faker.PickRandom(StaticCustomizations.Universities),
             Faker.Address.FullAddress(),

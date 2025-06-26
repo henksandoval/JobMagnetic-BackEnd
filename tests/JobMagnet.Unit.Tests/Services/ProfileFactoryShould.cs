@@ -90,7 +90,7 @@ public class ProfileFactoryShould
             .BeEquivalentTo(profileDto.Testimonials, options => options.ExcludingMissingMembers());
     }
 
-    #region Resume Mapping Tests
+    #region Headline Mapping Tests
 
     [Fact(DisplayName = "Map resume aggregation when the DTO provides them")]
     public async Task MapResume_WhenDtoProvidesThem()

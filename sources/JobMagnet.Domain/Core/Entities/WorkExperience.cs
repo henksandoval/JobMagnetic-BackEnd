@@ -4,9 +4,9 @@ using JobMagnet.Domain.Core.Entities.Base;
 
 namespace JobMagnet.Domain.Core.Entities;
 
-public class WorkExperienceEntity : SoftDeletableEntity<long>
+public class WorkExperience : SoftDeletableEntity<long>
 {
-    private readonly HashSet<WorkResponsibilityEntity> _responsibilities = [];
+    private readonly HashSet<WorkResponsibility> _responsibilities = [];
 
     public string JobTitle { get; private set; }
     public string CompanyName { get; private set; }
@@ -16,14 +16,14 @@ public class WorkExperienceEntity : SoftDeletableEntity<long>
     public string Description { get; private set; }
     public long SummaryId { get; private set; }
 
-    public virtual IReadOnlyCollection<WorkResponsibilityEntity> Responsibilities => _responsibilities;
+    public virtual IReadOnlyCollection<WorkResponsibility> Responsibilities => _responsibilities;
 
-    private WorkExperienceEntity()
+    private WorkExperience()
     {
     }
 
     [SetsRequiredMembers]
-    public WorkExperienceEntity(string jobTitle,
+    public WorkExperience(string jobTitle,
         string companyName,
         string companyLocation,
         DateTime startDate,
@@ -53,7 +53,7 @@ public class WorkExperienceEntity : SoftDeletableEntity<long>
         Description = description;
     }
 
-    public void AddResponsibility(WorkResponsibilityEntity responsibility)
+    public void AddResponsibility(WorkResponsibility responsibility)
     {
         Guard.IsNotNull(responsibility);
 

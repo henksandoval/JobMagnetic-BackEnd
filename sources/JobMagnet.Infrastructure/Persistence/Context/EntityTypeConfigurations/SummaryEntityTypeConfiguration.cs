@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobMagnet.Infrastructure.Persistence.Context.EntityTypeConfigurations;
 
-public class SummaryEntityTypeConfiguration : IEntityTypeConfiguration<ProfessionalSummary>
+public class SummaryEntityTypeConfiguration : IEntityTypeConfiguration<CareerHistory>
 {
-    public void Configure(EntityTypeBuilder<ProfessionalSummary> builder)
+    public void Configure(EntityTypeBuilder<CareerHistory> builder)
     {
         builder.HasKey(x => x.Id);
 
-        builder.HasMany(s => s.Education)
+        builder.HasMany(s => s.Qualifications)
             .WithOne()
             .HasForeignKey(e => e.SummaryId)
             .OnDelete(DeleteBehavior.Cascade);

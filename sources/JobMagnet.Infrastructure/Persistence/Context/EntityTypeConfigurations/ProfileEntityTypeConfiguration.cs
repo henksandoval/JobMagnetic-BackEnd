@@ -11,14 +11,14 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<Profile>
     {
         builder.HasKey(p => p.Id);
 
-        builder.HasOne<Resume>(p => p.Resume)
+        builder.HasOne<Headline>(p => p.Resume)
             .WithOne()
-            .HasForeignKey<Resume>(r => r.ProfileId)
+            .HasForeignKey<Headline>(r => r.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne<ProfessionalSummary>(p => p.ProfessionalSummary)
+        builder.HasOne<CareerHistory>(p => p.ProfessionalSummary)
             .WithOne()
-            .HasForeignKey<ProfessionalSummary>(s => s.ProfileId)
+            .HasForeignKey<CareerHistory>(s => s.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne<SkillSet>(p => p.SkillSet)

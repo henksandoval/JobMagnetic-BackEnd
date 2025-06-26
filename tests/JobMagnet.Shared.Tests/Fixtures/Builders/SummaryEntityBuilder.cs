@@ -5,24 +5,24 @@ namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
 public class SummaryEntityBuilder(IFixture fixture)
 {
-    private List<EducationEntity> _education = [];
-    private List<WorkExperienceEntity> _workExperiences = [];
+    private List<Qualification> _education = [];
+    private List<WorkExperience> _workExperiences = [];
 
     public SummaryEntityBuilder WithEducation(int count = 5)
     {
-        _education = fixture.CreateMany<EducationEntity>(count).ToList();
+        _education = fixture.CreateMany<Qualification>(count).ToList();
         return this;
     }
 
     public SummaryEntityBuilder WithWorkExperiences(int count = 5)
     {
-        _workExperiences = fixture.CreateMany<WorkExperienceEntity>(count).ToList();
+        _workExperiences = fixture.CreateMany<WorkExperience>(count).ToList();
         return this;
     }
 
-    public ProfessionalSummary Build()
+    public CareerHistory Build()
     {
-        var summary = fixture.Create<ProfessionalSummary>();
+        var summary = fixture.Create<CareerHistory>();
 
         foreach (var education in _education)
             summary.AddEducation(education);

@@ -13,7 +13,7 @@ public class WorkExperienceCustomization : ICustomization
 
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<WorkExperienceEntity>(composer =>
+        fixture.Customize<WorkExperience>(composer =>
             composer
                 .FromFactory(WorkExperienceFactory)
                 .OmitAutoProperties());
@@ -22,13 +22,13 @@ public class WorkExperienceCustomization : ICustomization
         fixture.Register(WorkExperienceBaseFactory);
     }
 
-    private static WorkExperienceEntity WorkExperienceFactory()
+    private static WorkExperience WorkExperienceFactory()
     {
         var startDate = Faker.Date.Past(20, DateTime.Now.AddYears(-5));
         var endDate = Faker.Date.Between(startDate, startDate.AddYears(5))
             .OrNull(Faker, 0.25f);
 
-        var workExperience = new WorkExperienceEntity(
+        var workExperience = new WorkExperience(
             Faker.PickRandom(StaticCustomizations.JobTitles),
             Faker.PickRandom(StaticCustomizations.CompanyNames),
             Faker.Address.FullAddress(),

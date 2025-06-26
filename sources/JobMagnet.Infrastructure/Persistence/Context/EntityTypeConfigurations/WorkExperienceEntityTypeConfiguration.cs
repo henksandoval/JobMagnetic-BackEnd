@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobMagnet.Infrastructure.Persistence.Context.EntityTypeConfigurations;
 
-public class WorkExperienceEntityTypeConfiguration : IEntityTypeConfiguration<WorkExperienceEntity>
+public class WorkExperienceEntityTypeConfiguration : IEntityTypeConfiguration<WorkExperience>
 {
-    public void Configure(EntityTypeBuilder<WorkExperienceEntity> builder)
+    public void Configure(EntityTypeBuilder<WorkExperience> builder)
     {
         builder.HasKey(x => x.Id);
 

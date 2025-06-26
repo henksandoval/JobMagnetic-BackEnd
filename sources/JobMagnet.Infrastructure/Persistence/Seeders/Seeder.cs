@@ -76,7 +76,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
     {
         var contactTypeMap = await BuildContactTypesMapAsync(cancellationToken).ConfigureAwait(false);
 
-        var resume = new Resume("Mr.",
+        var resume = new Headline("Mr.",
             "",
             "UI/UX Designer & Web Developer",
             About,
@@ -117,7 +117,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
     private static void AddSummary(Profile profile)
     {
-        var summary = new ProfessionalSummary(
+        var summary = new CareerHistory(
             "Professional with experience in your area or profession, recognized for key skills. Committed to value or professional goal, seeking to contribute to the growth of company or industry.",
             profile.Id);
 

@@ -18,9 +18,9 @@ public class Profile : SoftDeletableEntity<long>
     public string? MiddleName { get; private set; }
     public string? SecondLastName { get; private set; }
 
-    public virtual Resume? Resume { get; private set; }
+    public virtual Headline? Resume { get; private set; }
     public virtual SkillSet? SkillSet { get; private set; }
-    public virtual ProfessionalSummary? ProfessionalSummary { get; private set; }
+    public virtual CareerHistory? ProfessionalSummary { get; private set; }
     public SocialProof SocialProof { get; private set; }
     public Portfolio Portfolio { get; private set; }
     public VanityUrls LinkManager { get; private set; }
@@ -96,18 +96,18 @@ public class Profile : SoftDeletableEntity<long>
         SkillSet = skillSet;
     }
 
-    public void AddSummary(ProfessionalSummary professionalSummary)
+    public void AddSummary(CareerHistory careerHistory)
     {
-        Guard.IsNotNull(professionalSummary);
+        Guard.IsNotNull(careerHistory);
 
-        ProfessionalSummary = professionalSummary;
+        ProfessionalSummary = careerHistory;
     }
 
-    public void AddResume(Resume resume)
+    public void AddResume(Headline headline)
     {
-        Guard.IsNotNull(resume);
+        Guard.IsNotNull(headline);
 
-        Resume = resume;
+        Resume = headline;
     }
 
     internal void AddTestimonial(Testimonial testimonial)
