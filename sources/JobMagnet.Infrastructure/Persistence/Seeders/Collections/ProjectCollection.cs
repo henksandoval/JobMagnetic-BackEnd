@@ -1,13 +1,13 @@
 ﻿using System.Collections.Immutable;
+using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 // ReSharper disable once NotAccessedPositionalProperty.Global
 public record ProjectCollection
 {
-    private readonly long _profileId;
+    private readonly ProfileId _profileId;
 
     private readonly IList<GalleryProperties> _values =
     [
@@ -49,7 +49,7 @@ public record ProjectCollection
             "DOG")
     ];
 
-    public ProjectCollection(long profileId = 0)
+    public ProjectCollection(ProfileId profileId)
     {
         _profileId = profileId;
     }
@@ -64,7 +64,8 @@ public record ProjectCollection
                 x.UrlVideo ?? string.Empty,
                 x.Type,
                 ++index,
-                _profileId))
+                _profileId,
+                new ProjectId()))
             .ToImmutableList();
     }
 }

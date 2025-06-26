@@ -18,11 +18,6 @@ public class ContactTypeEntityTypeConfiguration : IEntityTypeConfiguration<Conta
         builder.Property(c => c.IconClass)
             .HasMaxLength(ContactType.MaxIconClassLength);
 
-        builder.HasMany(c => c.Aliases)
-            .WithOne()
-            .HasForeignKey(a => a.ContactTypeId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasIndex(c => c.Name)
             .IsUnique();
 

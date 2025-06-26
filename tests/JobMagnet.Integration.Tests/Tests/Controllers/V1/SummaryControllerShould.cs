@@ -6,7 +6,6 @@ using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Summary;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Integration.Tests.Fixtures;
@@ -43,7 +42,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var educationCollection = _fixture.CreateMany<EducationBase>(3).ToList();
         var workExperienceCollection = _fixture.CreateMany<WorkExperienceBase>(3).ToList();
         var summaryBase = _fixture.Build<SummaryBase>()
-            .With(x => x.ProfileId, profileEntity.Id)
+            .With(x => x.ProfileId, profileEntity.Id.Value)
             .With(x => x.Education, educationCollection)
             .With(x => x.WorkExperiences, workExperienceCollection)
             .Create();
@@ -69,7 +68,7 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<ISummaryQueryRepository>();
-        var entityCreated = await queryRepository.GetByIdWithIncludesAsync(responseData.Id);
+        var entityCreated = await queryRepository.GetByIdWithIncludesAsync(new CareerHistoryId(responseData.Id));
 
         entityCreated.ShouldNotBeNull();
         entityCreated.Qualifications.ShouldNotBeNull();

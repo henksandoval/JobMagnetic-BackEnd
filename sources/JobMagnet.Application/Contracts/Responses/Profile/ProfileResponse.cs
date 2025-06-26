@@ -2,8 +2,8 @@
 
 namespace JobMagnet.Application.Contracts.Responses.Profile;
 
-public sealed record ProfileResponse : IIdentifierBase<long>
+public sealed record ProfileResponse : IIdentifierBase<Guid>
 {
     public required ProfileBase ProfileData { get; init; }
-    public required long Id { get; init; }
+    public required Guid Id { get; init; }
 }

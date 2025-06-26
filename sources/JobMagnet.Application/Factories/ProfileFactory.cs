@@ -3,7 +3,6 @@ using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 
@@ -19,6 +18,8 @@ public class ProfileFactory(
     ISkillTypeResolverService skillTypeResolverService,
     IQueryRepository<SkillCategory, ushort> skillCategoryRepository) : IProfileFactory
 {
+    private ProfileId _profileId = new ProfileId();
+
     public async Task<Profile> CreateProfileFromDtoAsync(ProfileParseDto profileDto,
         CancellationToken cancellationToken)
     {
@@ -26,6 +27,8 @@ public class ProfileFactory(
 
         var profile = new Profile
         (
+            _profileId,
+            Guid.Empty,
             profileDto.FirstName,
             profileDto.LastName,
             profileDto.ProfileImageUrl,
@@ -77,13 +80,15 @@ public class ProfileFactory(
             resumeDto.About ?? string.Empty,
             resumeDto.Summary ?? string.Empty,
             resumeDto.Overview ?? string.Empty,
-            resumeDto.Address ?? string.Empty);
+            resumeDto.Address ?? string.Empty,
+            new HeadlineId(),
+            _profileId);
 
         foreach (var dto in resumeDto.ContactInfo.Where(info => !string.IsNullOrWhiteSpace(info.ContactType)))
         {
             var resolvedType = await contactTypeResolver.ResolveAsync(dto.ContactType!, cancellationToken);
 
-            var contactType = resolvedType.HasValue ? resolvedType.Value : new ContactType(dto.ContactType!);
+            var contactType = resolvedType.HasValue ? resolvedType.Value : new ContactType(new ContactTypeId(), Guid.Empty, dto.ContactType!);
 
             resumeEntity.AddContactInfo(dto.Value!, contactType);
         }
@@ -101,12 +106,12 @@ public class ProfileFactory(
 
         return talentDtos
             .Select(dto => new Talent(
-                dto.Description!
-            ))
-            .ToList();
+                dto.Description!,
+                _profileId,
+                new TalentId())).ToList();
     }
 
-    private static List<Testimonial> BuildTestimonials(List<TestimonialParseDto>? testimonials)
+    private List<Testimonial> BuildTestimonials(List<TestimonialParseDto>? testimonials)
     {
         if (testimonials is null) return [];
 
@@ -114,7 +119,9 @@ public class ProfileFactory(
             dto.Name ?? string.Empty,
             dto.JobTitle ?? string.Empty,
             dto.Feedback ?? string.Empty,
-            dto.PhotoUrl ?? string.Empty)).ToList();
+            dto.PhotoUrl ?? string.Empty,
+            _profileId,
+            new TestimonialId())).ToList();
     }
 
     private List<Project> BuildProjects(List<ProjectParseDto>? projectDtos)
@@ -128,9 +135,9 @@ public class ProfileFactory(
                 dto.UrlImage ?? string.Empty,
                 dto.UrlVideo ?? string.Empty,
                 dto.Type ?? string.Empty,
-                ++index
-            ))
-            .ToList();
+                ++index,
+                _profileId,
+                new ProjectId())).ToList();
     }
 
     private List<Qualification> BuildEducationHistory(List<EducationParseDto>? educationDtos)
@@ -142,7 +149,10 @@ public class ProfileFactory(
             dto.InstitutionLocation ?? string.Empty,
             ToDateTimeOrDefault(dto.StartDate),
             ToNullableDateTime(dto.EndDate),
-            dto.Description ?? string.Empty
+            dto.Description ?? string.Empty,
+            new HeadlineId(),
+            new QualificationId(),
+            Guid.Empty
         )).ToList();
     }
 
@@ -155,21 +165,22 @@ public class ProfileFactory(
             dto.CompanyLocation ?? string.Empty,
             ToDateTimeOrDefault(dto.StartDate),
             ToNullableDateTime(dto.EndDate),
-            dto.Description ?? string.Empty
-        )).ToList();
+            dto.Description ?? string.Empty,
+            new  HeadlineId(),
+            new WorkExperienceId())).ToList();
     }
 
     private CareerHistory? BuildSummary(SummaryParseDto? summaryDto)
     {
         if (summaryDto is null) return null;
 
-        return new CareerHistory(summaryDto.Introduction ?? string.Empty);
+        return new CareerHistory(new CareerHistoryId(), Guid.Empty, summaryDto.Introduction ?? string.Empty, _profileId);
     }
 
     private async Task<SkillSet> BuildSkillSetAsync(SkillSetParseDto skillSetDto,
         CancellationToken cancellationToken)
     {
-        var skillSetEntity = new SkillSet(skillSetDto.Overview!, 0);
+        var skillSetEntity = new SkillSet(skillSetDto.Overview!, _profileId, new SkillSetId());
         var defaultCategory = await skillCategoryRepository
             .FirstAsync(c => c.Name == SkillCategory.DefaultCategoryName, cancellationToken)
             .ConfigureAwait(false);
@@ -179,7 +190,7 @@ public class ProfileFactory(
             var resolvedType = await skillTypeResolverService.ResolveAsync(skill.Name!, cancellationToken)
                 .ConfigureAwait(false); //TODO: Add method by resolving skills by batch
 
-            var skillType = resolvedType.HasValue ? resolvedType.Value : new SkillType(skill.Name!, defaultCategory);
+            var skillType = resolvedType.HasValue ? resolvedType.Value : new SkillType(new SkillTypeId(), skill.Name!, defaultCategory);
 
             skillSetEntity.AddSkill(skill.Level.GetValueOrDefault(), skillType);
         }

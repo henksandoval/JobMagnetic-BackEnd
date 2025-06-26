@@ -2,8 +2,8 @@
 using JobMagnet.Application.Contracts.Commands.Resume;
 using JobMagnet.Application.Contracts.Responses.Resume;
 using JobMagnet.Application.Mappers;
+using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Host.Controllers.Base;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +20,7 @@ public class ResumeController(
     [ProducesResponseType(typeof(ResumeResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ResumeCommand createCommand, CancellationToken cancellationToken)
     {
+        //TODO: VALIDATE CALL
         var entity = new Headline(
             createCommand.ResumeData.Title,
             createCommand.ResumeData.Suffix,
@@ -28,8 +29,8 @@ public class ResumeController(
             createCommand.ResumeData.Summary,
             createCommand.ResumeData.Overview,
             createCommand.ResumeData.Address,
-            0,
-            createCommand.ResumeData.ProfileId
+            new HeadlineId(),
+            new ProfileId()
         );
         await commandRepository.CreateAsync(entity, cancellationToken);
         await commandRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

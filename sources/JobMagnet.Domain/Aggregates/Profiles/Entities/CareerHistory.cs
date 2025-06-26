@@ -1,28 +1,26 @@
-using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
-using JobMagnet.Domain.Core.Entities.Base;
+using JobMagnet.Domain.Shared.Base;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
-public class CareerHistory : SoftDeletableEntity<long>
+public readonly record struct CareerHistoryId(Guid Value) : IStronglyTypedId<Guid>;
+
+public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
 {
     private readonly HashSet<Qualification> _qualifications = [];
     private readonly HashSet<WorkExperience> _workExperiences = [];
 
     public string Introduction { get; private set; }
-    public long ProfileId { get; private set; }
+    public ProfileId ProfileId { get; private set; }
     public virtual IReadOnlyCollection<Qualification> Qualifications => _qualifications;
     public virtual IReadOnlyCollection<WorkExperience> WorkExperiences => _workExperiences;
 
-    private CareerHistory()
+    private CareerHistory() : base(new CareerHistoryId(), Guid.Empty)
     {
     }
 
-    [SetsRequiredMembers]
-    public CareerHistory(string introduction, long profileId = 0, long id = 0)
+    public CareerHistory(CareerHistoryId id, Guid addedBy, string introduction, ProfileId profileId) : base(id, addedBy)
     {
-        Guard.IsGreaterThanOrEqualTo(id, 0);
-        Guard.IsGreaterThanOrEqualTo(profileId, 0);
         Guard.IsNotNullOrWhiteSpace(introduction);
 
         Id = id;

@@ -2,7 +2,7 @@ namespace JobMagnet.Application.Contracts.Responses.Base;
 
 public sealed record ResumeCommandBase
 {
-    public long ProfileId { get; init; }
+    public Guid ProfileId { get; init; }
     public string? JobTitle { get; init; }
     public string? About { get; init; }
     public string? Summary { get; init; }

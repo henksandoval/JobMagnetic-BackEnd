@@ -2,8 +2,8 @@
 
 namespace JobMagnet.Application.Contracts.Responses.Portfolio;
 
-public sealed record ProjectResponse : IIdentifierBase<long>
+public sealed record ProjectResponse : IIdentifierBase<Guid>
 {
     public required ProjectBase ProjectData { get; init; }
-    public required long Id { get; init; }
+    public required Guid Id { get; init; }
 }

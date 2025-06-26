@@ -3,7 +3,6 @@ using Bogus;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Shared.Utils;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
@@ -34,7 +33,10 @@ public class EducationCustomization : ICustomization
             Faker.Address.FullAddress(),
             startDate,
             endDate,
-            Faker.Lorem.Sentences()
+            Faker.Lorem.Sentences(),
+            new HeadlineId(),
+            new QualificationId(),
+            Faker.Random.Guid()
         );
 
         return education;

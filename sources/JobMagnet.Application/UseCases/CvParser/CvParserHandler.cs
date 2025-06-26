@@ -5,7 +5,6 @@ using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Application.UseCases.CvParser.Responses;
 using JobMagnet.Domain.Aggregates.Profiles;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
@@ -36,7 +35,7 @@ public class CvParserHandler(
         var userEmail = GetUserEmail(profileEntity);
         var profileUrl = GetProfileSlugUrl(profileEntity);
 
-        return new CreateProfileResponse(profileEntity.Id, userEmail, profileUrl);
+        return new CreateProfileResponse(profileEntity.Id.Value, userEmail, profileUrl);
     }
 
     private async Task<Profile> BuildProfileFromCvAsync(CvParserCommand command, CancellationToken cancellationToken)

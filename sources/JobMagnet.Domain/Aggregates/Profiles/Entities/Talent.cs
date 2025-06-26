@@ -1,23 +1,21 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using CommunityToolkit.Diagnostics;
-using JobMagnet.Domain.Core.Entities.Base;
+﻿using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Shared.Base;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
-public class Talent : SoftDeletableEntity<long>
+public readonly record struct TalentId(Guid Value) : IStronglyTypedId<Guid>;
+
+public class Talent : SoftDeletableEntity<TalentId>
 {
     public string Description { get; private set; }
-    public long ProfileId { get; private set; }
+    public ProfileId ProfileId { get; private set; }
 
-    private Talent()
+    private Talent() : base(new TalentId(), Guid.Empty)
     {
     }
 
-    [SetsRequiredMembers]
-    public Talent(string description, long profileId = 0, long id = 0)
+    public Talent(string description, ProfileId profileId, TalentId id) : base(id, Guid.Empty)
     {
-        Guard.IsGreaterThanOrEqualTo(id, 0);
-        Guard.IsGreaterThanOrEqualTo(profileId, 0);
         Guard.IsNotNullOrWhiteSpace(description);
 
         Id = id;

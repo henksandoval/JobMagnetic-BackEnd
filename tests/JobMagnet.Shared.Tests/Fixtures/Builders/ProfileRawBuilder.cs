@@ -79,8 +79,8 @@ public class ProfileRawBuilder
 
     public ProfileRawBuilder WithProjects(int count = 5)
     {
-        var Project = _fixture.CreateMany<ProjectRaw>(count).ToList();
-        _instance = _instance with { Project = Project };
+        var project = _fixture.CreateMany<ProjectRaw>(count).ToList();
+        _instance = _instance with { Project = project };
         return this;
     }
 

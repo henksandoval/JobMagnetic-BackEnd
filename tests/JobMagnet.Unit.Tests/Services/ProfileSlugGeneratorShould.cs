@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
+
 using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;

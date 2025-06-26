@@ -1,5 +1,4 @@
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,7 +12,7 @@ public class SummaryEntityTypeConfiguration : IEntityTypeConfiguration<CareerHis
 
         builder.HasMany(s => s.Qualifications)
             .WithOne()
-            .HasForeignKey(e => e.SummaryId)
+            .HasForeignKey(e => e.HeadlineId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

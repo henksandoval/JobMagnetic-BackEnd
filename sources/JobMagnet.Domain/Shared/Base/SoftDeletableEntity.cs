@@ -1,12 +1,16 @@
-﻿using JobMagnet.Domain.Core.Entities.Base.Interfaces;
+﻿using JobMagnet.Domain.Shared.Base.Interfaces;
 
-namespace JobMagnet.Domain.Core.Entities.Base;
+namespace JobMagnet.Domain.Shared.Base;
 
 public abstract class SoftDeletableEntity<TId> : TrackableEntity<TId>, ISoftDeletableEntity<TId>
 {
-    public bool IsDeleted { get; set; }
-    public DateTime? DeletedAt { get; set; }
-    public Guid? DeletedBy { get; set; }
+    protected SoftDeletableEntity(TId id, Guid addedBy) : base(id, addedBy)
+    {
+    }
+
+    public bool IsDeleted { get; private set; }
+    public DateTime? DeletedAt { get; private set; }
+    public Guid? DeletedBy { get; private set; }
 
     public virtual void Delete(Guid? deletedBy = null)
     {
@@ -15,6 +19,8 @@ public abstract class SoftDeletableEntity<TId> : TrackableEntity<TId>, ISoftDele
         IsDeleted = true;
         DeletedAt = DateTime.UtcNow;
         DeletedBy = deletedBy;
+
+        UpdateModificationDetails(deletedBy);
 
         //TODO: AddDomainEvent(new EntitySoftDeletedEvent(this));
     }
@@ -27,6 +33,6 @@ public abstract class SoftDeletableEntity<TId> : TrackableEntity<TId>, ISoftDele
         DeletedAt = null;
         DeletedBy = null;
 
-        //TODO: AddDomainEvent(new EntitySoftDeletedEvent(this));
+        //TODO: AddDomainEvent(new EntityRestoredEvent(this));
     }
 }

@@ -1,10 +1,12 @@
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
-using JobMagnet.Domain.Core.Entities.Base;
+using JobMagnet.Domain.Shared.Base;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
-public class Qualification : SoftDeletableEntity<long>
+public readonly record struct QualificationId(Guid Value) : IStronglyTypedId<Guid>;
+
+public class Qualification : SoftDeletableEntity<QualificationId>
 {
     public string Degree { get; private set; }
     public string InstitutionName { get; private set; }
@@ -12,14 +14,12 @@ public class Qualification : SoftDeletableEntity<long>
     public DateTime StartDate { get; private set; }
     public DateTime? EndDate { get; private set; }
     public string Description { get; private set; }
-    public long SummaryId { get; private set; }
+    public HeadlineId HeadlineId { get; private set; }
 
     [SetsRequiredMembers]
     public Qualification(string degree, string institutionName, string institutionLocation, DateTime startDate, DateTime? endDate,
-        string description, long summaryId = 0, long id = 0)
+        string description, HeadlineId headlineId, QualificationId id, Guid addedBy) : base(id, addedBy)
     {
-        Guard.IsGreaterThanOrEqualTo(id, 0);
-        Guard.IsGreaterThanOrEqualTo(summaryId, 0);
         Guard.IsNotNullOrWhiteSpace(degree);
         Guard.IsNotNullOrWhiteSpace(institutionName);
         Guard.IsNotNullOrWhiteSpace(institutionLocation);
@@ -34,7 +34,7 @@ public class Qualification : SoftDeletableEntity<long>
         InstitutionLocation = institutionLocation;
         StartDate = startDate;
         EndDate = endDate;
-        SummaryId = summaryId;
+        HeadlineId = headlineId;
         Description = description;
         Id = id;
     }

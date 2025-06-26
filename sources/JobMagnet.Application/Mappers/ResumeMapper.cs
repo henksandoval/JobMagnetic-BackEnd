@@ -1,7 +1,6 @@
 ﻿using JobMagnet.Application.Contracts.Commands.Resume;
 using JobMagnet.Application.Contracts.Responses.Resume;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 using Mapster;
 
 namespace JobMagnet.Application.Mappers;

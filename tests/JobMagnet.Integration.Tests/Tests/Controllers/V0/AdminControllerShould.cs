@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
@@ -79,6 +80,7 @@ public class AdminControllerShould(
         response.IsSuccessStatusCode.ShouldBeTrue();
         response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
 
+        var profileId = new ProfileId();
         await using var scope = testFixture.GetProvider().CreateAsyncScope();
         var profileQueryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
         var profile = await profileQueryRepository
@@ -87,15 +89,15 @@ public class AdminControllerShould(
             .WithTestimonials()
             .WithSkills()
             .WithProject()
-            .WhereCondition(x => x.Id == 1)
+            .WhereCondition(x => x.Id == profileId)
             .BuildFirstOrDefaultAsync();
 
         profile.ShouldNotBeNull();
         profile.Resume.ShouldNotBeNull();
         profile.Resume.ContactInfo.ShouldNotBeNull();
         profile.SkillSet.Skills.Count.ShouldBe(SkillInfoCollection.Data.Count);
-        profile.Talents.Count.ShouldBe(new TalentsCollection().GetTalents().Count);
-        profile.Testimonials.Count.ShouldBe(new TestimonialCollection().GetTestimonials().Count);
-        profile.Projects.Count.ShouldBe(new ProjectCollection().GetProjects().Count);
+        profile.Talents.Count.ShouldBe(new TalentsCollection(profileId).GetTalents().Count);
+        profile.Testimonials.Count.ShouldBe(new TestimonialCollection(profileId).GetTestimonials().Count);
+        profile.Projects.Count.ShouldBe(new ProjectCollection(profileId).GetProjects().Count);
     }
 }

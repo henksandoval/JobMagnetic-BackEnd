@@ -1,6 +1,5 @@
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 
 namespace JobMagnet.Domain.Ports.Repositories.Base;
 

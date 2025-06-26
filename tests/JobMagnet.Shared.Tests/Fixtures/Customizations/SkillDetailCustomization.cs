@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using Bogus;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 
@@ -6,6 +7,8 @@ namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class SkillDetailCustomization : ICustomization
 {
+    private static readonly Faker Faker = FixtureBuilder.Faker;
+
     public void Customize(IFixture fixture)
     {
         fixture.Customize<SkillItemBase>(composer =>
@@ -16,8 +19,8 @@ public class SkillDetailCustomization : ICustomization
         fixture.Customize<SkillRaw>(composer =>
             composer.FromFactory(() =>
                 new SkillRaw(
-                    FixtureBuilder.Faker.Company.CompanyName(),
-                    FixtureBuilder.Faker.Random.UShort(1, 10).ToString()
+                    Faker.Company.CompanyName(),
+                    Faker.Random.UShort(1, 10).ToString()
                 )
             )
         );
@@ -25,10 +28,10 @@ public class SkillDetailCustomization : ICustomization
 
     private static void ApplyCommonProperties(dynamic item)
     {
-        item.Name = FixtureBuilder.Faker.Company.CompanyName();
-        item.ProficiencyLevel = FixtureBuilder.Faker.Random.UShort(1, 10);
-        item.Category = FixtureBuilder.Faker.Music.Genre();
-        item.Rank = FixtureBuilder.Faker.Random.UShort(1, 10);
-        item.IconUrl = FixtureBuilder.Faker.Image.PicsumUrl();
+        item.Name = Faker.Company.CompanyName();
+        item.ProficiencyLevel = Faker.Random.UShort(1, 10);
+        item.Category = Faker.Music.Genre();
+        item.Rank = Faker.Random.UShort(1, 10);
+        item.IconUrl = Faker.Image.PicsumUrl();
     }
 }

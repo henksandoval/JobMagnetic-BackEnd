@@ -1,11 +1,10 @@
 ﻿using System.Linq.Expressions;
 using JobMagnet.Domain.Aggregates.Profiles;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 
 namespace JobMagnet.Domain.Ports.Repositories;
 
-public interface IProfileQueryRepository : IQueryRepository<Profile, long>
+public interface IProfileQueryRepository : IQueryRepository<Profile, ProfileId>
 {
     IProfileQueryRepository WhereCondition(Expression<Func<Profile, bool>> expression);
     IProfileQueryRepository WithResume();

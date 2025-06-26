@@ -10,27 +10,17 @@ public interface ISkillTypeResolverService
 }
 
 public class SkillTypeResolverService(
-    IQueryRepository<SkillType, int> skillTypeRepository,
-    IQueryRepository<SkillTypeAlias, int> skillTypeAliasRepository)
+    IQueryRepository<SkillType, int> skillTypeRepository)
     : ISkillTypeResolverService
 {
     public async Task<Maybe<SkillType>> ResolveAsync(string nameOrAlias, CancellationToken cancellationToken)
     {
         var skillType = await skillTypeRepository
-            .FirstOrDefaultAsync(c =>
-                    c.Name.ToLower() == nameOrAlias.ToLower(),
+            .FirstOrDefaultAsync(s =>
+                    s.Name.Equals(nameOrAlias, StringComparison.CurrentCultureIgnoreCase) ||
+                    s.Aliases.Any(types => types.Alias.Equals(nameOrAlias, StringComparison.CurrentCultureIgnoreCase)),
                 cancellationToken);
 
-        if (skillType is not null) return Maybe.From(skillType);
-
-        var alias = await skillTypeAliasRepository.FirstOrDefaultAsync(
-            a => a.Alias.ToLower() == nameOrAlias.ToLower(),
-            cancellationToken);
-
-        if (alias is null || !alias.SkillTypeExist) return Maybe.None;
-
-        var finalSkillType = await skillTypeRepository.GetByIdAsync(alias.SkillTypeId, cancellationToken);
-
-        return Maybe.From(finalSkillType);
+        return Maybe.From(skillType);
     }
 }

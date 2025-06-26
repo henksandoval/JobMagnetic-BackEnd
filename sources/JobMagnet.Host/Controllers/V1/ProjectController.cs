@@ -4,7 +4,6 @@ using JobMagnet.Application.Contracts.Responses.Portfolio;
 using JobMagnet.Application.Contracts.Responses.Resume;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Host.Controllers.Base;
 using Microsoft.AspNetCore.Mvc;

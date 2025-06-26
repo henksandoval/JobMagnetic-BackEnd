@@ -1,13 +1,13 @@
 ﻿using System.Collections.Immutable;
+using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 // ReSharper disable once NotAccessedPositionalProperty.Global
 public record TestimonialCollection
 {
-    private readonly long _profileId;
+    private readonly ProfileId _profileId;
 
     private readonly IList<(string Name, string JobTitle, string PhotoUrl, string Feedback)> _values =
     [
@@ -23,7 +23,7 @@ public record TestimonialCollection
             "Their innovative solutions and commitment to quality have been pivotal in our project’s success, making them an invaluable partner in our journey.")
     ];
 
-    public TestimonialCollection(long profileId = 0)
+    public TestimonialCollection(ProfileId profileId)
     {
         _profileId = profileId;
     }
@@ -37,7 +37,8 @@ public record TestimonialCollection
                 x.JobTitle,
                 x.PhotoUrl,
                 x.Feedback,
-                _profileId
+                _profileId,
+                new TestimonialId()
             ))
             .ToImmutableList();
     }

@@ -1,12 +1,14 @@
 using AutoFixture;
+using Bogus;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
+using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class ProjectCustomization : ICustomization
 {
+    private static readonly Faker Faker = FixtureBuilder.Faker;
     private static int _autoIncrementId = 1;
 
     public void Customize(IFixture fixture)
@@ -14,25 +16,27 @@ public class ProjectCustomization : ICustomization
         fixture.Customize<Project>(composer =>
             composer
                 .FromFactory(() => new Project(
-                    FixtureBuilder.Faker.Company.CompanyName(),
-                    FixtureBuilder.Faker.Lorem.Sentence(),
-                    FixtureBuilder.Faker.Image.PicsumUrl(),
-                    FixtureBuilder.Faker.Image.PicsumUrl(),
-                    FixtureBuilder.Faker.Image.PicsumUrl(),
-                    FixtureBuilder.Faker.Address.CountryCode(),
-                    _autoIncrementId++
+                    Faker.Company.CompanyName(),
+                    Faker.Lorem.Sentence(),
+                    Faker.Image.PicsumUrl(),
+                    Faker.Image.PicsumUrl(),
+                    Faker.Image.PicsumUrl(),
+                    Faker.Address.CountryCode(),
+                    _autoIncrementId++,
+                    new ProfileId(),
+                    new ProjectId()
                 ))
                 .OmitAutoProperties()
         );
 
         fixture.Customize<ProjectRaw>(composer =>
             composer.FromFactory(() => new ProjectRaw(
-                FixtureBuilder.Faker.Company.CompanyName(),
-                FixtureBuilder.Faker.Lorem.Sentence(),
-                FixtureBuilder.Faker.Image.PicsumUrl(),
-                FixtureBuilder.Faker.Image.PicsumUrl(),
-                FixtureBuilder.Faker.Image.PicsumUrl(),
-                FixtureBuilder.Faker.Address.CountryCode()
+                Faker.Company.CompanyName(),
+                Faker.Lorem.Sentence(),
+                Faker.Image.PicsumUrl(),
+                Faker.Image.PicsumUrl(),
+                Faker.Image.PicsumUrl(),
+                Faker.Address.CountryCode()
             ))
         );
     }

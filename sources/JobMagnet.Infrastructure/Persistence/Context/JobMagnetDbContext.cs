@@ -6,7 +6,7 @@ using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
-using JobMagnet.Domain.Core.Entities.Base.Interfaces;
+using JobMagnet.Domain.Shared.Base.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobMagnet.Infrastructure.Persistence.Context;
@@ -41,18 +41,7 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 
-    public override int SaveChanges()
-    {
-        UpdateEntityProperties();
-        return base.SaveChanges();
-    }
-
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        UpdateEntityProperties();
-        return base.SaveChangesAsync(cancellationToken);
-    }
-
+/*
     private void UpdateEntityProperties()
     {
         var currentUserId = GetCurrentUserId();
@@ -99,6 +88,6 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
                     );
             }
     }
-
+*/
     private Guid GetCurrentUserId() => currentUserService.GetCurrentUserId() ?? Guid.Empty;
 }

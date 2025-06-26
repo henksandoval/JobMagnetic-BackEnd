@@ -1,17 +1,18 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using CommunityToolkit.Diagnostics;
+﻿using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
-using JobMagnet.Domain.Core.Entities.Base;
+using JobMagnet.Domain.Shared.Base;
 
 namespace JobMagnet.Domain.Aggregates.Profiles;
 
-public class Profile : SoftDeletableEntity<long>
+public readonly record struct ProfileId(Guid Value) : IStronglyTypedId<Guid>;
+
+public class Profile : SoftDeletableEntity<ProfileId>
 {
     private readonly HashSet<Project> _projects = [];
-    private readonly HashSet<VanityUrl> _vanityUrls = [];
     private readonly HashSet<Talent> _talents = [];
     private readonly HashSet<Testimonial> _testimonials = [];
+    private readonly HashSet<VanityUrl> _vanityUrls = [];
     public string? FirstName { get; private set; }
     public string? LastName { get; private set; }
     public string? ProfileImageUrl { get; private set; }
@@ -31,19 +32,23 @@ public class Profile : SoftDeletableEntity<long>
     public virtual IReadOnlyCollection<Testimonial> Testimonials => _testimonials;
     public virtual IReadOnlyCollection<VanityUrl> VanityUrls => _vanityUrls;
 
-    private Profile()
+    private Profile() : base(new ProfileId(), Guid.Empty)
     {
-        InitializeEncapsulatedCollector();
+        SocialProof = new SocialProof(this);
+        Portfolio = new Portfolio(this);
+        LinkManager = new VanityUrls(this);
+        TalentShowcase = new TalentShowcase(this);
     }
 
-    [SetsRequiredMembers]
     public Profile(
+        ProfileId id,
+        Guid addedBy,
         string? firstName,
         string? lastName,
         string? profileImageUrl = null,
         DateOnly? birthDate = null,
         string? middleName = null,
-        string? secondLastName = null)
+        string? secondLastName = null) : base(id, addedBy)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -52,7 +57,10 @@ public class Profile : SoftDeletableEntity<long>
         MiddleName = middleName;
         SecondLastName = secondLastName;
 
-        InitializeEncapsulatedCollector();
+        SocialProof = new SocialProof(this);
+        Portfolio = new Portfolio(this);
+        LinkManager = new VanityUrls(this);
+        TalentShowcase = new TalentShowcase(this);
     }
 
     public void ChangeFirstName(string? firstName)
@@ -124,13 +132,5 @@ public class Profile : SoftDeletableEntity<long>
     internal void AddPublicProfileIdentifier(VanityUrl publicProfile)
     {
         _vanityUrls.Add(publicProfile);
-    }
-
-    private void InitializeEncapsulatedCollector()
-    {
-        SocialProof = new SocialProof(this);
-        Portfolio = new Portfolio(this);
-        LinkManager = new VanityUrls(this);
-        TalentShowcase = new TalentShowcase(this);
     }
 }

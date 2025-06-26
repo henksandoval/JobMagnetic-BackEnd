@@ -1,11 +1,13 @@
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
-using JobMagnet.Domain.Core.Entities.Base;
+using JobMagnet.Domain.Shared.Base;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
-public class WorkExperience : SoftDeletableEntity<long>
+public readonly record struct WorkExperienceId(Guid Value) : IStronglyTypedId<Guid>;
+
+public class WorkExperience : SoftDeletableEntity<WorkExperienceId>
 {
     private readonly HashSet<WorkHighlight> _highlights = [];
 
@@ -15,11 +17,11 @@ public class WorkExperience : SoftDeletableEntity<long>
     public DateTime StartDate { get; private set; }
     public DateTime? EndDate { get; private set; }
     public string Description { get; private set; }
-    public long SummaryId { get; private set; }
+    public HeadlineId HeadlineId { get; private set; }
 
     public virtual IReadOnlyCollection<WorkHighlight> Highlights => _highlights;
 
-    private WorkExperience()
+    private WorkExperience() : base(new WorkExperienceId(), Guid.Empty)
     {
     }
 
@@ -30,11 +32,9 @@ public class WorkExperience : SoftDeletableEntity<long>
         DateTime startDate,
         DateTime? endDate,
         string description,
-        long summaryId = 0,
-        long id = 0)
+        HeadlineId headlineId,
+        WorkExperienceId id) : base(id, Guid.Empty)
     {
-        Guard.IsGreaterThanOrEqualTo(id, 0);
-        Guard.IsGreaterThanOrEqualTo(summaryId, 0);
         Guard.IsNotNullOrWhiteSpace(jobTitle);
         Guard.IsNotNullOrWhiteSpace(companyName);
         Guard.IsNotNullOrWhiteSpace(companyLocation);
@@ -45,7 +45,7 @@ public class WorkExperience : SoftDeletableEntity<long>
             Guard.IsGreaterThan(endDate.Value, startDate);
 
         Id = id;
-        SummaryId = summaryId;
+        HeadlineId = headlineId;
         JobTitle = jobTitle;
         CompanyName = companyName;
         CompanyLocation = companyLocation;

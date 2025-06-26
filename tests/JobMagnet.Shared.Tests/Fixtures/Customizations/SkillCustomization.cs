@@ -2,6 +2,7 @@
 using Bogus;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
+using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
@@ -20,7 +21,7 @@ public class SkillCustomization : ICustomization
                 .OmitAutoProperties()
         );
 
-        fixture.Register(() => new SkillSet(Faker.Lorem.Sentence(), 0));
+        fixture.Register(() => new SkillSet(Faker.Lorem.Sentence(), new ProfileId(), new SkillSetId()));
 
         fixture.Register(() => new SkillSetRaw(Faker.Lorem.Sentence(), []));
 
@@ -33,7 +34,7 @@ public class SkillCustomization : ICustomization
 
         fixture.Customize<SkillItemBase>(composer =>
             composer
-                .With(x => x.Id, 0)
+                .With(x => x.Id, Faker.Random.Guid())
                 .WithAutoProperties()
         );
 

@@ -1,26 +1,24 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using CommunityToolkit.Diagnostics;
+﻿using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Contact;
-using JobMagnet.Domain.Core.Entities.Base;
+using JobMagnet.Domain.Shared.Base;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
-public class ContactInfo : SoftDeletableEntity<long>
+public readonly record struct ContactInfoId(Guid Value) : IStronglyTypedId<Guid>;
+
+public class ContactInfo : SoftDeletableEntity<ContactInfoId>
 {
     public string Value { get; private set; }
-    public int ContactTypeId { get; private set; }
-    public long ResumeId { get; private set; }
+    public ContactTypeId ContactTypeId { get; private set; }
+    public HeadlineId HeadlineId { get; private set; }
     public virtual ContactType ContactType { get; private set; }
 
-    private ContactInfo()
+    private ContactInfo() : base(new ContactInfoId(), Guid.Empty)
     {
     }
 
-    [SetsRequiredMembers]
-    internal ContactInfo(long id, string value, ContactType contactType, long resumeId)
+    internal ContactInfo(string value, ContactType contactType, ContactInfoId id, Guid addedBy, HeadlineId headlineId) : base(id, addedBy)
     {
-        Guard.IsGreaterThanOrEqualTo(id, 0);
-        Guard.IsGreaterThanOrEqualTo(resumeId, 0);
         Guard.IsNotNullOrEmpty(value);
         Guard.IsNotNull(contactType);
 
@@ -28,6 +26,6 @@ public class ContactInfo : SoftDeletableEntity<long>
         Value = value;
         ContactTypeId = contactType.Id;
         ContactType = contactType;
-        ResumeId = resumeId;
+        HeadlineId = headlineId;
     }
 }

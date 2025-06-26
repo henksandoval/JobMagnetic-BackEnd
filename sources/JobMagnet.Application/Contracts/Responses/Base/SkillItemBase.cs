@@ -2,7 +2,7 @@
 
 public sealed record SkillItemBase
 {
-    public long Id { get; init; }
+    public Guid Id { get; init; }
     public ushort ProficiencyLevel { get; init; }
     public ushort Rank { get; init; }
     public string? Name { get; init; }

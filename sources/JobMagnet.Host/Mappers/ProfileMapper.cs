@@ -1,7 +1,6 @@
 ﻿using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Skills;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Host.ViewModels.Profile;
 using JobMagnet.Shared.Utils;
 using Mapster;

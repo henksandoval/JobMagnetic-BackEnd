@@ -7,7 +7,6 @@ using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Testimonial;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -74,7 +73,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         var profileEntity = await SetupProfileEntityAsync();
         var createRequest = _fixture
             .Build<TestimonialCommand>()
-            .With(x => x.TestimonialData, GetTestimonialData(profileEntity.Id))
+            .With(x => x.TestimonialData, GetTestimonialData(profileEntity.Id.Value))
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
@@ -93,8 +92,8 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Testimonial, long>>();
-        var entityCreated = await queryRepository.GetByIdAsync(responseData.Id, CancellationToken.None);
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Testimonial, TestimonialId>>();
+        var entityCreated = await queryRepository.GetByIdAsync(new TestimonialId(responseData.Id), CancellationToken.None);
 
         entityCreated.ShouldNotBeNull();
         entityCreated.Should()
@@ -114,7 +113,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Testimonial, long>>();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Testimonial, TestimonialId>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
         dbEntity.ShouldBeNull();
     }
@@ -139,7 +138,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         // --- Given ---
         var entity = await SetupEntityAsync();
         var updatedCommand = _fixture.Build<TestimonialCommand>()
-            .With(x => x.TestimonialData, GetTestimonialData(entity.Id))
+            .With(x => x.TestimonialData, GetTestimonialData(entity.Id.Value))
             .Create();
 
         // --- When ---
@@ -150,7 +149,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Testimonial, long>>();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Testimonial, TestimonialId>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
         dbEntity.ShouldNotBeNull();
         dbEntity.Should().BeEquivalentTo(updatedCommand.TestimonialData);
@@ -204,7 +203,7 @@ public class TestimonialControllerShould : IClassFixture<JobMagnetTestSetupFixtu
         return entity;
     }
 
-    private TestimonialBase GetTestimonialData(long profileEntityId)
+    private TestimonialBase GetTestimonialData(Guid profileEntityId)
     {
         return _fixture
             .Build<TestimonialBase>()

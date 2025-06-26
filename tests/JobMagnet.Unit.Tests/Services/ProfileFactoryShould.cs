@@ -6,6 +6,7 @@ using JobMagnet.Application.Factories;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Domain.Aggregates.Contact;
+using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
@@ -47,11 +48,13 @@ public class ProfileFactoryShould
             .ToProfileParseDto();
 
         // --- When ---
-        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto,
+            CancellationToken.None);
 
         // --- Then ---
         profile.Should().NotBeNull();
-        profile.Should().BeEquivalentTo(profileDto, options => options.ExcludingMissingMembers());
+        profile.Should().BeEquivalentTo(profileDto,
+            options => options.ExcludingMissingMembers());
     }
 
     [Fact(DisplayName = "Map talents collection when the DTO provides them")]
@@ -64,13 +67,15 @@ public class ProfileFactoryShould
             .ToProfileParseDto();
 
         // --- When ---
-        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto,
+            CancellationToken.None);
 
         // --- Then ---
         profile.Should().NotBeNull();
         profile.Talents.Should().NotBeNull();
 
-        profile.Talents.Should().BeEquivalentTo(profileDto.Talents, options => options);
+        profile.Talents.Should().BeEquivalentTo(profileDto.Talents,
+            options => options);
     }
 
     [Fact(DisplayName = "Map testimonials collection when the DTO provides them")]
@@ -83,12 +88,14 @@ public class ProfileFactoryShould
             .ToProfileParseDto();
 
         // --- When ---
-        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto,
+            CancellationToken.None);
 
         // --- Then ---
         profile.Should().NotBeNull();
         profile.Testimonials.Should()
-            .BeEquivalentTo(profileDto.Testimonials, options => options.ExcludingMissingMembers());
+            .BeEquivalentTo(profileDto.Testimonials,
+                options => options.ExcludingMissingMembers());
     }
 
     #region Headline Mapping Tests
@@ -103,7 +110,8 @@ public class ProfileFactoryShould
             .ToProfileParseDto();
 
         // --- When ---
-        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto,
+            CancellationToken.None);
 
         // --- Then ---
         profile.Should().NotBeNull();
@@ -127,15 +135,20 @@ public class ProfileFactoryShould
         const string expectedIconClass = "bx bx-envelope";
         const string expectedValue = "test@test.com";
 
-        var emailType = new ContactType(expectedTypeName, 0, expectedIconClass);
+        var emailType = new ContactType(new ContactTypeId(),
+            Guid.Empty,
+            expectedTypeName,
+            expectedIconClass);
 
         _contactTypeResolverMock
             .Setup(r => r.ResolveAsync(
-                It.Is<string>(s => s.Equals(expectedTypeName, StringComparison.InvariantCultureIgnoreCase)),
+                It.Is<string>(s => s.Equals(expectedTypeName,
+                    StringComparison.InvariantCultureIgnoreCase)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(emailType));
 
-        var contacts = new[] { new ContactInfoRaw(expectedTypeName.ToUpper(), expectedValue) };
+        var contacts = new[] { new ContactInfoRaw(expectedTypeName.ToUpper(),
+            expectedValue) };
         var profileDto = _profileBuilder
             .WithResume()
             .WithContactInfo(contacts.ToList())
@@ -143,7 +156,8 @@ public class ProfileFactoryShould
             .ToProfileParseDto();
 
         // --- When ---
-        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto,
+            CancellationToken.None);
 
         // --- Then ---
         profile.Resume.Should().NotBeNull();
@@ -165,13 +179,18 @@ public class ProfileFactoryShould
         const string expectedIconClass = "bx bx-mobile";
         const string expectedValue = "+58 412457824";
 
-        var phoneType = new ContactType(expectedTypeName, 0, expectedIconClass);
+        var phoneType = new ContactType(new ContactTypeId(),
+            Guid.Empty,
+            expectedTypeName,
+            expectedIconClass);
 
         _contactTypeResolverMock
-            .Setup(r => r.ResolveAsync(typeAlias, It.IsAny<CancellationToken>()))
+            .Setup(r => r.ResolveAsync(typeAlias,
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(phoneType));
 
-        var contacts = new[] { new ContactInfoRaw(typeAlias, expectedValue) };
+        var contacts = new[] { new ContactInfoRaw(typeAlias,
+            expectedValue) };
         var profileDto = _profileBuilder
             .WithResume()
             .WithContactInfo(contacts.ToList())
@@ -179,7 +198,8 @@ public class ProfileFactoryShould
             .ToProfileParseDto();
 
         // --- When ---
-        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto,
+            CancellationToken.None);
 
         // --- Then ---
         profile.Resume.Should().NotBeNull();
@@ -200,10 +220,12 @@ public class ProfileFactoryShould
         const string unknownTypeValue = "Some value";
 
         _contactTypeResolverMock
-            .Setup(r => r.ResolveAsync(unknownTypeName, It.IsAny<CancellationToken>()))
+            .Setup(r => r.ResolveAsync(unknownTypeName,
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe<ContactType>.None);
 
-        var contacts = new[] { new ContactInfoRaw(unknownTypeName, unknownTypeValue) };
+        var contacts = new[] { new ContactInfoRaw(unknownTypeName,
+            unknownTypeValue) };
         var profileDto = _profileBuilder
             .WithResume()
             .WithContactInfo(contacts.ToList())
@@ -211,7 +233,8 @@ public class ProfileFactoryShould
             .ToProfileParseDto();
 
         // --- When ---
-        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto,
+            CancellationToken.None);
 
         // --- Then ---
         profile.Resume.Should().NotBeNull();
@@ -234,19 +257,26 @@ public class ProfileFactoryShould
         const string unknownTypeName = "TypeDontExist";
         const string unknownTypeValue = "Some value";
 
-        var emailType = new ContactType(knownTypeName, 0, knownTypeIcon);
+        var emailType = new ContactType(new ContactTypeId(),
+            Guid.Empty,
+            knownTypeName,
+            knownTypeIcon);
         _contactTypeResolverMock
-            .Setup(r => r.ResolveAsync(knownTypeName, It.IsAny<CancellationToken>()))
+            .Setup(r => r.ResolveAsync(knownTypeName,
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(emailType));
 
         _contactTypeResolverMock
-            .Setup(r => r.ResolveAsync(unknownTypeName, It.IsAny<CancellationToken>()))
+            .Setup(r => r.ResolveAsync(unknownTypeName,
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe<ContactType>.None);
 
         var contacts = new[]
         {
-            new ContactInfoRaw(knownTypeName, knownTypeValue),
-            new ContactInfoRaw(unknownTypeName, unknownTypeValue)
+            new ContactInfoRaw(knownTypeName,
+                knownTypeValue),
+            new ContactInfoRaw(unknownTypeName,
+                unknownTypeValue)
         };
         var profileDto = _profileBuilder
             .WithResume()
@@ -255,7 +285,8 @@ public class ProfileFactoryShould
             .ToProfileParseDto();
 
         // --- When ---
-        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto,
+            CancellationToken.None);
 
         // --- Then ---
         profile.Resume.Should().NotBeNull();
@@ -294,25 +325,31 @@ public class ProfileFactoryShould
             .ToProfileParseDto();
 
         // --- When ---
-        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto,
+            CancellationToken.None);
 
         // --- Then ---
         profile.Should().NotBeNull();
-        profile.SkillSet.Should().BeEquivalentTo(profileDto.SkillSet, options => options.ExcludingMissingMembers());
+        profile.SkillSet.Should().BeEquivalentTo(profileDto.SkillSet,
+            options => options.ExcludingMissingMembers());
     }
 
     [Fact(DisplayName = "Map skills collection when the type exists")]
     public async Task MapSkills_WhenTypeExists_MapsCorrectly()
     {
         // --- Given ---
-        var skills = new List<SkillRaw> { new("C#", "10") };
-        var csharpSkill = new SkillType("C#",
-            new SkillCategory("Programming"),
-            1, new Uri("https://example.com/csharp-icon.png"));
+        var skills = new List<SkillRaw> { new("C#",
+            "10") };
+        var csharpSkill = new SkillType(
+            new SkillTypeId(),
+            "C#",
+            new SkillCategory(new SkillCategoryId(), "Programming"),
+            new Uri("https://example.com/csharp-icon.png"));
 
         _skillTypeResolverMock
             .Setup(r => r.ResolveAsync(
-                It.Is<string>(s => s.Equals("C#", StringComparison.InvariantCultureIgnoreCase)),
+                It.Is<string>(s => s.Equals("C#",
+                    StringComparison.InvariantCultureIgnoreCase)),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(csharpSkill));
 
@@ -322,29 +359,39 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var skillSet = new SkillSet("Test Overview", 1);
-        skillSet.AddSkill(10, csharpSkill);
+        var skillSet = new SkillSet(
+            "Test Overview",
+            new ProfileId(),
+            new SkillSetId());
+        skillSet.AddSkill(10,
+            csharpSkill);
         var expectedSkill = skillSet.Skills.ToList();
 
         // --- When ---
-        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto,
+            CancellationToken.None);
 
         // --- Then ---
         var currentSkills = profile.SkillSet!.Skills!.ToList();
-        currentSkills.Should().BeEquivalentTo(expectedSkill, options => options);
+        currentSkills.Should().BeEquivalentTo(expectedSkill,
+            options => options);
     }
 
     [Fact(DisplayName = "Map skills collection when the type is an alias")]
     public async Task MapSkills_WhenTypeIsAlias_MapsToCorrectBaseType()
     {
         // --- Given ---
-        var skills = new List<SkillRaw> { new("csharp", "10") };
-        var csharpSkill = new SkillType("C#",
-            new SkillCategory("Programming"),
-            1, new Uri("https://example.com/csharp-icon.png"));
+        var skills = new List<SkillRaw> { new("csharp",
+            "10") };
+        var csharpSkill = new SkillType(
+            new SkillTypeId(),
+            "C#",
+            new SkillCategory(new SkillCategoryId(), "Programming"),
+            new Uri("https://example.com/csharp-icon.png"));
 
         _skillTypeResolverMock
-            .Setup(r => r.ResolveAsync("csharp", It.IsAny<CancellationToken>()))
+            .Setup(r => r.ResolveAsync("csharp",
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(csharpSkill));
 
         var profileDto = _profileBuilder
@@ -353,12 +400,17 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var skillSet = new SkillSet("Test Overview", 1);
-        skillSet.AddSkill(10, csharpSkill);
+        var skillSet = new SkillSet(
+            "Test Overview",
+            new ProfileId(),
+            new SkillSetId());
+        skillSet.AddSkill(10,
+            csharpSkill);
         var expectedSkill = skillSet.Skills.ToList();
 
         // --- When ---
-        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto,
+            CancellationToken.None);
 
         // --- Then ---
         var currentSkills = profile.SkillSet!.Skills!.ToList();
@@ -369,12 +421,14 @@ public class ProfileFactoryShould
     public async Task MapSkills_WhenTypeDoesNotExist_CreatesAdHocTypeWithDefaultIcon()
     {
         // --- Given ---
-        var defaultCategory = new SkillCategory("AdHoc");
+        var defaultCategory = new SkillCategory(new SkillCategoryId(), "AdHoc");
 
-        var skills = new List<SkillRaw> { new("TypeDontExist", "10") };
+        var skills = new List<SkillRaw> { new("TypeDontExist",
+            "10") };
 
         _skillTypeResolverMock
-            .Setup(r => r.ResolveAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(r => r.ResolveAsync(It.IsAny<string>(),
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.None);
         _skillCategoryRepositoryMock
             .Setup(r => r.FirstAsync(
@@ -382,10 +436,17 @@ public class ProfileFactoryShould
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(defaultCategory);
 
-        var expectedAdHocType = new SkillType("TypeDontExist", new SkillCategory("AdHoc"));
+        var expectedAdHocType = new SkillType(
+            new SkillTypeId(),
+            "TypeDontExist",
+            new SkillCategory(new SkillCategoryId(), "AdHoc"));
 
-        var skillSet = new SkillSet("Test Overview", 1);
-        skillSet.AddSkill(10, expectedAdHocType);
+        var skillSet = new SkillSet(
+            "Test Overview",
+            new ProfileId(),
+            new SkillSetId());
+        skillSet.AddSkill(10,
+            expectedAdHocType);
         var expectedSkill = skillSet.Skills.ToList();
 
         var profileDto = _profileBuilder
@@ -395,12 +456,14 @@ public class ProfileFactoryShould
             .ToProfileParseDto();
 
         // --- When ---
-        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto,
+            CancellationToken.None);
 
         // --- Then ---
         var currentSkills = profile.SkillSet!.Skills!.ToList();
-        currentSkills.Should().BeEquivalentTo(expectedSkill, options => options
-            .Excluding(entity => entity.Id)
+        currentSkills.Should().BeEquivalentTo(expectedSkill,
+            options => options
+                .Excluding(entity => entity.Id)
         );
     }
 
@@ -412,17 +475,21 @@ public class ProfileFactoryShould
         const string knownSkill = "C#";
         const string knownSkillAlias = "csharp";
 
-        var defaultCategory = new SkillCategory("AdHoc");
-        var csharpSkill = new SkillType(knownSkill,
-            new SkillCategory("Programming"),
-            1, new Uri("https://example.com/csharp-icon.png"));
+        var defaultCategory = new SkillCategory(new SkillCategoryId(), "AdHoc");
+        var csharpSkill = new SkillType(
+            new SkillTypeId(),
+            knownSkill,
+            new SkillCategory(new SkillCategoryId(), "Programming"),
+            new Uri("https://example.com/csharp-icon.png"));
 
         _skillTypeResolverMock
-            .Setup(r => r.ResolveAsync(It.Is<string>(knownSkillAlias, StringComparer.InvariantCulture),
+            .Setup(r => r.ResolveAsync(It.Is<string>(knownSkillAlias,
+                    StringComparer.InvariantCulture),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(csharpSkill));
         _skillTypeResolverMock
-            .Setup(r => r.ResolveAsync(unknownSkill, It.IsAny<CancellationToken>()))
+            .Setup(r => r.ResolveAsync(unknownSkill,
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe<SkillType>.None);
 
         _skillCategoryRepositoryMock
@@ -431,12 +498,17 @@ public class ProfileFactoryShould
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(defaultCategory);
 
-        var expectedAdHocType = new SkillType(unknownSkill, defaultCategory);
+        var expectedAdHocType = new SkillType(
+            new SkillTypeId(),
+            unknownSkill,
+            defaultCategory);
 
         var skills = new[]
         {
-            new SkillRaw(knownSkillAlias, "5"),
-            new SkillRaw(unknownSkill, "2")
+            new SkillRaw(knownSkillAlias,
+                "5"),
+            new SkillRaw(unknownSkill,
+                "2")
         };
         var profileDto = _profileBuilder
             .WithSkillSet()
@@ -444,18 +516,25 @@ public class ProfileFactoryShould
             .Build()
             .ToProfileParseDto();
 
-        var skillSet = new SkillSet("Test Overview", 1);
-        skillSet.AddSkill(5, csharpSkill);
-        skillSet.AddSkill(2, expectedAdHocType);
+        var skillSet = new SkillSet(
+            "Test Overview",
+            new ProfileId(),
+            new SkillSetId());
+        skillSet.AddSkill(5,
+            csharpSkill);
+        skillSet.AddSkill(2,
+            expectedAdHocType);
         var expectedSkills = skillSet.Skills.ToList();
 
         // --- When ---
-        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
+        var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto,
+            CancellationToken.None);
 
         // --- Then ---
         var currentSkills = profile.SkillSet!.Skills!.ToList();
-        currentSkills.Should().BeEquivalentTo(expectedSkills, options => options
-            .Excluding(entity => entity.Id)
+        currentSkills.Should().BeEquivalentTo(expectedSkills,
+            options => options
+                .Excluding(entity => entity.Id)
         );
     }
 

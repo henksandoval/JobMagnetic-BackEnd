@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using JobMagnet.Domain.Aggregates.Profiles;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Repositories.Base;
@@ -9,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace JobMagnet.Infrastructure.Persistence.Repositories;
 
 public class ProfileQueryRepository(JobMagnetDbContext dbContext)
-    : Repository<Profile, long>(dbContext), IProfileQueryRepository
+    : Repository<Profile, ProfileId>(dbContext), IProfileQueryRepository
 {
     private IQueryable<Profile> _query = dbContext.Profiles;
     private Expression<Func<Profile, bool>> _whereCondition = x => true;

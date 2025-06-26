@@ -25,11 +25,6 @@ public class SkillTypeEntityTypeConfiguration : IEntityTypeConfiguration<SkillTy
             .HasForeignKey(type => type.CategoryId)
             .IsRequired();
 
-        builder.HasMany(type => type.Aliases)
-            .WithOne()
-            .HasForeignKey(alias => alias.SkillTypeId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasData(SkillDataFactory.SeedData.Types);
     }
 }

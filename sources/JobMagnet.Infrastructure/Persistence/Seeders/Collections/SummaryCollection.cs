@@ -6,8 +6,7 @@ namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 // ReSharper disable once NotAccessedPositionalProperty.Global
 public record SummaryCollection
 {
-    private readonly long _summaryId;
-
+    private readonly HeadlineId _headlineId;
 
     private readonly IList<WorkExperienceProperties> _value =
     [
@@ -81,9 +80,9 @@ public record SummaryCollection
     {
     }
 
-    public SummaryCollection(long summaryId)
+    public SummaryCollection(HeadlineId headlineId)
     {
-        _summaryId = summaryId;
+        _headlineId = headlineId;
     }
 
     public Qualification[] GetEducation()
@@ -96,7 +95,9 @@ public record SummaryCollection
                 x.StartDate,
                 x.EndDate,
                 x.Description,
-                _summaryId
+                _headlineId,
+                new QualificationId(),
+                Guid.Empty
             )).ToArray();
     }
 
@@ -112,7 +113,8 @@ public record SummaryCollection
                     item.StartDate,
                     item.EndDate,
                     item.Description,
-                    _summaryId
+                    _headlineId,
+                    new WorkExperienceId()
                 );
 
                 foreach (var description in item.Responsibilities)

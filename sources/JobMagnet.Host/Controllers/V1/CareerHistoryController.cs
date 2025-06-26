@@ -3,7 +3,6 @@ using JobMagnet.Application.Contracts.Commands.Summary;
 using JobMagnet.Application.Contracts.Responses.Summary;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Host.Controllers.Base;
@@ -29,15 +28,15 @@ public class CareerHistoryController(
         return Results.CreatedAtRoute(nameof(GetSummaryByIdAsync), new { id = newRecord.Id }, newRecord);
     }
 
-    [HttpGet("{id:long}", Name = nameof(GetSummaryByIdAsync))]
+    [HttpGet("{id:guid}", Name = nameof(GetSummaryByIdAsync))]
     [ProducesResponseType(typeof(SummaryResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> GetSummaryByIdAsync(long id)
+    public async Task<IResult> GetSummaryByIdAsync(Guid id)
     {
         var entity = await queryRepository
             .IncludeEducation()
             .IncludeWorkExperience()
-            .GetByIdWithIncludesAsync(id).ConfigureAwait(false);
+            .GetByIdWithIncludesAsync(new CareerHistoryId(id)).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();
@@ -47,12 +46,12 @@ public class CareerHistoryController(
         return Results.Ok(responseModel);
     }
 
-    [HttpDelete("{id:long}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> DeleteAsync(int id, CancellationToken cancellationToken)
+    public async Task<IResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
+        var entity = await queryRepository.GetByIdAsync(new CareerHistoryId(id), cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
             return Results.NotFound();

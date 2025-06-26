@@ -1,28 +1,30 @@
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
-using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Exceptions;
+using JobMagnet.Domain.Shared.Base;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
-public class Project : SoftDeletableEntity<long>
-{
-    public int Position { get; private set; }
-    public string Title { get; private set; }
-    public string Description { get; private set; }
-    public string UrlLink { get; private set; }
-    public string UrlImage { get; private set; }
-    public string UrlVideo { get; private set; }
-    public string Type { get; private set; }
-    public long ProfileId { get; private set; }
+public readonly record struct ProjectId(Guid Value) : IStronglyTypedId<Guid>;
 
-    private Project()
+public class Project : SoftDeletableEntity<ProjectId>
+{
+    public int Position { get; }
+    public string Title { get; }
+    public string Description { get; }
+    public string UrlLink { get; }
+    public string UrlImage { get; }
+    public string UrlVideo { get; }
+    public string Type { get; }
+    public ProfileId ProfileId { get; private set; }
+
+    private Project() : base(new ProjectId(), Guid.Empty)
     {
     }
 
     [SetsRequiredMembers]
-    public Project(string title, string description, string urlLink, string urlImage, string urlVideo, string type, int position, long profileId = 0,
-        long id = 0)
+    public Project(string title, string description, string urlLink, string urlImage, string urlVideo, string type, int position, ProfileId profileId,
+        ProjectId id) : base(id, Guid.Empty)
     {
         Id = id;
         Title = title;
@@ -39,8 +41,6 @@ public class Project : SoftDeletableEntity<long>
 
     private void ValidateInvariants()
     {
-        Guard.IsGreaterThanOrEqualTo(Id, 0);
-        Guard.IsGreaterThanOrEqualTo(ProfileId, 0);
         Guard.IsGreaterThanOrEqualTo(Position, 0);
         Guard.IsNotNullOrEmpty(Title);
         Guard.IsNotNullOrEmpty(Description);

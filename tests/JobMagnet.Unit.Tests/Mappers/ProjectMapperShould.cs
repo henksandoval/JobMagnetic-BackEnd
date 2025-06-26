@@ -4,7 +4,7 @@ using FluentAssertions;
 using JobMagnet.Application.Contracts.Commands.Portfolio;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
+
 using JobMagnet.Shared.Tests.Fixtures;
 
 namespace JobMagnet.Unit.Tests.Mappers;
@@ -24,7 +24,7 @@ public class ProjectMapperShould
 
         // --- Then ---
         testimonialModel.Should().NotBeNull();
-        testimonialModel.Id.Should().Be(entity.Id);
+        testimonialModel.Id.Should().Be(entity.Id.Value);
         testimonialModel.ProjectData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
     }

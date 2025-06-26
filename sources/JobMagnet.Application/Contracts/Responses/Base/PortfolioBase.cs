@@ -2,7 +2,7 @@
 
 public sealed record ProjectBase
 {
-    public long ProfileId { get; init; }
+    public Guid ProfileId { get; init; }
     public int Position { get; init; }
     public string? Title { get; init; }
     public string? Description { get; init; }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
+using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
@@ -9,7 +9,7 @@ public record Talents(string Description);
 
 public record TalentsCollection
 {
-    private readonly long _profileId;
+    private readonly ProfileId _profileId;
 
     private readonly IList<Talents> _values =
     [
@@ -20,7 +20,7 @@ public record TalentsCollection
         new ("Resilient")
     ];
 
-    public TalentsCollection(long profileId = 0)
+    public TalentsCollection(ProfileId profileId)
     {
         _profileId = profileId;
     }
@@ -30,7 +30,8 @@ public record TalentsCollection
         return _values.Select(talent => new Talent
         (
             talent.Description,
-            _profileId
+            _profileId,
+            new TalentId()
         )).ToImmutableList();
     }
 }

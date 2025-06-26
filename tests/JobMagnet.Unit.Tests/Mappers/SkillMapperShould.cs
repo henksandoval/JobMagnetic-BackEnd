@@ -31,7 +31,7 @@ public class SkillMapperShould
 
         // --- Then ---
         skillModel.Should().NotBeNull();
-        skillModel.Id.Should().Be(entity.Id);
+        skillModel.Id.Should().Be(entity.Id.Value);
 
         skillModel.SkillData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(e => e.Skills).Excluding(GetExcludeEntityProperties()));
@@ -43,7 +43,7 @@ public class SkillMapperShould
             var sourceSkill = sourceSkills[i];
             var mappedSkill = mappedSkills[i];
 
-            mappedSkill.Id.Should().Be(sourceSkill.Id);
+            mappedSkill.Id.Should().Be(sourceSkill.Id.Value);
             mappedSkill.ProficiencyLevel.Should().Be(sourceSkill.ProficiencyLevel);
             mappedSkill.Rank.Should().Be(sourceSkill.Rank);
             mappedSkill.Name.Should().Be(sourceSkill.SkillType.Name);

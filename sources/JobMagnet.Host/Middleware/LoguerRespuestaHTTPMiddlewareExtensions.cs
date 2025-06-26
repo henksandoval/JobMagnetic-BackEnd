@@ -1,16 +1,16 @@
 namespace JobMagnet.Host.Middleware;
 
-public static class LoguerRespuestaHTTPMiddlewareExtensions
+public static class LoguerRespuestaHttpMiddlewareExtensions
 {
-    public static IApplicationBuilder UseLoguearRespuestaHttp(this IApplicationBuilder app) => app.UseMiddleware<LoguearRespuestaHTTPMiddleware>();
+    public static IApplicationBuilder UseLoguearRespuestaHttp(this IApplicationBuilder app) => app.UseMiddleware<LoguearRespuestaHttpMiddleware>();
 }
 
-public class LoguearRespuestaHTTPMiddleware
+public class LoguearRespuestaHttpMiddleware
 {
-    private readonly ILogger<LoguearRespuestaHTTPMiddleware> logger;
+    private readonly ILogger<LoguearRespuestaHttpMiddleware> logger;
     private readonly RequestDelegate siguiente;
 
-    public LoguearRespuestaHTTPMiddleware(RequestDelegate siguiente, ILogger<LoguearRespuestaHTTPMiddleware> logger)
+    public LoguearRespuestaHttpMiddleware(RequestDelegate siguiente, ILogger<LoguearRespuestaHttpMiddleware> logger)
     {
         this.siguiente = siguiente;
         this.logger = logger;

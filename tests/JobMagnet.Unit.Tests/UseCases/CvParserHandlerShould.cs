@@ -11,7 +11,7 @@ using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
+
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -61,10 +61,10 @@ public class CvParserHandlerShould
 
         var contactInfoEmail = contactInfoRaw.FirstOrDefault(c => c.ContactType == "EMAIL");
         var resumeEntity = _fixture.Create<Headline>();
-        var contactType = new ContactType(contactInfoEmail!.ContactType);
+        var contactType = new ContactType(new ContactTypeId(), Guid.Empty, contactInfoEmail!.ContactType);
         resumeEntity.AddContactInfo(contactInfoEmail.Value!, contactType);
 
-        var profileEntity = new Profile(profileRaw.FirstName, profileRaw.LastName);
+        var profileEntity = new Profile(new ProfileId(), Guid.Empty, profileRaw.FirstName, profileRaw.LastName);
 
         profileEntity.AddResume(resumeEntity);
 
@@ -88,9 +88,9 @@ public class CvParserHandlerShould
 
     private List<ContactInfoRaw> PrepareContactInfoData()
     {
-        var emailType = new ContactType("Email", 1, "bx bx-envelope");
-        var phoneType = new ContactType("Phone", 2, "bx bx-mobile");
-        var linkedInType = new ContactType("LinkedIn", 3, "bx bx-linkedin");
+        var emailType = new ContactType(new ContactTypeId(), Guid.Empty,  "Email", "bx bx-envelope");
+        var phoneType = new ContactType(new ContactTypeId(), Guid.Empty, "Phone", "bx bx-mobile");
+        var linkedInType = new ContactType(new ContactTypeId(), Guid.Empty, "LinkedIn", "bx bx-linkedin");
 
         _contactTypeResolverMock
             .Setup(r => r.ResolveAsync("EMAIL", It.IsAny<CancellationToken>()))

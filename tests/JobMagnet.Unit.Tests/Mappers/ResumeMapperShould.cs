@@ -3,7 +3,7 @@ using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
+
 using JobMagnet.Shared.Tests.Fixtures;
 
 namespace JobMagnet.Unit.Tests.Mappers;
@@ -23,7 +23,7 @@ public class ResumeMapperShould
 
         // --- Then ---
         resumeModel.Should().NotBeNull();
-        resumeModel.Id.Should().Be(entity.Id);
+        resumeModel.Id.Should().Be(entity.Id.Value);
         resumeModel.ResumeData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
     }

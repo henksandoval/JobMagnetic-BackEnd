@@ -11,7 +11,6 @@ using JobMagnet.Application.Contracts.Responses.Profile;
 using JobMagnet.Application.UseCases.CvParser.Responses;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
@@ -114,7 +113,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
-        var entityCreated = await queryRepository.GetByIdAsync(responseData.Id, CancellationToken.None);
+        var entityCreated = await queryRepository.GetByIdAsync(new ProfileId(responseData.Id), CancellationToken.None);
 
         entityCreated.ShouldNotBeNull();
         entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
@@ -216,7 +215,6 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         responseData.ShouldNotBeNull();
         responseData.UserEmail.ShouldNotBeNullOrEmpty();
         responseData.ProfileUrl.ShouldNotBeNullOrEmpty();
-        responseData.ProfileId.ShouldBeGreaterThan(0);
         responseData.UserEmail.Should().Be("laura.gomez.dev@example.net");
         responseData.ProfileUrl.Should().StartWith("laura-gomez-");
     }

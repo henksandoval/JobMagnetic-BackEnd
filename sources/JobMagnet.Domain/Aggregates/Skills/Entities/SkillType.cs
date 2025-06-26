@@ -1,11 +1,12 @@
-using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
-using JobMagnet.Domain.Core.Entities.Base;
 using JobMagnet.Domain.Exceptions;
+using JobMagnet.Domain.Shared.Base;
 
 namespace JobMagnet.Domain.Aggregates.Skills.Entities;
 
-public class SkillType : SoftDeletableEntity<int>
+public readonly record struct SkillTypeId(Guid Value) : IStronglyTypedId<Guid>;
+
+public class SkillType : SoftDeletableEntity<SkillTypeId>
 {
     public const int MaxNameLength = 50;
     private const string DefaultIconUri = "https://jobmagnet.com/default-icon.png";
@@ -14,19 +15,17 @@ public class SkillType : SoftDeletableEntity<int>
 
     public string Name { get; private set; }
     public Uri IconUrl { get; private set; }
-    public ushort CategoryId { get; private set; }
+    public SkillCategoryId CategoryId { get; private set; }
 
     public virtual IReadOnlyCollection<SkillTypeAlias> Aliases => _aliases.AsReadOnly();
     public virtual SkillCategory Category { get; private set; }
 
-    private SkillType()
+    private SkillType() : base(new SkillTypeId(), Guid.Empty)
     {
     }
 
-    [SetsRequiredMembers]
-    internal SkillType(string name, SkillCategory category, int id = 0, Uri? iconUrl = null)
+    internal SkillType(SkillTypeId id, string name, SkillCategory category, Uri? iconUrl = null) : base(id, Guid.Empty)
     {
-        Guard.IsGreaterThanOrEqualTo(id, 0);
         Guard.IsNotNullOrWhiteSpace(name);
         Guard.HasSizeLessThanOrEqualTo(name, MaxNameLength);
         Guard.IsNotNull(category);
@@ -46,17 +45,8 @@ public class SkillType : SoftDeletableEntity<int>
         if (_aliases.Any(a => a.Alias.Equals(alias, StringComparison.OrdinalIgnoreCase)))
             throw new JobMagnetDomainException($"The alias ({alias}) already exists.");
 
-        var newAlias = new SkillTypeAlias(alias, Id);
+        var newAlias = new SkillTypeAlias(alias);
         _aliases.Add(newAlias);
-    }
-
-    public void RemoveAlias(string alias)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(alias);
-
-        var aliasToRemove = _aliases.FirstOrDefault(a => a.Alias.Equals(alias, StringComparison.OrdinalIgnoreCase));
-
-        aliasToRemove?.Delete();
     }
 
     public void UpdateIcons(Uri? newIconUrl)

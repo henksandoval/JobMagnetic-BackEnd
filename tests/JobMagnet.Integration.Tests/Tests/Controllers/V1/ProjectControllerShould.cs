@@ -7,7 +7,6 @@ using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Portfolio;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -41,7 +40,7 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         await _testFixture.ResetDatabaseAsync();
         var profileEntity = await SetupProfileEntityAsync();
         var createRequest = _fixture.Build<ProjectCommand>()
-            .With(x => x.ProjectData, GetProjectData(profileEntity.Id))
+            .With(x => x.ProjectData, GetProjectData(profileEntity.Id.Value))
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
@@ -61,14 +60,14 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository =
-            scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, long>>();
-        var entityCreated = await queryRepository.GetByIdAsync(responseData.Id, CancellationToken.None);
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, ProjectId>>();
+        var entityCreated = await queryRepository.GetByIdAsync(new ProjectId(responseData.Id), CancellationToken.None);
 
         entityCreated.ShouldNotBeNull();
         entityCreated.ShouldSatisfyAllConditions(() => entityCreated.ProfileId.ShouldBe(profileEntity.Id));
     }
 
-    private ProjectBase GetProjectData(long profileEntityId)
+    private ProjectBase GetProjectData(Guid profileEntityId)
     {
         return _fixture
             .Build<ProjectBase>()
@@ -122,10 +121,10 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryProjectRepository =
-            scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, long>>();
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, ProjectId>>();
 
-        var ProjectEntity = await queryProjectRepository.GetByIdAsync(entity.Id, CancellationToken.None);
-        ProjectEntity.ShouldBeNull();
+        var projectEntity = await queryProjectRepository.GetByIdAsync(entity.Id, CancellationToken.None);
+        projectEntity.ShouldBeNull();
     }
 
     [Fact(DisplayName = "Return 404 when a DELETE request with invalid ID is provided")]
@@ -148,7 +147,7 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         // --- Given ---
         var entity = await SetupEntityAsync();
         var updatedEntity = _fixture.Build<ProjectCommand>()
-            .With(x => x.ProjectData, GetProjectData(entity.Id))
+            .With(x => x.ProjectData, GetProjectData(entity.Id.Value))
             .Create();
 
         // --- When ---
@@ -160,7 +159,7 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository =
-            scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, long>>();
+            scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, ProjectId>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
         dbEntity.ShouldNotBeNull();
         dbEntity.Should().BeEquivalentTo(updatedEntity.ProjectData);

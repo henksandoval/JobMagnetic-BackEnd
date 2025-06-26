@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using JobMagnet.Domain.Aggregates.Profiles;
-using JobMagnet.Domain.Core.Entities;
+
 using JobMagnet.Host.Mappers;
 using JobMagnet.Host.ViewModels.Profile;
 using JobMagnet.Shared.Tests.Fixtures;

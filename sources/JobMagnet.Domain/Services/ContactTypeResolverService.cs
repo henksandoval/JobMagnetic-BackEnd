@@ -10,27 +10,17 @@ public interface IContactTypeResolverService
 }
 
 public class ContactTypeResolverService(
-    IQueryRepository<ContactType, int> contactTypeRepository,
-    IQueryRepository<ContactTypeAlias, int> contactTypeAliasRepository)
+    IQueryRepository<ContactType, int> contactTypeRepository)
     : IContactTypeResolverService
 {
     public async Task<Maybe<ContactType>> ResolveAsync(string nameOrAlias, CancellationToken cancellationToken)
     {
         var contactType = await contactTypeRepository
             .FirstOrDefaultAsync(c =>
-                    c.Name.ToLower() == nameOrAlias.ToLower(),
+                    c.Name.Equals(nameOrAlias, StringComparison.CurrentCultureIgnoreCase) ||
+                    c.Aliases.Any(a => a.Alias.Equals(nameOrAlias, StringComparison.CurrentCultureIgnoreCase)),
                 cancellationToken);
 
-        if (contactType is not null) return Maybe.From(contactType);
-
-        var alias = await contactTypeAliasRepository.FirstOrDefaultAsync(
-            a => a.Alias.ToLower() == nameOrAlias.ToLower(),
-            cancellationToken);
-
-        if (alias is null || !alias.ContactTypeExist) return Maybe.None;
-
-        var finalContactType = await contactTypeRepository.GetByIdAsync(alias.ContactTypeId, cancellationToken);
-
-        return Maybe.From(finalContactType);
+        return Maybe.From(contactType);
     }
 }

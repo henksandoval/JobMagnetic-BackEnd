@@ -9,8 +9,6 @@ public class ContactTypeAliasEntityTypeConfiguration : IEntityTypeConfiguration<
 {
     public void Configure(EntityTypeBuilder<ContactTypeAlias> builder)
     {
-        builder.HasKey(c => c.Id);
-
         builder.Property(c => c.Alias)
             .IsRequired()
             .HasMaxLength(ContactTypeAlias.MaxAliasLength);

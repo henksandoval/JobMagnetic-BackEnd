@@ -1,5 +1,4 @@
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,7 +15,7 @@ public class ResumeEntityEntityTypeConfiguration : IEntityTypeConfiguration<Head
 
         builder.HasMany(r => r.ContactInfo)
             .WithOne()
-            .HasForeignKey(contact => contact.ResumeId)
+            .HasForeignKey(contact => contact.HeadlineId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

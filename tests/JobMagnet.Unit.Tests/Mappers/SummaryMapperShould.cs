@@ -3,7 +3,7 @@ using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Entities;
+
 using JobMagnet.Shared.Tests.Fixtures;
 
 namespace JobMagnet.Unit.Tests.Mappers;
@@ -23,7 +23,7 @@ public class SummaryMapperShould
 
         // --- Then ---
         summaryModel.Should().NotBeNull();
-        summaryModel.Id.Should().Be(entity.Id);
+        summaryModel.Id.Should().Be(entity.Id.Value);
         summaryModel.SummaryData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
         summaryModel.SummaryData.Education.Should().BeEquivalentTo(entity.Qualifications, options =>
@@ -65,7 +65,8 @@ public class SummaryMapperShould
     {
         return e => new
         {
-            e.Id, e.SummaryId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy, e.IsDeleted,
+            e.Id,
+            SummaryId = e.HeadlineId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy, e.IsDeleted,
             e.DeletedAt, e.DeletedBy
         };
     }
@@ -74,7 +75,8 @@ public class SummaryMapperShould
     {
         return e => new
         {
-            e.Id, e.SummaryId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy, e.IsDeleted,
+            e.Id,
+            SummaryId = e.HeadlineId, e.AddedAt, e.AddedBy, e.LastModifiedAt, e.LastModifiedBy, e.IsDeleted,
             e.DeletedAt, e.DeletedBy
         };
     }

@@ -34,7 +34,7 @@ public static class SkillDataFactory
 
         var categories = new Dictionary<string, SkillCategory>
         {
-            { SkillCategory.DefaultCategoryName, new SkillCategory(SkillCategory.DefaultCategoryName, SkillCategory.DefaultCategoryId) }
+            { SkillCategory.DefaultCategoryName, new SkillCategory(new SkillCategoryId(), SkillCategory.DefaultCategoryName) }
         };
         var types = new List<TypeSeedData>();
         var aliases = new List<AliasSeedData>();
@@ -48,7 +48,7 @@ public static class SkillDataFactory
             if (!categories.TryGetValue(rawDef.CategoryName, out var category))
             {
                 categoryIdCounter++;
-                categories.Add(rawDef.CategoryName, new SkillCategory(rawDef.CategoryName, (ushort)categoryIdCounter));
+                categories.Add(rawDef.CategoryName, new SkillCategory(new SkillCategoryId(), rawDef.CategoryName));
             }
 
             var typeId = typeIdCounter++;
@@ -71,11 +71,11 @@ public static class SkillDataFactory
         {
             if (!categoryCache.TryGetValue(rawDef.CategoryName, out var category))
             {
-                category = new SkillCategory(rawDef.CategoryName);
+                category = new SkillCategory(new SkillCategoryId(), rawDef.CategoryName);
                 categoryCache.Add(rawDef.CategoryName, category);
             }
 
-            var skill = new SkillType(rawDef.Name, category, 0, new Uri(rawDef.Uri));
+            var skill = new SkillType(new SkillTypeId(),rawDef.Name, category, new Uri(rawDef.Uri));
 
             foreach (var alias in rawDef.Aliases) skill.AddAlias(alias);
 

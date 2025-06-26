@@ -2,7 +2,6 @@
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
-using JobMagnet.Domain.Core.Entities;
 using JobMagnet.Infrastructure.Exceptions;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
@@ -46,6 +45,8 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
     private async Task<Profile> BuildSampleProfileAsync(CancellationToken cancellationToken)
     {
         var profile = new Profile(
+            new ProfileId(Guid.NewGuid()),
+            Guid.Empty,
             "John",
             "Doe",
             "https://bootstrapmade.com/content/demo/MyResume/assets/img/profile-img.jpg",
@@ -69,7 +70,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
     private static void AddTalents(Profile profile)
     {
-        var talentsCollection = new TalentsCollection().GetTalents();
+        var talentsCollection = new TalentsCollection(profile.Id).GetTalents();
         foreach (var talent in talentsCollection)
             profile.TalentShowcase.AddTalent(talent.Description);
     }
@@ -84,7 +85,9 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
             About,
             Summary,
             Overview,
-            "123 Main St, Springfield, USA");
+            "123 Main St, Springfield, USA",
+            new HeadlineId(Guid.NewGuid()),
+            profile.Id);
 
         foreach (var (value, contactTypeName) in ContactInfoCollection.Data)
             if (contactTypeMap.TryGetValue(contactTypeName, out var contactType))
@@ -105,7 +108,7 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
                                 I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
                                 I am always eager to learn new technologies and improve my skills.
                                 """;
-        var skillSet = new SkillSet(overview, profile.Id);
+        var skillSet = new SkillSet(overview, profile.Id, new SkillSetId());
 
         foreach (var (skillName, proficiencyLevel, rank) in SkillInfoCollection.Data)
             if (skillTypeMap.TryGetValue(skillName, out var skillType))
@@ -120,6 +123,8 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
     private static void AddSummary(Profile profile)
     {
         var summary = new CareerHistory(
+            new CareerHistoryId(),
+            Guid.Empty,
             "Professional with experience in your area or profession, recognized for key skills. Committed to value or professional goal, seeking to contribute to the growth of company or industry.",
             profile.Id);
 
@@ -134,13 +139,13 @@ public class Seeder(JobMagnetDbContext context) : ISeeder
 
     private static void AddProject(Profile profile)
     {
-        var ProjectItems = new ProjectCollection().GetProjects();
-        foreach (var item in ProjectItems) profile.AddProjectToPortfolio(item);
+        var projectItems = new ProjectCollection(profile.Id).GetProjects();
+        foreach (var item in projectItems) profile.AddProjectToPortfolio(item);
     }
 
     private static void AddTestimonials(Profile profile)
     {
-        var testimonials = new TestimonialCollection().GetTestimonials();
+        var testimonials = new TestimonialCollection(profile.Id).GetTestimonials();
         foreach (var item in testimonials)
             profile.SocialProof.AddTestimonial(item.Name, item.JobTitle, item.Feedback, item.PhotoUrl);
     }

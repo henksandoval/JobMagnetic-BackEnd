@@ -1,9 +1,9 @@
 ﻿using JobMagnet.Application.Contracts.Commands.Summary;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Summary;
+using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
-using JobMagnet.Domain.Core.Entities;
 using Mapster;
 
 namespace JobMagnet.Application.Mappers;
@@ -41,7 +41,7 @@ public static class SummaryMapper
     public static CareerHistory ToEntity(this SummaryCommand command)
     {
         var data = command.SummaryData;
-        var entity = new CareerHistory(data!.Introduction!, data.ProfileId);
+        var entity = new CareerHistory( new CareerHistoryId(), Guid.Empty,data.Introduction!, new ProfileId(data.ProfileId));
 
         foreach (var educationBase in data.Education)
         {

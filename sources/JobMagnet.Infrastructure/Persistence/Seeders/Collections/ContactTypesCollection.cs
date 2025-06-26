@@ -77,9 +77,9 @@ public static class ContactTypeDataFactory
 
         foreach (var rawDef in RawData)
         {
-            var contactType = new ContactType(rawDef.Name, 0, rawDef.IconClass);
+            var contactType = new ContactType(new ContactTypeId(), Guid.Empty, rawDef.Name, rawDef.IconClass);
 
-            foreach (var alias in rawDef.Aliases) contactType.AddAlias(alias);
+            foreach (var alias in rawDef.Aliases) contactType.AddAlias(alias, Guid.Empty);
 
             contactTypes.Add(contactType);
         }

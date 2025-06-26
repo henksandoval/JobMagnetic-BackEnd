@@ -1,11 +1,12 @@
-using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Contact;
-using JobMagnet.Domain.Core.Entities.Base;
+using JobMagnet.Domain.Shared.Base;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
-public class Headline : SoftDeletableEntity<long>
+public readonly record struct HeadlineId(Guid Value) : IStronglyTypedId<Guid>;
+
+public class Headline : SoftDeletableEntity<HeadlineId>
 {
     public const int MaxJobTitleLength = 100;
 
@@ -18,15 +19,14 @@ public class Headline : SoftDeletableEntity<long>
     public string Overview { get; private set; }
     public string Suffix { get; private set; }
     public string Address { get; private set; }
-    public long ProfileId { get; private set; }
+    public ProfileId ProfileId { get; private set; }
 
     public virtual IReadOnlyCollection<ContactInfo>? ContactInfo => _contactInfo;
 
-    private Headline()
+    private Headline() : base(new HeadlineId(), Guid.Empty)
     {
     }
 
-    [SetsRequiredMembers]
     public Headline(
         string title,
         string suffix,
@@ -35,11 +35,9 @@ public class Headline : SoftDeletableEntity<long>
         string summary,
         string overview,
         string address,
-        long id = 0,
-        long profileId = 0)
+        HeadlineId id,
+        ProfileId profileId) : base(id, Guid.Empty)
     {
-        Guard.IsGreaterThanOrEqualTo(id, 0);
-        Guard.IsGreaterThanOrEqualTo(profileId, 0);
         Guard.HasSizeLessThanOrEqualTo(jobTitle!, MaxJobTitleLength);
 
         Id = id;
@@ -79,7 +77,7 @@ public class Headline : SoftDeletableEntity<long>
         Guard.IsNotNullOrEmpty(value);
         Guard.IsNotNull(contactType);
 
-        var contactInfo = new ContactInfo(0, value, contactType, Id);
+        var contactInfo = new ContactInfo(value, contactType, new ContactInfoId(), Guid.Empty, Id);
         _contactInfo?.Add(contactInfo);
     }
 }

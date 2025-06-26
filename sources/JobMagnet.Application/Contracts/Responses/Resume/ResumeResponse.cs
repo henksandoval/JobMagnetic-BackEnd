@@ -2,8 +2,8 @@
 
 namespace JobMagnet.Application.Contracts.Responses.Resume;
 
-public sealed record ResumeResponse : IIdentifierBase<long>
+public sealed record ResumeResponse : IIdentifierBase<Guid>
 {
     public required ResumeBase ResumeData { get; init; }
-    public required long Id { get; init; }
+    public required Guid Id { get; init; }
 }

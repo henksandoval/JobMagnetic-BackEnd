@@ -9,8 +9,6 @@ public class SkillTypeAliasEntityTypeConfiguration : IEntityTypeConfiguration<Sk
 {
     public void Configure(EntityTypeBuilder<SkillTypeAlias> builder)
     {
-        builder.HasKey(alias => alias.Id);
-
         builder.Property(alias => alias.Alias)
             .HasMaxLength(SkillTypeAlias.MaxAliasLength)
             .IsRequired();
