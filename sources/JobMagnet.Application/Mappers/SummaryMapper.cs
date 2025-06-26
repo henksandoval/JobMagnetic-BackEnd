@@ -52,7 +52,7 @@ public static class SummaryMapper
             var workExperience = experienceBase.Adapt<WorkExperience>();
 
             foreach (var description in experienceBase?.Responsibilities ?? [])
-                workExperience.AddResponsibility(new WorkResponsibility(description));
+                workExperience.AddResponsibility(new WorkHighlight(description));
 
             entity.AddWorkExperience(workExperience);
         }

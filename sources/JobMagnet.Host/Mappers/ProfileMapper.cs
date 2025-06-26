@@ -100,7 +100,7 @@ public static class ProfileMapper
     {
         var workExperienceList = src.WorkExperiences?.Select(work =>
             {
-                var responsibilities = work.Responsibilities?
+                var responsibilities = work.Highlights?
                     .Select(r => r.Description)
                     .ToArray() ?? [];
                 return new PositionViewModel(

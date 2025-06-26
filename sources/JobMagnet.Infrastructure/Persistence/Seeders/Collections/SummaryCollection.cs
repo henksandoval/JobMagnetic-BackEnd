@@ -115,7 +115,7 @@ public record SummaryCollection
                 );
 
                 foreach (var description in item.Responsibilities)
-                    workExperience.AddResponsibility(new WorkResponsibility(description));
+                    workExperience.AddResponsibility(new WorkHighlight(description));
 
                 return workExperience;
             })

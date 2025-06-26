@@ -6,7 +6,7 @@ namespace JobMagnet.Domain.Core.Entities;
 
 public class WorkExperience : SoftDeletableEntity<long>
 {
-    private readonly HashSet<WorkResponsibility> _responsibilities = [];
+    private readonly HashSet<WorkHighlight> _highlights = [];
 
     public string JobTitle { get; private set; }
     public string CompanyName { get; private set; }
@@ -16,7 +16,7 @@ public class WorkExperience : SoftDeletableEntity<long>
     public string Description { get; private set; }
     public long SummaryId { get; private set; }
 
-    public virtual IReadOnlyCollection<WorkResponsibility> Responsibilities => _responsibilities;
+    public virtual IReadOnlyCollection<WorkHighlight> Highlights => _highlights;
 
     private WorkExperience()
     {
@@ -53,10 +53,10 @@ public class WorkExperience : SoftDeletableEntity<long>
         Description = description;
     }
 
-    public void AddResponsibility(WorkResponsibility responsibility)
+    public void AddResponsibility(WorkHighlight highlight)
     {
-        Guard.IsNotNull(responsibility);
+        Guard.IsNotNull(highlight);
 
-        _responsibilities.Add(responsibility);
+        _highlights.Add(highlight);
     }
 }

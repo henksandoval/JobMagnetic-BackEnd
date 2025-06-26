@@ -28,7 +28,7 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
     public DbSet<CareerHistory> Summaries { get; set; }
     public DbSet<Testimonial> Testimonials { get; set; }
     public DbSet<WorkExperience> WorkExperiences { get; set; }
-    public DbSet<WorkResponsibility> WorkResponsibilities { get; set; }
+    public DbSet<WorkHighlight> WorkResponsibilities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

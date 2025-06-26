@@ -10,9 +10,14 @@ public class WorkExperienceEntityTypeConfiguration : IEntityTypeConfiguration<Wo
     {
         builder.HasKey(x => x.Id);
 
-        builder.HasMany(w => w.Responsibilities)
-            .WithOne()
-            .HasForeignKey(w => w.WorkExperienceId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.OwnsMany(w => w.Highlights,
+            navigationBuilder =>
+            {
+                navigationBuilder.WithOwner().HasForeignKey("WorkExperienceId");
+                navigationBuilder.HasKey("Id");
+                navigationBuilder.Property(r => r.Description)
+                    .IsRequired()
+                    .HasMaxLength(WorkHighlight.MaxDescriptionLength);
+            });
     }
 }

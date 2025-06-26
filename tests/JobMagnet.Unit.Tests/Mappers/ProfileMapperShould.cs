@@ -227,7 +227,7 @@ public class ProfileMapperShould
                 w.StartDate.ToString("yyyy-MM-dd"),
                 w.CompanyLocation,
                 w.Description,
-                w.Responsibilities.Select(d => d.Description).ToArray()))
+                w.Highlights.Select(d => d.Description).ToArray()))
             .ToArray();
 
         return new SummaryViewModel(
