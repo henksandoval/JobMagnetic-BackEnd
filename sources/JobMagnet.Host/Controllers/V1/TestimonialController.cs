@@ -34,12 +34,16 @@ public class TestimonialController(
     [ProducesResponseType(typeof(TestimonialResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] TestimonialCommand createCommand, CancellationToken cancellationToken)
     {
+        throw new NotImplementedException();
+//TODO: Implement the logic to create a new Testimonial entity from the createCommand.
+/*
         var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity, cancellationToken).ConfigureAwait(false);
         await commandRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetTestimonialByIdAsync), new { id = newRecord.Id }, newRecord);
+*/
     }
 
     [HttpDelete("{id:long}")]
@@ -47,6 +51,8 @@ public class TestimonialController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteAsync(int id, CancellationToken cancellationToken)
     {
+        throw new NotImplementedException();
+
         var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
@@ -66,6 +72,9 @@ public class TestimonialController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PutAsync(int id, TestimonialCommand command, CancellationToken cancellationToken)
     {
+        throw new NotImplementedException();
+//TODO: Implement the logic to update an existing Testimonial entity with the provided command.
+/*
         var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
@@ -79,5 +88,6 @@ public class TestimonialController(
             .ConfigureAwait(false);
 
         return Results.NoContent();
+*/
     }
 }

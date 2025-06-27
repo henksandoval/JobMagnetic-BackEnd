@@ -5,11 +5,15 @@ using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
+using JobMagnet.Shared.Abstractions;
+using JobMagnet.Shared.Tests.Abstractions;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
-public class ProfileEntityBuilder(IFixture fixture)
+public class ProfileEntityBuilder
 {
+    private readonly IClock _clock;
+    private readonly IGuidGenerator _guidGenerator;
     private static readonly Faker Faker = FixtureBuilder.Faker;
     private string? _firstName;
     private string? _lastName;
@@ -19,17 +23,25 @@ public class ProfileEntityBuilder(IFixture fixture)
     private CareerHistory _careerHistory = null!;
     private List<Talent> _talents = [];
     private List<Testimonial> _testimonials = [];
+    private readonly IFixture _fixture;
+
+    public ProfileEntityBuilder(IFixture fixture)
+    {
+        _fixture = fixture;
+        _clock = new DeterministicClock();
+        _guidGenerator = new SequentialGuidGenerator();
+    }
 
 
     public ProfileEntityBuilder WithResume()
     {
-        _headline = fixture.Create<Headline>();
+        _headline = _fixture.Create<Headline>();
         return this;
     }
 
     public ProfileEntityBuilder WithContactInfo(int count = 5)
     {
-        if (count > ContactTypeDataFactory.Count)
+        if (count > ContactTypeSeeder.Count)
             throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available contact types.");
 
         if (_headline == null) throw new InvalidOperationException("Cannot add contact info without a headline. Call WithResume() first.");
@@ -38,7 +50,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         while (_headline.ContactInfo?.Count < count)
         {
-            var requestedContactType = fixture.Create<ContactType>();
+            var requestedContactType = _fixture.Create<ContactType>();
             ContactType contactTypeToAdd;
 
             if (addedContactInfo.TryGetValue(requestedContactType.Name, out var existingContactType))
@@ -53,7 +65,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
             var value = GenerateContactDetails(contactTypeToAdd.Name);
 
-            _headline.AddContactInfo(value, contactTypeToAdd);
+            _headline.AddContactInfo(_guidGenerator, _clock, value, contactTypeToAdd);
         }
 
         return this;
@@ -61,14 +73,14 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithSkillSet()
     {
-        _skillSet = fixture.Create<SkillSet>();
+        _skillSet = _fixture.Create<SkillSet>();
         return this;
     }
 
     public ProfileEntityBuilder WithSkills(int count = 5)
     {
-        if (count > SkillDataFactory.Count)
-            throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available skill types.");
+        // if (count > SkillSeeder.Count)
+        //     throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available skill types.");
 
         if (_skillSet == null) throw new InvalidOperationException("Cannot add skills without a skill set. Call WithSkillSet() first.");
 
@@ -78,7 +90,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         while (_skillSet.Skills.Count < count)
         {
-            var skillType = fixture.Create<SkillType>();
+            var skillType = _fixture.Create<SkillType>();
 
             if (addedSkillCategories.TryGetValue(skillType.Category.Name, out var existingCategory))
                 skillType.SetCategory(existingCategory);
@@ -87,7 +99,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
             var proficiencyLevel = (ushort)random.Next(1, 10);
 
-            if (addedSkillTypes.Add(skillType.Name)) _skillSet.AddSkill(proficiencyLevel, skillType);
+            if (addedSkillTypes.Add(skillType.Name)) _skillSet.AddSkill(_guidGenerator, _clock, proficiencyLevel, skillType);
         }
 
         return this;
@@ -97,20 +109,20 @@ public class ProfileEntityBuilder(IFixture fixture)
     {
         while (_talents?.Count < count)
         {
-            _talents = fixture.CreateMany<Talent>(count).ToList();
+            _talents = _fixture.CreateMany<Talent>(count).ToList();
         }
         return this;
     }
 
     public ProfileEntityBuilder WithProjects(int count = 5)
     {
-        _projects = fixture.CreateMany<Project>(count).ToList();
+        _projects = _fixture.CreateMany<Project>(count).ToList();
         return this;
     }
 
     public ProfileEntityBuilder WithSummary()
     {
-        _careerHistory = fixture.Create<CareerHistory>();
+        _careerHistory = _fixture.Create<CareerHistory>();
         return this;
     }
 
@@ -124,7 +136,7 @@ public class ProfileEntityBuilder(IFixture fixture)
     {
         if (_careerHistory == null) throw new InvalidOperationException("Cannot add contact info without a careerHistory. Call WithSummary() first.");
 
-        foreach (var education in fixture.CreateMany<Qualification>(count).ToList())
+        foreach (var education in _fixture.CreateMany<Qualification>(count).ToList())
             _careerHistory.AddEducation(education);
 
         return this;
@@ -134,7 +146,7 @@ public class ProfileEntityBuilder(IFixture fixture)
     {
         if (_careerHistory == null) throw new InvalidOperationException("Cannot add contact info without a careerHistory. Call WithSummary() first.");
 
-        foreach (var workExperience in fixture.CreateMany<WorkExperience>(count).ToList())
+        foreach (var workExperience in _fixture.CreateMany<WorkExperience>(count).ToList())
             _careerHistory.AddWorkExperience(workExperience);
 
         return this;
@@ -142,7 +154,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public ProfileEntityBuilder WithTestimonials(int count = 5)
     {
-        _testimonials = fixture.CreateMany<Testimonial>(count).ToList();
+        _testimonials = _fixture.CreateMany<Testimonial>(count).ToList();
         return this;
     }
 
@@ -160,7 +172,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
     public Profile Build()
     {
-        var profile = fixture.Create<Profile>();
+        var profile = _fixture.Create<Profile>();
 
         if (_firstName is not null) profile.ChangeFirstName(_firstName);
 
@@ -174,11 +186,19 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         if (_testimonials.Count > 0)
             foreach (var item in _testimonials)
-                profile.SocialProof.AddTestimonial(item.Name, item.JobTitle, item.Feedback, item.PhotoUrl);
+                profile.SocialProof.AddTestimonial(
+                    _guidGenerator,
+                    _clock,
+                    item.Name,
+                    item.JobTitle,
+                    item.Feedback,
+                    item.PhotoUrl);
 
         if (_projects.Count > 0)
             foreach (var gallery in _projects)
                 profile.Portfolio.AddProject(
+                    _guidGenerator,
+                    _clock,
                     gallery.Title,
                     gallery.Description,
                     gallery.UrlLink,
@@ -188,7 +208,7 @@ public class ProfileEntityBuilder(IFixture fixture)
 
         if (_talents.Count > 0) return profile;
         foreach (var talent in _talents)
-            profile.TalentShowcase.AddTalent(talent.Description);
+            profile.TalentShowcase.AddTalent(_guidGenerator, _clock, talent.Description);
 
         return profile;
     }

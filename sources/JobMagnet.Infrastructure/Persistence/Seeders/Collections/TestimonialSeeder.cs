@@ -5,7 +5,7 @@ using JobMagnet.Domain.Aggregates.Profiles.Entities;
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 // ReSharper disable once NotAccessedPositionalProperty.Global
-public record TestimonialCollection
+public record TestimonialSeeder
 {
     private readonly ProfileId _profileId;
 
@@ -23,7 +23,7 @@ public record TestimonialCollection
             "Their innovative solutions and commitment to quality have been pivotal in our project’s success, making them an invaluable partner in our journey.")
     ];
 
-    public TestimonialCollection(ProfileId profileId)
+    public TestimonialSeeder(ProfileId profileId)
     {
         _profileId = profileId;
     }
@@ -31,15 +31,7 @@ public record TestimonialCollection
     public ImmutableList<Testimonial> GetTestimonials()
     {
         return _values
-            .Select(x => new Testimonial
-            (
-                x.Name,
-                x.JobTitle,
-                x.PhotoUrl,
-                x.Feedback,
-                _profileId,
-                new TestimonialId()
-            ))
+            .Select(x => Testimonial.CreateInstance(_profileId, x.Name, x.JobTitle, x.PhotoUrl, x.Feedback))
             .ToImmutableList();
     }
 }

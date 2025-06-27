@@ -1,6 +1,6 @@
-﻿namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
+namespace JobMagnet.Shared.Data;
 
-public record ContactInfoCollection
+public static class ContactInfoRawData
 {
     public static readonly IReadOnlyList<(string value, string contactType)> Data =
     [

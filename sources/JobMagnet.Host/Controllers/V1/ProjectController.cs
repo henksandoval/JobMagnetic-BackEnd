@@ -20,12 +20,16 @@ public class ProjectController(
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ProjectCommand command, CancellationToken cancellationToken)
     {
+        throw new NotImplementedException();
+//TODO: Implement the logic to create a new Project entity from the command.
+/*
         var entity = command.ToEntity();
         await commandRepository.CreateAsync(entity, cancellationToken).ConfigureAwait(false);
         await commandRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetProjectByIdAsync), new { id = newRecord.Id }, newRecord);
+*/
     }
 
     [HttpGet("{id:long}", Name = nameof(GetProjectByIdAsync))]
@@ -49,6 +53,8 @@ public class ProjectController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteAsync(int id, CancellationToken cancellationToken)
     {
+        throw new NotImplementedException();
+
         var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
@@ -68,6 +74,9 @@ public class ProjectController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PutAsync(int id, ProjectCommand updateCommand, CancellationToken cancellationToken)
     {
+        throw new NotImplementedException();
+//TODO: Implement the logic to update an existing Project entity with the provided command.
+/*
         var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)
@@ -81,5 +90,6 @@ public class ProjectController(
             .ConfigureAwait(false);
 
         return Results.NoContent();
+*/
     }
 }

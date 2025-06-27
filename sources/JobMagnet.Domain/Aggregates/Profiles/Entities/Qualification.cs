@@ -1,12 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Shared.Base;
+using JobMagnet.Domain.Shared.Base.Interfaces;
+using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
-public readonly record struct QualificationId(Guid Value) : IStronglyTypedId<Guid>;
+public readonly record struct QualificationId(Guid Value) : IStronglyTypedId<QualificationId>;
 
-public class Qualification : SoftDeletableEntity<QualificationId>
+public class Qualification : SoftDeletableAggregate<QualificationId>
 {
     public string Degree { get; private set; }
     public string InstitutionName { get; private set; }
@@ -16,9 +18,13 @@ public class Qualification : SoftDeletableEntity<QualificationId>
     public string Description { get; private set; }
     public HeadlineId HeadlineId { get; private set; }
 
-    [SetsRequiredMembers]
-    public Qualification(string degree, string institutionName, string institutionLocation, DateTime startDate, DateTime? endDate,
-        string description, HeadlineId headlineId, QualificationId id, Guid addedBy) : base(id, addedBy)
+    private Qualification(QualificationId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
+        base(id, addedAt, lastModifiedAt, deletedAt)
+    {
+    }
+
+    private Qualification(QualificationId id, HeadlineId headlineId, string degree, string institutionName, string institutionLocation,
+        DateTime startDate, DateTime? endDate, string description, IClock clock) : base(id, clock)
     {
         Guard.IsNotNullOrWhiteSpace(degree);
         Guard.IsNotNullOrWhiteSpace(institutionName);
@@ -36,6 +42,12 @@ public class Qualification : SoftDeletableEntity<QualificationId>
         EndDate = endDate;
         HeadlineId = headlineId;
         Description = description;
-        Id = id;
+    }
+
+    public static Qualification CreateInstance(IGuidGenerator guidGenerator, IClock clock, HeadlineId headlineId, string degree,
+        string institutionName, string institutionLocation, DateTime startDate, DateTime? endDate, string description)
+    {
+        var id = new QualificationId(guidGenerator.NewGuid());
+        return new Qualification(id, headlineId, degree, institutionName, institutionLocation, startDate, endDate, description, clock);
     }
 }

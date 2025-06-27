@@ -16,32 +16,15 @@ public static class SummaryMapper
             .NewConfig()
             .Map(dest => dest.SummaryData, src => src);
 
-        TypeAdapterConfig<SummaryCommand, CareerHistory>
-            .NewConfig()
-            .Map(dest => dest, src => src.SummaryData)
-            .Ignore(dest => dest.Id);
-
-        TypeAdapterConfig<SummaryCommand, CareerHistory>
-            .NewConfig()
-            .Map(dest => dest, src => src.SummaryData);
-
         TypeAdapterConfig<CareerHistory, SummaryCommand>
             .NewConfig()
             .Map(dest => dest.SummaryData, src => src);
-
-        TypeAdapterConfig<EducationBase, Qualification>
-            .NewConfig()
-            .MapToConstructor(true);
-
-        TypeAdapterConfig<WorkExperienceBase, WorkExperience>
-            .NewConfig()
-            .MapToConstructor(true);
     }
-
+/*
     public static CareerHistory ToEntity(this SummaryCommand command)
     {
         var data = command.SummaryData;
-        var entity = new CareerHistory( new CareerHistoryId(), Guid.Empty,data.Introduction!, new ProfileId(data.ProfileId));
+        var entity = CareerHistory.CreateInstance(new CareerHistoryId(), Guid.Empty,data.Introduction!, new ProfileId(data.ProfileId));
 
         foreach (var educationBase in data.Education)
         {
@@ -57,19 +40,12 @@ public static class SummaryMapper
                 workExperience.AddResponsibility(new WorkHighlight(description));
 
             entity.AddWorkExperience(workExperience);
-        }
-
-        ;
+        };
 
         return entity;
     }
-
+*/
     public static SummaryResponse ToModel(this CareerHistory entity) => entity.Adapt<SummaryResponse>();
 
     public static SummaryCommand ToUpdateCommand(this CareerHistory entity) => entity.Adapt<SummaryCommand>();
-
-    public static void UpdateEntity(this CareerHistory entity, SummaryCommand command)
-    {
-        command.Adapt(entity);
-    }
 }

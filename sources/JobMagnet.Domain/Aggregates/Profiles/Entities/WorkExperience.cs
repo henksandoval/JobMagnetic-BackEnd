@@ -1,13 +1,16 @@
+
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Shared.Base;
+using JobMagnet.Domain.Shared.Base.Interfaces;
+using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
-public readonly record struct WorkExperienceId(Guid Value) : IStronglyTypedId<Guid>;
+public readonly record struct WorkExperienceId(Guid Value) : IStronglyTypedId<WorkExperienceId>;
 
-public class WorkExperience : SoftDeletableEntity<WorkExperienceId>
+public class WorkExperience : SoftDeletableAggregate<WorkExperienceId>
 {
     private readonly HashSet<WorkHighlight> _highlights = [];
 
@@ -21,19 +24,21 @@ public class WorkExperience : SoftDeletableEntity<WorkExperienceId>
 
     public virtual IReadOnlyCollection<WorkHighlight> Highlights => _highlights;
 
-    private WorkExperience() : base(new WorkExperienceId(), Guid.Empty)
+    private WorkExperience(WorkExperienceId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
+        base(id, addedAt, lastModifiedAt, deletedAt)
     {
     }
 
-    [SetsRequiredMembers]
-    public WorkExperience(string jobTitle,
+    private WorkExperience(
+        WorkExperienceId id,
+        HeadlineId headlineId,
+        IClock clock,
+        string jobTitle,
         string companyName,
         string companyLocation,
         DateTime startDate,
         DateTime? endDate,
-        string description,
-        HeadlineId headlineId,
-        WorkExperienceId id) : base(id, Guid.Empty)
+        string description) : base(id, clock)
     {
         Guard.IsNotNullOrWhiteSpace(jobTitle);
         Guard.IsNotNullOrWhiteSpace(companyName);
@@ -52,6 +57,12 @@ public class WorkExperience : SoftDeletableEntity<WorkExperienceId>
         StartDate = startDate;
         EndDate = endDate;
         Description = description;
+    }
+
+    public static WorkExperience CreateInstance(IGuidGenerator guidGenerator, IClock clock, HeadlineId headlineId, string jobTitle, string companyName, string companyLocation, DateTime startDate, DateTime? endDate, string description)
+    {
+        var id = new WorkExperienceId(guidGenerator.NewGuid());
+        return new WorkExperience(id, headlineId, clock,jobTitle, companyName, companyLocation, startDate, endDate, description);
     }
 
     public void AddResponsibility(WorkHighlight highlight)

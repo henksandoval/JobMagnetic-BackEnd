@@ -2,6 +2,7 @@ using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Domain.Services;
+using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 
@@ -18,19 +19,19 @@ public class VanityUrls
         _profile = profile;
     }
 
-    public void CreateAndAssignPublicIdentifier(IProfileSlugGenerator slugGenerator)
+    public void CreateAndAssignPublicIdentifier(IGuidGenerator guidGenerator, IClock clock, IProfileSlugGenerator slugGenerator)
     {
         if (_profile.VanityUrls.Any(p => p.Type == LinkType.Primary)) return;
 
         var generatedSlug = slugGenerator.GenerateProfileSlug(_profile);
-        AddPublicProfileIdentifier(generatedSlug);
+        AddPublicProfileIdentifier(guidGenerator, clock,generatedSlug);
     }
 
-    public void AddPublicProfileIdentifier(string slug, LinkType type = LinkType.Primary)
+    public void AddPublicProfileIdentifier(IGuidGenerator guidGenerator, IClock clock, string slug, LinkType type = LinkType.Primary)
     {
         Guard.IsNotNullOrEmpty(slug);
 
-        var publicIdentifier = new VanityUrl(slug, _profile.Id, type);
+        var publicIdentifier = VanityUrl.CreateInstance(guidGenerator, clock, _profile.Id, slug, type);
 
         _profile.AddPublicProfileIdentifier(publicIdentifier);
     }

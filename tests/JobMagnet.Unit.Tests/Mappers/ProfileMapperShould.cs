@@ -164,7 +164,7 @@ public class ProfileMapperShould
             entity.BirthDate!.Value,
             webSite,
             mobilePhone,
-            entity.Resume.Address!,
+            entity.Resume.Address,
             entity.BirthDate.GetAge(),
             entity.Resume.Title ?? string.Empty,
             email,

@@ -29,12 +29,16 @@ public class ProfileController(
     [ProducesResponseType(typeof(ProfileResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ProfileCommand createCommand, CancellationToken cancellationToken)
     {
+        throw new NotImplementedException();
+//TODO: Implement the logic to create a new Profile entity from the createCommand.
+/*
         var entity = createCommand.ToEntity();
         await commandRepository.CreateAsync(entity, cancellationToken);
         await commandRepository.SaveChangesAsync(cancellationToken);
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetProfileByIdAsync), new { id = newRecord.Id }, newRecord);
+*/
     }
 
     [HttpPost]
@@ -72,6 +76,9 @@ public class ProfileController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PutAsync(Guid id, ProfileCommand command, CancellationToken cancellationToken)
     {
+        throw new NotImplementedException();
+//TODO: Implement the logic to update an existing Profile entity with the provided command.
+/*
         var entity = await queryRepository.GetByIdAsync(new ProfileId(id), cancellationToken);
 
         if (entity is null)
@@ -85,6 +92,7 @@ public class ProfileController(
             .ConfigureAwait(false);
 
         return Results.NoContent();
+*/
     }
 
     [HttpGet]

@@ -1,14 +1,13 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Shared.Base;
+using JobMagnet.Domain.Shared.Base.Interfaces;
+using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Skills.Entities;
 
-public readonly record struct SkillCategoryId(Guid Value) : IStronglyTypedId<Guid>
-{
-    public static SkillCategoryId Default => new(Guid.Empty);
-}
+public readonly record struct SkillCategoryId(Guid Value) : IStronglyTypedId<SkillCategoryId>;
 
-public class SkillCategory : SoftDeletableEntity<SkillCategoryId>
+public class SkillCategory : SoftDeletableAggregate<SkillCategoryId>
 {
     private const int MinNameLength = 2;
     public const int MaxNameLength = 50;
@@ -16,11 +15,12 @@ public class SkillCategory : SoftDeletableEntity<SkillCategoryId>
 
     public string Name { get; private set; }
 
-    private SkillCategory() : base(new SkillCategoryId(), Guid.Empty)
+    private SkillCategory(SkillCategoryId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
+        base(id, addedAt, lastModifiedAt, deletedAt)
     {
     }
 
-    public SkillCategory(SkillCategoryId id, string name) : base(id, Guid.Empty)
+    private SkillCategory(SkillCategoryId id, IClock clock, string name) : base(id, clock)
     {
         Guard.IsNotNullOrWhiteSpace(name);
         Guard.HasSizeGreaterThan(name, MinNameLength);
@@ -28,5 +28,11 @@ public class SkillCategory : SoftDeletableEntity<SkillCategoryId>
 
         Id = id;
         Name = name;
+    }
+
+    internal static SkillCategory CreateInstance1(IGuidGenerator guidGenerator, IClock clock, string name)
+    {
+        var id = new SkillCategoryId(guidGenerator.NewGuid());
+        return new SkillCategory(id, clock, name);
     }
 }

@@ -3,12 +3,14 @@ using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Domain.Shared.Base;
+using JobMagnet.Domain.Shared.Base.Interfaces;
+using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
-public readonly record struct SkillSetId(Guid Value) : IStronglyTypedId<Guid>;
+public readonly record struct SkillSetId(Guid Value) : IStronglyTypedId<SkillSetId>;
 
-public class SkillSet : SoftDeletableEntity<SkillSetId>
+public class SkillSet : SoftDeletableAggregate<SkillSetId>
 {
     private readonly HashSet<Skill> _skills = [];
 
@@ -17,20 +19,28 @@ public class SkillSet : SoftDeletableEntity<SkillSetId>
 
     public ProfileId ProfileId { get; private set; }
 
-    private SkillSet() : base(new SkillSetId(), Guid.Empty)
+    private SkillSet(SkillSetId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
+        base(id, addedAt, lastModifiedAt, deletedAt)
     {
     }
 
-    public SkillSet(string overview, ProfileId profileId, SkillSetId id) : base(id, Guid.Empty)
+    private SkillSet(SkillSetId id, ProfileId profileId, IClock clock, string overview) : base(id, clock)
     {
         Guard.IsNotNullOrWhiteSpace(overview);
+        Guard.IsNotNull(profileId);
 
         Id = id;
         Overview = overview;
         ProfileId = profileId;
     }
 
-    public void AddSkill(ushort proficiencyLevel, SkillType skillType)
+    public static SkillSet CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string overview)
+    {
+        var id = new SkillSetId(guidGenerator.NewGuid());
+        return new SkillSet(id, profileId, clock, overview);
+    }
+
+    public void AddSkill(IGuidGenerator guidGenerator, IClock clock, ushort proficiencyLevel, SkillType skillType)
     {
         Guard.IsBetweenOrEqualTo<ushort>(proficiencyLevel, 0, 10);
         Guard.IsNotNull(skillType);
@@ -40,7 +50,7 @@ public class SkillSet : SoftDeletableEntity<SkillSetId>
 
         var newRank = (ushort)(_skills.Count + 1);
 
-        var newSkill = new Skill(new SkillId(), Id, skillType, proficiencyLevel, newRank);
+        var newSkill = Skill.CreateInstance(guidGenerator, clock, Id, skillType, proficiencyLevel, newRank);
         _skills.Add(newSkill);
     }
 

@@ -1,12 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Shared.Base;
+using JobMagnet.Domain.Shared.Base.Interfaces;
+using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
-public readonly record struct TestimonialId(Guid Value) : IStronglyTypedId<Guid>;
+public readonly record struct TestimonialId(Guid Value) : IStronglyTypedId<TestimonialId>;
 
-public class Testimonial : SoftDeletableEntity<TestimonialId>
+public class Testimonial : SoftDeletableAggregate<TestimonialId>
 {
     public string Name { get; private set; }
     public string JobTitle { get; private set; }
@@ -14,13 +16,12 @@ public class Testimonial : SoftDeletableEntity<TestimonialId>
     public string Feedback { get; private set; }
     public ProfileId ProfileId { get; private set; }
 
-    private Testimonial() : base(new TestimonialId(), Guid.Empty)
+    private Testimonial(TestimonialId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
+        base(id, addedAt, lastModifiedAt, deletedAt)
     {
     }
 
-    [SetsRequiredMembers]
-    public Testimonial(string name, string jobTitle, string feedback, string? photoUrl, ProfileId profileId, TestimonialId testimonialId) : base(
-        testimonialId, Guid.Empty)
+    private Testimonial(TestimonialId id, IClock clock, ProfileId profileId, string name, string jobTitle, string feedback, string? photoUrl) : base( id, clock)
     {
         Guard.IsNotNullOrWhiteSpace(name);
         Guard.IsNotNullOrWhiteSpace(jobTitle);
@@ -31,5 +32,11 @@ public class Testimonial : SoftDeletableEntity<TestimonialId>
         Feedback = feedback;
         ProfileId = profileId;
         PhotoUrl = photoUrl;
+    }
+
+    public static Testimonial CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string name, string jobTitle, string feedback, string? photoUrl)
+    {
+        var id = new TestimonialId(guidGenerator.NewGuid());
+        return new Testimonial(id, clock, profileId, name, jobTitle, feedback, photoUrl);
     }
 }

@@ -8,6 +8,7 @@ using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
+using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Application.UseCases.CvParser;
 
@@ -17,6 +18,8 @@ public interface ICvParserHandler
 }
 
 public class CvParserHandler(
+    IGuidGenerator guidGenerator,
+    IClock clock,
     IRawCvParser cvParser,
     ICommandRepository<Profile> profileRepository,
     IProfileSlugGenerator slugGenerator,
@@ -27,7 +30,7 @@ public class CvParserHandler(
     {
         var profileEntity = await BuildProfileFromCvAsync(command, cancellationToken);
 
-        profileEntity.LinkManager.CreateAndAssignPublicIdentifier(slugGenerator);
+        profileEntity.LinkManager.CreateAndAssignPublicIdentifier(guidGenerator, clock, slugGenerator);
 
         await profileRepository.CreateAsync(profileEntity, cancellationToken);
         await profileRepository.SaveChangesAsync(cancellationToken);
@@ -58,6 +61,6 @@ public class CvParserHandler(
 
     private static string GetProfileSlugUrl(Profile profile)
     {
-        return profile.VanityUrls!.SingleOrDefault(x => x.Type == LinkType.Primary)!.ProfileSlugUrl;
+        return profile.VanityUrls.SingleOrDefault(x => x.Type == LinkType.Primary)!.ProfileSlugUrl;
     }
 }

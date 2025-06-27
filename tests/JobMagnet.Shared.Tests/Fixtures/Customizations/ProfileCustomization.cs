@@ -2,28 +2,32 @@ using AutoFixture;
 using Bogus;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Shared.Abstractions;
+using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Utils;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class ProfileCustomization : ICustomization
 {
+    private readonly IClock _clock = new DeterministicClock();
+    private readonly IGuidGenerator _guidGenerator = new SequentialGuidGenerator();
     private static readonly Faker Faker = FixtureBuilder.Faker;
 
     public void Customize(IFixture fixture)
     {
         fixture.Customize<Profile>(composer =>
             composer
-                .FromFactory(() => new Profile(
-                    new ProfileId(),
-                    Faker.Random.Guid(),
+                .FromFactory(() => Profile.CreateInstance(
+                    _guidGenerator,
+                    _clock,
                     Faker.Name.FirstName(),
                     Faker.Name.LastName(),
                     Faker.Image.PicsumUrl(200, 200),
                     DateOnly.FromDateTime(Faker.Date.Past(30)),
                     TestUtilities.OptionalValue(Faker, f => f.Name.FirstName()),
                     TestUtilities.OptionalValue(Faker, f => f.Name.LastName()
-                )))
+                    )))
                 .OmitAutoProperties()
         );
 

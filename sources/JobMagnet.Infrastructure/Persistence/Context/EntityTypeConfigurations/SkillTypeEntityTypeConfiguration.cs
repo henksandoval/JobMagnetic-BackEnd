@@ -25,6 +25,6 @@ public class SkillTypeEntityTypeConfiguration : IEntityTypeConfiguration<SkillTy
             .HasForeignKey(type => type.CategoryId)
             .IsRequired();
 
-        builder.HasData(SkillDataFactory.SeedData.Types);
+        // builder.HasData(SkillSeeder.SeedData.Types);
     }
 }

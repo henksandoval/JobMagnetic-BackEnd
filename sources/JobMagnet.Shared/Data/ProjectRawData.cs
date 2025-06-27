@@ -1,15 +1,10 @@
-﻿using System.Collections.Immutable;
-using JobMagnet.Domain.Aggregates.Profiles;
-using JobMagnet.Domain.Aggregates.Profiles.Entities;
+namespace JobMagnet.Shared.Data;
 
-namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
+public record GalleryProperties(string Title, string Description, string UrlLink, string UrlImage, string Type, string UrlVideo = "");
 
-// ReSharper disable once NotAccessedPositionalProperty.Global
-public record ProjectCollection
+public static class ProjectRawData
 {
-    private readonly ProfileId _profileId;
-
-    private readonly IList<GalleryProperties> _values =
+    public static IList<GalleryProperties> Data =
     [
         new("Aventuras Animales",
             "Cada fotografía captura momentos únicos y comportamientos fascinantes.",
@@ -48,24 +43,4 @@ public record ProjectCollection
             "https://images.pexels.com/photos/19949287/pexels-photo-19949287/free-photo-of-animal-perro-mascota-mono.jpeg?auto=compress&cs=tinysrgb&w=1200",
             "DOG")
     ];
-
-    public ProjectCollection(ProfileId profileId)
-    {
-        _profileId = profileId;
-    }
-
-    public ImmutableList<Project> GetProjects()
-    {
-        return _values.Select((x, index) => new Project(
-                x.Title,
-                x.Description,
-                x.UrlLink,
-                x.UrlImage,
-                x.UrlVideo ?? string.Empty,
-                x.Type,
-                ++index,
-                _profileId,
-                new ProjectId()))
-            .ToImmutableList();
-    }
 }

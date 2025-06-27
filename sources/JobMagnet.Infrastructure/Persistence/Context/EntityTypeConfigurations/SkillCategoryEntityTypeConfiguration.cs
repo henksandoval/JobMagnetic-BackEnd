@@ -18,6 +18,6 @@ public class SkillCategoryEntityTypeConfiguration : IEntityTypeConfiguration<Ski
         builder.HasIndex(c => c.Name)
             .IsUnique();
 
-        builder.HasData(SkillDataFactory.SeedData.Categories);
+        // builder.HasData(SkillSeeder.SeedData.Categories);
     }
 }

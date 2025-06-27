@@ -4,7 +4,7 @@ using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 // ReSharper disable once NotAccessedPositionalProperty.Global
-public record SummaryCollection
+public record SummarySeeder
 {
     private readonly HeadlineId _headlineId;
 
@@ -76,11 +76,11 @@ public record SummaryCollection
             "Certificate in Web Development with a focus on front-end development and responsive design.")
     ];
 
-    public SummaryCollection()
+    public SummarySeeder()
     {
     }
 
-    public SummaryCollection(HeadlineId headlineId)
+    public SummarySeeder(HeadlineId headlineId)
     {
         _headlineId = headlineId;
     }
@@ -106,16 +106,14 @@ public record SummaryCollection
         return _value
             .Select(item =>
             {
-                var workExperience = new WorkExperience(
-                    item.JobTitle,
+                var workExperience = WorkExperience.CreateInstance(item.JobTitle,
                     item.CompanyName,
                     item.CompanyLocation,
                     item.StartDate,
                     item.EndDate,
                     item.Description,
                     _headlineId,
-                    new WorkExperienceId()
-                );
+                    new WorkExperienceId());
 
                 foreach (var description in item.Responsibilities)
                     workExperience.AddResponsibility(new WorkHighlight(description));

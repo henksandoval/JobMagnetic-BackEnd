@@ -1,16 +1,18 @@
 ﻿using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Domain.Shared.Base;
+using JobMagnet.Domain.Shared.Base.Interfaces;
+using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Contact;
 
-public readonly record struct ContactTypeId(Guid Value) : IStronglyTypedId<Guid>;
+public readonly record struct ContactTypeId(Guid Value) : IStronglyTypedId<ContactTypeId>;
 
-public class ContactType : SoftDeletableEntity<ContactTypeId>
+public class ContactType : SoftDeletableAggregate<ContactTypeId>
 {
     public const int MaxNameLength = 20;
     public const int MaxIconClassLength = 20;
-    private const string? DefaultIconClass = "bx bx-link-alt";
+    public const string DefaultIconClass = "bx bx-link-alt";
 
     private readonly HashSet<ContactTypeAlias> _aliases = new(new ContactTypeAliasComparer());
 
@@ -19,12 +21,13 @@ public class ContactType : SoftDeletableEntity<ContactTypeId>
     public Uri? IconUrl { get; private set; }
     public virtual IReadOnlyCollection<ContactTypeAlias> Aliases => _aliases;
 
-    private ContactType() : base(new ContactTypeId(), Guid.Empty)
+    private ContactType(ContactTypeId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
+        base(id, addedAt, lastModifiedAt, deletedAt)
     {
     }
 
-    public ContactType(ContactTypeId id, Guid addedBy, string name, string? iconClass = null, Uri? iconUrl = null)
-        : base(id, addedBy)
+    private ContactType(ContactTypeId id, IClock clock, string name, string? iconClass = null, Uri? iconUrl = null)
+        : base(id, clock)
     {
         Guard.IsNotNullOrWhiteSpace(name);
 
@@ -36,35 +39,41 @@ public class ContactType : SoftDeletableEntity<ContactTypeId>
         ValidateInvariants();
     }
 
-    public void UpdateName(string newName, Guid modifiedBy)
+    public static ContactType CreateInstance(IGuidGenerator guidGenerator, IClock clock, string name, string? iconClass = null, Uri? iconUrl = null)
+    {
+        var id = new ContactTypeId(guidGenerator.NewGuid());
+        return new ContactType(id, clock, name, iconClass, iconUrl);
+    }
+
+    public void UpdateName(string newName, IClock clock)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(newName);
         Name = newName;
-        UpdateModificationDetails(modifiedBy);
+        UpdateModificationDetails(clock);
     }
 
-    public void AddAlias(string aliasValue, Guid modifiedBy)
+    public void AddAlias(string aliasValue, IClock clock)
     {
         var newAlias = new ContactTypeAlias(aliasValue);
 
-        if (_aliases.Add(newAlias)) UpdateModificationDetails(modifiedBy);
+        if (_aliases.Add(newAlias)) UpdateModificationDetails(clock);
     }
 
-    public void RemoveAlias(string aliasValue, Guid modifiedBy)
+    public void RemoveAlias(string aliasValue, IClock clock)
     {
         var aliasToRemove = new ContactTypeAlias(aliasValue);
 
-        if (_aliases.Remove(aliasToRemove)) UpdateModificationDetails(modifiedBy);
+        if (_aliases.Remove(aliasToRemove)) UpdateModificationDetails(clock);
     }
 
-    public void UpdateIcons(string? newIconClass, Uri? newIconUrl, Guid modifiedBy)
+    public void UpdateIcons(string? newIconClass, Uri? newIconUrl, IClock clock)
     {
         IconClass = newIconClass;
         IconUrl = newIconUrl;
 
         EnsureDefaultIcon();
         ValidateInvariants();
-        UpdateModificationDetails(modifiedBy);
+        UpdateModificationDetails(clock);
     }
 
     private void EnsureDefaultIcon()

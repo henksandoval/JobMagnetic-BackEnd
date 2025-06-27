@@ -63,7 +63,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
             { nameof(ProfileQueryParameters.ProfileSlug), publicProfile.ProfileSlugUrl }
         };
 
-        var requestUrl = QueryHelpers.AddQueryString(RequestUriController, queryParameters!);
+        var requestUrl = QueryHelpers.AddQueryString(RequestUriController, queryParameters);
 
         // --- When ---
         var response = await _httpClient.GetAsync(requestUrl);

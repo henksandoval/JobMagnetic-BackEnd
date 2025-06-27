@@ -23,10 +23,6 @@ public static class SkillMapper
             .NewConfig()
             .Map(dest => dest.SkillData, src => src);
 
-        TypeAdapterConfig<SkillCommand, SkillSet>
-            .NewConfig()
-            .Map(dest => dest, src => src.SkillData);
-
         TypeAdapterConfig<SkillSet, SkillCommand>
             .NewConfig()
             .Map(dest => dest.SkillData, src => src);

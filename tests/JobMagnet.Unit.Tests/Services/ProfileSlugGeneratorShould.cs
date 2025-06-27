@@ -114,7 +114,7 @@ public partial class ProfileSlugGeneratorShould
             .Build();
 
         profile.ChangeFirstName(firstName);
-        profile.ChangeLastName(lastName!);
+        profile.ChangeLastName(lastName);
 
         // --- When ---
         var slug = _subject.GenerateProfileSlug(profile);

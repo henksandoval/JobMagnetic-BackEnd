@@ -7,7 +7,7 @@ namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 // ReSharper disable once NotAccessedPositionalProperty.Global
 public record Talents(string Description);
 
-public record TalentsCollection
+public record TalentsSeeder
 {
     private readonly ProfileId _profileId;
 
@@ -20,18 +20,15 @@ public record TalentsCollection
         new ("Resilient")
     ];
 
-    public TalentsCollection(ProfileId profileId)
+    public TalentsSeeder(ProfileId profileId)
     {
         _profileId = profileId;
     }
 
     public ImmutableList<Talent> GetTalents()
     {
-        return _values.Select(talent => new Talent
-        (
-            talent.Description,
+        return _values.Select(talent => Talent.CreateInstance(talent.Description,
             _profileId,
-            new TalentId()
-        )).ToImmutableList();
+            new TalentId())).ToImmutableList();
     }
 }

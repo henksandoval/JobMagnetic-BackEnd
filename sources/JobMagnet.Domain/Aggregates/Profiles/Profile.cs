@@ -2,12 +2,14 @@
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Shared.Base;
+using JobMagnet.Domain.Shared.Base.Interfaces;
+using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles;
 
-public readonly record struct ProfileId(Guid Value) : IStronglyTypedId<Guid>;
+public readonly record struct ProfileId(Guid Value) : IStronglyTypedId<ProfileId>;
 
-public class Profile : SoftDeletableEntity<ProfileId>
+public class Profile : SoftDeletableAggregate<ProfileId>
 {
     private readonly HashSet<Project> _projects = [];
     private readonly HashSet<Talent> _talents = [];
@@ -32,7 +34,8 @@ public class Profile : SoftDeletableEntity<ProfileId>
     public virtual IReadOnlyCollection<Testimonial> Testimonials => _testimonials;
     public virtual IReadOnlyCollection<VanityUrl> VanityUrls => _vanityUrls;
 
-    private Profile() : base(new ProfileId(), Guid.Empty)
+    private Profile(ProfileId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
+        base(id, addedAt, lastModifiedAt, deletedAt)
     {
         SocialProof = new SocialProof(this);
         Portfolio = new Portfolio(this);
@@ -40,15 +43,15 @@ public class Profile : SoftDeletableEntity<ProfileId>
         TalentShowcase = new TalentShowcase(this);
     }
 
-    public Profile(
+    private Profile(
         ProfileId id,
-        Guid addedBy,
+        IClock clock,
         string? firstName,
         string? lastName,
         string? profileImageUrl = null,
         DateOnly? birthDate = null,
         string? middleName = null,
-        string? secondLastName = null) : base(id, addedBy)
+        string? secondLastName = null) : base(id, clock)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -61,6 +64,13 @@ public class Profile : SoftDeletableEntity<ProfileId>
         Portfolio = new Portfolio(this);
         LinkManager = new VanityUrls(this);
         TalentShowcase = new TalentShowcase(this);
+    }
+
+    public static Profile CreateInstance(IGuidGenerator guidGenerator, IClock clock, string? firstName, string? lastName, string? profileImageUrl = null, DateOnly? birthDate = null, string? middleName = null, string? secondLastName = null)
+    {
+        var id = new ProfileId(guidGenerator.NewGuid());
+
+        return new Profile(id, clock, firstName, lastName, profileImageUrl, birthDate, middleName, secondLastName);
     }
 
     public void ChangeFirstName(string? firstName)

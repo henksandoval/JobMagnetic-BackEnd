@@ -1,12 +1,14 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Domain.Shared.Base;
+using JobMagnet.Domain.Shared.Base.Interfaces;
+using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Skills.Entities;
 
 public readonly record struct SkillTypeId(Guid Value) : IStronglyTypedId<Guid>;
 
-public class SkillType : SoftDeletableEntity<SkillTypeId>
+public class SkillType : SoftDeletableAggregate<SkillTypeId>
 {
     public const int MaxNameLength = 50;
     private const string DefaultIconUri = "https://jobmagnet.com/default-icon.png";
@@ -20,11 +22,12 @@ public class SkillType : SoftDeletableEntity<SkillTypeId>
     public virtual IReadOnlyCollection<SkillTypeAlias> Aliases => _aliases.AsReadOnly();
     public virtual SkillCategory Category { get; private set; }
 
-    private SkillType() : base(new SkillTypeId(), Guid.Empty)
+    private SkillType(SkillTypeId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
+        base(id, addedAt, lastModifiedAt, deletedAt)
     {
     }
 
-    internal SkillType(SkillTypeId id, string name, SkillCategory category, Uri? iconUrl = null) : base(id, Guid.Empty)
+    private SkillType(SkillTypeId id, IClock clock, string name, SkillCategory category, Uri? iconUrl = null) : base(id, clock)
     {
         Guard.IsNotNullOrWhiteSpace(name);
         Guard.HasSizeLessThanOrEqualTo(name, MaxNameLength);
@@ -36,6 +39,12 @@ public class SkillType : SoftDeletableEntity<SkillTypeId>
         Name = name;
         Category = category;
         IconUrl = iconUrl;
+    }
+
+    internal static SkillType CreateInstance(IGuidGenerator guidGenerator, IClock clock, string name, SkillCategory category, Uri? iconUrl = null)
+    {
+        var id = new SkillTypeId(guidGenerator.NewGuid());
+        return new SkillType(id, clock, name, category, iconUrl);
     }
 
     public void AddAlias(string alias)

@@ -96,8 +96,8 @@ public class AdminControllerShould(
         profile.Resume.ShouldNotBeNull();
         profile.Resume.ContactInfo.ShouldNotBeNull();
         profile.SkillSet.Skills.Count.ShouldBe(SkillInfoCollection.Data.Count);
-        profile.Talents.Count.ShouldBe(new TalentsCollection(profileId).GetTalents().Count);
-        profile.Testimonials.Count.ShouldBe(new TestimonialCollection(profileId).GetTestimonials().Count);
-        profile.Projects.Count.ShouldBe(new ProjectCollection(profileId).GetProjects().Count);
+        profile.Talents.Count.ShouldBe(new TalentsSeeder(profileId).GetTalents().Count);
+        profile.Testimonials.Count.ShouldBe(new TestimonialSeeder(profileId).GetTestimonials().Count);
+        profile.Projects.Count.ShouldBe(new ProjectSeeder(profileId).GetProjects().Count);
     }
 }

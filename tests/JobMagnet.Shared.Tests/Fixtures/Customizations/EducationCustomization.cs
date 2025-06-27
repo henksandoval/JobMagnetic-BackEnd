@@ -3,12 +3,16 @@ using Bogus;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Shared.Abstractions;
+using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Utils;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class EducationCustomization : ICustomization
 {
+    private readonly IClock _clock = new DeterministicClock();
+    private readonly IGuidGenerator _guidGenerator = new SequentialGuidGenerator();
     private static readonly Faker Faker = FixtureBuilder.Faker;
 
     public void Customize(IFixture fixture)
@@ -21,22 +25,22 @@ public class EducationCustomization : ICustomization
         fixture.Register(EducationBaseFactory);
     }
 
-    private static Qualification EducationFactory()
+    private Qualification EducationFactory()
     {
         var startDate = Faker.Date.Past(20, DateTime.Now.AddYears(-5));
         var endDate = Faker.Date.Between(startDate, startDate.AddYears(5))
             .OrNull(Faker, 0.25f);
 
-        var education = new Qualification(
+        var education = Qualification.CreateInstance(
+            _guidGenerator,
+            _clock,
+            new HeadlineId(),
             Faker.PickRandom(StaticCustomizations.Degrees),
             Faker.PickRandom(StaticCustomizations.Universities),
             Faker.Address.FullAddress(),
             startDate,
             endDate,
-            Faker.Lorem.Sentences(),
-            new HeadlineId(),
-            new QualificationId(),
-            Faker.Random.Guid()
+            Faker.Lorem.Sentences()
         );
 
         return education;

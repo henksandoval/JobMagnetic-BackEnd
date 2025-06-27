@@ -27,4 +27,8 @@
     <ItemGroup>
         <Folder Include="Shared\"/>
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\JobMagnet.Shared\JobMagnet.Shared.csproj" />
+    </ItemGroup>
 </Project>

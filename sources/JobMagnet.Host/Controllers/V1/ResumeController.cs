@@ -20,23 +20,17 @@ public class ResumeController(
     [ProducesResponseType(typeof(ResumeResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ResumeCommand createCommand, CancellationToken cancellationToken)
     {
-        //TODO: VALIDATE CALL
-        var entity = new Headline(
-            createCommand.ResumeData.Title,
-            createCommand.ResumeData.Suffix,
-            createCommand.ResumeData.JobTitle,
-            createCommand.ResumeData.About,
-            createCommand.ResumeData.Summary,
-            createCommand.ResumeData.Overview,
-            createCommand.ResumeData.Address,
-            new HeadlineId(),
-            new ProfileId()
-        );
+        throw new NotImplementedException();
+//TODO: Implement the logic to create a new Resume entity from the createCommand.
+/*
+        var entity = Headline.CreateInstance(new HeadlineId(),
+            new ProfileId(), createCommand.ResumeData.Title, createCommand.ResumeData.Suffix, createCommand.ResumeData.JobTitle, createCommand.ResumeData.About, createCommand.ResumeData.Summary, createCommand.ResumeData.Overview, createCommand.ResumeData.Address);
         await commandRepository.CreateAsync(entity, cancellationToken);
         await commandRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetResumeByIdAsync), new { id = newRecord.Id }, newRecord);
+*/
     }
 
     [HttpGet("{id:long}", Name = nameof(GetResumeByIdAsync))]
@@ -60,6 +54,8 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PutAsync(int id, ResumeCommand command, CancellationToken cancellationToken)
     {
+        throw new NotImplementedException();
+
         var entity = await queryRepository.GetByIdAsync(id, cancellationToken);
 
         if (entity is null)
@@ -90,6 +86,8 @@ public class ResumeController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteAsync(int id, CancellationToken cancellationToken)
     {
+        throw new NotImplementedException();
+
         var entity = await queryRepository.GetByIdAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (entity is null)

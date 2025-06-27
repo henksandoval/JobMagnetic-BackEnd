@@ -16,6 +16,6 @@ public class SkillTypeAliasEntityTypeConfiguration : IEntityTypeConfiguration<Sk
         builder.HasIndex(alias => alias.Alias)
             .IsUnique();
 
-        builder.HasData(SkillDataFactory.SeedData.Aliases);
+        // builder.HasData(SkillSeeder.SeedData.Aliases);
     }
 }

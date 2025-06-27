@@ -3,7 +3,7 @@ using JobMagnet.Domain.Aggregates.Skills.Entities;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
-public static class SkillDataFactory
+public static class SkillSeeder
 {
     private static readonly IReadOnlyList<RawSkillDefinition> RawData =
     [
@@ -34,7 +34,7 @@ public static class SkillDataFactory
 
         var categories = new Dictionary<string, SkillCategory>
         {
-            { SkillCategory.DefaultCategoryName, new SkillCategory(new SkillCategoryId(), SkillCategory.DefaultCategoryName) }
+            { SkillCategory.DefaultCategoryName, SkillCategory.CreateInstance(SkillCategory.DefaultCategoryName) }
         };
         var types = new List<TypeSeedData>();
         var aliases = new List<AliasSeedData>();
@@ -48,7 +48,7 @@ public static class SkillDataFactory
             if (!categories.TryGetValue(rawDef.CategoryName, out var category))
             {
                 categoryIdCounter++;
-                categories.Add(rawDef.CategoryName, new SkillCategory(new SkillCategoryId(), rawDef.CategoryName));
+                categories.Add(rawDef.CategoryName, SkillCategory.CreateInstance(rawDef.CategoryName));
             }
 
             var typeId = typeIdCounter++;
@@ -71,11 +71,11 @@ public static class SkillDataFactory
         {
             if (!categoryCache.TryGetValue(rawDef.CategoryName, out var category))
             {
-                category = new SkillCategory(new SkillCategoryId(), rawDef.CategoryName);
+                category = SkillCategory.CreateInstance(rawDef.CategoryName);
                 categoryCache.Add(rawDef.CategoryName, category);
             }
 
-            var skill = new SkillType(new SkillTypeId(),rawDef.Name, category, new Uri(rawDef.Uri));
+            var skill = SkillType.CreateInstance(rawDef.Name, category, new Uri(rawDef.Uri));
 
             foreach (var alias in rawDef.Aliases) skill.AddAlias(alias);
 

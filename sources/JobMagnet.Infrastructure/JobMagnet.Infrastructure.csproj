@@ -32,4 +32,14 @@
         <Folder Include="Services\"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Persistence\Seeders\Collections\ProjectSeeder.cs" />
+      <Compile Remove="Persistence\Seeders\Collections\SkillInfoCollection.cs" />
+      <Compile Remove="Persistence\Seeders\Collections\SkillSeeder.cs" />
+      <Compile Remove="Persistence\Seeders\Collections\SummarySeeder.cs" />
+      <Compile Remove="Persistence\Seeders\Collections\TalentsSeeder.cs" />
+      <Compile Remove="Persistence\Seeders\Collections\TestimonialSeeder.cs" />
+      <Compile Remove="Persistence\Seeders\Seeder.cs" />
+    </ItemGroup>
+
 </Project>

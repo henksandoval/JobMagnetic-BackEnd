@@ -1,6 +1,7 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Exceptions;
+using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 
@@ -19,12 +20,12 @@ public class TalentShowcase
         _profile = profile;
     }
 
-    public void AddTalent(string description)
+    public void AddTalent(IGuidGenerator guidGenerator, IClock clock, string description)
     {
         if (Talents.Count >= 10) throw new JobMagnetDomainException("Cannot add more than 10 talents.");
         if (Talents.Any(t => t.Description == description)) throw new JobMagnetDomainException("This talent already exists.");
 
-        var talent = new Talent(description, _profile.Id, new TalentId());
+        var talent = Talent.CreateInstance(guidGenerator, clock, _profile.Id, description);
 
         _profile.AddTalent(talent);
     }
