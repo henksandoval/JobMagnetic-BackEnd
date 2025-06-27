@@ -12,10 +12,7 @@ public class Talent : SoftDeletableAggregate<TalentId>
     public string Description { get; private set; }
     public ProfileId ProfileId { get; private set; }
 
-    private Talent(TalentId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
-        base(id, addedAt, lastModifiedAt, deletedAt)
-    {
-    }
+    private Talent() : base() { }
 
     private Talent(TalentId id, ProfileId profileId, IClock clock, string description) : base(id, clock)
     {

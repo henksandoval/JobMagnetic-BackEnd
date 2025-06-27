@@ -1,4 +1,5 @@
 using JobMagnet.Domain.Aggregates.Contact;
+using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Shared.Abstractions;
 using JobMagnet.Shared.Data;
 using JobMagnet.Shared.Tests.Abstractions;
@@ -9,8 +10,10 @@ public class TestDataFactory
 {
     private readonly IClock _clock;
     private readonly IGuidGenerator _guidGenerator;
-
     private readonly Lazy<IReadOnlyList<ContactType>> _predefinedContactTypes;
+    private readonly Lazy<IReadOnlyList<SkillType>> _predefinedSkillTypes;
+    public IReadOnlyList<ContactType> PredefinedContactTypes => _predefinedContactTypes.Value;
+    public IReadOnlyList<SkillType> PredefinedSkillTypes => _predefinedSkillTypes.Value;
 
     public TestDataFactory()
     {
@@ -18,9 +21,8 @@ public class TestDataFactory
         _guidGenerator = new SequentialGuidGenerator();
 
         _predefinedContactTypes = new Lazy<IReadOnlyList<ContactType>>(CreateAllPredefinedContactTypes);
+        _predefinedSkillTypes = new Lazy<IReadOnlyList<SkillType>>(CreateAllPredefinedSkillTypes);
     }
-
-    public IReadOnlyList<ContactType> PredefinedContactTypes => _predefinedContactTypes.Value;
 
     private IReadOnlyList<ContactType> CreateAllPredefinedContactTypes()
     {
@@ -41,5 +43,37 @@ public class TestDataFactory
             list.Add(contactType);
         }
         return list.AsReadOnly();
+    }
+
+    private IReadOnlyList<SkillType> CreateAllPredefinedSkillTypes()
+    {
+        var skills = new List<SkillType>();
+        var categoryCache = new Dictionary<string, SkillCategory>();
+
+        foreach (var rawDef in SkillRawData.Data)
+        {
+            if (!categoryCache.TryGetValue(rawDef.CategoryName, out var category))
+            {
+                category = SkillCategory.CreateInstance(
+                    _guidGenerator,
+                    _clock,
+                    rawDef.CategoryName);
+                categoryCache.Add(rawDef.CategoryName, category);
+            }
+
+            var skill = SkillType.CreateInstance(
+                _guidGenerator,
+                _clock,
+                rawDef.Name,
+                category,
+                new Uri(rawDef.Uri));
+
+            foreach (var alias in rawDef.Aliases)
+                skill.AddAlias(alias);
+
+            skills.Add(skill);
+        }
+
+        return skills.AsReadOnly();
     }
 }

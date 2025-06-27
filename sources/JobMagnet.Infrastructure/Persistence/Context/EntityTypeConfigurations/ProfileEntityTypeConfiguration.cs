@@ -1,5 +1,6 @@
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Infrastructure.Persistence.Context.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,6 +11,11 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<Profile>
     public void Configure(EntityTypeBuilder<Profile> builder)
     {
         builder.HasKey(p => p.Id);
+
+        builder.Property(x => x.Id)
+            .HasConversion(new StronglyTypedIdValueConverter<ProfileId, Guid>());
+
+        builder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder.HasOne<Headline>(p => p.Resume)
             .WithOne()

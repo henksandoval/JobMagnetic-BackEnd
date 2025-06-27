@@ -23,7 +23,7 @@ public class ResumeController(
         throw new NotImplementedException();
 //TODO: Implement the logic to create a new Resume entity from the createCommand.
 /*
-        var entity = Headline.CreateInstance(new HeadlineId(),
+        var entity = Headline.CreateInstance(new CareerHistoryId(),
             new ProfileId(), createCommand.ResumeData.Title, createCommand.ResumeData.Suffix, createCommand.ResumeData.JobTitle, createCommand.ResumeData.About, createCommand.ResumeData.Summary, createCommand.ResumeData.Overview, createCommand.ResumeData.Address);
         await commandRepository.CreateAsync(entity, cancellationToken);
         await commandRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

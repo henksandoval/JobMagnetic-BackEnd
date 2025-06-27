@@ -16,10 +16,7 @@ public class Testimonial : SoftDeletableAggregate<TestimonialId>
     public string Feedback { get; private set; }
     public ProfileId ProfileId { get; private set; }
 
-    private Testimonial(TestimonialId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
-        base(id, addedAt, lastModifiedAt, deletedAt)
-    {
-    }
+    private Testimonial() : base() { }
 
     private Testimonial(TestimonialId id, IClock clock, ProfileId profileId, string name, string jobTitle, string feedback, string? photoUrl) : base( id, clock)
     {

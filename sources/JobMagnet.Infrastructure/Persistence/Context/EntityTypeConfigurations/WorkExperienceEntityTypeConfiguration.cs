@@ -1,5 +1,6 @@
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Infrastructure.Persistence.Context.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,10 +12,18 @@ public class WorkExperienceEntityTypeConfiguration : IEntityTypeConfiguration<Wo
     {
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.Id)
+            .HasConversion(new StronglyTypedIdValueConverter<WorkExperienceId, Guid>());
+
+        builder.Property(x => x.CareerHistoryId)
+            .HasConversion(new StronglyTypedIdValueConverter<CareerHistoryId, Guid>());
+
+        builder.UsePropertyAccessMode(PropertyAccessMode.Field);
+
         builder.OwnsMany(w => w.Highlights,
             navigationBuilder =>
             {
-                navigationBuilder.WithOwner().HasForeignKey("WorkExperienceId");
+                navigationBuilder.WithOwner().HasForeignKey(nameof(WorkExperienceId));
                 navigationBuilder.HasKey("Id");
                 navigationBuilder.Property(r => r.Description)
                     .IsRequired()

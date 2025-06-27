@@ -1,5 +1,6 @@
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Infrastructure.Persistence.Context.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,6 +11,11 @@ public class ContactInfoEntityTypeConfiguration : IEntityTypeConfiguration<Conta
     public void Configure(EntityTypeBuilder<ContactInfo> builder)
     {
         builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+            .HasConversion(new StronglyTypedIdValueConverter<ContactInfoId, Guid>());
+
+        builder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder.Property(x => x.Value)
             .IsRequired();

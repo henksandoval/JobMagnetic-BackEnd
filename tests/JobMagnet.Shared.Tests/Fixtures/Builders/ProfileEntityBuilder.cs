@@ -6,6 +6,7 @@ using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using JobMagnet.Shared.Abstractions;
+using JobMagnet.Shared.Data;
 using JobMagnet.Shared.Tests.Abstractions;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Builders;
@@ -79,8 +80,8 @@ public class ProfileEntityBuilder
 
     public ProfileEntityBuilder WithSkills(int count = 5)
     {
-        // if (count > SkillSeeder.Count)
-        //     throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available skill types.");
+        if (count > SkillRawData.Count)
+            throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available skill types.");
 
         if (_skillSet == null) throw new InvalidOperationException("Cannot add skills without a skill set. Call WithSkillSet() first.");
 

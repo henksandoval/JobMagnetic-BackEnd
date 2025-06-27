@@ -19,10 +19,7 @@ public class VanityUrl : TrackableAggregate<VanityUrlId>
     public ProfileId ProfileId { get; private set; }
     public long ViewCount { get; private set; }
 
-    private VanityUrl(VanityUrlId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt) :
-        base(id, addedAt, lastModifiedAt)
-    {
-    }
+    private VanityUrl() : base() {}
 
     private VanityUrl(VanityUrlId id, ProfileId profileId, IClock clock, string slug, LinkType linkType = LinkType.Primary)
         : base(id, clock)

@@ -17,10 +17,7 @@ public class CareerHistory : SoftDeletableAggregate<CareerHistoryId>
     public virtual IReadOnlyCollection<Qualification> Qualifications => _qualifications;
     public virtual IReadOnlyCollection<WorkExperience> WorkExperiences => _workExperiences;
 
-    private CareerHistory(CareerHistoryId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
-        base(id, addedAt, lastModifiedAt, deletedAt)
-    {
-    }
+    private CareerHistory() : base() { }
 
     private CareerHistory(CareerHistoryId id, IClock clock, string introduction, ProfileId profileId) : base(id, clock)
     {

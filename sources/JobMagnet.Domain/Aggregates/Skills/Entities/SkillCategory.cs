@@ -30,7 +30,7 @@ public class SkillCategory : SoftDeletableAggregate<SkillCategoryId>
         Name = name;
     }
 
-    internal static SkillCategory CreateInstance1(IGuidGenerator guidGenerator, IClock clock, string name)
+    public static SkillCategory CreateInstance(IGuidGenerator guidGenerator, IClock clock, string name)
     {
         var id = new SkillCategoryId(guidGenerator.NewGuid());
         return new SkillCategory(id, clock, name);

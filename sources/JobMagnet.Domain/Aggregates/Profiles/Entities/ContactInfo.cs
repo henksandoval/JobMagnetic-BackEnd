@@ -15,10 +15,7 @@ public class ContactInfo : TrackableAggregate<ContactInfoId>
     public HeadlineId HeadlineId { get; private set; }
     public virtual ContactType ContactType { get; private set; }
 
-    private ContactInfo(ContactInfoId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt) :
-        base(id, addedAt, lastModifiedAt)
-    {
-    }
+    private ContactInfo() : base() { }
 
     private ContactInfo(ContactInfoId id, IClock clock, string value, ContactType contactType, HeadlineId headlineId) : base(id, clock)
     {

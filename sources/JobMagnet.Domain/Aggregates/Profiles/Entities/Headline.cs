@@ -25,10 +25,7 @@ public class Headline : SoftDeletableAggregate<HeadlineId>
 
     public virtual IReadOnlyCollection<ContactInfo>? ContactInfo => _contactInfo;
 
-    private Headline(HeadlineId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
-        base(id, addedAt, lastModifiedAt, deletedAt)
-    {
-    }
+    private Headline() : base() { }
 
     private Headline(
         HeadlineId id,

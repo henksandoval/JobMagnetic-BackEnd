@@ -20,10 +20,7 @@ public class Project : SoftDeletableAggregate<ProjectId>
     public string Type { get; }
     public ProfileId ProfileId { get; private set; }
 
-    private Project(ProjectId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
-        base(id, addedAt, lastModifiedAt, deletedAt)
-    {
-    }
+    private Project() : base() { }
 
     private Project(ProjectId id, ProfileId profileId, IClock clock, string title, string description, string urlLink, string urlImage,
         string urlVideo,

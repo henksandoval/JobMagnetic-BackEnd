@@ -19,10 +19,7 @@ public class SkillSet : SoftDeletableAggregate<SkillSetId>
 
     public ProfileId ProfileId { get; private set; }
 
-    private SkillSet(SkillSetId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
-        base(id, addedAt, lastModifiedAt, deletedAt)
-    {
-    }
+    private SkillSet() : base() { }
 
     private SkillSet(SkillSetId id, ProfileId profileId, IClock clock, string overview) : base(id, clock)
     {

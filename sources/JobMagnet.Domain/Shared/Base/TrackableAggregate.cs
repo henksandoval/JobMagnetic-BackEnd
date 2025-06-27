@@ -7,6 +7,8 @@ public abstract class TrackableAggregate<TId>: BaseAggregate<TId>
     public DateTimeOffset AddedAt { get; private set; }
     public DateTimeOffset? LastModifiedAt { get; private set; }
 
+    protected TrackableAggregate() : base() {}
+
     protected TrackableAggregate(TId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt) : base(id)
     {
         AddedAt = addedAt;

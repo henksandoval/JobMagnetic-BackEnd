@@ -16,14 +16,11 @@ public class Qualification : SoftDeletableAggregate<QualificationId>
     public DateTime StartDate { get; private set; }
     public DateTime? EndDate { get; private set; }
     public string Description { get; private set; }
-    public HeadlineId HeadlineId { get; private set; }
+    public CareerHistoryId CareerHistoryId { get; private set; }
 
-    private Qualification(QualificationId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
-        base(id, addedAt, lastModifiedAt, deletedAt)
-    {
-    }
+    private Qualification() : base() { }
 
-    private Qualification(QualificationId id, HeadlineId headlineId, string degree, string institutionName, string institutionLocation,
+    private Qualification(QualificationId id, CareerHistoryId careerHistoryId, string degree, string institutionName, string institutionLocation,
         DateTime startDate, DateTime? endDate, string description, IClock clock) : base(id, clock)
     {
         Guard.IsNotNullOrWhiteSpace(degree);
@@ -40,14 +37,14 @@ public class Qualification : SoftDeletableAggregate<QualificationId>
         InstitutionLocation = institutionLocation;
         StartDate = startDate;
         EndDate = endDate;
-        HeadlineId = headlineId;
+        CareerHistoryId = careerHistoryId;
         Description = description;
     }
 
-    public static Qualification CreateInstance(IGuidGenerator guidGenerator, IClock clock, HeadlineId headlineId, string degree,
+    public static Qualification CreateInstance(IGuidGenerator guidGenerator, IClock clock, CareerHistoryId careerHistoryId, string degree,
         string institutionName, string institutionLocation, DateTime startDate, DateTime? endDate, string description)
     {
         var id = new QualificationId(guidGenerator.NewGuid());
-        return new Qualification(id, headlineId, degree, institutionName, institutionLocation, startDate, endDate, description, clock);
+        return new Qualification(id, careerHistoryId, degree, institutionName, institutionLocation, startDate, endDate, description, clock);
     }
 }

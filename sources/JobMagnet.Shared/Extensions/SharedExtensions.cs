@@ -9,7 +9,9 @@ public static class SharedExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.AddSingleton<IClock, Clock>();
+        services
+            .AddSingleton<IClock, Clock>()
+            .AddSingleton<IGuidGenerator, GuidGenerator>();
 
         return services;
     }

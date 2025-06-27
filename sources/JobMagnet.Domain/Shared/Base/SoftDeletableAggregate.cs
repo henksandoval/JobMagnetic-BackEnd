@@ -7,6 +7,8 @@ public abstract class SoftDeletableAggregate<TId> : TrackableAggregate<TId>
     public DateTimeOffset? DeletedAt { get; private set; }
     public bool IsDeleted => DeletedAt.HasValue;
 
+    protected SoftDeletableAggregate() : base() { }
+
     protected SoftDeletableAggregate(TId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
         base(id, addedAt, lastModifiedAt)
     {

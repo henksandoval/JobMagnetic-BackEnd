@@ -8,6 +8,7 @@ using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using JobMagnet.Shared.Abstractions;
 using JobMagnet.Shared.Tests.Abstractions;
+using JobMagnet.Shared.Tests.Factories;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
@@ -19,13 +20,14 @@ public class SkillCustomization : ICustomization
 
     public void Customize(IFixture fixture)
     {
-        /*
+        var factory = new TestDataFactory();
+
         fixture.Customize<SkillType>(composer =>
             composer
-                .FromFactory(() => Faker.PickRandom(SkillSeeder.GetDomainSkillTypes().ToList()))
+                .FromFactory(() => Faker.PickRandom(factory.PredefinedSkillTypes.ToList()))
                 .OmitAutoProperties()
         );
-        */
+
         fixture.Register(() => SkillSet.CreateInstance(
             _guidGenerator,
             _clock,

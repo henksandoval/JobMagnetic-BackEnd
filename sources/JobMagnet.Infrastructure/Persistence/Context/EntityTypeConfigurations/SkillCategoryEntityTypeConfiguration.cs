@@ -1,4 +1,6 @@
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
+using JobMagnet.Infrastructure.Persistence.Context.ValueConverters;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -10,6 +12,11 @@ public class SkillCategoryEntityTypeConfiguration : IEntityTypeConfiguration<Ski
     public void Configure(EntityTypeBuilder<SkillCategory> builder)
     {
         builder.HasKey(c => c.Id);
+
+        builder.Property(x => x.Id)
+            .HasConversion(new StronglyTypedIdValueConverter<SkillCategoryId, Guid>());
+
+        builder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder.Property(c => c.Name)
             .HasMaxLength(SkillCategory.MaxNameLength)

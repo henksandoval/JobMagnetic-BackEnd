@@ -34,7 +34,7 @@ public class EducationCustomization : ICustomization
         var education = Qualification.CreateInstance(
             _guidGenerator,
             _clock,
-            new HeadlineId(),
+            new CareerHistoryId(),
             Faker.PickRandom(StaticCustomizations.Degrees),
             Faker.PickRandom(StaticCustomizations.Universities),
             Faker.Address.FullAddress(),

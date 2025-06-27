@@ -20,18 +20,15 @@ public class WorkExperience : SoftDeletableAggregate<WorkExperienceId>
     public DateTime StartDate { get; private set; }
     public DateTime? EndDate { get; private set; }
     public string Description { get; private set; }
-    public HeadlineId HeadlineId { get; private set; }
+    public CareerHistoryId CareerHistoryId { get; private set; }
 
     public virtual IReadOnlyCollection<WorkHighlight> Highlights => _highlights;
 
-    private WorkExperience(WorkExperienceId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
-        base(id, addedAt, lastModifiedAt, deletedAt)
-    {
-    }
+    private WorkExperience() : base() { }
 
     private WorkExperience(
         WorkExperienceId id,
-        HeadlineId headlineId,
+        CareerHistoryId careerHistoryId,
         IClock clock,
         string jobTitle,
         string companyName,
@@ -50,7 +47,7 @@ public class WorkExperience : SoftDeletableAggregate<WorkExperienceId>
             Guard.IsGreaterThan(endDate.Value, startDate);
 
         Id = id;
-        HeadlineId = headlineId;
+        CareerHistoryId = careerHistoryId;
         JobTitle = jobTitle;
         CompanyName = companyName;
         CompanyLocation = companyLocation;
@@ -59,10 +56,10 @@ public class WorkExperience : SoftDeletableAggregate<WorkExperienceId>
         Description = description;
     }
 
-    public static WorkExperience CreateInstance(IGuidGenerator guidGenerator, IClock clock, HeadlineId headlineId, string jobTitle, string companyName, string companyLocation, DateTime startDate, DateTime? endDate, string description)
+    public static WorkExperience CreateInstance(IGuidGenerator guidGenerator, IClock clock, CareerHistoryId careerHistoryId, string jobTitle, string companyName, string companyLocation, DateTime startDate, DateTime? endDate, string description)
     {
         var id = new WorkExperienceId(guidGenerator.NewGuid());
-        return new WorkExperience(id, headlineId, clock,jobTitle, companyName, companyLocation, startDate, endDate, description);
+        return new WorkExperience(id, careerHistoryId, clock,jobTitle, companyName, companyLocation, startDate, endDate, description);
     }
 
     public void AddResponsibility(WorkHighlight highlight)

@@ -1,107 +1,85 @@
-﻿using System.Collections.Immutable;
-using JobMagnet.Domain.Aggregates.Skills.Entities;
+﻿using JobMagnet.Domain.Aggregates.Skills.Entities;
+using JobMagnet.Shared.Data;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 public static class SkillSeeder
 {
-    private static readonly IReadOnlyList<RawSkillDefinition> RawData =
-    [
-        new("HTML", "https://cdn.simpleicons.org/html5", "Software Development", []),
-        new("CSS", "https://cdn.simpleicons.org/css3", "Software Development", []),
-        new("JavaScript", "https://cdn.simpleicons.org/javascript", "Software Development", ["JS"]),
-        new("C#", "https://cdn.simpleicons.org/dotnet", "Software Development", []),
-        new("TypeScript", "https://cdn.simpleicons.org/typescript", "Software Development", ["TS"]),
-        new("Angular", "https://cdn.simpleicons.org/angular", "Software Development", []),
-        new("PostgreSQL", "https://cdn.simpleicons.org/postgresql", "Software Development", ["Postgres"]),
-        new("React", "https://cdn.simpleicons.org/react", "Software Development", []),
-        new("Bootstrap", "https://cdn.simpleicons.org/bootstrap", "Software Development", []),
-        new("Vue", "https://cdn.simpleicons.org/vuedotjs", "Software Development", ["Vue.js"]),
-        new("Git", "https://cdn.simpleicons.org/git", "Software Development", []),
-        new("Blazor", "https://cdn.simpleicons.org/blazor", "Software Development", []),
-        new("RabbitMQ", "https://cdn.simpleicons.org/rabbitmq", "Software Development", ["Rabbit MQ"]),
-        new("Docker", "https://cdn.simpleicons.org/docker", "Software Development", [])
-    ];
-
     public static SeedingData SeedData { get; } = GenerateSeedData();
-
-    public static int Count => RawData.Count;
 
     private static SeedingData GenerateSeedData()
     {
-        var seedTimestamp = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var clock = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var guidGenerator = new SeederSequentialGuidGenerator();
         var systemUserId = Guid.Empty;
 
-        var categories = new Dictionary<string, SkillCategory>
+        var categoryNameToIdMap = new Dictionary<string, Guid>();
+        var categories = new List<CategorySeedData>();
+
+        var distinctCategoryNames = SkillRawData.Data
+            .Select(r => r.CategoryName)
+            .Distinct()
+            .ToList();
+
+        if (!distinctCategoryNames.Contains(SkillCategory.DefaultCategoryName))
         {
-            { SkillCategory.DefaultCategoryName, SkillCategory.CreateInstance(SkillCategory.DefaultCategoryName) }
-        };
+            distinctCategoryNames.Add(SkillCategory.DefaultCategoryName);
+        }
+
+        foreach (var categoryName in distinctCategoryNames)
+        {
+            var categoryId = guidGenerator.NewGuid();
+            categoryNameToIdMap.Add(categoryName, categoryId);
+            categories.Add(new CategorySeedData(
+                Id: categoryId,
+                Name: categoryName,
+                AddedAt: clock
+            ));
+        }
+
         var types = new List<TypeSeedData>();
         var aliases = new List<AliasSeedData>();
 
-        var categoryIdCounter = categories.Count;
-        var typeIdCounter = 1;
-        var aliasIdCounter = 1;
-
-        foreach (var rawDef in RawData)
+        foreach (var rawDef in SkillRawData.Data)
         {
-            if (!categories.TryGetValue(rawDef.CategoryName, out var category))
-            {
-                categoryIdCounter++;
-                categories.Add(rawDef.CategoryName, SkillCategory.CreateInstance(rawDef.CategoryName));
-            }
+            var typeId = guidGenerator.NewGuid();
+            var categoryId = categoryNameToIdMap[rawDef.CategoryName];
 
-            var typeId = typeIdCounter++;
-            types.Add(new TypeSeedData(typeId, rawDef.Name, new Uri(rawDef.Uri), (ushort)categoryIdCounter, seedTimestamp, systemUserId));
+            types.Add(new TypeSeedData(
+                Id: typeId,
+                Name: rawDef.Name,
+                IconUrl: new Uri(rawDef.Uri),
+                CategoryId: categoryId,
+                AddedAt: clock
+            ));
 
             aliases.AddRange(rawDef.Aliases.Select(aliasName =>
-                new AliasSeedData(aliasIdCounter++, aliasName, typeId, seedTimestamp, systemUserId))
+                new AliasSeedData(
+                    Id: guidGenerator.NewGuid(),
+                    Alias: aliasName,
+                    SkillTypeId: typeId,
+                    AddedAt: clock
+                ))
             );
         }
 
-        return new SeedingData(categories.Values, types, aliases);
+        return new SeedingData(categories, types, aliases);
     }
 
-    public static ImmutableList<SkillType> GetDomainSkillTypes()
-    {
-        var skills = new List<SkillType>();
-        var categoryCache = new Dictionary<string, SkillCategory>();
-
-        foreach (var rawDef in RawData)
-        {
-            if (!categoryCache.TryGetValue(rawDef.CategoryName, out var category))
-            {
-                category = SkillCategory.CreateInstance(rawDef.CategoryName);
-                categoryCache.Add(rawDef.CategoryName, category);
-            }
-
-            var skill = SkillType.CreateInstance(rawDef.Name, category, new Uri(rawDef.Uri));
-
-            foreach (var alias in rawDef.Aliases) skill.AddAlias(alias);
-
-            skills.Add(skill);
-        }
-
-        return skills.ToImmutableList();
-    }
-
-    private record RawSkillDefinition(string Name, string Uri, string CategoryName, string[] Aliases);
-
-    public record CategorySeedData(ushort Id, string Name, DateTime AddedAt, Guid AddedBy, bool IsDeleted = false);
+    public record CategorySeedData(Guid Id, string Name, DateTimeOffset AddedAt, bool IsDeleted = false);
 
     public record TypeSeedData(
-        int Id,
+        Guid Id,
         string Name,
         Uri IconUrl,
-        ushort CategoryId,
-        DateTime AddedAt,
-        Guid AddedBy,
+        Guid CategoryId,
+        DateTimeOffset AddedAt,
         bool IsDeleted = false);
 
-    public record AliasSeedData(int Id, string Alias, int SkillTypeId, DateTime AddedAt, Guid AddedBy, bool IsDeleted = false);
+    public record AliasSeedData(Guid Id, string Alias, Guid SkillTypeId, DateTimeOffset AddedAt, bool IsDeleted = false);
 
     public record SeedingData(
-        IReadOnlyCollection<SkillCategory> Categories,
+        IReadOnlyCollection<CategorySeedData> Categories,
         IReadOnlyCollection<TypeSeedData> Types,
         IReadOnlyCollection<AliasSeedData> Aliases);
 }

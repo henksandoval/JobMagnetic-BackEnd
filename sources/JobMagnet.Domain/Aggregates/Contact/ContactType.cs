@@ -21,10 +21,7 @@ public class ContactType : SoftDeletableAggregate<ContactTypeId>
     public Uri? IconUrl { get; private set; }
     public virtual IReadOnlyCollection<ContactTypeAlias> Aliases => _aliases;
 
-    private ContactType(ContactTypeId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
-        base(id, addedAt, lastModifiedAt, deletedAt)
-    {
-    }
+    private ContactType() : base() { }
 
     private ContactType(ContactTypeId id, IClock clock, string name, string? iconClass = null, Uri? iconUrl = null)
         : base(id, clock)

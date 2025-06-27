@@ -165,7 +165,7 @@ public class ProfileFactory(
         return educationDtos.Select(dto => Qualification.CreateInstance(
             guidGenerator,
             clock,
-            new HeadlineId(),
+            new CareerHistoryId(),
             dto.Degree ?? string.Empty,
             dto.InstitutionName ?? string.Empty,
             dto.InstitutionLocation ?? string.Empty,
@@ -181,7 +181,7 @@ public class ProfileFactory(
         return experienceDtos.Select(dto => WorkExperience.CreateInstance(
             guidGenerator,
             clock,
-            new HeadlineId(),
+            new CareerHistoryId(),
             dto.JobTitle ?? string.Empty,
             dto.CompanyName ?? string.Empty,
             dto.CompanyLocation ?? string.Empty,

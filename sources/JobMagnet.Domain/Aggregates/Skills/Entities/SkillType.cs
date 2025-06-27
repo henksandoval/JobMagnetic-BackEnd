@@ -6,7 +6,7 @@ using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Skills.Entities;
 
-public readonly record struct SkillTypeId(Guid Value) : IStronglyTypedId<Guid>;
+public readonly record struct SkillTypeId(Guid Value) : IStronglyTypedId<SkillTypeId>;
 
 public class SkillType : SoftDeletableAggregate<SkillTypeId>
 {
@@ -41,7 +41,7 @@ public class SkillType : SoftDeletableAggregate<SkillTypeId>
         IconUrl = iconUrl;
     }
 
-    internal static SkillType CreateInstance(IGuidGenerator guidGenerator, IClock clock, string name, SkillCategory category, Uri? iconUrl = null)
+    public static SkillType CreateInstance(IGuidGenerator guidGenerator, IClock clock, string name, SkillCategory category, Uri? iconUrl = null)
     {
         var id = new SkillTypeId(guidGenerator.NewGuid());
         return new SkillType(id, clock, name, category, iconUrl);
