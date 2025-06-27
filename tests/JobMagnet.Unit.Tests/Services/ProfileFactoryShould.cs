@@ -1,7 +1,8 @@
 using System.Linq.Expressions;
 using AutoFixture;
+using AwesomeAssertions;
 using CSharpFunctionalExtensions;
-using FluentAssertions;
+
 using JobMagnet.Application.Factories;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;

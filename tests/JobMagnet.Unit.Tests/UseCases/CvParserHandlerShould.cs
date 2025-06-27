@@ -1,7 +1,8 @@
-using System.Net.Mime;
+ using System.Net.Mime;
 using AutoFixture;
+using AwesomeAssertions;
 using CSharpFunctionalExtensions;
-using FluentAssertions;
+
 using JobMagnet.Application.Factories;
 using JobMagnet.Application.UseCases.CvParser;
 using JobMagnet.Application.UseCases.CvParser.Commands;
@@ -19,7 +20,7 @@ using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using Moq;
-using Shouldly;
+
 
 namespace JobMagnet.Unit.Tests.UseCases;
 
@@ -94,7 +95,7 @@ public class CvParserHandlerShould
             repo => repo.CreateAsync(It.IsAny<Profile>(), It.IsAny<CancellationToken>()),
             Times.Once);
 
-        result.ShouldNotBeNull();
+        result.Should().NotBeNull();
         result.UserEmail.Should().Be("test@test.com");
     }
 

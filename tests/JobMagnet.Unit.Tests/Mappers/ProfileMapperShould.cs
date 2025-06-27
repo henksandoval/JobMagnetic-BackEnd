@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using AwesomeAssertions;
 using JobMagnet.Domain.Aggregates.Profiles;
 
 using JobMagnet.Host.Mappers;
@@ -6,7 +7,7 @@ using JobMagnet.Host.ViewModels.Profile;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Utils;
-using Shouldly;
+
 
 namespace JobMagnet.Unit.Tests.Mappers;
 
@@ -32,10 +33,10 @@ public class ProfileMapperShould
 
         var result = profile.ToViewModel();
 
-        result.ShouldNotBeNull();
-        result.ShouldBeOfType<ProfileViewModel>();
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ProfileViewModel>();
 
-        result.PersonalData!.ShouldBeEquivalentTo(profileExpected.PersonalData);
+        result.PersonalData!.Should().BeEquivalentTo(profileExpected.PersonalData);
     }
 
     [Fact(DisplayName = "Map Profile to ProfileViewModel when About is defined")]
@@ -53,10 +54,10 @@ public class ProfileMapperShould
 
         var result = profile.ToViewModel();
 
-        result.ShouldNotBeNull();
-        result.ShouldBeOfType<ProfileViewModel>();
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ProfileViewModel>();
 
-        result.About!.ShouldBeEquivalentTo(profileExpected.About);
+        result.About!.Should().BeEquivalentTo(profileExpected.About);
     }
 
     [Fact(DisplayName = "Map Profile to ProfileViewModel when Testimonial is defined")]
@@ -72,10 +73,10 @@ public class ProfileMapperShould
 
         var result = profile.ToViewModel();
 
-        result.ShouldNotBeNull();
-        result.ShouldBeOfType<ProfileViewModel>();
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ProfileViewModel>();
 
-        result.Testimonials!.ShouldBeEquivalentTo(profileExpected.Testimonials);
+        result.Testimonials!.Should().BeEquivalentTo(profileExpected.Testimonials);
     }
 
     [Fact(DisplayName = "Map Profile to ProfileViewModel when Portfolio is defined")]
@@ -91,10 +92,10 @@ public class ProfileMapperShould
 
         var result = profile.ToViewModel();
 
-        result.ShouldNotBeNull();
-        result.ShouldBeOfType<ProfileViewModel>();
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ProfileViewModel>();
 
-        result.Project.ShouldBeEquivalentTo(profileExpected.Project);
+        result.Project.Should().BeEquivalentTo(profileExpected.Project);
     }
 
     [Fact(DisplayName = "Map Profile to ProfileViewModel when Skills are defined")]
@@ -111,10 +112,10 @@ public class ProfileMapperShould
 
         var result = profile.ToViewModel();
 
-        result.ShouldNotBeNull();
-        result.ShouldBeOfType<ProfileViewModel>();
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ProfileViewModel>();
 
-        result.SkillSet!.ShouldBeEquivalentTo(profileExpected.SkillSet);
+        result.SkillSet!.Should().BeEquivalentTo(profileExpected.SkillSet);
     }
 
     [Fact(DisplayName = "Map Profile to ProfileViewModel when SummaryViewModel is defined")]
@@ -130,10 +131,10 @@ public class ProfileMapperShould
 
         var result = profile.ToViewModel();
 
-        result.ShouldNotBeNull();
-        result.ShouldBeOfType<ProfileViewModel>();
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ProfileViewModel>();
 
-        result.Summary.ShouldBeEquivalentTo(profileExpected.Summary);
+        result.Summary.Should().BeEquivalentTo(profileExpected.Summary);
     }
 
     private static PersonalDataViewModel GetPersonalDataViewModel(Profile entity)

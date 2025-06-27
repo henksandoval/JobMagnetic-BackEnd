@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 using AutoFixture;
-using FluentAssertions;
+using AwesomeAssertions;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 using JobMagnet.Domain.Services;

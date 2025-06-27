@@ -1,6 +1,6 @@
 using System.Net;
 using AutoFixture;
-using FluentAssertions;
+using AwesomeAssertions;
 using JobMagnet.Application.Contracts.Commands.Summary;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Summary;
@@ -13,7 +13,7 @@ using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
-using Shouldly;
+
 using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
@@ -56,25 +56,25 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.PostAsync(RequestUriController, httpContent);
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
 
         var responseData = await TestUtilities.DeserializeResponseAsync<SummaryResponse>(response);
-        responseData.ShouldNotBeNull();
+        responseData.Should().NotBeNull();
 
         var locationHeader = response.Headers.Location!.ToString();
-        locationHeader.ShouldNotBeNull();
-        locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
+        locationHeader.Should().NotBeNull();
+        locationHeader.Should().Contain($"{RequestUriController}/{responseData.Id}");
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<ISummaryQueryRepository>();
         var entityCreated = await queryRepository.GetByIdWithIncludesAsync(new CareerHistoryId(responseData.Id));
 
-        entityCreated.ShouldNotBeNull();
-        entityCreated.Qualifications.ShouldNotBeNull();
-        entityCreated.WorkExperiences.ShouldNotBeNull();
-        entityCreated.Qualifications.ShouldBeSameAs(entityCreated.Qualifications);
-        entityCreated.WorkExperiences.ShouldBeSameAs(entityCreated.WorkExperiences);
+        entityCreated.Should().NotBeNull();
+        entityCreated.Qualifications.Should().NotBeNull();
+        entityCreated.WorkExperiences.Should().NotBeNull();
+        entityCreated.Qualifications.Should().BeSameAs(entityCreated.Qualifications);
+        entityCreated.WorkExperiences.Should().BeSameAs(entityCreated.WorkExperiences);
     }
 
     [Fact(DisplayName = "Return the record and return 200 when GET request with valid ID is provided")]
@@ -87,11 +87,11 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var responseData = await TestUtilities.DeserializeResponseAsync<SummaryResponse>(response);
-        responseData.ShouldNotBeNull();
+        responseData.Should().NotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
 
@@ -105,8 +105,8 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeFalse();
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact(DisplayName = "Delete and return 204 when DELETE request is received")]
@@ -119,12 +119,12 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{entity.Id}");
 
         // --- Then ---
-        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var querySummaryRepository = scope.ServiceProvider.GetRequiredService<ISummaryQueryRepository>();
         var summaryEntity = await querySummaryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
-        summaryEntity.ShouldBeNull();
+        summaryEntity.Should().BeNull();
     }
 
     [Fact(DisplayName = "Return 404 when a DELETE request with invalid ID is provided")]
@@ -137,8 +137,8 @@ public class SummaryControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{InvalidId}");
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeFalse();
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     private async Task<CareerHistory> SetupEntityAsync(Func<CareerHistory> entityBuilder)

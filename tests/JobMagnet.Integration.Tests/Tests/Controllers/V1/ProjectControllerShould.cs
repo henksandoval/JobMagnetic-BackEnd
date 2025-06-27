@@ -1,7 +1,8 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using AutoFixture;
-using FluentAssertions;
+using AwesomeAssertions;
+
 using JobMagnet.Application.Contracts.Commands.Portfolio;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Portfolio;
@@ -13,7 +14,7 @@ using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
-using Shouldly;
+
 using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
@@ -48,23 +49,23 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.PostAsync(RequestUriController, httpContent);
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
 
         var responseData = await TestUtilities.DeserializeResponseAsync<ProjectResponse>(response);
-        responseData.ShouldNotBeNull();
+        responseData.Should().NotBeNull();
 
         var locationHeader = response.Headers.Location!.ToString();
-        locationHeader.ShouldNotBeNull();
-        locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
+        locationHeader.Should().NotBeNull();
+        locationHeader.Should().Contain($"{RequestUriController}/{responseData.Id}");
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository =
             scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, ProjectId>>();
         var entityCreated = await queryRepository.GetByIdAsync(new ProjectId(responseData.Id), CancellationToken.None);
 
-        entityCreated.ShouldNotBeNull();
-        entityCreated.ShouldSatisfyAllConditions(() => entityCreated.ProfileId.ShouldBe(profileEntity.Id));
+        entityCreated.Should().NotBeNull();
+        entityCreated.ProfileId.Should().Be(profileEntity.Id);
     }
 
     private ProjectBase GetProjectData(Guid profileEntityId)
@@ -85,11 +86,11 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var responseData = await TestUtilities.DeserializeResponseAsync<ProjectResponse>(response);
-        responseData.ShouldNotBeNull();
+        responseData.Should().NotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
 
@@ -103,8 +104,8 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeFalse();
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact(DisplayName = "Delete and return 204 when DELETE request is received")]
@@ -117,14 +118,14 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{entity.Id}");
 
         // --- Then ---
-        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryProjectRepository =
             scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, ProjectId>>();
 
         var projectEntity = await queryProjectRepository.GetByIdAsync(entity.Id, CancellationToken.None);
-        projectEntity.ShouldBeNull();
+        projectEntity.Should().BeNull();
     }
 
     [Fact(DisplayName = "Return 404 when a DELETE request with invalid ID is provided")]
@@ -137,8 +138,8 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.DeleteAsync($"{RequestUriController}/{InvalidId}");
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeFalse();
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact(DisplayName = "Return 204 when a valid PUT request is provided")]
@@ -154,14 +155,14 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updatedEntity);
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository =
             scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, ProjectId>>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
-        dbEntity.ShouldNotBeNull();
+        dbEntity.Should().NotBeNull();
         dbEntity.Should().BeEquivalentTo(updatedEntity.ProjectData);
     }
 
@@ -176,8 +177,8 @@ public class ProjectControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{InvalidId}", updatedEntity);
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeFalse();
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     private async Task<Profile> SetupProfileEntityAsync()
