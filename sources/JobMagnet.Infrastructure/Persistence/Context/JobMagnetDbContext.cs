@@ -35,9 +35,6 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Talent>().ToTable("Talents");
-        modelBuilder.Entity<CareerHistory>().ToTable("Summaries");
-
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 

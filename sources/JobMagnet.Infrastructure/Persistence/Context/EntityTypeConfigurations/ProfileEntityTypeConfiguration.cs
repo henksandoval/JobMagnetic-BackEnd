@@ -45,10 +45,16 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<Profile>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Ignore(p => p.TalentShowcase);
-        builder.HasMany(p => p.Talents)
-            .WithOne()
-            .HasForeignKey(t => t.ProfileId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.OwnsMany(c => c.Talents,
+            talentBuilder =>
+            {
+                talentBuilder.WithOwner().HasForeignKey(nameof(ProfileId));
+                talentBuilder.HasKey("Id");
+                talentBuilder.Property<Guid>("Id").ValueGeneratedOnAdd();
+                talentBuilder.Property(t => t.Description)
+                    .IsRequired()
+                    .HasMaxLength(Talent.MaxNameLength);
+            });
 
         builder.Ignore(p => p.Portfolio);
         builder.HasMany(p => p.Projects)

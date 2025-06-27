@@ -32,6 +32,7 @@ public class ContactTypeEntityTypeConfiguration : IEntityTypeConfiguration<Conta
             {
                 typeAliasBuilder.WithOwner().HasForeignKey(nameof(ContactTypeId));
                 typeAliasBuilder.HasKey("Id");
+                typeAliasBuilder.Property<Guid>("Id").ValueGeneratedOnAdd();
                 typeAliasBuilder.Property(r => r.Alias)
                     .IsRequired()
                     .HasMaxLength(ContactTypeAlias.MaxAliasLength);

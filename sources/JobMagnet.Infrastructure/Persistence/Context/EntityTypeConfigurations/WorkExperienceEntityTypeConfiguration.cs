@@ -21,11 +21,12 @@ public class WorkExperienceEntityTypeConfiguration : IEntityTypeConfiguration<Wo
         builder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder.OwnsMany(w => w.Highlights,
-            navigationBuilder =>
+            responsibilityBuilder =>
             {
-                navigationBuilder.WithOwner().HasForeignKey(nameof(WorkExperienceId));
-                navigationBuilder.HasKey("Id");
-                navigationBuilder.Property(r => r.Description)
+                responsibilityBuilder.WithOwner().HasForeignKey(nameof(WorkExperienceId));
+                responsibilityBuilder.HasKey("Id");
+                responsibilityBuilder.Property<Guid>("Id").ValueGeneratedOnAdd();
+                responsibilityBuilder.Property(r => r.Description)
                     .IsRequired()
                     .HasMaxLength(WorkHighlight.MaxDescriptionLength);
             });

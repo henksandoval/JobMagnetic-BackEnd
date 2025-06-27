@@ -209,7 +209,7 @@ public class ProfileEntityBuilder
 
         if (_talents.Count > 0) return profile;
         foreach (var talent in _talents)
-            profile.TalentShowcase.AddTalent(_guidGenerator, _clock, talent.Description);
+            profile.TalentShowcase.AddTalent(talent.Description);
 
         return profile;
     }

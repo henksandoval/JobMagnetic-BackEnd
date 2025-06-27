@@ -36,6 +36,7 @@ public class SkillTypeEntityTypeConfiguration : IEntityTypeConfiguration<SkillTy
             {
                 typeAliasBuilder.WithOwner().HasForeignKey(nameof(SkillTypeId));
                 typeAliasBuilder.HasKey("Id");
+                typeAliasBuilder.Property<Guid>("Id").ValueGeneratedOnAdd();
                 typeAliasBuilder.Property(r => r.Alias)
                     .IsRequired()
                     .HasMaxLength(SkillTypeAlias.MaxAliasLength);

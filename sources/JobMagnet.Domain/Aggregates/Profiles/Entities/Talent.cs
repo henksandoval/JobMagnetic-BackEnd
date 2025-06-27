@@ -5,27 +5,18 @@ using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
-public readonly record struct TalentId(Guid Value) : IStronglyTypedId<TalentId>;
-
-public class Talent : SoftDeletableAggregate<TalentId>
+public record Talent
 {
+    public const int MaxNameLength = 50;
     public string Description { get; private set; }
-    public ProfileId ProfileId { get; private set; }
 
-    private Talent() : base() { }
+    private Talent() { }
 
-    private Talent(TalentId id, ProfileId profileId, IClock clock, string description) : base(id, clock)
+    public Talent(string description)
     {
         Guard.IsNotNullOrWhiteSpace(description);
+        Guard.IsLessThanOrEqualTo(description.Length, MaxNameLength);
 
-        Id = id;
         Description = description;
-        ProfileId = profileId;
-    }
-
-    public static Talent CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string description)
-    {
-        var id = new TalentId(guidGenerator.NewGuid());
-        return new Talent( id, profileId,clock, description);
     }
 }

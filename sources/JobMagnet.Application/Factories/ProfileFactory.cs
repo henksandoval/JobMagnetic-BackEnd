@@ -45,7 +45,7 @@ public class ProfileFactory(
         var galleryItems = BuildProjects(profileDto.Project);
 
         foreach (var talent in talents)
-            profile.TalentShowcase.AddTalent(guidGenerator, clock,talent.Description);
+            profile.TalentShowcase.AddTalent(talent.Description);
 
         foreach (var item in testimonials)
             profile.SocialProof.AddTestimonial(
@@ -118,10 +118,7 @@ public class ProfileFactory(
                 throw new ArgumentException("Talent description cannot be null or whitespace.", nameof(talentDtos));
 
         return talentDtos
-            .Select(dto => Talent.CreateInstance(
-                guidGenerator,
-                clock,
-                _profileId,
+            .Select(dto => new Talent(
                 dto.Description ?? string.Empty
                 )).ToList();
     }
