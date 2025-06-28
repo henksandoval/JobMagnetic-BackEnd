@@ -22,10 +22,7 @@ public class SkillType : SoftDeletableAggregate<SkillTypeId>
     public virtual IReadOnlyCollection<SkillTypeAlias> Aliases => _aliases.AsReadOnly();
     public virtual SkillCategory Category { get; private set; }
 
-    private SkillType(SkillTypeId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
-        base(id, addedAt, lastModifiedAt, deletedAt)
-    {
-    }
+    private SkillType() : base() {}
 
     private SkillType(SkillTypeId id, IClock clock, string name, SkillCategory category, Uri? iconUrl = null) : base(id, clock)
     {

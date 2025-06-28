@@ -3,36 +3,47 @@ using JobMagnet.Shared.Data;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
+public record CategorySeedData(SkillCategoryId Id, string Name, DateTimeOffset AddedAt, bool IsDeleted = false);
+
+public record TypeSeedData(SkillTypeId Id, string Name, Uri IconUrl, SkillCategoryId CategoryId, DateTimeOffset AddedAt, bool IsDeleted = false);
+
+public record AliasSeedData(Guid Id, string Alias, SkillTypeId SkillTypeId);
+
+public record SeedingData(
+    IReadOnlyCollection<CategorySeedData> Categories,
+    IReadOnlyCollection<TypeSeedData> Types,
+    IReadOnlyCollection<AliasSeedData> Aliases);
+
 public static class SkillSeeder
 {
-    public static SeedingData SeedData { get; } = GenerateSeedData();
+    public static SeedingData SeedData { get; } =
+        GenerateSeedData();
 
     private static SeedingData GenerateSeedData()
     {
         var clock = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero);
-        var guidGenerator = new SeederSequentialGuidGenerator();
-        var systemUserId = Guid.Empty;
 
-        var categoryNameToIdMap = new Dictionary<string, Guid>();
+        var categoryNameToIdMap = new Dictionary<string, SkillCategoryId>();
         var categories = new List<CategorySeedData>();
 
-        var distinctCategoryNames = SkillRawData.Data
-            .Select(r => r.CategoryName)
-            .Distinct()
-            .ToList();
+        var categoryList = Enumerable.Repeat((Id: SkillCategory.DefaultCategoryId, Name: SkillCategory.DefaultCategoryName), 1)
+            .Concat(SkillRawData.Data
+                .Where(data => !string.Equals(data.Category.Name, SkillCategory.DefaultCategoryName, StringComparison.InvariantCulture))
+                .Select(r =>
+                {
+                    var categoryId = SeederSequentialGuidGenerator.FromInt(r.Category.Id);
+                    return (Id: categoryId, r.Category.Name);
+                })
+                .Distinct()
+            );
 
-        if (!distinctCategoryNames.Contains(SkillCategory.DefaultCategoryName))
+        foreach (var category in categoryList)
         {
-            distinctCategoryNames.Add(SkillCategory.DefaultCategoryName);
-        }
-
-        foreach (var categoryName in distinctCategoryNames)
-        {
-            var categoryId = guidGenerator.NewGuid();
-            categoryNameToIdMap.Add(categoryName, categoryId);
+            var skillCategoryId = new SkillCategoryId(category.Id);
+            categoryNameToIdMap.Add(category.Name, skillCategoryId);
             categories.Add(new CategorySeedData(
-                Id: categoryId,
-                Name: categoryName,
+                Id: skillCategoryId,
+                Name: category.Name,
                 AddedAt: clock
             ));
         }
@@ -40,46 +51,28 @@ public static class SkillSeeder
         var types = new List<TypeSeedData>();
         var aliases = new List<AliasSeedData>();
 
-        foreach (var rawDef in SkillRawData.Data)
+        foreach (var rawSkill in SkillRawData.Data)
         {
-            var typeId = guidGenerator.NewGuid();
-            var categoryId = categoryNameToIdMap[rawDef.CategoryName];
+            var typeId = new SkillTypeId(SeederSequentialGuidGenerator.FromInt(rawSkill.SkillId));
+            var categoryId = categoryNameToIdMap[rawSkill.Category.Name];
 
             types.Add(new TypeSeedData(
                 Id: typeId,
-                Name: rawDef.Name,
-                IconUrl: new Uri(rawDef.Uri),
+                Name: rawSkill.Name,
+                IconUrl: new Uri(rawSkill.Uri),
                 CategoryId: categoryId,
                 AddedAt: clock
             ));
 
-            aliases.AddRange(rawDef.Aliases.Select(aliasName =>
+            aliases.AddRange(rawSkill.Aliases.Select(alias =>
                 new AliasSeedData(
-                    Id: guidGenerator.NewGuid(),
-                    Alias: aliasName,
-                    SkillTypeId: typeId,
-                    AddedAt: clock
+                    Id: SeederSequentialGuidGenerator.FromInt(alias.Id),
+                    Alias: alias.Name,
+                    SkillTypeId: typeId
                 ))
             );
         }
 
         return new SeedingData(categories, types, aliases);
     }
-
-    public record CategorySeedData(Guid Id, string Name, DateTimeOffset AddedAt, bool IsDeleted = false);
-
-    public record TypeSeedData(
-        Guid Id,
-        string Name,
-        Uri IconUrl,
-        Guid CategoryId,
-        DateTimeOffset AddedAt,
-        bool IsDeleted = false);
-
-    public record AliasSeedData(Guid Id, string Alias, Guid SkillTypeId, DateTimeOffset AddedAt, bool IsDeleted = false);
-
-    public record SeedingData(
-        IReadOnlyCollection<CategorySeedData> Categories,
-        IReadOnlyCollection<TypeSeedData> Types,
-        IReadOnlyCollection<AliasSeedData> Aliases);
 }

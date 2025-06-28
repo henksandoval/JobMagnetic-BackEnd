@@ -11,14 +11,12 @@ public class SkillCategory : SoftDeletableAggregate<SkillCategoryId>
 {
     private const int MinNameLength = 2;
     public const int MaxNameLength = 50;
+    public static Guid DefaultCategoryId = new ("00000001-0000-0000-0000-000000000000");
     public const string DefaultCategoryName = "General";
 
     public string Name { get; private set; }
 
-    private SkillCategory(SkillCategoryId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
-        base(id, addedAt, lastModifiedAt, deletedAt)
-    {
-    }
+    private SkillCategory() : base() {}
 
     private SkillCategory(SkillCategoryId id, IClock clock, string name) : base(id, clock)
     {

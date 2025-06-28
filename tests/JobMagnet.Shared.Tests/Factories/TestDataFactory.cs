@@ -52,13 +52,13 @@ public class TestDataFactory
 
         foreach (var rawDef in SkillRawData.Data)
         {
-            if (!categoryCache.TryGetValue(rawDef.CategoryName, out var category))
+            if (!categoryCache.TryGetValue(rawDef.Category.Name, out var category))
             {
                 category = SkillCategory.CreateInstance(
                     _guidGenerator,
                     _clock,
-                    rawDef.CategoryName);
-                categoryCache.Add(rawDef.CategoryName, category);
+                    rawDef.Category.Name);
+                categoryCache.Add(rawDef.Category.Name, category);
             }
 
             var skill = SkillType.CreateInstance(
@@ -69,7 +69,7 @@ public class TestDataFactory
                 new Uri(rawDef.Uri));
 
             foreach (var alias in rawDef.Aliases)
-                skill.AddAlias(alias);
+                skill.AddAlias(alias.Name);
 
             skills.Add(skill);
         }

@@ -31,6 +31,8 @@ public class SkillTypeEntityTypeConfiguration : IEntityTypeConfiguration<SkillTy
             .HasForeignKey(type => type.CategoryId)
             .IsRequired();
 
+        builder.HasData(SkillSeeder.SeedData.Types);
+
         builder.OwnsMany(c => c.Aliases,
             typeAliasBuilder =>
             {
@@ -40,29 +42,7 @@ public class SkillTypeEntityTypeConfiguration : IEntityTypeConfiguration<SkillTy
                 typeAliasBuilder.Property(r => r.Alias)
                     .IsRequired()
                     .HasMaxLength(SkillTypeAlias.MaxAliasLength);
+                typeAliasBuilder.HasData(SkillSeeder.SeedData.Aliases);
             });
-
-        // builder.HasData(SkillSeeder.SeedData.Types);
-        //builder.HasData(SkillSeeder.SeedData.Aliases); //TODO: PENDING TO DEFINE
-        /*
-         * // En ContactTypeEntityTypeConfiguration.cs
-
-// 1. Necesitas una forma de generar IDs únicos para el seeding.
-var aliasSeedId = -1;
-
-// 2. Prepara los datos de semilla para los alias.
-var aliasSeedData = ContactTypeSeeder.SeedData.Aliases
-    .Select(seed => new
-    {
-        // El objeto anónimo debe tener las propiedades que EF necesita:
-        // la FK y las propiedades del Value Object.
-        ContactTypeId = new ContactTypeId(seed.ContactTypeId),
-        Alias = seed.Alias,
-        Id = aliasSeedId-- // ¡Asignamos el ID negativo explícito!
-    }).ToList();
-
-// 3. Dentro del builder.OwnsMany, después de la configuración:
-ownedBuilder.HasData(aliasSeedData);
-         */
     }
 }
