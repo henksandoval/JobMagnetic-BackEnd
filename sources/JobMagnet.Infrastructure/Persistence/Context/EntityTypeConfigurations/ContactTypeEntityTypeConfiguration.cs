@@ -27,6 +27,8 @@ public class ContactTypeEntityTypeConfiguration : IEntityTypeConfiguration<Conta
         builder.HasIndex(c => c.Name)
             .IsUnique();
 
+        builder.HasData(ContactTypeSeeder.SeedData.Types);
+
         builder.OwnsMany(c => c.Aliases,
             typeAliasBuilder =>
             {
@@ -36,9 +38,8 @@ public class ContactTypeEntityTypeConfiguration : IEntityTypeConfiguration<Conta
                 typeAliasBuilder.Property(r => r.Alias)
                     .IsRequired()
                     .HasMaxLength(ContactTypeAlias.MaxAliasLength);
+                typeAliasBuilder.HasData(ContactTypeSeeder.SeedData.Aliases);
             });
 
-        // builder.HasData(ContactTypeSeeder.SeedData.Types);
-        // builder.HasData(SkillSeeder.SeedData.Aliases);
     }
 }

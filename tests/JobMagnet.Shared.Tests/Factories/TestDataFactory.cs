@@ -38,7 +38,7 @@ public class TestDataFactory
 
             foreach (var alias in rawDef.Aliases)
             {
-                contactType.AddAlias(alias, _clock);
+                contactType.AddAlias(alias.Name, _clock);
             }
             list.Add(contactType);
         }

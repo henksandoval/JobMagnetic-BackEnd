@@ -9,19 +9,19 @@ public record TypeSeedData(SkillTypeId Id, string Name, Uri IconUrl, SkillCatego
 
 public record AliasSeedData(Guid Id, string Alias, SkillTypeId SkillTypeId);
 
-public record SeedingData(
-    IReadOnlyCollection<CategorySeedData> Categories,
-    IReadOnlyCollection<TypeSeedData> Types,
-    IReadOnlyCollection<AliasSeedData> Aliases);
-
 public static class SkillSeeder
 {
+    public record SeedingData(
+        IReadOnlyCollection<CategorySeedData> Categories,
+        IReadOnlyCollection<TypeSeedData> Types,
+        IReadOnlyCollection<AliasSeedData> Aliases);
+
     public static SeedingData SeedData { get; } =
         GenerateSeedData();
 
     private static SeedingData GenerateSeedData()
     {
-        var clock = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var addedAt = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
         var categoryNameToIdMap = new Dictionary<string, SkillCategoryId>();
         var categories = new List<CategorySeedData>();
@@ -44,7 +44,7 @@ public static class SkillSeeder
             categories.Add(new CategorySeedData(
                 Id: skillCategoryId,
                 Name: category.Name,
-                AddedAt: clock
+                AddedAt: addedAt
             ));
         }
 
@@ -61,7 +61,7 @@ public static class SkillSeeder
                 Name: rawSkill.Name,
                 IconUrl: new Uri(rawSkill.Uri),
                 CategoryId: categoryId,
-                AddedAt: clock
+                AddedAt: addedAt
             ));
 
             aliases.AddRange(rawSkill.Aliases.Select(alias =>
