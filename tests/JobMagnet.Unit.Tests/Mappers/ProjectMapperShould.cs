@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using AutoFixture;
-using FluentAssertions;
+using AwesomeAssertions;
 using JobMagnet.Application.Contracts.Commands.Portfolio;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;

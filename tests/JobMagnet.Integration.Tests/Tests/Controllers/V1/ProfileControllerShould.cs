@@ -39,7 +39,6 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     private const int EducationCount = 4;
     private const int WorkExperienceCount = 2;
     private const int SkillDetailsCount = 12;
-    private const int ServiceDetailsCount = 3;
 
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly HttpClient _httpClient;

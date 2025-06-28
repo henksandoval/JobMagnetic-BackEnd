@@ -35,12 +35,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="Mappers\ProfileRawMapperShould.cs" />
-      <Compile Remove="Mappers\ProjectMapperShould.cs" />
       <Compile Remove="Mappers\ResumeMapperShould.cs" />
       <Compile Remove="Mappers\SkillMapperShould.cs" />
       <Compile Remove="Mappers\SummaryMapperShould.cs" />
       <Compile Remove="Mappers\TestimonialMapperShould.cs" />
+      <Compile Remove="Mappers\ProjectMapperShould.cs" />
     </ItemGroup>
 
 </Project>
