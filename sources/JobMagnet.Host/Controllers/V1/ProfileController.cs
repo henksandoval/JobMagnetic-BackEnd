@@ -85,23 +85,26 @@ public class ProfileController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> PutAsync(Guid id, ProfileCommand command, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
-//TODO: Implement the logic to update an existing Profile entity with the provided command.
-/*
         var entity = await queryRepository.GetByIdAsync(new ProfileId(id), cancellationToken);
 
         if (entity is null)
             return Results.NotFound();
 
-        entity.UpdateEntity(command);
+        var data = command.ProfileData;
+        entity.Update(
+            data.FirstName,
+            data.LastName,
+            data.MiddleName,
+            data.SecondLastName,
+            data.BirthDate,
+            data.ProfileImageUrl
+        );
 
         await commandRepository
-            .Update(entity)
             .SaveChangesAsync(cancellationToken)
             .ConfigureAwait(false);
 
         return Results.NoContent();
-*/
     }
 
     [HttpGet]

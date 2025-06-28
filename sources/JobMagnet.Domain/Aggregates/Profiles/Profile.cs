@@ -73,6 +73,22 @@ public class Profile : SoftDeletableAggregate<ProfileId>
         return new Profile(id, clock, firstName, lastName, profileImageUrl, birthDate, middleName, secondLastName);
     }
 
+    public void Update(
+        string? firstName,
+        string? lastName,
+        string? middleName,
+        string? secondLastName,
+        DateOnly? birthDate,
+        string? profileImageUrl)
+    {
+        ChangeFirstName(firstName);
+        ChangeLastName(lastName);
+        ChangeMiddleName(middleName);
+        ChangeSecondLastName(secondLastName);
+        ChangeBirthDate(birthDate);
+        ChangeProfileImageUrl(profileImageUrl);
+    }
+
     public void ChangeFirstName(string? firstName)
     {
         FirstName = firstName;

@@ -132,7 +132,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var entity = await SetupEntityAsync();
 
         // --- When ---
-        var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
+        var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id.Value}");
 
         // --- Then ---
         response.IsSuccessStatusCode.Should().BeTrue();
@@ -166,7 +166,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
             .Create();
 
         // --- When ---
-        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updateRequest);
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id.Value}", updateRequest);
 
         // --- Then ---
         response.IsSuccessStatusCode.Should().BeTrue();
