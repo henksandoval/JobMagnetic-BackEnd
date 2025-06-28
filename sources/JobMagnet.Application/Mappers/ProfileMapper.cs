@@ -9,17 +9,15 @@ public static class ProfileMapper
 {
     static ProfileMapper()
     {
+        TypeAdapterConfig<Profile, ProfileResponse>
+            .NewConfig()
+            .Map(dest => dest.Id, src => src.Id.Value)
+            .Map(dest => dest.ProfileData, src => src);
+
         TypeAdapterConfig<Profile, ProfileCommand>
             .NewConfig()
             .Map(dest => dest.ProfileData, src => src);
     }
 
     public static ProfileResponse ToModel(this Profile entity) => entity.Adapt<ProfileResponse>();
-
-    private static void ConfigMapper()
-    {
-        TypeAdapterConfig<Profile, ProfileCommand>
-            .NewConfig()
-            .Map(dest => dest.ProfileData, src => src);
-    }
 }

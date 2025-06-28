@@ -13,12 +13,15 @@ using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Host.Controllers.Base;
 using JobMagnet.Host.Mappers;
 using JobMagnet.Host.ViewModels.Profile;
+using JobMagnet.Shared.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Host.Controllers.V1;
 
 [ApiVersion("1")]
 public class ProfileController(
+    IGuidGenerator guidGenerator,
+    IClock clock,
     ICvParserHandler cvParser,
     ILogger<ProfileController> logger,
     IProfileQueryRepository queryRepository,
@@ -29,16 +32,22 @@ public class ProfileController(
     [ProducesResponseType(typeof(ProfileResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ProfileCommand createCommand, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
-//TODO: Implement the logic to create a new Profile entity from the createCommand.
-/*
-        var entity = createCommand.ToEntity();
+        var data = createCommand.ProfileData;
+        var entity = Profile.CreateInstance(
+            guidGenerator,
+            clock,
+            data.FirstName,
+            data.LastName,
+            data.ProfileImageUrl,
+            data.BirthDate,
+            data.MiddleName,
+            data.SecondLastName
+        );
         await commandRepository.CreateAsync(entity, cancellationToken);
         await commandRepository.SaveChangesAsync(cancellationToken);
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetProfileByIdAsync), new { id = newRecord.Id }, newRecord);
-*/
     }
 
     [HttpPost]

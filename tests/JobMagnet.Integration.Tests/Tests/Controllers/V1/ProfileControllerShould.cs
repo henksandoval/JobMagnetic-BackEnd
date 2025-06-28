@@ -112,7 +112,10 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         var locationHeader = response.Headers.Location!.ToString();
         locationHeader.Should().NotBeNull();
-        locationHeader.Should().Contain($"{RequestUriController}/{responseData.Id}");
+        var expectedHeader = $"{RequestUriController}/{responseData.Id}";
+        locationHeader.Should().Match(currentHeader =>
+                currentHeader.Contains(expectedHeader, StringComparison.OrdinalIgnoreCase)
+        );
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();

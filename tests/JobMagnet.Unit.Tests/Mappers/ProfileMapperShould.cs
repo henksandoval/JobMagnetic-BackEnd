@@ -1,5 +1,7 @@
 ﻿using AutoFixture;
 using AwesomeAssertions;
+using JobMagnet.Application.Contracts.Responses.Profile;
+using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles;
 
 using JobMagnet.Host.Mappers;
@@ -14,6 +16,18 @@ namespace JobMagnet.Unit.Tests.Mappers;
 public class ProfileMapperShould
 {
     private readonly IFixture _fixture = FixtureBuilder.Build();
+
+    [Fact(DisplayName = "Map Profile to ProfileResponse when is defined")]
+    public void MapperProfileToProfileResponseWithSimpleData()
+    {
+        var profile = _fixture.Create<Profile>();
+
+        var profileResponse = profile.ToModel();
+
+        profileResponse.Should().NotBeNull();
+        profileResponse.Id.Should().Be(profile.Id.Value);
+        profileResponse.ProfileData.Should().BeEquivalentTo(profile, options => options.ExcludingMissingMembers());
+    }
 
     [Fact(DisplayName = "Map Profile to ProfileViewModel when PersonalData is defined")]
     public void MapperProfileEntityToProfileViewModelWithPersonalData()
