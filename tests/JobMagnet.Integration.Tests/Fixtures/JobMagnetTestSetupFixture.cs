@@ -78,7 +78,7 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
             InitialCatalog = $"JobMagnetTestDb_{Guid.NewGuid()}"
         }.ConnectionString;
 
-        _testOutputHelper?.WriteLine(_connectionString);
+        _testOutputHelper?.WriteLine("Successful connection to the database: {0}", _connectionString);
     }
 
     private async Task EnsureDatabaseCreatedAsync()

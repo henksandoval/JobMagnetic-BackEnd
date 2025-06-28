@@ -17,8 +17,8 @@ public class ContactTypeResolverService(
     {
         var contactType = await contactTypeRepository
             .FirstOrDefaultAsync(c =>
-                    c.Name.Equals(nameOrAlias, StringComparison.CurrentCultureIgnoreCase) ||
-                    c.Aliases.Any(a => a.Alias.Equals(nameOrAlias, StringComparison.CurrentCultureIgnoreCase)),
+                    StringComparer.OrdinalIgnoreCase.Compare(c.Name, nameOrAlias) == 0 ||
+                    c.Aliases.Any(a => StringComparer.OrdinalIgnoreCase.Compare(a.Alias, nameOrAlias) == 0),
                 cancellationToken);
 
         return Maybe.From(contactType);

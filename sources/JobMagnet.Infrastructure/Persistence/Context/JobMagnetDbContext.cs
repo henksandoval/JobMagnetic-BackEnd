@@ -35,7 +35,9 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        modelBuilder
+            .ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly())
+            .UseCollation("SQL_Latin1_General_CP1_CI_AS");
     }
 
 /*

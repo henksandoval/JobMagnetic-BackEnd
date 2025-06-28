@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Text;
 using AutoFixture;
-using FluentAssertions;
+using AwesomeAssertions;
 using JobMagnet.Application.Contracts.Commands.Profile;
 using JobMagnet.Application.Contracts.Queries.Profile;
 using JobMagnet.Application.Contracts.Responses.Profile;
@@ -16,6 +16,7 @@ using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Host.ViewModels.Profile;
 using JobMagnet.Integration.Tests.Fixtures;
+using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Fixtures.Customizations;
@@ -23,7 +24,6 @@ using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Shouldly;
 using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
@@ -44,11 +44,15 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
+    private readonly SequentialGuidGenerator _guidGenerator;
+    private readonly DeterministicClock _clock;
 
     public ProfileControllerShould(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
         _testFixture = testFixture;
         _httpClient = _testFixture.GetClient();
+        _guidGenerator = new SequentialGuidGenerator();
+        _clock = new DeterministicClock();
         _testFixture.SetTestOutputHelper(testOutputHelper);
     }
 
@@ -69,31 +73,30 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.GetAsync(requestUrl);
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var responseData = await TestUtilities.DeserializeResponseAsync<ProfileViewModel>(response);
-        responseData.ShouldNotBeNull();
-        responseData.ShouldBeAssignableTo<ProfileViewModel>();
+        responseData.Should().NotBeNull();
+        responseData.Should().BeAssignableTo<ProfileViewModel>();
 
-        responseData.About.ShouldNotBeNull();
-        responseData.SkillSet.ShouldNotBeNull();
-        responseData.SkillSet.SkillDetails.Length.ShouldBe(SkillDetailsCount);
-        responseData.Summary.ShouldNotBeNull();
-        responseData.Summary.Education.AcademicBackground.Length.ShouldBe(EducationCount);
-        responseData.Summary.WorkExperience.Position.Length.ShouldBe(WorkExperienceCount);
-        responseData.PersonalData.ShouldNotBeNull();
-        responseData.PersonalData.Professions.ShouldNotBeNull();
-        responseData.PersonalData.SocialNetworks.Length.ShouldBe(ContactInfoCount);
-        responseData.Testimonials!.Length.ShouldBe(TestimonialsCount);
-        responseData.Project!.Length.ShouldBe(ProjectCount);
+        responseData.About.Should().NotBeNull();
+        responseData.SkillSet.Should().NotBeNull();
+        responseData.SkillSet.SkillDetails.Length.Should().Be(SkillDetailsCount);
+        responseData.Summary.Should().NotBeNull();
+        responseData.Summary.Education.AcademicBackground.Length.Should().Be(EducationCount);
+        responseData.Summary.WorkExperience.Position.Length.Should().Be(WorkExperienceCount);
+        responseData.PersonalData.Should().NotBeNull();
+        responseData.PersonalData.Professions.Should().NotBeNull();
+        responseData.PersonalData.SocialNetworks.Length.Should().Be(ContactInfoCount);
+        responseData.Testimonials!.Length.Should().Be(TestimonialsCount);
+        responseData.Project!.Length.Should().Be(ProjectCount);
     }
 
     [Fact(DisplayName = "Create a new record and return 201 when the POST request is valid")]
     public async Task ReturnCreatedAndPersistData_WhenRequestIsValidAsync()
     {
         // --- Given ---
-        await _testFixture.ResetDatabaseAsync();
         var createRequest = _fixture.Build<ProfileCommand>().Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
@@ -101,21 +104,21 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.PostAsync(RequestUriController, httpContent);
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
 
         var responseData = await TestUtilities.DeserializeResponseAsync<ProfileResponse>(response);
-        responseData.ShouldNotBeNull();
+        responseData.Should().NotBeNull();
 
         var locationHeader = response.Headers.Location!.ToString();
-        locationHeader.ShouldNotBeNull();
-        locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
+        locationHeader.Should().NotBeNull();
+        locationHeader.Should().Contain($"{RequestUriController}/{responseData.Id}");
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
         var entityCreated = await queryRepository.GetByIdAsync(new ProfileId(responseData.Id), CancellationToken.None);
 
-        entityCreated.ShouldNotBeNull();
+        entityCreated.Should().NotBeNull();
         entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
     }
 
@@ -129,11 +132,11 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var responseData = await TestUtilities.DeserializeResponseAsync<ProfileResponse>(response);
-        responseData.ShouldNotBeNull();
+        responseData.Should().NotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
 
@@ -147,8 +150,8 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeFalse();
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact(DisplayName = "Return 204 when a valid PUT request is provided")]
@@ -163,13 +166,13 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updateRequest);
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
         var dbEntity = await queryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
-        dbEntity.ShouldNotBeNull();
+        dbEntity.Should().NotBeNull();
         dbEntity.Should().BeEquivalentTo(updateRequest, options => options.ExcludingMissingMembers());
     }
 
@@ -184,16 +187,14 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{InvalidId}", updatedEntity);
 
         // --- Then ---
-        response.IsSuccessStatusCode.ShouldBeFalse();
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact(DisplayName = "Create a new profile and return 201 when a valid CV file is loaded")]
     public async Task ReturnCreatedAndPersistData_WhenIsValidCVFileAsync()
     {
         // --- Given ---
-        await _testFixture.ResetDatabaseAsync();
-
         const string fileName = "cv_laura_gomez.pdf";
         const string cvContent = StaticCustomizations.CvContent;
         var fileBytes = Encoding.UTF8.GetBytes(cvContent);
@@ -210,11 +211,11 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         // --- Then ---
         response.EnsureSuccessStatusCode();
-        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
         var responseData = await response.Content.ReadFromJsonAsync<CreateProfileResponse>();
-        responseData.ShouldNotBeNull();
-        responseData.UserEmail.ShouldNotBeNullOrEmpty();
-        responseData.ProfileUrl.ShouldNotBeNullOrEmpty();
+        responseData.Should().NotBeNull();
+        responseData.UserEmail.Should().NotBeNullOrEmpty();
+        responseData.ProfileUrl.Should().NotBeNullOrEmpty();
         responseData.UserEmail.Should().Be("laura.gomez.dev@example.net");
         responseData.ProfileUrl.Should().StartWith("laura-gomez-");
     }
@@ -253,7 +254,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     {
         var slugGenerator = new Mock<IProfileSlugGenerator>();
         const string slug = "alexander-gonzalez-6ca66d";
-        profile.LinkManager.AddPublicProfileIdentifier(slug);
+        profile.LinkManager.AddPublicProfileIdentifier(_guidGenerator, _clock, slug);
         slugGenerator
             .Setup(sg => sg.GenerateProfileSlug(It.IsAny<Profile>()))
             .Returns(slug);

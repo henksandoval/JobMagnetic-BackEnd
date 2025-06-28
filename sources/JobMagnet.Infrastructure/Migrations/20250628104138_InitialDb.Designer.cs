@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobMagnet.Infrastructure.Migrations
 {
     [DbContext(typeof(JobMagnetDbContext))]
-    [Migration("20250628090117_InitialDb")]
+    [Migration("20250628104138_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -20,6 +20,7 @@ namespace JobMagnet.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS")
                 .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
