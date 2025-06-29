@@ -45,7 +45,7 @@ public partial class ProfileController
         return Results.CreatedAtRoute("GetProjectsByProfile", new { profileId }, result);
     }
 
-    [HttpGet("{profileId:guid}/project", Name = "GetProjectsByProfile")]
+    [HttpGet("{profileId:guid}/projects", Name = "GetProjectsByProfile")]
     [ProducesResponseType(typeof(IEnumerable<ProjectResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetProjectsByProfileAsync(Guid profileId, CancellationToken cancellationToken)
