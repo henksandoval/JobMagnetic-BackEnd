@@ -1,14 +1,7 @@
-using System.Linq.Expressions;
 using AutoFixture;
 using AwesomeAssertions;
-using CSharpFunctionalExtensions;
-
 using JobMagnet.Application.Factories;
-using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
-using JobMagnet.Domain.Aggregates.Contact;
-using JobMagnet.Domain.Aggregates.Profiles;
-using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
@@ -23,9 +16,9 @@ namespace JobMagnet.Unit.Tests.Services;
 public class ProfileFactoryShould
 {
     private readonly IClock _clock;
-    private readonly IGuidGenerator _guidGenerator;
     private readonly Mock<IContactTypeResolverService> _contactTypeResolverMock;
     private readonly IFixture _fixture = FixtureBuilder.Build();
+    private readonly IGuidGenerator _guidGenerator;
     private readonly ProfileRawBuilder _profileBuilder;
     private readonly ProfileFactory _profileFactory;
     private readonly Mock<IQueryRepository<SkillCategory, ushort>> _skillCategoryRepositoryMock;

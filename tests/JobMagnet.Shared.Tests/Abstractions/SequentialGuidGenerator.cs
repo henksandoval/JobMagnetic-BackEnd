@@ -4,7 +4,8 @@ namespace JobMagnet.Shared.Tests.Abstractions;
 
 public class SequentialGuidGenerator : IGuidGenerator
 {
-    private int _counter = 0;
+    private int _counter;
+
     public Guid NewGuid()
     {
         _counter++;

@@ -13,18 +13,18 @@ namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
 public class ProfileEntityBuilder
 {
-    private readonly IClock _clock;
-    private readonly IGuidGenerator _guidGenerator;
     private static readonly Faker Faker = FixtureBuilder.Faker;
+    private readonly IClock _clock;
+    private readonly IFixture _fixture;
+    private readonly IGuidGenerator _guidGenerator;
+    private CareerHistory _careerHistory = null!;
     private string? _firstName;
     private string? _lastName;
-    private List<Project> _projects = [];
     private ProfileHeader _profileHeader = null!;
+    private List<Project> _projects = [];
     private SkillSet _skillSet = null!;
-    private CareerHistory _careerHistory = null!;
     private List<Talent> _talents = [];
     private List<Testimonial> _testimonials = [];
-    private readonly IFixture _fixture;
 
     public ProfileEntityBuilder(IFixture fixture)
     {
@@ -108,10 +108,7 @@ public class ProfileEntityBuilder
 
     public ProfileEntityBuilder WithTalents(int count = 5)
     {
-        while (_talents?.Count < count)
-        {
-            _talents = _fixture.CreateMany<Talent>(count).ToList();
-        }
+        while (_talents?.Count < count) _talents = _fixture.CreateMany<Talent>(count).ToList();
         return this;
     }
 

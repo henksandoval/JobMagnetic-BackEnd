@@ -34,17 +34,17 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
     private const string InvalidId = "100";
     private const int ContactInfoCount = 3;
     private const int TalentsCount = 8;
-    private int _projectCount = 3;
     private const int TestimonialsCount = 6;
     private const int EducationCount = 4;
     private const int WorkExperienceCount = 2;
     private const int SkillDetailsCount = 12;
+    private readonly DeterministicClock _clock;
 
     private readonly IFixture _fixture = FixtureBuilder.Build();
+    private readonly SequentialGuidGenerator _guidGenerator;
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
-    private readonly SequentialGuidGenerator _guidGenerator;
-    private readonly DeterministicClock _clock;
+    private int _projectCount = 3;
 
     public ProfileControllerShould(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
@@ -113,7 +113,7 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
         locationHeader.Should().NotBeNull();
         var expectedHeader = $"{RequestUriController}/{responseData.Id}";
         locationHeader.Should().Match(currentHeader =>
-                currentHeader.Contains(expectedHeader, StringComparison.OrdinalIgnoreCase)
+            currentHeader.Contains(expectedHeader, StringComparison.OrdinalIgnoreCase)
         );
 
         var entityCreated = await FindProfileByIdAsync(responseData.Id);

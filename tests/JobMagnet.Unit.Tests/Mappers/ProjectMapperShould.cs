@@ -2,7 +2,6 @@ using AutoFixture;
 using AwesomeAssertions;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-
 using JobMagnet.Shared.Tests.Fixtures;
 
 namespace JobMagnet.Unit.Tests.Mappers;

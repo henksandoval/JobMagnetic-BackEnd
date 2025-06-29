@@ -1,8 +1,7 @@
- using System.Net.Mime;
+using System.Net.Mime;
 using AutoFixture;
 using AwesomeAssertions;
 using CSharpFunctionalExtensions;
-
 using JobMagnet.Application.Factories;
 using JobMagnet.Application.UseCases.CvParser;
 using JobMagnet.Application.UseCases.CvParser.Commands;
@@ -12,7 +11,6 @@ using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Abstractions;
@@ -21,15 +19,14 @@ using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using Moq;
 
-
 namespace JobMagnet.Unit.Tests.UseCases;
 
 public class CvParserHandlerShould
 {
     private readonly IClock _clock;
-    private readonly IGuidGenerator _guidGenerator;
     private readonly Mock<IContactTypeResolverService> _contactTypeResolverMock;
     private readonly IFixture _fixture = FixtureBuilder.Build();
+    private readonly IGuidGenerator _guidGenerator;
     private readonly CvParserHandler _handler;
     private readonly Mock<IGenericCommandRepository<Profile>> _profileCommandRepositoryMock;
     private readonly Mock<IProfileFactory> _profileFactoryMock;
@@ -101,7 +98,7 @@ public class CvParserHandlerShould
 
     private List<ContactInfoRaw> PrepareContactInfoData()
     {
-        var emailType = ContactType.CreateInstance(_guidGenerator, _clock,  "Email", "bx bx-envelope");
+        var emailType = ContactType.CreateInstance(_guidGenerator, _clock, "Email", "bx bx-envelope");
         var phoneType = ContactType.CreateInstance(_guidGenerator, _clock, "Phone", "bx bx-mobile");
         var linkedInType = ContactType.CreateInstance(_guidGenerator, _clock, "LinkedIn", "bx bx-linkedin");
 

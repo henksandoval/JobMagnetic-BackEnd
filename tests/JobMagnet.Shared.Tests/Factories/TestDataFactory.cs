@@ -36,12 +36,10 @@ public class TestDataFactory
                 rawDef.Name,
                 rawDef.IconClass);
 
-            foreach (var alias in rawDef.Aliases)
-            {
-                contactType.AddAlias(alias.Name, _clock);
-            }
+            foreach (var alias in rawDef.Aliases) contactType.AddAlias(alias.Name, _clock);
             list.Add(contactType);
         }
+
         return list.AsReadOnly();
     }
 
