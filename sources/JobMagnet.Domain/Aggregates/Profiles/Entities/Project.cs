@@ -55,4 +55,18 @@ public class Project : SoftDeletableAggregate<ProjectId>
         if (string.IsNullOrEmpty(UrlLink) && string.IsNullOrEmpty(UrlImage) && string.IsNullOrEmpty(UrlVideo))
             throw new JobMagnetDomainException("At least one of UrlLink, UrlImage, or UrlVideo must be provided.");
     }
+
+    public Project UpdateDetails(string newTitle, string newDescription, string newUrlLink, string newUrlImage, string newUrlVideo, string newType)
+    {
+        Title = newTitle;
+        Description = newDescription;
+        UrlLink = newUrlLink;
+        UrlImage = newUrlImage;
+        UrlVideo = newUrlVideo;
+        Type = newType;
+
+        ValidateInvariants();
+
+        return this;
+    }
 }

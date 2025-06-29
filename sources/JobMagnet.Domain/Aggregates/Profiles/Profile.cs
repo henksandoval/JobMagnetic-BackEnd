@@ -155,6 +155,12 @@ public class Profile : SoftDeletableAggregate<ProfileId>
         _projects.Add(project);
     }
 
+    internal void RemoveProjectToPortfolio(Project project)
+    {
+        _projects.Remove(project);
+    }
+
+
     internal void AddPublicProfileIdentifier(VanityUrl publicProfile)
     {
         _vanityUrls.Add(publicProfile);

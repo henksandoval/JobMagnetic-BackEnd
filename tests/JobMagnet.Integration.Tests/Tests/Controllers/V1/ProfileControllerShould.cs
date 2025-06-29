@@ -250,8 +250,8 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
             .WithTestimonials(TestimonialsCount)
             .Build();
 
-        await commandRepository.CreateAsync(entity);
-        await unitOfWork.SaveChangesAsync();
+        await commandRepository.CreateAsync(entity, CancellationToken.None);
+        await unitOfWork.SaveChangesAsync(CancellationToken.None);
 
         return entity;
     }

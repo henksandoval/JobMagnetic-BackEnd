@@ -19,7 +19,7 @@ public class CommandRepository<TEntity>(JobMagnetDbContext dbContext) : ICommand
         _dbSet.Update(entity);
     }
 
-    public void Delete(TEntity entity)
+    public void Remove(TEntity entity)
     {
         _dbSet.Remove(entity);
     }

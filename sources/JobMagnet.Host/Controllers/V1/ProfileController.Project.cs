@@ -1,7 +1,10 @@
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Application.Contracts.Commands.Portfolio;
 using JobMagnet.Application.Contracts.Responses.Portfolio;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Host.Controllers.V1;
@@ -17,11 +20,7 @@ public partial class ProfileController
         if (profileId != command.ProjectData?.ProfileId)
             throw new ArgumentException($"{nameof(command.ProjectData.ProfileId)} must be equal to profileId.");
 
-        var profile = await queryRepository
-            .WhereCondition(p => p.Id == new ProfileId(profileId))
-            .WithProject()
-            .BuildFirstOrDefaultAsync(cancellationToken)
-            .ConfigureAwait(false);
+        var profile = await GetProfileWithProjects(profileId, cancellationToken).ConfigureAwait(false);
 
         if (profile is null)
             return Results.NotFound();
@@ -50,21 +49,87 @@ public partial class ProfileController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetProjectsByProfileAsync(Guid profileId, CancellationToken cancellationToken)
     {
-        var profile = await queryRepository
-            .WhereCondition(p => p.Id == new ProfileId(profileId))
-            .WithProject()
-            .BuildFirstOrDefaultAsync(cancellationToken)
-            .ConfigureAwait(false);
+        var profile = await GetProfileWithProjects(profileId, cancellationToken);
 
         if (profile is null)
-        {
-            return Results.NotFound("Profile not found.");
-        }
+            return Results.NotFound();
 
         var response = profile.Projects
             .Select(project => project.ToModel())
             .ToList();
 
         return Results.Ok(response);
+    }
+
+    [HttpPut("{profileId:guid}/projects/{projectId:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IResult> UpdateProjectAsync(Guid profileId, Guid projectId, [FromBody] ProjectCommand command,
+        CancellationToken cancellationToken)
+    {
+        var profile = await GetProfileWithProjects(profileId, cancellationToken).ConfigureAwait(false);
+
+        if (profile is null)
+            return Results.NotFound();
+
+        var data = command.ProjectData;
+
+        Guard.IsNotNull(data);
+
+        try
+        {
+            var updatedProject = profile.Portfolio.UpdateProject(
+                new ProjectId(projectId),
+                data.Title ?? string.Empty,
+                data.Description ?? string.Empty,
+                data.UrlLink ?? string.Empty,
+                data.UrlImage ?? string.Empty,
+                data.UrlVideo ?? string.Empty,
+                data.Type ?? string.Empty
+            );
+
+            projectCommandRepository.Update(updatedProject);
+        }
+        catch (NotFoundException ex)
+        {
+            return Results.NotFound(new { ex.Message });
+        }
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Results.NoContent();
+    }
+
+    [HttpDelete("{profileId:guid}/projects/{projectId:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> DeleteProjectAsync(Guid profileId, Guid projectId, CancellationToken cancellationToken)
+    {
+        var profile = await GetProfileWithProjects(profileId, cancellationToken).ConfigureAwait(false);
+
+        if (profile is null)
+            return Results.NotFound();
+
+        try
+        {
+            var project = profile.Portfolio.RemoveProject(new ProjectId(projectId));
+            projectCommandRepository.Remove(project);
+        }
+        catch (NotFoundException ex)
+        {
+            return Results.NotFound(new { ex.Message });
+        }
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Results.NoContent();
+    }
+
+    private async Task<Profile?> GetProfileWithProjects(Guid profileId, CancellationToken cancellationToken)
+    {
+        return await queryRepository
+            .WhereCondition(p => p.Id == new ProfileId(profileId))
+            .WithProject()
+            .BuildFirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
 }

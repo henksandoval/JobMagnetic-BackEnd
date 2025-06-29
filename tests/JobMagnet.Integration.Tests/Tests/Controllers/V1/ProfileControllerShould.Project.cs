@@ -1,11 +1,11 @@
 using System.Net;
+using System.Net.Http.Json;
 using AutoFixture;
 using AwesomeAssertions;
 using JobMagnet.Application.Contracts.Commands.Portfolio;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Portfolio;
 using JobMagnet.Application.Mappers;
-using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Shared.Tests.Utils;
@@ -98,6 +98,121 @@ public partial class ProfileControllerShould
 
         var responseData = await TestUtilities.DeserializeResponseAsync<List<ProjectResponse>>(response);
         responseData.Should().NotBeNull().And.BeEmpty();
+    }
+
+    [Fact(DisplayName = "Should return 204 No Content when updating an existing project")]
+    public async Task UpdateProject_WhenProfileAndProjectExistAndPayloadIsValid()
+    {
+        // --- Given ---
+        var profile = await SetupProfileAsync();
+        var projectData = GetProjectData(profile.Id.Value);
+        var projectToUpdate = profile.Projects.First();
+        var command = _fixture.Build<ProjectCommand>()
+            .With(x => x.ProjectData, projectData)
+            .Create();
+        var requestUri = $"{RequestUriController}/{profile.Id.Value}/projects/{projectToUpdate.Id.Value}";
+
+        // --- When ---
+        var response = await _httpClient.PutAsJsonAsync(requestUri, command);
+
+        // --- Then ---
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, ProjectId>>();
+        var projectUpdated = await queryRepository.GetByIdAsync(projectToUpdate.Id, CancellationToken.None);
+
+        projectUpdated.Should().NotBeNull();
+        projectUpdated.ProfileId.Should().Be(profile.Id);
+        var commandBase = command.ProjectData;
+        projectUpdated.Should().BeEquivalentTo(commandBase, options => options
+            .Excluding(expect => expect!.ProfileId)
+            .Excluding(expect => expect!.Position)
+        );
+    }
+
+    [Fact(DisplayName = "Should return 404 Not Found when the profile ID does not exist for an update")]
+    public async Task UpdateProject_WhenProfileDoesNotExist()
+    {
+        // --- Given ---
+        var nonExistentProfileId = Guid.NewGuid();
+        var projectData = GetProjectData(nonExistentProfileId);
+        var requestUri = $"{RequestUriController}/{nonExistentProfileId}/projects/{nonExistentProfileId}";
+
+        // --- When ---
+        var response = await _httpClient.PutAsJsonAsync(requestUri, projectData);
+
+        // --- Then ---
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact(DisplayName = "Should return 404 Not Found when the project does not belong to the profile")]
+    public async Task UpdateProject_WhenProjectDoesNotExistInProfile()
+    {
+        // --- Given ---
+        var profile = await SetupProfileAsync();
+        var projectData = GetProjectData(profile.Id.Value);
+        var nonExistentProjectId = Guid.NewGuid();
+        var command = _fixture.Build<ProjectCommand>()
+            .With(x => x.ProjectData, projectData)
+            .Create();
+        var requestUri = $"{RequestUriController}/{profile.Id.Value}/projects/{nonExistentProjectId}";
+
+        // --- When ---
+        var response = await _httpClient.PutAsJsonAsync(requestUri, command);
+
+        // --- Then ---
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact(DisplayName = "Should return 204 No Content when deleting an existing project")]
+    public async Task DeleteProject_WhenProfileAndProjectExist()
+    {
+        // --- Given ---
+        _projectCount = 5;
+        var profile = await SetupProfileAsync();
+        var projectToDelete = profile.Projects.First();
+        var requestUri = $"{RequestUriController}/{profile.Id.Value}/projects/{projectToDelete.Id.Value}";
+
+        // --- When ---
+        var response = await _httpClient.DeleteAsync(requestUri);
+
+        // --- Then ---
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, ProjectId>>();
+        var projects = await queryRepository.FindAsync(p => p.ProfileId == projectToDelete.ProfileId, CancellationToken.None);
+
+        projects.Should().HaveCount(_projectCount - 1);
+        projects.Should().NotContain(p => p.Id == projectToDelete.Id);
+    }
+
+    [Fact(DisplayName = "Should return 404 Not Found when the profile ID does not exist for a delete")]
+    public async Task DeleteProject_WhenProfileDoesNotExist()
+    {
+        // --- Given ---
+        var nonExistentProfileId = Guid.NewGuid();
+        var requestUri = $"{RequestUriController}/{nonExistentProfileId}/projects/{Guid.NewGuid()}";
+
+        // --- When ---
+        var response = await _httpClient.DeleteAsync(requestUri);
+
+        // --- Then ---
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact(DisplayName = "Should return 404 Not Found when deleting a project that does not belong to the profile")]
+    public async Task DeleteProject_WhenProjectDoesNotExistInProfile()
+    {
+        // --- Given ---
+        var profile = await SetupProfileAsync();
+        var nonExistentProjectId = Guid.NewGuid();
+        var requestUri = $"{RequestUriController}/{profile.Id.Value}/projects/{nonExistentProjectId}";
+
+        // --- When ---
+        var response = await _httpClient.DeleteAsync(requestUri);
+
+        // --- Then ---
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     private ProjectBase GetProjectData(Guid profileEntityId)
