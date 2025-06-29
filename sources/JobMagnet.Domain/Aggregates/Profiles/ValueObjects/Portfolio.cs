@@ -3,6 +3,7 @@ using CSharpFunctionalExtensions;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Shared.Abstractions;
+using JobMagnet.Shared.Utils;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 
@@ -72,6 +73,27 @@ public class Portfolio
 
         _profile.RemoveProjectToPortfolio(projectToRemove);
         return projectToRemove;
+    }
+
+    public void ArrangeProjects(IEnumerable<ProjectId> orderedProjects)
+    {
+        var projectIds = orderedProjects.ToList();
+        Guard.IsNotNull(projectIds);
+
+        var currentProjectIds = new HashSet<ProjectId>(Projects.Select(p => p.Id));
+
+        if (projectIds.Count != new HashSet<ProjectId>(projectIds).Count)
+            throw new BusinessRuleValidationException("The list of project IDs for reordering contains duplicates.");
+
+        if (!currentProjectIds.SetEquals(projectIds))
+            throw new BusinessRuleValidationException("The provided project list for reordering does not match the projects in the portfolio. Ensure all projects are included exactly once.");
+
+        foreach (var (projectId, index) in projectIds.WithIndex())
+        {
+            var position = index + 1;
+            var projectToUpdate = Projects.Single(p => p.Id == projectId);
+            projectToUpdate.UpdatePosition(position);
+        }
     }
 
     private int GetPosition()

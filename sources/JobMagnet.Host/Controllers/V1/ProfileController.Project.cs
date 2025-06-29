@@ -100,6 +100,38 @@ public partial class ProfileController
         return Results.NoContent();
     }
 
+    [HttpPut("{profileId:guid}/projects/arrange")] // Un buen endpoint RESTful para esta operación
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IResult> ArrangeProjectsAsync(Guid profileId, [FromBody] List<Guid> orderedProjectIds, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var profile = await GetProfileWithProjects(profileId, cancellationToken);
+
+            if (profile is null)
+                return Results.NotFound();
+
+            var typedIds = orderedProjectIds.Select(id => new ProjectId(id));
+
+            profile.Portfolio.ArrangeProjects(typedIds);
+
+            projectCommandRepository.UpdateRange(profile.Projects);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Results.NoContent();
+        }
+        catch (NotFoundException ex)
+        {
+            return Results.NotFound(new { ex.Message });
+        }
+        catch (BusinessRuleValidationException ex)
+        {
+            return Results.BadRequest(new { ex.Message });
+        }
+    }
+
     [HttpDelete("{profileId:guid}/projects/{projectId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

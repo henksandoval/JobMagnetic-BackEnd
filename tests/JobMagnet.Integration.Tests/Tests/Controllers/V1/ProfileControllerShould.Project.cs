@@ -6,6 +6,7 @@ using JobMagnet.Application.Contracts.Commands.Portfolio;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Portfolio;
 using JobMagnet.Application.Mappers;
+using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Shared.Tests.Utils;
@@ -211,6 +212,28 @@ public partial class ProfileControllerShould
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
+    [Fact(DisplayName = "Should return 204 No Content when arranging projects with a valid order")]
+    public async Task ArrangeProjects_WhenProfileExistsAndPayloadIsValid_ShouldUpdatePositionsInDb()
+    {
+        // --- Given ---
+        _projectCount = 3;
+        var profile = await SetupProfileAsync();
+        var projects = profile.Projects.ToList();
+        var newOrderExpected = projects.OrderByDescending(x => x.Position).Select(x => x.Id).ToList();
+        var newOrderCommand = newOrderExpected.Select(x => x.Value);
+
+        var requestUri = $"{RequestUriController}/{profile.Id.Value}/projects/arrange";
+
+        // --- When ---
+        var response = await _httpClient.PutAsJsonAsync(requestUri, newOrderCommand);
+
+        // --- Then ---
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        var projectsUpdated = await FindProjectsByProfileIdAsync(profile.Id);
+        var projectsOrderedByPosition = projectsUpdated.OrderBy(p => p.Position).Select(x => x.Id);
+        projectsOrderedByPosition.Should().BeEquivalentTo(newOrderExpected);
+    }
+
     private ProjectBase GetProjectData(Guid profileEntityId)
     {
         return _fixture
@@ -225,5 +248,14 @@ public partial class ProfileControllerShould
         var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, ProjectId>>();
         var entityCreated = await queryRepository.GetByIdAsync(new ProjectId(id), CancellationToken.None);
         return entityCreated;
+    }
+
+    private async Task<List<Project>> FindProjectsByProfileIdAsync(ProfileId profileId)
+    {
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, ProjectId>>();
+
+        var projects = await queryRepository.FindAsync(p => p.ProfileId == profileId, CancellationToken.None);
+        return projects.ToList();
     }
 }

@@ -14,6 +14,12 @@ public class CommandRepository<TEntity>(JobMagnetDbContext dbContext) : ICommand
         await _dbSet.AddAsync(entity, cancellationToken);
     }
 
+    public void UpdateRange(IEnumerable<TEntity> entities)
+    {
+        foreach (var entity in entities)
+            _dbSet.Update(entity);
+    }
+
     public void Update(TEntity entity)
     {
         _dbSet.Update(entity);

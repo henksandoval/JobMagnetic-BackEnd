@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Domain.Shared.Base;
@@ -39,24 +38,13 @@ public class Project : SoftDeletableAggregate<ProjectId>
         ValidateInvariants();
     }
 
-    public static Project CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string title, string description, string urlLink, string urlImage, string urlVideo, string type, int position)
+    internal static Project CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string title, string description, string urlLink, string urlImage, string urlVideo, string type, int position)
     {
         var id = new ProjectId(guidGenerator.NewGuid());
         return new Project(id, profileId, clock, title, description, urlLink, urlImage, urlVideo, type, position);
     }
 
-    private void ValidateInvariants()
-    {
-        Guard.IsGreaterThanOrEqualTo(Position, 0);
-        Guard.IsNotNullOrEmpty(Title);
-        Guard.IsNotNullOrEmpty(Description);
-        Guard.IsNotNullOrEmpty(Type);
-
-        if (string.IsNullOrEmpty(UrlLink) && string.IsNullOrEmpty(UrlImage) && string.IsNullOrEmpty(UrlVideo))
-            throw new JobMagnetDomainException("At least one of UrlLink, UrlImage, or UrlVideo must be provided.");
-    }
-
-    public Project UpdateDetails(string newTitle, string newDescription, string newUrlLink, string newUrlImage, string newUrlVideo, string newType)
+    internal Project UpdateDetails(string newTitle, string newDescription, string newUrlLink, string newUrlImage, string newUrlVideo, string newType)
     {
         Title = newTitle;
         Description = newDescription;
@@ -68,5 +56,22 @@ public class Project : SoftDeletableAggregate<ProjectId>
         ValidateInvariants();
 
         return this;
+    }
+
+    internal void UpdatePosition(int newPosition)
+    {
+        Guard.IsGreaterThanOrEqualTo(newPosition, 1);
+        Position = newPosition;
+    }
+
+    private void ValidateInvariants()
+    {
+        Guard.IsGreaterThanOrEqualTo(Position, 1);
+        Guard.IsNotNullOrEmpty(Title);
+        Guard.IsNotNullOrEmpty(Description);
+        Guard.IsNotNullOrEmpty(Type);
+
+        if (string.IsNullOrEmpty(UrlLink) && string.IsNullOrEmpty(UrlImage) && string.IsNullOrEmpty(UrlVideo))
+            throw new JobMagnetDomainException("At least one of UrlLink, UrlImage, or UrlVideo must be provided.");
     }
 }
