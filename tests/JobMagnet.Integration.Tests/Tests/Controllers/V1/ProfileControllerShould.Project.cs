@@ -8,7 +8,6 @@ using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
-using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,8 +20,9 @@ public partial class ProfileControllerShould
     {
         // --- Given ---
         var profile = await SetupProfileAsync();
+        var projectData = GetProjectData(profile.Id.Value);
         var createRequest = _fixture.Build<ProjectCommand>()
-            .With(x => x.ProjectData, GetProjectData(profile.Id.Value))
+            .With(x => x.ProjectData, projectData)
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
@@ -87,7 +87,8 @@ public partial class ProfileControllerShould
     public async Task GetOkAndEmptyList_WhenProfileExistsButHasNoProjects()
     {
         // --- Given ---
-        var profileWithoutProjects = await CreateAndPersistProfileWithoutProjectsAsync();
+        _projectCount = 0;
+        var profileWithoutProjects = await SetupProfileAsync();
 
         // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{profileWithoutProjects.Id.Value}/projects");
@@ -97,24 +98,6 @@ public partial class ProfileControllerShould
 
         var responseData = await TestUtilities.DeserializeResponseAsync<List<ProjectResponse>>(response);
         responseData.Should().NotBeNull().And.BeEmpty();
-    }
-
-    private async Task<Profile> CreateAndPersistProfileWithoutProjectsAsync()
-    {
-        await _testFixture.ResetDatabaseAsync();
-
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<Profile>>();
-        var unitWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-
-        var entity = new ProfileEntityBuilder(_fixture)
-            .WithProjects(0)
-            .Build();
-
-        await commandRepository.CreateAsync(entity);
-        await unitWork.SaveChangesAsync();
-
-        return entity;
     }
 
     private ProjectBase GetProjectData(Guid profileEntityId)

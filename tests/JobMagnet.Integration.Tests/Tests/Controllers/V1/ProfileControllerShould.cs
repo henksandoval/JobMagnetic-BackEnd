@@ -37,7 +37,7 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
     private const string InvalidId = "100";
     private const int ContactInfoCount = 3;
     private const int TalentsCount = 8;
-    private const int ProjectCount = 3;
+    private int _projectCount = 3;
     private const int TestimonialsCount = 6;
     private const int EducationCount = 4;
     private const int WorkExperienceCount = 2;
@@ -92,7 +92,7 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
         responseData.PersonalData.Professions.Should().NotBeNull();
         responseData.PersonalData.SocialNetworks.Length.Should().Be(ContactInfoCount);
         responseData.Testimonials!.Length.Should().Be(TestimonialsCount);
-        responseData.Project!.Length.Should().Be(ProjectCount);
+        responseData.Project!.Length.Should().Be(_projectCount);
     }
 
     [Fact(DisplayName = "Create a new record and return 201 when the POST request is valid")]
@@ -234,13 +234,14 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
     private async Task<Profile> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<IGenericCommandRepository<Profile>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<Profile>>();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
         var entity = new ProfileEntityBuilder(_fixture)
             .WithResume()
             .WithContactInfo(ContactInfoCount)
             .WithTalents(TalentsCount)
-            .WithProjects(ProjectCount)
+            .WithProjects(_projectCount)
             .WithSummary()
             .WithEducation(EducationCount)
             .WithWorkExperience(WorkExperienceCount)
@@ -250,7 +251,7 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
             .Build();
 
         await commandRepository.CreateAsync(entity);
-        await commandRepository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync();
 
         return entity;
     }
