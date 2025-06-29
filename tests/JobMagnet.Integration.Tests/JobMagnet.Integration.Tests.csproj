@@ -51,14 +51,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Tests\Controllers\V0\"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Compile Remove="Tests\Controllers\V0\AdminControllerShould.cs"/>
-        <Compile Remove="Tests\Controllers\V1\ResumeControllerShould.cs"/>
-        <Compile Remove="Tests\Controllers\V1\SummaryControllerShould.cs"/>
-        <Compile Remove="Tests\Controllers\V1\TestimonialControllerShould.cs"/>
+        <Compile Update="Tests\Controllers\V1\ProfileControllerShould.*.cs">
+            <DependentUpon>ProfileControllerShould.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 </Project>

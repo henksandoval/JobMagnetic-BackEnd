@@ -22,6 +22,9 @@
         <Content Update="appsettings.Development.json">
             <DependentUpon>appsettings.json</DependentUpon>
         </Content>
+        <Compile Update="Controllers\V1\ProfileController.*.cs">
+            <DependentUpon>ProfileController.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
