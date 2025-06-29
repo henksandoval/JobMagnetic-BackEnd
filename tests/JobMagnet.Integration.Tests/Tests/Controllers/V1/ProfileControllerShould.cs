@@ -5,11 +5,8 @@ using System.Net.Mime;
 using System.Text;
 using AutoFixture;
 using AwesomeAssertions;
-using JobMagnet.Application.Contracts.Commands.Portfolio;
 using JobMagnet.Application.Contracts.Commands.Profile;
 using JobMagnet.Application.Contracts.Queries.Profile;
-using JobMagnet.Application.Contracts.Responses.Base;
-using JobMagnet.Application.Contracts.Responses.Portfolio;
 using JobMagnet.Application.Contracts.Responses.Profile;
 using JobMagnet.Application.UseCases.CvParser.Responses;
 using JobMagnet.Domain.Aggregates.Profiles;
@@ -119,9 +116,7 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
                 currentHeader.Contains(expectedHeader, StringComparison.OrdinalIgnoreCase)
         );
 
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
-        var entityCreated = await queryRepository.GetByIdAsync(new ProfileId(responseData.Id), CancellationToken.None);
+        var entityCreated = await FindProfileByIdAsync(responseData.Id);
 
         entityCreated.Should().NotBeNull();
         entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
@@ -174,11 +169,9 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
         response.IsSuccessStatusCode.Should().BeTrue();
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
-        var dbEntity = await queryRepository.GetByIdAsync(entity.Id, CancellationToken.None);
-        dbEntity.Should().NotBeNull();
-        dbEntity.Should().BeEquivalentTo(updateRequest, options => options.ExcludingMissingMembers());
+        var updatedProfile = await FindProfileByIdAsync(entity.Id.Value);
+        updatedProfile.Should().NotBeNull();
+        updatedProfile.Should().BeEquivalentTo(updateRequest, options => options.ExcludingMissingMembers());
     }
 
     [Fact(DisplayName = "Return 404 when a PUT request with invalid ID is provided")]
@@ -274,5 +267,13 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
 
         return profile.VanityUrls.FirstOrDefault() ??
                throw new InvalidOperationException("Public profile identifier was not created.");
+    }
+
+    private async Task<Profile?> FindProfileByIdAsync(Guid id)
+    {
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
+        var entityCreated = await queryRepository.GetByIdAsync(new ProfileId(id), CancellationToken.None);
+        return entityCreated;
     }
 }

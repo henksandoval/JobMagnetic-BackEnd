@@ -43,9 +43,7 @@ public partial class ProfileControllerShould
             currentHeader.Contains(expectedHeader, StringComparison.OrdinalIgnoreCase)
         );
 
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, ProjectId>>();
-        var entityCreated = await queryRepository.GetByIdAsync(new ProjectId(responseData.Id), CancellationToken.None);
+        var entityCreated = await FindProjectByIdAsync(responseData.Id);
 
         entityCreated.Should().NotBeNull();
         entityCreated.ProfileId.Should().Be(profile.Id);
@@ -117,9 +115,7 @@ public partial class ProfileControllerShould
 
         // --- Then ---
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, ProjectId>>();
-        var projectUpdated = await queryRepository.GetByIdAsync(projectToUpdate.Id, CancellationToken.None);
+        var projectUpdated = await FindProjectByIdAsync(projectToUpdate.Id.Value);
 
         projectUpdated.Should().NotBeNull();
         projectUpdated.ProfileId.Should().Be(profile.Id);
@@ -221,5 +217,13 @@ public partial class ProfileControllerShould
             .Build<ProjectBase>()
             .With(x => x.ProfileId, profileEntityId)
             .Create();
+    }
+
+    private async Task<Project?> FindProjectByIdAsync(Guid id)
+    {
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, ProjectId>>();
+        var entityCreated = await queryRepository.GetByIdAsync(new ProjectId(id), CancellationToken.None);
+        return entityCreated;
     }
 }
