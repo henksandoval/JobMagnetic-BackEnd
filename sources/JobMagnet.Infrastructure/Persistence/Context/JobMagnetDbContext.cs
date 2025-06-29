@@ -6,6 +6,7 @@ using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
+using JobMagnet.Domain.Aggregates.Skills.ValueObjects;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,17 +22,17 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
     public DbSet<SkillTypeAlias> SkillTypeAliases { get; set; }
     public DbSet<ContactInfo> ContactInfo { get; set; }
     public DbSet<ContactType> ContactTypes { get; set; }
-    public DbSet<ContactTypeAlias> ContactAliases { get; set; }
+    public DbSet<ContactTypeAlias> ContactTypeAliases { get; set; }
     public DbSet<Profile> Profiles { get; set; }
-    public DbSet<VanityUrl> PublicProfileIdentifier { get; set; }
-    public DbSet<Qualification> Educations { get; set; }
+    public DbSet<VanityUrl> VanityUrls { get; set; }
+    public DbSet<Qualification> Qualification { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<Talent> Talents { get; set; }
-    public DbSet<Headline> Resumes { get; set; }
-    public DbSet<CareerHistory> Summaries { get; set; }
+    public DbSet<ProfileHeader> ProfileHeaders { get; set; }
+    public DbSet<CareerHistory> CareerHistory { get; set; }
     public DbSet<Testimonial> Testimonials { get; set; }
     public DbSet<WorkExperience> WorkExperiences { get; set; }
-    public DbSet<WorkHighlight> WorkResponsibilities { get; set; }
+    public DbSet<WorkHighlight> WorkHighlight { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

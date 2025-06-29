@@ -82,9 +82,9 @@ public class ProfileFactory(
         return profile;
     }
 
-    private async Task<Headline> BuildResumeAsync(ResumeParseDto resumeDto, CancellationToken cancellationToken)
+    private async Task<ProfileHeader> BuildResumeAsync(ResumeParseDto resumeDto, CancellationToken cancellationToken)
     {
-        var resumeEntity = Headline.CreateInstance(
+        var resumeEntity = ProfileHeader.CreateInstance(
             guidGenerator,
             clock,
             _profileId,

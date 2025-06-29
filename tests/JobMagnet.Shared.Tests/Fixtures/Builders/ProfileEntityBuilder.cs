@@ -19,7 +19,7 @@ public class ProfileEntityBuilder
     private string? _firstName;
     private string? _lastName;
     private List<Project> _projects = [];
-    private Headline _headline = null!;
+    private ProfileHeader _profileHeader = null!;
     private SkillSet _skillSet = null!;
     private CareerHistory _careerHistory = null!;
     private List<Talent> _talents = [];
@@ -36,7 +36,7 @@ public class ProfileEntityBuilder
 
     public ProfileEntityBuilder WithResume()
     {
-        _headline = _fixture.Create<Headline>();
+        _profileHeader = _fixture.Create<ProfileHeader>();
         return this;
     }
 
@@ -45,11 +45,11 @@ public class ProfileEntityBuilder
         if (count > ContactTypeSeeder.Count)
             throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available contact types.");
 
-        if (_headline == null) throw new InvalidOperationException("Cannot add contact info without a headline. Call WithResume() first.");
+        if (_profileHeader == null) throw new InvalidOperationException("Cannot add contact info without a profileHeader. Call WithResume() first.");
 
         var addedContactInfo = new Dictionary<string, ContactType>();
 
-        while (_headline.ContactInfo?.Count < count)
+        while (_profileHeader.ContactInfo?.Count < count)
         {
             var requestedContactType = _fixture.Create<ContactType>();
             ContactType contactTypeToAdd;
@@ -66,7 +66,7 @@ public class ProfileEntityBuilder
 
             var value = GenerateContactDetails(contactTypeToAdd.Name);
 
-            _headline.AddContactInfo(_guidGenerator, _clock, value, contactTypeToAdd);
+            _profileHeader.AddContactInfo(_guidGenerator, _clock, value, contactTypeToAdd);
         }
 
         return this;
@@ -179,7 +179,7 @@ public class ProfileEntityBuilder
 
         if (_lastName is not null) profile.ChangeLastName(_lastName);
 
-        if (_headline is not null) profile.AddResume(_headline);
+        if (_profileHeader is not null) profile.AddResume(_profileHeader);
 
         if (_careerHistory is not null) profile.AddSummary(_careerHistory);
 

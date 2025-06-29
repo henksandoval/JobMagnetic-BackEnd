@@ -17,7 +17,7 @@ public class ResumeCustomization : ICustomization
 
     public void Customize(IFixture fixture)
     {
-        fixture.Register(() => Headline.CreateInstance(
+        fixture.Register(() => ProfileHeader.CreateInstance(
             _guidGenerator,
             _clock,
             new ProfileId(),

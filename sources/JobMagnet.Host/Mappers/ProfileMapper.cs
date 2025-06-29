@@ -30,8 +30,8 @@ public static class ProfileMapper
                 src => src.Projects.Any())
             .Map(dest => dest.SkillSet, src => src.SkillSet.Adapt<SkillSetViewModel>(),
                 src => src.SkillSet != null && src.SkillSet.Skills.Count > 0)
-            .Map(dest => dest.Summary, src => src.ProfessionalSummary.Adapt<SummaryViewModel>(),
-                src => src.ProfessionalSummary != null);
+            .Map(dest => dest.Summary, src => src.CareerHistory.Adapt<SummaryViewModel>(),
+                src => src.CareerHistory != null);
 
         TypeAdapterConfig<Project, ProjectViewModel>
             .NewConfig()
@@ -69,18 +69,18 @@ public static class ProfileMapper
 
         var viewModel = new AboutViewModel(
             entity.ProfileImageUrl ?? string.Empty,
-            entity.Resume?.About ?? string.Empty,
-            entity.Resume?.JobTitle ?? string.Empty,
-            entity.Resume?.Overview ?? string.Empty,
+            entity.ProfileHeader?.About ?? string.Empty,
+            entity.ProfileHeader?.JobTitle ?? string.Empty,
+            entity.ProfileHeader?.Overview ?? string.Empty,
             entity.BirthDate,
             GetContactValue(entity, "Website"),
             GetContactValue(entity, "Phone"),
-            entity.Resume?.Address ?? string.Empty,
+            entity.ProfileHeader?.Address ?? string.Empty,
             entity.BirthDate.GetAge(),
-            entity.Resume?.Title ?? string.Empty,
+            entity.ProfileHeader?.Title ?? string.Empty,
             GetContactValue(entity, "Email"),
-            entity.Resume?.Summary ?? string.Empty,
-            entity.Resume?.Summary ?? string.Empty
+            entity.ProfileHeader?.Summary ?? string.Empty,
+            entity.ProfileHeader?.Summary ?? string.Empty
         );
         return viewModel;
     }
@@ -117,7 +117,7 @@ public static class ProfileMapper
 
     private static PersonalDataViewModel PersonalDataViewModelMap(Profile src)
     {
-        var socialNetworks = src.Resume?.ContactInfo?.Select(c => new SocialNetworksViewModel(
+        var socialNetworks = src.ProfileHeader?.ContactInfo?.Select(c => new SocialNetworksViewModel(
                 c.ContactType.Name,
                 c.Value,
                 c.ContactType.IconClass ?? string.Empty,
@@ -141,7 +141,7 @@ public static class ProfileMapper
 
     private static string GetContactValue(Profile entity, string contactTypeName)
     {
-        return entity.Resume?.ContactInfo?
+        return entity.ProfileHeader?.ContactInfo?
             .FirstOrDefault(c => string.Equals(c.ContactType.Name, contactTypeName, StringComparison.OrdinalIgnoreCase))
             ?.Value ?? string.Empty;
     }

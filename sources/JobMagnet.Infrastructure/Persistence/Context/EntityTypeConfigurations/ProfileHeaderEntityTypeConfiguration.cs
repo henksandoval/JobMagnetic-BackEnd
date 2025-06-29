@@ -5,23 +5,23 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobMagnet.Infrastructure.Persistence.Context.EntityTypeConfigurations;
 
-public class HeadlineEntityTypeConfiguration : IEntityTypeConfiguration<Headline>
+public class ProfileHeaderEntityTypeConfiguration : IEntityTypeConfiguration<ProfileHeader>
 {
-    public void Configure(EntityTypeBuilder<Headline> builder)
+    public void Configure(EntityTypeBuilder<ProfileHeader> builder)
     {
         builder.HasKey(e => e.Id);
 
         builder.Property(x => x.Id)
-            .HasConversion(new StronglyTypedIdValueConverter<HeadlineId, Guid>());
+            .HasConversion(new StronglyTypedIdValueConverter<ProfileHeaderId, Guid>());
 
         builder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder.Property(r => r.JobTitle)
-            .HasMaxLength(Headline.MaxJobTitleLength);
+            .HasMaxLength(ProfileHeader.MaxJobTitleLength);
 
         builder.HasMany(r => r.ContactInfo)
             .WithOne()
-            .HasForeignKey(contact => contact.HeadlineId)
+            .HasForeignKey(contact => contact.ProfileHeaderId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

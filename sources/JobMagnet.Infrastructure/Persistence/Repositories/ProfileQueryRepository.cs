@@ -16,7 +16,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
     public IProfileQueryRepository WithResume()
     {
         _query = _query
-            .Include(p => p.Resume)
+            .Include(p => p.ProfileHeader)
             .ThenInclude(r => r.ContactInfo)
             .ThenInclude(c => c.ContactType);
 
@@ -35,10 +35,10 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
     public IProfileQueryRepository WithSummary()
     {
         _query = _query
-            .Include(p => p.ProfessionalSummary)
+            .Include(p => p.CareerHistory)
             .ThenInclude(p => p.Qualifications);
         _query = _query
-            .Include(p => p.ProfessionalSummary)
+            .Include(p => p.CareerHistory)
             .ThenInclude(p => p.WorkExperiences)
             .ThenInclude(p => p.Highlights);
         return this;

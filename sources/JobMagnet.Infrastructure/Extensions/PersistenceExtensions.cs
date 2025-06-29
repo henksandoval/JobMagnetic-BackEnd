@@ -3,6 +3,7 @@ using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
+using JobMagnet.Domain.Aggregates.Skills.ValueObjects;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Infrastructure.Persistence.Context;
@@ -25,7 +26,7 @@ internal static class PersistenceExtensions
 
     private static IServiceCollection AddQueryRepositories(this IServiceCollection services) =>
         services
-            .AddTransient<IQueryRepository<Headline, long>, Repository<Headline, long>>()
+            .AddTransient<IQueryRepository<ProfileHeader, long>, Repository<ProfileHeader, long>>()
             .AddTransient<IQueryRepository<VanityUrl, long>, Repository<VanityUrl, long>>()
             .AddTransient<IQueryRepository<ContactType, int>, Repository<ContactType, int>>()
             .AddTransient<IQueryRepository<ContactTypeAlias, int>, Repository<ContactTypeAlias, int>>()
@@ -45,7 +46,7 @@ internal static class PersistenceExtensions
             .AddTransient<IGenericCommandRepository<Profile>, Repository<Profile, long>>()
             .AddTransient<IGenericCommandRepository<VanityUrl>, Repository<VanityUrl, long>>()
             .AddTransient<IGenericCommandRepository<Talent>, Repository<Talent, long>>()
-            .AddTransient<IGenericCommandRepository<Headline>, Repository<Headline, long>>()
+            .AddTransient<IGenericCommandRepository<ProfileHeader>, Repository<ProfileHeader, long>>()
             .AddTransient<IGenericCommandRepository<Testimonial>, Repository<Testimonial, long>>()
             .AddTransient<IGenericCommandRepository<Project>, Repository<Project, long>>()
             .AddTransient<IGenericCommandRepository<SkillSet>, Repository<SkillSet, long>>()

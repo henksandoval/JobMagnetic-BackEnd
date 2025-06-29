@@ -93,7 +93,7 @@ public class ProfileMapperShould
         result.Testimonials!.Should().BeEquivalentTo(profileExpected.Testimonials);
     }
 
-    [Fact(DisplayName = "Map Profile to ProfileViewModel when Portfolio is defined")]
+    [Fact(DisplayName = "Map Profile to ProfileViewModel when Project is defined")]
     public void MapperProfileEntityToProfileViewModelWithProject()
     {
         var profile = new ProfileEntityBuilder(_fixture)
@@ -156,7 +156,7 @@ public class ProfileMapperShould
         return new PersonalDataViewModel(
             $"{entity.FirstName} {entity.LastName}",
             entity.Talents.Select(x => x.Description).ToArray(),
-            entity.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(
+            entity.ProfileHeader.ContactInfo.Select(c => new SocialNetworksViewModel(
                 c.ContactType.Name,
                 c.Value,
                 c.ContactType.IconClass ?? string.Empty,
@@ -173,23 +173,23 @@ public class ProfileMapperShould
 
         return new AboutViewModel(
             entity.ProfileImageUrl,
-            entity.Resume.About,
-            entity.Resume.JobTitle,
-            entity.Resume.Overview,
+            entity.ProfileHeader.About,
+            entity.ProfileHeader.JobTitle,
+            entity.ProfileHeader.Overview,
             entity.BirthDate!.Value,
             webSite,
             mobilePhone,
-            entity.Resume.Address,
+            entity.ProfileHeader.Address,
             entity.BirthDate.GetAge(),
-            entity.Resume.Title ?? string.Empty,
+            entity.ProfileHeader.Title ?? string.Empty,
             email,
-            entity.Resume.Summary ?? string.Empty,
-            entity.Resume.Summary
+            entity.ProfileHeader.Summary ?? string.Empty,
+            entity.ProfileHeader.Summary
         );
 
         string GetContactValue(string contactTypeName)
         {
-            return entity.Resume.ContactInfo
+            return entity.ProfileHeader.ContactInfo
                 .FirstOrDefault(x => x.ContactType.Name == contactTypeName)
                 ?.Value ?? string.Empty;
         }
@@ -229,7 +229,7 @@ public class ProfileMapperShould
 
     private static SummaryViewModel GetSummaryViewModel(Profile profile)
     {
-        var education = profile.ProfessionalSummary.Qualifications
+        var education = profile.CareerHistory.Qualifications
             .Select(e => new AcademicBackgroundViewModel(
                 e.Degree,
                 e.StartDate.ToString("yyyy-MM-dd"),
@@ -237,7 +237,7 @@ public class ProfileMapperShould
                 e.Description))
             .ToArray();
 
-        var workExperiences = profile.ProfessionalSummary.WorkExperiences
+        var workExperiences = profile.CareerHistory.WorkExperiences
             .Select(w => new PositionViewModel(
                 w.JobTitle,
                 w.StartDate.ToString("yyyy-MM-dd"),
@@ -247,7 +247,7 @@ public class ProfileMapperShould
             .ToArray();
 
         return new SummaryViewModel(
-            profile.ProfessionalSummary.Introduction,
+            profile.CareerHistory.Introduction,
             new EducationViewModel(education),
             new WorkExperienceViewModel(workExperiences));
     }

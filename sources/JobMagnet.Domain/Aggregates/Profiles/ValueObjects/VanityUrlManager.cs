@@ -6,15 +6,15 @@ using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 
-public class VanityUrls
+public class VanityUrlManager
 {
     private readonly Profile _profile;
 
-    private VanityUrls()
+    private VanityUrlManager()
     {
     }
 
-    internal VanityUrls(Profile profile)
+    internal VanityUrlManager(Profile profile)
     {
         _profile = profile;
     }

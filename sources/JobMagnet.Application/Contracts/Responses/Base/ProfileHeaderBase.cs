@@ -1,6 +1,6 @@
 namespace JobMagnet.Application.Contracts.Responses.Base;
 
-public sealed record ResumeCommandBase
+public sealed record ProfileHeaderBase
 {
     public Guid ProfileId { get; init; }
     public string? JobTitle { get; init; }

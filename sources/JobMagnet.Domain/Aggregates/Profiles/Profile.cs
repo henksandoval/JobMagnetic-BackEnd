@@ -22,12 +22,12 @@ public class Profile : SoftDeletableAggregate<ProfileId>
     public string? MiddleName { get; private set; }
     public string? SecondLastName { get; private set; }
 
-    public virtual Headline? Resume { get; private set; }
+    public virtual ProfileHeader? ProfileHeader { get; private set; }
     public virtual SkillSet? SkillSet { get; private set; }
-    public virtual CareerHistory? ProfessionalSummary { get; private set; }
+    public virtual CareerHistory? CareerHistory { get; private set; }
     public SocialProof SocialProof { get; private set; }
     public Portfolio Portfolio { get; private set; }
-    public VanityUrls LinkManager { get; private set; }
+    public VanityUrlManager LinkManager { get; private set; }
     public TalentShowcase TalentShowcase { get; private set; }
     public virtual IReadOnlyCollection<Talent> Talents => _talents;
     public virtual IReadOnlyCollection<Project> Projects => _projects;
@@ -39,7 +39,7 @@ public class Profile : SoftDeletableAggregate<ProfileId>
     {
         SocialProof = new SocialProof(this);
         Portfolio = new Portfolio(this);
-        LinkManager = new VanityUrls(this);
+        LinkManager = new VanityUrlManager(this);
         TalentShowcase = new TalentShowcase(this);
     }
 
@@ -62,7 +62,7 @@ public class Profile : SoftDeletableAggregate<ProfileId>
 
         SocialProof = new SocialProof(this);
         Portfolio = new Portfolio(this);
-        LinkManager = new VanityUrls(this);
+        LinkManager = new VanityUrlManager(this);
         TalentShowcase = new TalentShowcase(this);
     }
 
@@ -135,14 +135,14 @@ public class Profile : SoftDeletableAggregate<ProfileId>
     {
         Guard.IsNotNull(careerHistory);
 
-        ProfessionalSummary = careerHistory;
+        CareerHistory = careerHistory;
     }
 
-    public void AddResume(Headline headline)
+    public void AddResume(ProfileHeader profileHeader)
     {
-        Guard.IsNotNull(headline);
+        Guard.IsNotNull(profileHeader);
 
-        Resume = headline;
+        ProfileHeader = profileHeader;
     }
 
     internal void AddTestimonial(Testimonial testimonial)

@@ -173,11 +173,11 @@ public class GeminiCvParser(IGeminiClient geminiClient, IOptions<GeminiSettings>
         promptBuilder.AppendLine("Infer ALL possible information from the 'CV Text' for EVERY field in the 'Target JSON Structure'.");
         promptBuilder.AppendLine("\nResume Content Instructions:");
         promptBuilder.AppendLine(
-            "  - For 'Headline.About': Generate a brief, first-person personal introduction (e.g., 'Hello! I'm [Name], a passionate [Job Title]...'). This should highlight the candidate's professional identity and passion.");
+            "  - For 'ProfileHeader.About': Generate a brief, first-person personal introduction (e.g., 'Hello! I'm [Name], a passionate [Job Title]...'). This should highlight the candidate's professional identity and passion.");
         promptBuilder.AppendLine(
-            "  - For 'Headline.CareerHistory': Extract or generate a concise list or a few short sentences detailing key professional actions, responsibilities, or contributions from the candidate's experience (e.g., 'Developed and maintained web applications..., Assisted in the development of...'). Focus on what the candidate *did*.");
+            "  - For 'ProfileHeader.ProfileHeader': Extract or generate a concise list or a few short sentences detailing key professional actions, responsibilities, or contributions from the candidate's experience (e.g., 'Developed and maintained web applications..., Assisted in the development of...'). Focus on what the candidate *did*.");
         promptBuilder.AppendLine(
-            "  - For 'Headline.Overview': Generate a compelling and comprehensive professional overview. This text should summarize the candidate's key skills, overall experience, and suitability for roles, effectively acting as an 'elevator pitch'.");
+            "  - For 'ProfileHeader.Overview': Generate a compelling and comprehensive professional overview. This text should summarize the candidate's key skills, overall experience, and suitability for roles, effectively acting as an 'elevator pitch'.");
         promptBuilder.AppendLine("Talents Instructions:");
         promptBuilder.AppendLine(
             "  - From the entire 'CV Text' (including summary, experience, projects, and personal descriptions), identify key professional roles, identities, and core personal attributes or soft skills that define the candidate.");
@@ -192,7 +192,7 @@ public class GeminiCvParser(IGeminiClient geminiClient, IOptions<GeminiSettings>
             "  - For each skill, assign a numeric `level` (scale 0-10, where 10 is expert) if the CV provides any indication (e.g., 'advanced' could be 8, 'expert' 10, 'basic' 3).");
         promptBuilder.AppendLine("  - If no clear indication of skill level is found, assign a default `level` of `5`.");
         promptBuilder.AppendLine(
-            "Generate a compelling text for the 'Headline.Overview' field. This text should include a summary of key skills and be based on the 'CV Text', written in the same language as the 'CV Text'.");
+            "Generate a compelling text for the 'ProfileHeader.Overview' field. This text should include a summary of key skills and be based on the 'CV Text', written in the same language as the 'CV Text'.");
         promptBuilder.AppendLine("Dates: use YYYY-MM or YYYY for partials. If current, endDate is null.");
         promptBuilder.AppendLine("\nCV Text:");
         promptBuilder.AppendLine("```text");

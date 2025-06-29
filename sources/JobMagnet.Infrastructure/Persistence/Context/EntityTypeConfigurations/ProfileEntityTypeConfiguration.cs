@@ -17,12 +17,12 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<Profile>
 
         builder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
-        builder.HasOne<Headline>(p => p.Resume)
+        builder.HasOne<ProfileHeader>(p => p.ProfileHeader)
             .WithOne()
-            .HasForeignKey<Headline>(r => r.ProfileId)
+            .HasForeignKey<ProfileHeader>(r => r.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne<CareerHistory>(p => p.ProfessionalSummary)
+        builder.HasOne<CareerHistory>(p => p.CareerHistory)
             .WithOne()
             .HasForeignKey<CareerHistory>(s => s.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);

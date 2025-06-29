@@ -12,12 +12,12 @@ public class ContactInfo : TrackableAggregate<ContactInfoId>
 {
     public string Value { get; private set; }
     public ContactTypeId ContactTypeId { get; private set; }
-    public HeadlineId HeadlineId { get; private set; }
+    public ProfileHeaderId ProfileHeaderId { get; private set; }
     public virtual ContactType ContactType { get; private set; }
 
     private ContactInfo() : base() { }
 
-    private ContactInfo(ContactInfoId id, IClock clock, string value, ContactType contactType, HeadlineId headlineId) : base(id, clock)
+    private ContactInfo(ContactInfoId id, IClock clock, string value, ContactType contactType, ProfileHeaderId profileHeaderId) : base(id, clock)
     {
         Guard.IsNotNullOrEmpty(value);
         Guard.IsNotNull(contactType);
@@ -26,13 +26,13 @@ public class ContactInfo : TrackableAggregate<ContactInfoId>
         Value = value;
         ContactTypeId = contactType.Id;
         ContactType = contactType;
-        HeadlineId = headlineId;
+        ProfileHeaderId = profileHeaderId;
     }
 
-    internal static ContactInfo CreateInstance(IGuidGenerator guidGenerator, IClock clock, HeadlineId headlineId, string value,
+    internal static ContactInfo CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileHeaderId profileHeaderId, string value,
         ContactType contactType)
     {
         var id = new ContactInfoId(guidGenerator.NewGuid());
-        return new ContactInfo(id , clock, value, contactType, headlineId);
+        return new ContactInfo(id , clock, value, contactType, profileHeaderId);
     }
 }

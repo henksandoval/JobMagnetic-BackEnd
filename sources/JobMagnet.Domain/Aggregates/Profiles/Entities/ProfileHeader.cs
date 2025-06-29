@@ -6,9 +6,9 @@ using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
-public readonly record struct HeadlineId(Guid Value) : IStronglyTypedId<HeadlineId>;
+public readonly record struct ProfileHeaderId(Guid Value) : IStronglyTypedId<ProfileHeaderId>;
 
-public class Headline : SoftDeletableAggregate<HeadlineId>
+public class ProfileHeader : SoftDeletableAggregate<ProfileHeaderId>
 {
     public const int MaxJobTitleLength = 100;
 
@@ -25,10 +25,10 @@ public class Headline : SoftDeletableAggregate<HeadlineId>
 
     public virtual IReadOnlyCollection<ContactInfo>? ContactInfo => _contactInfo;
 
-    private Headline() : base() { }
+    private ProfileHeader() : base() { }
 
-    private Headline(
-        HeadlineId id,
+    private ProfileHeader(
+        ProfileHeaderId id,
         ProfileId profileId,
         IClock clock,
         string title,
@@ -52,11 +52,11 @@ public class Headline : SoftDeletableAggregate<HeadlineId>
         Address = address;
     }
 
-    public static Headline CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string title, string suffix, string jobTitle, string about,
+    public static ProfileHeader CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string title, string suffix, string jobTitle, string about,
         string summary, string overview, string address)
     {
-        var id = new HeadlineId(guidGenerator.NewGuid());
-        return new Headline(id, profileId, clock, title, suffix, jobTitle, about, summary, overview, address);
+        var id = new ProfileHeaderId(guidGenerator.NewGuid());
+        return new ProfileHeader(id, profileId, clock, title, suffix, jobTitle, about, summary, overview, address);
     }
 
     public void UpdateGeneralInfo(

@@ -107,7 +107,7 @@ public class ProfileFactoryShould
                 options => options.ExcludingMissingMembers());
     }
 /*
-    #region Headline Mapping Tests
+    #region ProfileHeader Mapping Tests
 
     [Fact(DisplayName = "Map resume aggregation when the DTO provides them")]
     public async Task MapResume_WhenDtoProvidesThem()
@@ -124,9 +124,9 @@ public class ProfileFactoryShould
 
         // --- Then ---
         profile.Should().NotBeNull();
-        profile.Resume.Should().NotBeNull();
-        var resume = profile.Resume!;
-        var expectedResume = profileDto.Resume!;
+        profile.ProfileHeader.Should().NotBeNull();
+        var resume = profile.ProfileHeader!;
+        var expectedResume = profileDto.ProfileHeader!;
 
         resume.About.Should().Be(expectedResume.About ?? string.Empty);
         resume.Address.Should().Be(expectedResume.Address ?? string.Empty);
@@ -168,11 +168,11 @@ public class ProfileFactoryShould
             CancellationToken.None);
 
         // --- Then ---
-        profile.Resume.Should().NotBeNull();
-        profile.Resume!.ContactInfo.Should().NotBeNull();
-        profile.Resume!.ContactInfo.Should().HaveCount(1);
+        profile.ProfileHeader.Should().NotBeNull();
+        profile.ProfileHeader!.ContactInfo.Should().NotBeNull();
+        profile.ProfileHeader!.ContactInfo.Should().HaveCount(1);
 
-        var actualContactInfo = profile.Resume!.ContactInfo!.First();
+        var actualContactInfo = profile.ProfileHeader!.ContactInfo!.First();
         actualContactInfo.Value.Should().Be(expectedValue);
         actualContactInfo.ContactType.Name.Should().Be(expectedTypeName);
         actualContactInfo.ContactType.IconClass.Should().Be(expectedIconClass);
@@ -209,11 +209,11 @@ public class ProfileFactoryShould
             CancellationToken.None);
 
         // --- Then ---
-        profile.Resume.Should().NotBeNull();
-        profile.Resume!.ContactInfo.Should().NotBeNull();
-        profile.Resume!.ContactInfo.Should().HaveCount(1);
+        profile.ProfileHeader.Should().NotBeNull();
+        profile.ProfileHeader!.ContactInfo.Should().NotBeNull();
+        profile.ProfileHeader!.ContactInfo.Should().HaveCount(1);
 
-        var actualContactInfo = profile.Resume!.ContactInfo!.First();
+        var actualContactInfo = profile.ProfileHeader!.ContactInfo!.First();
         actualContactInfo.Value.Should().Be(expectedValue);
         actualContactInfo.ContactType.Name.Should().Be(expectedTypeName);
         actualContactInfo.ContactType.IconClass.Should().Be(expectedIconClass);
@@ -244,11 +244,11 @@ public class ProfileFactoryShould
             CancellationToken.None);
 
         // --- Then ---
-        profile.Resume.Should().NotBeNull();
-        profile.Resume!.ContactInfo.Should().NotBeNull();
-        profile.Resume!.ContactInfo.Should().HaveCount(1);
+        profile.ProfileHeader.Should().NotBeNull();
+        profile.ProfileHeader!.ContactInfo.Should().NotBeNull();
+        profile.ProfileHeader!.ContactInfo.Should().HaveCount(1);
 
-        var actualContactInfo = profile.Resume!.ContactInfo!.First();
+        var actualContactInfo = profile.ProfileHeader!.ContactInfo!.First();
         actualContactInfo.Value.Should().Be(unknownTypeValue);
         actualContactInfo.ContactType.Name.Should().Be(unknownTypeName);
     }
@@ -292,11 +292,11 @@ public class ProfileFactoryShould
         var profile = await _profileFactory.CreateProfileFromDtoAsync(profileDto, CancellationToken.None);
 
         // --- Then ---
-        profile.Resume.Should().NotBeNull();
-        profile.Resume!.ContactInfo.Should().NotBeNull();
-        profile.Resume!.ContactInfo.Should().HaveSameCount(contacts);
+        profile.ProfileHeader.Should().NotBeNull();
+        profile.ProfileHeader!.ContactInfo.Should().NotBeNull();
+        profile.ProfileHeader!.ContactInfo.Should().HaveSameCount(contacts);
 
-        var emailContact = profile.Resume!.ContactInfo!.Single(c => c.ContactType.Name == knownTypeName);
+        var emailContact = profile.ProfileHeader!.ContactInfo!.Single(c => c.ContactType.Name == knownTypeName);
 
         emailContact.Should().NotBeNull();
 
@@ -304,7 +304,7 @@ public class ProfileFactoryShould
         emailContact.ContactType.Name.Should().Be(knownTypeName);
         emailContact.ContactType.IconClass.Should().Be(knownTypeIcon);
 
-        var adHocContact = profile.Resume!.ContactInfo!.Single(c => c.ContactType.Name == unknownTypeName);
+        var adHocContact = profile.ProfileHeader!.ContactInfo!.Single(c => c.ContactType.Name == unknownTypeName);
 
         adHocContact.Should().NotBeNull();
 
