@@ -100,7 +100,7 @@ public partial class ProfileController
         return Results.NoContent();
     }
 
-    [HttpPut("{profileId:guid}/projects/arrange")] // Un buen endpoint RESTful para esta operación
+    [HttpPut("{profileId:guid}/projects/arrange")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

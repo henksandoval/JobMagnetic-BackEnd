@@ -24,7 +24,7 @@ public class Portfolio
 
     public Project AddProject(IGuidGenerator guidGenerator, IClock clock, string title, string description, string urlLink, string urlImage, string urlVideo, string type)
     {
-        if (Projects.Count >= 20) throw new JobMagnetDomainException("Cannot add more than 20 testimonials.");
+        if (Projects.Count >= 20) throw new JobMagnetDomainException("Cannot add more than 20 projects.");
 
         var position = GetPosition();
         var project = Project.CreateInstance(
