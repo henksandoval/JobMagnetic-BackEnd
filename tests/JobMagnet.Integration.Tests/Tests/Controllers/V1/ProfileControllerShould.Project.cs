@@ -35,7 +35,7 @@ public partial class ProfileControllerShould
 
         var locationHeader = response.Headers.Location!.ToString();
         locationHeader.Should().NotBeNull();
-        var expectedHeader = $"{RequestUriController}/{profile.Id.Value}/projects";
+        var expectedHeader = $"{RequestUriController}/{profile.Id.Value}/project";
         locationHeader.Should().Match(currentHeader =>
             currentHeader.Contains(expectedHeader, StringComparison.OrdinalIgnoreCase)
         );

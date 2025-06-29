@@ -74,12 +74,12 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
         return this;
     }
 
-    public async Task<Profile?> BuildFirstOrDefaultAsync()
+    public async Task<Profile?> BuildFirstOrDefaultAsync(CancellationToken cancellationToken)
     {
         var finalQuery = _query.AsNoTracking().AsSplitQuery();
 
         return await finalQuery
-            .FirstOrDefaultAsync(_whereCondition)
+            .FirstOrDefaultAsync(_whereCondition, cancellationToken)
             .ConfigureAwait(false);
     }
 }

@@ -20,7 +20,7 @@ public partial class ProfileController
         var profile = await queryRepository
             .WhereCondition(p => p.Id == new ProfileId(profileId))
             .WithProject()
-            .BuildFirstOrDefaultAsync()
+            .BuildFirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
 
         if (profile is null)
@@ -45,7 +45,7 @@ public partial class ProfileController
         return Results.CreatedAtRoute("GetProjectsByProfile", new { profileId }, result);
     }
 
-    [HttpGet("{profileId:guid}/projects", Name = "GetProjectsByProfile")]
+    [HttpGet("{profileId:guid}/project", Name = "GetProjectsByProfile")]
     [ProducesResponseType(typeof(IEnumerable<ProjectResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetProjectsByProfileAsync(Guid profileId, CancellationToken cancellationToken)
@@ -53,7 +53,7 @@ public partial class ProfileController
         var profile = await queryRepository
             .WhereCondition(p => p.Id == new ProfileId(profileId))
             .WithProject()
-            .BuildFirstOrDefaultAsync()
+            .BuildFirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
 
         if (profile is null)

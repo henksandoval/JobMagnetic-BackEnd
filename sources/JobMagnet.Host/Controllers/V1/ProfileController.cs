@@ -133,7 +133,7 @@ public partial class ProfileController(
             .WithProject()
             .WithSummary()
             .WithTestimonials()
-            .BuildFirstOrDefaultAsync();
+            .BuildFirstOrDefaultAsync(cancellationToken);
 
         if (entity is null)
             return Results.NotFound();
