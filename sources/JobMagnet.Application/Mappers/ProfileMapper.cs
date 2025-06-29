@@ -1,5 +1,4 @@
-﻿using JobMagnet.Application.Contracts.Commands.Profile;
-using JobMagnet.Application.Contracts.Responses.Profile;
+﻿using JobMagnet.Application.Contracts.Responses.Profile;
 using JobMagnet.Domain.Aggregates.Profiles;
 using Mapster;
 
@@ -12,10 +11,6 @@ public static class ProfileMapper
         TypeAdapterConfig<Profile, ProfileResponse>
             .NewConfig()
             .Map(dest => dest.Id, src => src.Id.Value)
-            .Map(dest => dest.ProfileData, src => src);
-
-        TypeAdapterConfig<Profile, ProfileCommand>
-            .NewConfig()
             .Map(dest => dest.ProfileData, src => src);
     }
 

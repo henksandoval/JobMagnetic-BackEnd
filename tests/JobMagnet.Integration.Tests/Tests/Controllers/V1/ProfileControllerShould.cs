@@ -5,8 +5,11 @@ using System.Net.Mime;
 using System.Text;
 using AutoFixture;
 using AwesomeAssertions;
+using JobMagnet.Application.Contracts.Commands.Portfolio;
 using JobMagnet.Application.Contracts.Commands.Profile;
 using JobMagnet.Application.Contracts.Queries.Profile;
+using JobMagnet.Application.Contracts.Responses.Base;
+using JobMagnet.Application.Contracts.Responses.Portfolio;
 using JobMagnet.Application.Contracts.Responses.Profile;
 using JobMagnet.Application.UseCases.CvParser.Responses;
 using JobMagnet.Domain.Aggregates.Profiles;
@@ -59,7 +62,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ReturnRecord_WhenValidNameProvidedAsync()
     {
         // --- Given ---
-        var entity = await SetupEntityAsync();
+        var entity = await SetupProfileAsync();
         var publicProfile = await SetupPublicProfileAsync(entity);
         var queryParameters = new Dictionary<string, string?>
         {
@@ -128,7 +131,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ReturnRecord_WhenValidIdIsProvidedAsync()
     {
         // --- Given ---
-        var entity = await SetupEntityAsync();
+        var entity = await SetupProfileAsync();
 
         // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id.Value}");
@@ -146,7 +149,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ReturnNotFound_WhenInvalidIdIsProvidedAsync()
     {
         // --- Given ---
-        _ = await SetupEntityAsync();
+        _ = await SetupProfileAsync();
 
         // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
@@ -160,7 +163,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     public async Task ReturnNotContent_WhenReceivedValidPutRequestAsync()
     {
         // --- Given ---
-        var entity = await SetupEntityAsync();
+        var entity = await SetupProfileAsync();
         var updateRequest = _fixture.Build<ProfileCommand>()
             .Create();
 
@@ -222,7 +225,42 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
         responseData.ProfileUrl.Should().StartWith("laura-gomez-");
     }
 
-    private async Task<Profile> SetupEntityAsync()
+    [Fact(DisplayName = "Add Project to Profile")]
+    public async Task AddProjectToProfileAsync()
+    {
+        // --- Given ---
+        var profile = await SetupProfileAsync();
+        var createRequest = _fixture.Build<ProjectCommand>()
+            .With(x => x.ProjectData, GetProjectData(profile.Id.Value))
+            .Create();
+        var httpContent = TestUtilities.SerializeRequestContent(createRequest);
+
+        // --- When ---
+        var response = await _httpClient.PostAsync($"{RequestUriController}/{profile.Id.Value}/project", httpContent);
+
+        // --- Then ---
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+        var responseData = await TestUtilities.DeserializeResponseAsync<ProjectResponse>(response);
+        responseData.Should().NotBeNull();
+
+        var locationHeader = response.Headers.Location!.ToString();
+        locationHeader.Should().NotBeNull();
+        var expectedHeader = $"{RequestUriController}/{profile.Id.Value}/projects";
+        locationHeader.Should().Match(currentHeader =>
+            currentHeader.Contains(expectedHeader, StringComparison.OrdinalIgnoreCase)
+        );
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Project, ProjectId>>();
+        var entityCreated = await queryRepository.GetByIdAsync(new ProjectId(responseData.Id), CancellationToken.None);
+
+        entityCreated.Should().NotBeNull();
+        entityCreated.ProfileId.Should().Be(profile.Id);
+    }
+
+    private async Task<Profile> SetupProfileAsync()
     {
         await _testFixture.ResetDatabaseAsync();
         return await CreateAndPersistEntityAsync();
@@ -231,7 +269,7 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
     private async Task<Profile> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<Profile>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<IGenericCommandRepository<Profile>>();
 
         var entity = new ProfileEntityBuilder(_fixture)
             .WithResume()
@@ -263,12 +301,20 @@ public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository =
-            scope.ServiceProvider.GetRequiredService<ICommandRepository<VanityUrl>>();
+            scope.ServiceProvider.GetRequiredService<IGenericCommandRepository<VanityUrl>>();
 
         await commandRepository.CreateRangeAsync(profile.VanityUrls, CancellationToken.None);
         await commandRepository.SaveChangesAsync();
 
         return profile.VanityUrls.FirstOrDefault() ??
                throw new InvalidOperationException("Public profile identifier was not created.");
+    }
+
+    private ProjectBase GetProjectData(Guid profileEntityId)
+    {
+        return _fixture
+            .Build<ProjectBase>()
+            .With(x => x.ProfileId, profileEntityId)
+            .Create();
     }
 }

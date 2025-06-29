@@ -31,7 +31,7 @@ public class CvParserHandlerShould
     private readonly Mock<IContactTypeResolverService> _contactTypeResolverMock;
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly CvParserHandler _handler;
-    private readonly Mock<ICommandRepository<Profile>> _profileCommandRepositoryMock;
+    private readonly Mock<IGenericCommandRepository<Profile>> _profileCommandRepositoryMock;
     private readonly Mock<IProfileFactory> _profileFactoryMock;
     private readonly Mock<IRawCvParser> _rawCvParserMock;
     private readonly Mock<IProfileSlugGenerator> _slugGeneratorMock;
@@ -39,7 +39,7 @@ public class CvParserHandlerShould
     public CvParserHandlerShould()
     {
         _rawCvParserMock = new Mock<IRawCvParser>();
-        _profileCommandRepositoryMock = new Mock<ICommandRepository<Profile>>();
+        _profileCommandRepositoryMock = new Mock<IGenericCommandRepository<Profile>>();
         _slugGeneratorMock = new Mock<IProfileSlugGenerator>();
         _profileFactoryMock = new Mock<IProfileFactory>();
         _contactTypeResolverMock = new Mock<IContactTypeResolverService>();

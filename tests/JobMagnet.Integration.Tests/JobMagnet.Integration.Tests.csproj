@@ -56,7 +56,6 @@
 
     <ItemGroup>
       <Compile Remove="Tests\Controllers\V0\AdminControllerShould.cs" />
-      <Compile Remove="Tests\Controllers\V1\ProjectControllerShould.cs" />
       <Compile Remove="Tests\Controllers\V1\ResumeControllerShould.cs" />
       <Compile Remove="Tests\Controllers\V1\SummaryControllerShould.cs" />
       <Compile Remove="Tests\Controllers\V1\TestimonialControllerShould.cs" />

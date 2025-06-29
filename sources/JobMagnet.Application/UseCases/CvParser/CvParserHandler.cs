@@ -21,7 +21,7 @@ public class CvParserHandler(
     IGuidGenerator guidGenerator,
     IClock clock,
     IRawCvParser cvParser,
-    ICommandRepository<Profile> profileRepository,
+    IGenericCommandRepository<Profile> profileRepository,
     IProfileSlugGenerator slugGenerator,
     IProfileFactory profileFactory)
     : ICvParserHandler

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace JobMagnet.Infrastructure.Persistence.Repositories.Base;
 
 public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
-    : IQueryRepository<TEntity, TKey>, ICommandRepository<TEntity>
+    : IQueryRepository<TEntity, TKey>, IGenericCommandRepository<TEntity>
     where TEntity : class
 {
     private readonly DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
@@ -21,13 +21,13 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
         await _dbSet.AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
     }
 
-    public ICommandRepository<TEntity> Update(TEntity entity)
+    public IGenericCommandRepository<TEntity> Update(TEntity entity)
     {
         _dbSet.Update(entity);
         return this;
     }
 
-    public ICommandRepository<TEntity> HardDelete(TEntity entity)
+    public IGenericCommandRepository<TEntity> HardDelete(TEntity entity)
     {
         _dbSet.Remove(entity);
         return this;

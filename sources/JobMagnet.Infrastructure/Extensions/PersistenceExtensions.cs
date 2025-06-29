@@ -34,19 +34,20 @@ internal static class PersistenceExtensions
             .AddTransient<IQueryRepository<SkillCategory, ushort>, Repository<SkillCategory, ushort>>()
             .AddTransient<IQueryRepository<SkillType, int>, Repository<SkillType, int>>()
             .AddTransient<IQueryRepository<SkillTypeAlias, int>, Repository<SkillTypeAlias, int>>()
-            .AddTransient<IQueryRepository<Project, long>, Repository<Project, long>>()
+            .AddTransient<IQueryRepository<Project, ProjectId>, Repository<Project, ProjectId>>()
             .AddTransient<IQueryRepository<Skill, long>, Repository<Skill, long>>()
             .AddTransient<IQueryRepository<CareerHistory, long>, Repository<CareerHistory, long>>()
             .AddTransient<IProfileQueryRepository, ProfileQueryRepository>();
 
     private static IServiceCollection AddCommandRepositories(this IServiceCollection services) =>
         services
-            .AddTransient<ICommandRepository<Profile>, Repository<Profile, long>>()
-            .AddTransient<ICommandRepository<VanityUrl>, Repository<VanityUrl, long>>()
-            .AddTransient<ICommandRepository<Talent>, Repository<Talent, long>>()
-            .AddTransient<ICommandRepository<Headline>, Repository<Headline, long>>()
-            .AddTransient<ICommandRepository<Testimonial>, Repository<Testimonial, long>>()
-            .AddTransient<ICommandRepository<Project>, Repository<Project, long>>()
-            .AddTransient<ICommandRepository<SkillSet>, Repository<SkillSet, long>>()
-            .AddTransient<ICommandRepository<CareerHistory>, Repository<CareerHistory, long>>();
+            .AddScoped(typeof(ICommandRepository<>), typeof(CommandRepository<>))
+            .AddTransient<IGenericCommandRepository<Profile>, Repository<Profile, long>>()
+            .AddTransient<IGenericCommandRepository<VanityUrl>, Repository<VanityUrl, long>>()
+            .AddTransient<IGenericCommandRepository<Talent>, Repository<Talent, long>>()
+            .AddTransient<IGenericCommandRepository<Headline>, Repository<Headline, long>>()
+            .AddTransient<IGenericCommandRepository<Testimonial>, Repository<Testimonial, long>>()
+            .AddTransient<IGenericCommandRepository<Project>, Repository<Project, long>>()
+            .AddTransient<IGenericCommandRepository<SkillSet>, Repository<SkillSet, long>>()
+            .AddTransient<IGenericCommandRepository<CareerHistory>, Repository<CareerHistory, long>>();
 }
