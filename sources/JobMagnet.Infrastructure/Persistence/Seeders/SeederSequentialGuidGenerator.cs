@@ -4,7 +4,7 @@ namespace JobMagnet.Infrastructure.Persistence.Seeders;
 
 public class SeederSequentialGuidGenerator : IGuidGenerator
 {
-    private int _counter = 0;
+    private int _counter;
 
     public Guid NewGuid()
     {

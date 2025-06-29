@@ -24,7 +24,7 @@ public class VanityUrlManager
         if (_profile.VanityUrls.Any(p => p.Type == LinkType.Primary)) return;
 
         var generatedSlug = slugGenerator.GenerateProfileSlug(_profile);
-        AddPublicProfileIdentifier(guidGenerator, clock,generatedSlug);
+        AddPublicProfileIdentifier(guidGenerator, clock, generatedSlug);
     }
 
     public void AddPublicProfileIdentifier(IGuidGenerator guidGenerator, IClock clock, string slug, LinkType type = LinkType.Primary)

@@ -9,10 +9,6 @@ public record ContactAliasSeedData(Guid Id, string Alias, ContactTypeId ContactT
 
 public static class ContactTypeSeeder
 {
-    public record SeedingData(
-        IReadOnlyCollection<ContactTypeSeedData> Types,
-        IReadOnlyCollection<ContactAliasSeedData> Aliases);
-
     public static int Count => ContactRawData.Data.Count;
     public static SeedingData SeedData { get; } = GenerateSeedData();
 
@@ -46,4 +42,8 @@ public static class ContactTypeSeeder
 
         return new SeedingData(types, aliases);
     }
+
+    public record SeedingData(
+        IReadOnlyCollection<ContactTypeSeedData> Types,
+        IReadOnlyCollection<ContactAliasSeedData> Aliases);
 }

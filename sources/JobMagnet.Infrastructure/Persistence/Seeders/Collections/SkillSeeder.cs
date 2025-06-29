@@ -11,11 +11,6 @@ public record AliasSeedData(Guid Id, string Alias, SkillTypeId SkillTypeId);
 
 public static class SkillSeeder
 {
-    public record SeedingData(
-        IReadOnlyCollection<CategorySeedData> Categories,
-        IReadOnlyCollection<TypeSeedData> Types,
-        IReadOnlyCollection<AliasSeedData> Aliases);
-
     public static SeedingData SeedData { get; } =
         GenerateSeedData();
 
@@ -42,9 +37,9 @@ public static class SkillSeeder
             var skillCategoryId = new SkillCategoryId(category.Id);
             categoryNameToIdMap.Add(category.Name, skillCategoryId);
             categories.Add(new CategorySeedData(
-                Id: skillCategoryId,
-                Name: category.Name,
-                AddedAt: addedAt
+                skillCategoryId,
+                category.Name,
+                addedAt
             ));
         }
 
@@ -57,22 +52,27 @@ public static class SkillSeeder
             var categoryId = categoryNameToIdMap[rawSkill.Category.Name];
 
             types.Add(new TypeSeedData(
-                Id: typeId,
-                Name: rawSkill.Name,
-                IconUrl: new Uri(rawSkill.Uri),
-                CategoryId: categoryId,
-                AddedAt: addedAt
+                typeId,
+                rawSkill.Name,
+                new Uri(rawSkill.Uri),
+                categoryId,
+                addedAt
             ));
 
             aliases.AddRange(rawSkill.Aliases.Select(alias =>
                 new AliasSeedData(
-                    Id: SeederSequentialGuidGenerator.FromInt(alias.Id),
-                    Alias: alias.Name,
-                    SkillTypeId: typeId
+                    SeederSequentialGuidGenerator.FromInt(alias.Id),
+                    alias.Name,
+                    typeId
                 ))
             );
         }
 
         return new SeedingData(categories, types, aliases);
     }
+
+    public record SeedingData(
+        IReadOnlyCollection<CategorySeedData> Categories,
+        IReadOnlyCollection<TypeSeedData> Types,
+        IReadOnlyCollection<AliasSeedData> Aliases);
 }

@@ -38,7 +38,8 @@ public class Project : SoftDeletableAggregate<ProjectId>
         ValidateInvariants();
     }
 
-    internal static Project CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string title, string description, string urlLink, string urlImage, string urlVideo, string type, int position)
+    internal static Project CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string title, string description,
+        string urlLink, string urlImage, string urlVideo, string type, int position)
     {
         var id = new ProjectId(guidGenerator.NewGuid());
         return new Project(id, profileId, clock, title, description, urlLink, urlImage, urlVideo, type, position);

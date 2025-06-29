@@ -1,4 +1,3 @@
-using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Infrastructure.Persistence.Context.ValueConverters;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;

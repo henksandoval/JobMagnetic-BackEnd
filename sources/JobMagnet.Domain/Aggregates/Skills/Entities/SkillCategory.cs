@@ -11,8 +11,8 @@ public class SkillCategory : SoftDeletableAggregate<SkillCategoryId>
 {
     private const int MinNameLength = 2;
     public const int MaxNameLength = 50;
-    public static Guid DefaultCategoryId = new ("00000001-0000-0000-0000-000000000000");
     public const string DefaultCategoryName = "General";
+    public static Guid DefaultCategoryId = new("00000001-0000-0000-0000-000000000000");
 
     public string Name { get; private set; }
 

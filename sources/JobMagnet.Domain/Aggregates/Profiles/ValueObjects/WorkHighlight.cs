@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.ValueObjects;

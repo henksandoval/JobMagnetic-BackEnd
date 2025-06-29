@@ -1,5 +1,4 @@
 using CommunityToolkit.Diagnostics;
-using CSharpFunctionalExtensions;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Shared.Abstractions;
@@ -22,7 +21,8 @@ public class Portfolio
         _profile = profile;
     }
 
-    public Project AddProject(IGuidGenerator guidGenerator, IClock clock, string title, string description, string urlLink, string urlImage, string urlVideo, string type)
+    public Project AddProject(IGuidGenerator guidGenerator, IClock clock, string title, string description, string urlLink, string urlImage,
+        string urlVideo, string type)
     {
         if (Projects.Count >= 20) throw new JobMagnetDomainException("Cannot add more than 20 projects.");
 
@@ -86,7 +86,8 @@ public class Portfolio
             throw new BusinessRuleValidationException("The list of project IDs for reordering contains duplicates.");
 
         if (!currentProjectIds.SetEquals(projectIds))
-            throw new BusinessRuleValidationException("The provided project list for reordering does not match the projects in the portfolio. Ensure all projects are included exactly once.");
+            throw new BusinessRuleValidationException(
+                "The provided project list for reordering does not match the projects in the portfolio. Ensure all projects are included exactly once.");
 
         foreach (var (projectId, index) in projectIds.WithIndex())
         {

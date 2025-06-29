@@ -33,6 +33,6 @@ public class ContactInfo : TrackableAggregate<ContactInfoId>
         ContactType contactType)
     {
         var id = new ContactInfoId(guidGenerator.NewGuid());
-        return new ContactInfo(id , clock, value, contactType, profileHeaderId);
+        return new ContactInfo(id, clock, value, contactType, profileHeaderId);
     }
 }

@@ -4,6 +4,9 @@ public abstract class BaseAggregate<TId>
 {
     private readonly List<IDomainEvent> _domainEvents = [];
 
+    public TId Id { get; protected init; }
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+
     protected BaseAggregate()
     {
     }
@@ -13,10 +16,6 @@ public abstract class BaseAggregate<TId>
         Id = id;
     }
 
-    public TId Id { get; protected init; }
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
-
     protected void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
     protected void ClearDomainEvents() => _domainEvents.Clear();
-
 }

@@ -4,8 +4,8 @@ namespace JobMagnet.Domain.Shared.Base;
 
 public abstract class SoftDeletableAggregate<TId> : TrackableAggregate<TId>
 {
-    public DateTimeOffset? DeletedAt { get; private set; }
-    public bool IsDeleted => DeletedAt.HasValue;
+    protected DateTimeOffset? DeletedAt { get; private set; }
+    protected bool IsDeleted => DeletedAt.HasValue;
 
     protected SoftDeletableAggregate() : base() { }
 

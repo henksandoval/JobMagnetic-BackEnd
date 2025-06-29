@@ -22,7 +22,7 @@ public static class SkillRawData
         new(106, "Angular", "https://cdn.simpleicons.org/angular", CatSoftwareDev, []),
         new(107, "PostgreSQL", "https://cdn.simpleicons.org/postgresql", CatSoftwareDev,
         [
-            new RawSimpleDefinition (203, "Postgres")
+            new RawSimpleDefinition(203, "Postgres")
         ]),
         new(108, "React", "https://cdn.simpleicons.org/react", CatSoftwareDev, []),
         new(109, "Bootstrap", "https://cdn.simpleicons.org/bootstrap", CatSoftwareDev, []),

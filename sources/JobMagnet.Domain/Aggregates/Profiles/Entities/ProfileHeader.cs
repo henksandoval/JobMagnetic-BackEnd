@@ -52,7 +52,8 @@ public class ProfileHeader : SoftDeletableAggregate<ProfileHeaderId>
         Address = address;
     }
 
-    public static ProfileHeader CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string title, string suffix, string jobTitle, string about,
+    public static ProfileHeader CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string title, string suffix,
+        string jobTitle, string about,
         string summary, string overview, string address)
     {
         var id = new ProfileHeaderId(guidGenerator.NewGuid());

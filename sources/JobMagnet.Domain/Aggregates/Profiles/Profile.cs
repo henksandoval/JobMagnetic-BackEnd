@@ -66,7 +66,8 @@ public class Profile : SoftDeletableAggregate<ProfileId>
         TalentShowcase = new TalentShowcase(this);
     }
 
-    public static Profile CreateInstance(IGuidGenerator guidGenerator, IClock clock, string? firstName, string? lastName, string? profileImageUrl = null, DateOnly? birthDate = null, string? middleName = null, string? secondLastName = null)
+    public static Profile CreateInstance(IGuidGenerator guidGenerator, IClock clock, string? firstName, string? lastName,
+        string? profileImageUrl = null, DateOnly? birthDate = null, string? middleName = null, string? secondLastName = null)
     {
         var id = new ProfileId(guidGenerator.NewGuid());
 

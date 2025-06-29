@@ -40,6 +40,5 @@ public class ContactTypeEntityTypeConfiguration : IEntityTypeConfiguration<Conta
                     .HasMaxLength(ContactTypeAlias.MaxAliasLength);
                 typeAliasBuilder.HasData(ContactTypeSeeder.SeedData.Aliases);
             });
-
     }
 }

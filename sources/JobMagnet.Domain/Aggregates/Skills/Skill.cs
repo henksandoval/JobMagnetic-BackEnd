@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
@@ -37,7 +36,8 @@ public class Skill : TrackableAggregate<SkillId>
         SkillType = skillType;
     }
 
-    internal static Skill CreateInstance(IGuidGenerator guidGenerator, IClock clock, SkillSetId skillSetId, SkillType skillType, ushort proficiencyLevel, ushort rank)
+    internal static Skill CreateInstance(IGuidGenerator guidGenerator, IClock clock, SkillSetId skillSetId, SkillType skillType,
+        ushort proficiencyLevel, ushort rank)
     {
         var id = new SkillId(guidGenerator.NewGuid());
         return new Skill(id, clock, skillSetId, skillType, proficiencyLevel, rank);

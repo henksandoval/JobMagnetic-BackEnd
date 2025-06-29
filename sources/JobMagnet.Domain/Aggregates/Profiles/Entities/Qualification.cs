@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Shared.Base;
 using JobMagnet.Domain.Shared.Base.Interfaces;

@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Shared.Base;
 using JobMagnet.Domain.Shared.Base.Interfaces;
@@ -16,9 +15,12 @@ public class Testimonial : SoftDeletableAggregate<TestimonialId>
     public string Feedback { get; private set; }
     public ProfileId ProfileId { get; private set; }
 
-    private Testimonial() : base() { }
+    private Testimonial()
+    {
+    }
 
-    private Testimonial(TestimonialId id, IClock clock, ProfileId profileId, string name, string jobTitle, string feedback, string? photoUrl) : base( id, clock)
+    private Testimonial(TestimonialId id, IClock clock, ProfileId profileId, string name, string jobTitle, string feedback, string? photoUrl) :
+        base(id, clock)
     {
         Guard.IsNotNullOrWhiteSpace(name);
         Guard.IsNotNullOrWhiteSpace(jobTitle);
@@ -31,7 +33,8 @@ public class Testimonial : SoftDeletableAggregate<TestimonialId>
         PhotoUrl = photoUrl;
     }
 
-    public static Testimonial CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string name, string jobTitle, string feedback, string? photoUrl)
+    public static Testimonial CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string name, string jobTitle,
+        string feedback, string? photoUrl)
     {
         var id = new TestimonialId(guidGenerator.NewGuid());
         return new Testimonial(id, clock, profileId, name, jobTitle, feedback, photoUrl);

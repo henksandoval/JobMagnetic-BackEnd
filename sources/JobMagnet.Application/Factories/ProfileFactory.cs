@@ -100,8 +100,7 @@ public class ProfileFactory(
         {
             var resolvedType = await contactTypeResolver.ResolveAsync(dto.ContactType!, cancellationToken);
 
-            var contactType = resolvedType.HasValue ?
-                resolvedType.Value : ContactType.CreateInstance(guidGenerator, clock, dto.ContactType!);
+            var contactType = resolvedType.HasValue ? resolvedType.Value : ContactType.CreateInstance(guidGenerator, clock, dto.ContactType!);
 
             resumeEntity.AddContactInfo(guidGenerator, clock, dto.Value!, contactType);
         }
@@ -120,7 +119,7 @@ public class ProfileFactory(
         return talentDtos
             .Select(dto => new Talent(
                 dto.Description ?? string.Empty
-                )).ToList();
+            )).ToList();
     }
 
     private List<Testimonial> BuildTestimonials(List<TestimonialParseDto>? testimonials)
@@ -153,7 +152,7 @@ public class ProfileFactory(
             dto.UrlVideo ?? string.Empty,
             dto.Type ?? string.Empty,
             ++index
-            )).ToList();
+        )).ToList();
     }
 
     private List<Qualification> BuildEducationHistory(List<EducationParseDto>? educationDtos)
@@ -185,7 +184,7 @@ public class ProfileFactory(
             ToDateTimeOrDefault(dto.StartDate),
             ToNullableDateTime(dto.EndDate),
             dto.Description ?? string.Empty
-            )).ToList();
+        )).ToList();
     }
 
     private CareerHistory? BuildSummary(SummaryParseDto? summaryDto)
@@ -219,7 +218,8 @@ public class ProfileFactory(
                 .ConfigureAwait(false); //TODO: Add method by resolving skills by batch
 
             var skillType = resolvedType.HasValue
-                ? resolvedType.Value : SkillType.CreateInstance(
+                ? resolvedType.Value
+                : SkillType.CreateInstance(
                     guidGenerator,
                     clock,
                     skill.Name ?? string.Empty,

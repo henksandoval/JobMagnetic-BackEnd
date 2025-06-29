@@ -2,7 +2,6 @@
 using Asp.Versioning;
 using JobMagnet.Host.Controllers.Base;
 using JobMagnet.Infrastructure.Persistence.Context;
-using JobMagnet.Infrastructure.Persistence.Seeders;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Host.Controllers.V0;
@@ -10,7 +9,7 @@ namespace JobMagnet.Host.Controllers.V0;
 [ApiVersion("0.1")]
 public class AdminController(
     ILogger<AdminController> logger,
-    JobMagnetDbContext dbContext/*,
+    JobMagnetDbContext dbContext /*,
     ISeeder seeder*/) : BaseController<AdminController>(logger)
 {
     private const string PongMessage = "Pong";

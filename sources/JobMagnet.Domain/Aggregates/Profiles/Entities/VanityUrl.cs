@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Domain.Shared.Base;
@@ -33,7 +32,8 @@ public class VanityUrl : TrackableAggregate<VanityUrlId>
         ViewCount = 0;
     }
 
-    internal static VanityUrl CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string slug, LinkType linkType = LinkType.Primary)
+    internal static VanityUrl CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string slug,
+        LinkType linkType = LinkType.Primary)
     {
         var id = new VanityUrlId(guidGenerator.NewGuid());
         return new VanityUrl(id, profileId, clock, slug, linkType);

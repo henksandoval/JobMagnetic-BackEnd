@@ -1,9 +1,7 @@
 ﻿using System.Net.Mime;
 using Asp.Versioning;
-using JobMagnet.Application.Contracts.Commands.Portfolio;
 using JobMagnet.Application.Contracts.Commands.Profile;
 using JobMagnet.Application.Contracts.Queries.Profile;
-using JobMagnet.Application.Contracts.Responses.Portfolio;
 using JobMagnet.Application.Contracts.Responses.Profile;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Application.UseCases.CvParser;

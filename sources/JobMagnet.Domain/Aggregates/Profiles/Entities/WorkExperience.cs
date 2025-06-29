@@ -1,5 +1,3 @@
-
-using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Shared.Base;
@@ -56,10 +54,11 @@ public class WorkExperience : SoftDeletableAggregate<WorkExperienceId>
         Description = description;
     }
 
-    public static WorkExperience CreateInstance(IGuidGenerator guidGenerator, IClock clock, CareerHistoryId careerHistoryId, string jobTitle, string companyName, string companyLocation, DateTime startDate, DateTime? endDate, string description)
+    public static WorkExperience CreateInstance(IGuidGenerator guidGenerator, IClock clock, CareerHistoryId careerHistoryId, string jobTitle,
+        string companyName, string companyLocation, DateTime startDate, DateTime? endDate, string description)
     {
         var id = new WorkExperienceId(guidGenerator.NewGuid());
-        return new WorkExperience(id, careerHistoryId, clock,jobTitle, companyName, companyLocation, startDate, endDate, description);
+        return new WorkExperience(id, careerHistoryId, clock, jobTitle, companyName, companyLocation, startDate, endDate, description);
     }
 
     public void AddResponsibility(WorkHighlight highlight)
