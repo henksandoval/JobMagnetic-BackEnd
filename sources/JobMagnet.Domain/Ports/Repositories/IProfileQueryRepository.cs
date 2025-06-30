@@ -7,11 +7,11 @@ namespace JobMagnet.Domain.Ports.Repositories;
 public interface IProfileQueryRepository : IQueryRepository<Profile, ProfileId>
 {
     IProfileQueryRepository WhereCondition(Expression<Func<Profile, bool>> expression);
-    IProfileQueryRepository WithResume();
+    IProfileQueryRepository WithProfileHeader();
     IProfileQueryRepository WithSkills();
     IProfileQueryRepository WithTalents();
     IProfileQueryRepository WithProject();
-    IProfileQueryRepository WithSummary();
+    IProfileQueryRepository WithCareerHistory();
     IProfileQueryRepository WithTestimonials();
     Task<Profile?> BuildFirstOrDefaultAsync(CancellationToken cancellationToken);
 }

@@ -9,6 +9,7 @@ using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Repositories;
 using JobMagnet.Infrastructure.Persistence.Repositories.Base;
+using JobMagnet.Infrastructure.Persistence.Seeders;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JobMagnet.Infrastructure.Extensions;
@@ -18,7 +19,7 @@ internal static class PersistenceExtensions
     internal static IServiceCollection AddPersistence(this IServiceCollection services) =>
         services
             .AddTransient<IJobMagnetDbContextFactory, JobMagnetJobMagnetDbContextFactory>()
-            // .AddTransient<ISeeder, Seeder>()
+            .AddTransient<ISeeder, Seeder>()
             .AddScoped<IUnitOfWork, UnitOfWork>()
             .AddQueryRepositories()
             .AddCommandRepositories();

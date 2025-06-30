@@ -2,6 +2,7 @@
 using Asp.Versioning;
 using JobMagnet.Host.Controllers.Base;
 using JobMagnet.Infrastructure.Persistence.Context;
+using JobMagnet.Infrastructure.Persistence.Seeders;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Host.Controllers.V0;
@@ -9,8 +10,8 @@ namespace JobMagnet.Host.Controllers.V0;
 [ApiVersion("0.1")]
 public class AdminController(
     ILogger<AdminController> logger,
-    JobMagnetDbContext dbContext /*,
-    ISeeder seeder*/) : BaseController<AdminController>(logger)
+    JobMagnetDbContext dbContext,
+    ISeeder seeder) : BaseController<AdminController>(logger)
 {
     private const string PongMessage = "Pong";
 
@@ -42,7 +43,8 @@ public class AdminController(
     {
         if (!dbContext.ContactTypes.Any()) throw new InvalidOperationException("Contact types are not yet implemented");
 
-        // await seeder.RegisterProfileAsync(cancellationToken);
-        return Results.Accepted();
+        var profileId = await seeder.RegisterProfileAsync(cancellationToken);
+
+        return profileId.HasValue ? Results.Ok(profileId.Value.Value) : Results.Problem();
     }
 }

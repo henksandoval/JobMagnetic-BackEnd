@@ -4,7 +4,7 @@ public record GalleryProperties(string Title, string Description, string UrlLink
 
 public static class ProjectRawData
 {
-    public static IList<GalleryProperties> Data =
+    public static readonly IList<GalleryProperties> Data =
     [
         new("Aventuras Animales",
             "Cada fotografía captura momentos únicos y comportamientos fascinantes.",

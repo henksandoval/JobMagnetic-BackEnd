@@ -13,7 +13,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
     private IQueryable<Profile> _query = dbContext.Profiles;
     private Expression<Func<Profile, bool>> _whereCondition = x => true;
 
-    public IProfileQueryRepository WithResume()
+    public IProfileQueryRepository WithProfileHeader()
     {
         _query = _query
             .Include(p => p.ProfileHeader)
@@ -32,7 +32,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
         return this;
     }
 
-    public IProfileQueryRepository WithSummary()
+    public IProfileQueryRepository WithCareerHistory()
     {
         _query = _query
             .Include(p => p.CareerHistory)

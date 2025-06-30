@@ -1,9 +1,14 @@
 ﻿using System.Net;
 using AwesomeAssertions;
+using JobMagnet.Application.Contracts.Responses.Profile;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Infrastructure.Persistence.Context;
+using JobMagnet.Infrastructure.Persistence.Seeders;
+using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using JobMagnet.Integration.Tests.Fixtures;
+using JobMagnet.Shared.Data;
+using JobMagnet.Shared.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 
@@ -18,7 +23,7 @@ public class AdminControllerShould(
     private readonly HttpClient _httpClient = testFixture.GetClient();
     private readonly ITestOutputHelper _testOutputHelper = testFixture.SetTestOutputHelper(testOutputHelper);
 
-    [Fact(DisplayName = "Return 200 and Pong when GET ping request is called", Skip = "Skipped")]
+    [Fact(DisplayName = "Return 200 and Pong when GET ping request is called")]
     public async Task ReturnPong_WhenGetPingRequestAsync()
     {
         // --- When ---
@@ -33,7 +38,7 @@ public class AdminControllerShould(
         responseData.Should().Be("Pong");
     }
 
-    [Fact(DisplayName = "Delete and return 204 when DELETE request is received", Skip = "Skipped")]
+    [Fact(DisplayName = "Delete and return 204 when DELETE request is received")]
     public async Task DestroyDatabase_WhenDeleteRequestIsReceivedIsAsync()
     {
         // --- Given ---
@@ -53,7 +58,7 @@ public class AdminControllerShould(
         canConnect.Should().BeFalse();
     }
 
-    [Fact(DisplayName = "Create and return 200 when Post request is received", Skip = "Skipped")]
+    [Fact(DisplayName = "Create and return 200 when Post request is received")]
     public async Task CreateDatabase_WhenPostRequestIsReceivedIsAsync()
     {
         // --- When ---
@@ -69,7 +74,7 @@ public class AdminControllerShould(
         canConnect.Should().BeTrue();
     }
 
-    [Fact(DisplayName = "Return 200 when Post seedProfile request is received", Skip = "Skipped")]
+    [Fact(DisplayName = "Return 200 when Post seedProfile request is received")]
     public async Task SeedData_WhenPostSeedProfileRequestIsReceivedIsAsync()
     {
         // --- When ---
@@ -77,24 +82,27 @@ public class AdminControllerShould(
 
         // --- Then ---
         response.IsSuccessStatusCode.Should().BeTrue();
-        response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var profileId = new ProfileId();
+        var profileId = await TestUtilities.DeserializeResponseAsync<Guid>(response);
         await using var scope = testFixture.GetProvider().CreateAsyncScope();
         var profileQueryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
         var profile = await profileQueryRepository
-            .WithResume()
+            .WithProfileHeader()
             .WithTalents()
             .WithTestimonials()
             .WithSkills()
             .WithProject()
-            .WhereCondition(x => x.Id == profileId)
+            .WithCareerHistory()
+            .WhereCondition(x => x.Id == new ProfileId(profileId))
             .BuildFirstOrDefaultAsync(CancellationToken.None);
 
         profile.Should().NotBeNull();
-        // profile.SkillSet.Skills.Count.Should().Be(SkillInfoCollection.Data.Count);
-        // profile.Talents.Count.Should().Be(new TalentsSeeder(profileId).GetTalents().Count);
-        // profile.Testimonials.Count.Should().Be(new TestimonialSeeder(profileId).GetTestimonials().Count);
-        // profile.Projects.Count.Should().Be(new ProjectSeeder(profileId).GetProjects().Count);
+        profile.SkillSet!.Skills.Should().HaveSameCount(SkillInfoCollection.Data);
+        profile.CareerHistory!.Qualifications.Should().HaveCount(CareerHistorySeeder.QualificationCount);
+        profile.CareerHistory!.WorkExperiences.Should().HaveCount(CareerHistorySeeder.WorkExperienceCount);
+        profile.Talents.Should().HaveSameCount(new TalentsSeeder().GetTalents());
+        profile.Testimonials.Count.Should().Be(Seeder.TestimonialsCount);
+        profile.Projects.Should().HaveSameCount(ProjectRawData.Data);
     }
 }

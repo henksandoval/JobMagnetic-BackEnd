@@ -28,7 +28,7 @@ public class ProfileRawBuilder
 
     public ProfileRawBuilder WithContactInfo(int count = 5)
     {
-        if (_instance.Resume == null) throw new InvalidOperationException("Cannot add contact info without a resume. Call WithResume() first.");
+        if (_instance.Resume == null) throw new InvalidOperationException("Cannot add contact info without a resume. Call WithProfileHeader() first.");
 
         var contactInfo = _fixture.CreateMany<ContactInfoRaw>(count).ToList();
         return WithContactInfo(contactInfo);
@@ -37,7 +37,7 @@ public class ProfileRawBuilder
     public ProfileRawBuilder WithContactInfo(List<ContactInfoRaw> contactInfo)
     {
         var resumeBase = _instance.Resume ??
-                         throw new InvalidOperationException("ProfileHeader must be set before adding contact info. Call WithResume() first.");
+                         throw new InvalidOperationException("ProfileHeader must be set before adding contact info. Call WithProfileHeader() first.");
         var updatedResume = resumeBase with { ContactInfo = contactInfo };
 
         _instance = _instance with { Resume = updatedResume };
