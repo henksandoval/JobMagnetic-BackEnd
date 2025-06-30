@@ -1,6 +1,6 @@
 ﻿using JobMagnet.Application.Contracts.Responses.Base;
 
-namespace JobMagnet.Application.Contracts.Commands.Portfolio;
+namespace JobMagnet.Application.Contracts.Commands.Project;
 
 public sealed record ProjectCommand
 {
