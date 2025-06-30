@@ -26,6 +26,7 @@ public partial class ProfileController(
     ILogger<ProfileController> logger,
     IProfileQueryRepository queryRepository,
     ICommandRepository<Project> projectCommandRepository,
+    ICommandRepository<Talent> talentCommandRepository,
     IUnitOfWork unitOfWork,
     IQueryRepository<VanityUrl, long> publicProfileRepository,
     ICommandRepository<Profile> profileCommandRepository) : BaseController<ProfileController>(logger)
