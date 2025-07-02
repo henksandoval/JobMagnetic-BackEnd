@@ -4,16 +4,19 @@ using AutoFixture;
 using AwesomeAssertions;
 using JobMagnet.Application.Contracts.Commands.Talent;
 using JobMagnet.Application.Contracts.Responses.Base;
+using JobMagnet.Application.Contracts.Responses.TalentShowcase;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Domain.Ports.Repositories;
+using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Shared.Tests.Utils;
-using JobMagnet.Shared.Utils;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
 
 public partial class ProfileControllerShould
 {
     [Fact(DisplayName = "Should return 201 Created with the new talents when talents are added to a profile")]
-    
     public async Task AddTalentsToProfileAsync()
     {
         // Arrange
@@ -23,15 +26,35 @@ public partial class ProfileControllerShould
             .With(t => t.TalentData, talentsData)
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createdTalents);
-   
+
         // Act
         var response = await _httpClient.PostAsync($"{RequestUriController}/{profile.Id.Value}/talents", httpContent);
 
         // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
         response.StatusCode.Should().Be(HttpStatusCode.Created);
-        var expecteTalent = await response.Content.ReadFromJsonAsync<List<Talent>>();
-        createdTalents.Should().NotBeNull();
-        createdTalents.Should().Be(expecteTalent!.Count);
+
+        var locationHeader = response.Headers.Location!.ToString();
+        locationHeader.Should().NotBeNull();
+        var expectedHeader = $"{RequestUriController}/{profile.Id.Value}/talents";
+        locationHeader.Should().Match(currentHeader =>
+            currentHeader.Contains(expectedHeader, StringComparison.OrdinalIgnoreCase)
+        );
+
+        var responseData = await TestUtilities.DeserializeResponseAsync<TalentResponse>(response);
+        responseData.Should().NotBeNull();
+
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
+        var entityCreated = await queryRepository
+            .WithTalents()
+            .GetByIdAsync(profile.Id, CancellationToken.None);
+        entityCreated.Should().NotBeNull();
+        entityCreated.Talents.Should().NotBeNull();
+        entityCreated.Talents.Should().HaveCount(1);
+        var createdTalent = entityCreated.Talents.First();
+        createdTalent.ProfileId.Value.Should().Be(talentsData.ProfileId);
+        createdTalent.Description.Should().Be(talentsData.Description);
     }
     
     
