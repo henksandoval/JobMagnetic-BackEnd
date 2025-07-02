@@ -1,5 +1,5 @@
 using CommunityToolkit.Diagnostics;
-using JobMagnet.Application.Contracts.Commands.Portfolio;
+using JobMagnet.Application.Contracts.Commands.Project;
 using JobMagnet.Application.Contracts.Responses.Portfolio;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles;
