@@ -2,6 +2,7 @@
 using Bogus;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
@@ -13,7 +14,7 @@ public class TalentCustomization : ICustomization
     {
         fixture.Customize<Talent>(composer =>
             composer
-                .FromFactory(() => new Talent(Faker.PickRandom(StaticCustomizations.Talents))).OmitAutoProperties()
+                .FromFactory(() => Talent.CreateInstance(Faker.PickRandom(StaticCustomizations.Talents))).OmitAutoProperties()
         );
 
         fixture.Customize<TalentRaw>(composer =>
