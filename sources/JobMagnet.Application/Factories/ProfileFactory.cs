@@ -3,6 +3,7 @@ using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
@@ -117,9 +118,7 @@ public class ProfileFactory(
                 throw new ArgumentException("Talent description cannot be null or whitespace.", nameof(talentDtos));
 
         return talentDtos
-            .Select(dto => new Talent(
-                dto.Description ?? string.Empty
-            )).ToList();
+            .Select(dto => Talent.CreateInstance(dto.Description ?? string.Empty)).ToList();
     }
 
     private List<Testimonial> BuildTestimonials(List<TestimonialParseDto>? testimonials)
