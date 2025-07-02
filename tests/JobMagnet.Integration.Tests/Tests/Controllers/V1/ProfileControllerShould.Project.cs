@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using AutoFixture;
 using AwesomeAssertions;
-using JobMagnet.Application.Contracts.Commands.Portfolio;
+using JobMagnet.Application.Contracts.Commands.Project;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Portfolio;
 using JobMagnet.Application.Mappers;
