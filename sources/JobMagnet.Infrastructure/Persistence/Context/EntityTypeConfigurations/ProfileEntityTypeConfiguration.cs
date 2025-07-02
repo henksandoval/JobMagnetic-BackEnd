@@ -1,5 +1,6 @@
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Infrastructure.Persistence.Context.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -48,9 +49,9 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<Profile>
         builder.OwnsMany(c => c.Talents,
             talentBuilder =>
             {
-                talentBuilder.WithOwner().HasForeignKey(nameof(ProfileId));
-                talentBuilder.HasKey("Id");
-                talentBuilder.Property<Guid>("Id").ValueGeneratedOnAdd();
+                talentBuilder.WithOwner().HasForeignKey(x => x.ProfileId);
+                talentBuilder.HasKey(x => x.Id);
+                talentBuilder.Property(x => x.Id).ValueGeneratedOnAdd();
                 talentBuilder.Property(t => t.Description)
                     .IsRequired()
                     .HasMaxLength(Talent.MaxNameLength);
