@@ -9,6 +9,7 @@ using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using JobMagnet.Shared.Abstractions;
 using JobMagnet.Shared.Data;
 using JobMagnet.Shared.Tests.Abstractions;
+using JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
@@ -109,7 +110,23 @@ public class ProfileEntityBuilder
 
     public ProfileEntityBuilder WithTalents(int count = 5)
     {
-        while (_talents?.Count < count) _talents = _fixture.CreateMany<Talent>(count).ToList();
+        if (count >= StaticCustomizations.Talents.Length)
+            throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available talents.");
+
+        var talents = new List<Talent>();
+
+        while (talents.Count < count)
+        {
+            var talent = _fixture.Create<Talent>();
+
+            if (talents.Any(t => t.Description == talent.Description))
+                continue;
+
+            talents.Add(talent);
+        }
+
+        _talents = talents;
+
         return this;
     }
 
@@ -183,33 +200,49 @@ public class ProfileEntityBuilder
 
         if (_skillSet is not null) profile.AddSkill(_skillSet);
 
-        if (_testimonials.Count > 0)
-            foreach (var item in _testimonials)
-                profile.SocialProof.AddTestimonial(
-                    _guidGenerator,
-                    _clock,
-                    item.Name,
-                    item.JobTitle,
-                    item.Feedback,
-                    item.PhotoUrl);
-
-        if (_projects.Count > 0)
-            foreach (var gallery in _projects)
-                profile.Portfolio.AddProject(
-                    _guidGenerator,
-                    _clock,
-                    gallery.Title,
-                    gallery.Description,
-                    gallery.UrlLink,
-                    gallery.UrlImage,
-                    gallery.UrlVideo,
-                    gallery.Type);
-
-        if (_talents.Count > 0) return profile;
-        foreach (var talent in _talents)
-            profile.TalentShowcase.AddTalent(talent.Description);
+        LoadTestimonials(profile);
+        LoadProjects(profile);
+        LoadTalents(profile);
 
         return profile;
+    }
+
+    private void LoadTestimonials(Profile profile)
+    {
+        if (_testimonials.Count <= 0) return;
+
+        foreach (var item in _testimonials)
+            profile.SocialProof.AddTestimonial(
+                _guidGenerator,
+                _clock,
+                item.Name,
+                item.JobTitle,
+                item.Feedback,
+                item.PhotoUrl);
+    }
+
+    private void LoadProjects(Profile profile)
+    {
+        if (_projects.Count <= 0) return;
+
+        foreach (var gallery in _projects)
+            profile.Portfolio.AddProject(
+                _guidGenerator,
+                _clock,
+                gallery.Title,
+                gallery.Description,
+                gallery.UrlLink,
+                gallery.UrlImage,
+                gallery.UrlVideo,
+                gallery.Type);
+    }
+
+    private void LoadTalents(Profile profile)
+    {
+        if (_talents.Count <= 0) return;
+
+        foreach (var talent in _talents)
+            profile.TalentShowcase.AddTalent(talent.Description);
     }
 
     private static string GenerateContactDetails(string contactType)
