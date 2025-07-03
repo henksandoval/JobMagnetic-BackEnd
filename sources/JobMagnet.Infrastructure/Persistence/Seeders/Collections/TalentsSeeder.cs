@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
@@ -18,6 +18,6 @@ public record TalentsSeeder
 
     public ImmutableList<Talent> GetTalents()
     {
-        return _values.Select(talent => new Talent(talent.Description)).ToImmutableList();
+        return _values.Select(talent => Talent.CreateInstance(talent.Description)).ToImmutableList();
     }
 }
