@@ -2,8 +2,12 @@
 using AwesomeAssertions;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Host.Mappers;
 using JobMagnet.Host.ViewModels.Profile;
+using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
+using JobMagnet.Shared.Abstractions;
+using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Utils;
@@ -112,9 +116,17 @@ public class ProfileMapperShould
     [Fact(DisplayName = "Map Profile to ProfileViewModel when Skills are defined")]
     public void MapperProfileEntityToProfileViewModelWithSkills()
     {
+        var sequentialGuidGenerator = new SequentialGuidGenerator();
+        var clock = new DeterministicClock();
+        var skillTypes = SkillSeeder.SeedData.Types.Select(s =>
+            {
+                var category = SkillCategory.CreateInstance(sequentialGuidGenerator, clock, SkillCategory.DefaultCategoryName);
+                return SkillType.CreateInstance(sequentialGuidGenerator, clock, s.Name, category);
+            }
+        ).ToArray();
         var profile = new ProfileEntityBuilder(_fixture)
             .WithSkillSet()
-            .WithSkills()
+            .WithSkills(skillTypes)
             .Build();
 
         var profileExpected = new ProfileViewModel();

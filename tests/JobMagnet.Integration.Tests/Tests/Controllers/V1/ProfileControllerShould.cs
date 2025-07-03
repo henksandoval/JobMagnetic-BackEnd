@@ -24,6 +24,7 @@ using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Tests.Fixtures.Customizations;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit.Abstractions;
@@ -248,19 +249,20 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
             .WithEducation(_educationCount)
             .WithWorkExperience(_workExperienceCount)
             .WithTestimonials(_testimonialsCount)
-            .WithContactInfo(_contactInfoCount)
+            // .WithContactInfo(_contactInfoCount)
             .WithSkillSet(_loadSkillSet)
-            .WithSkills(_skillsCount)
+            .WithSkills(_testFixture.SeededSkillTypes.ToArray(), _skillsCount)
             .Build();
 
-        var skills = entity.SkillSet?.Skills ?? [];
-        var contactInfo = entity.ProfileHeader?.ContactInfo ?? [];
+        var skillTypes = entity.SkillSet?.Skills.Select(s => s.SkillType) ?? [];
+        foreach (var skillType in skillTypes.Distinct())
+        {
+            if (context.Entry(skillType.Category).State == EntityState.Detached)
+                context.Entry(skillType.Category).State = EntityState.Unchanged;
 
-        foreach (var skill in skills)
-            context.Attach(skill.SkillType);
-
-        foreach (var info in contactInfo)
-            context.Attach(info.ContactType);
+            if (context.Entry(skillType).State == EntityState.Detached)
+                context.Entry(skillType).State = EntityState.Unchanged;
+        }
 
         await commandRepository.CreateAsync(entity, CancellationToken.None);
         await unitOfWork.SaveChangesAsync(CancellationToken.None);

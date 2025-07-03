@@ -3,13 +3,11 @@ using Bogus;
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using JobMagnet.Shared.Abstractions;
-using JobMagnet.Shared.Data;
 using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Fixtures.Customizations;
 
@@ -84,44 +82,23 @@ public class ProfileEntityBuilder
         return this;
     }
 
-    public ProfileEntityBuilder WithSkills(int count = 5)
+    public ProfileEntityBuilder WithSkills(SkillType[] availableSkillTypes, int count = 5)
     {
         if (count == 0)
             return this;
 
-        if (count > SkillRawData.Count)
-            throw new ArgumentOutOfRangeException(nameof(count), $"Count exceeds the number of available skill types. ({SkillRawData.Count})");
+        if (count > availableSkillTypes.Length)
+            throw new ArgumentOutOfRangeException(nameof(count), $"Count exceeds the number of available skill types. ({availableSkillTypes.Length})");
 
         if (_skillSet == null) throw new InvalidOperationException("Cannot add skills without a skill set. Call WithSkillSet() first.");
 
-        var typesWithCategory = SkillSeeder.SeedData.Types
-            .Join(SkillSeeder.SeedData.Categories,
-                type => type.CategoryId,
-                cat => cat.Id,
-                (type, cat) => (Type: type, Category: cat)
-            ).ToList();
-
         while (_skillSet.Skills.Count < count)
         {
-            var proposalSkill = Faker.PickRandom(typesWithCategory);
-            if (_skillSet.Skills.Any(s => s.SkillTypeId == proposalSkill.Type.Id)) continue;
-
-            var category = SkillCategory.Reconstitute(
-                proposalSkill.Category.Id,
-                _clock,
-                proposalSkill.Category.Name
-            );
-
-            var skillType = SkillType.Reconstitute(
-                proposalSkill.Type.Id,
-                _clock,
-                proposalSkill.Type.Name,
-                category,
-                proposalSkill.Type.IconUrl
-            );
+            var skillsToAdd = Faker.PickRandom(availableSkillTypes);
+            if (_skillSet.SkillExists(skillsToAdd)) continue;
 
             var proficiencyLevel = (ushort)Faker.Random.Int(1, 10);
-            _skillSet.AddSkill(_guidGenerator, _clock, proficiencyLevel, skillType);
+            _skillSet.AddSkill(_guidGenerator, _clock, proficiencyLevel, skillsToAdd);
         }
 
         return this;

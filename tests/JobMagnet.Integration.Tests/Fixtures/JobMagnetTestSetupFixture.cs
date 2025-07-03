@@ -1,8 +1,10 @@
 ﻿extern alias JobMagnetHost;
+using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Integration.Tests.Factories;
 using JobMagnet.Integration.Tests.TestContainers;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Respawn;
 using Xunit.Abstractions;
@@ -13,6 +15,8 @@ namespace JobMagnet.Integration.Tests.Fixtures;
 public class JobMagnetTestSetupFixture : IAsyncLifetime
 {
     private readonly MsSqlServerTestContainer _msSqlServerTestContainer = new();
+    public IReadOnlyList<SkillType> SeededSkillTypes { get; private set; } = null!;
+    public IReadOnlyList<SkillCategory> SeededSkillCategories { get; private set; } = null!;
 
     private readonly RespawnerOptions _respawnerOptions = new()
     {
@@ -37,6 +41,7 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         SetConnectionString();
         _webApplicationFactory = new HostWebApplicationFactory<Program>(_connectionString);
         await EnsureDatabaseCreatedAsync();
+        await LoadSeedDataAsync();
     }
 
     public async Task DisposeAsync()
@@ -93,5 +98,17 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         using var scope = _webApplicationFactory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
         await dbContext.Database.EnsureCreatedAsync();
+    }
+
+    private async Task LoadSeedDataAsync()
+    {
+        _testOutputHelper?.WriteLine("Loading seed data from database into fixture");
+        await using var scope = GetProvider().CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
+
+        SeededSkillCategories = await context.SkillCategories.ToListAsync();
+        SeededSkillTypes = await context.SkillTypes.Include(st => st.Category).ToListAsync();
+
+        _testOutputHelper?.WriteLine($"Loaded {SeededSkillCategories.Count} categories and {SeededSkillTypes.Count} skill types.");
     }
 }
