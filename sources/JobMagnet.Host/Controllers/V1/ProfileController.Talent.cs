@@ -8,7 +8,7 @@ namespace JobMagnet.Host.Controllers.V1;
 
 public partial class ProfileController
 {
-    [HttpPost("{profileId:guid}/talents")]
+    [HttpPost("{profileId:guid}/talent")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IResult> AddTalentsToProfileAsync(Guid profileId, [FromBody] TalentCommand command, CancellationToken cancellationToken)
     {
@@ -37,7 +37,16 @@ public partial class ProfileController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetTalentsByProfileAsync(Guid profileId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var profile = await GetProfileWithTalent(profileId, cancellationToken).ConfigureAwait(false);
+
+        if (profile is null)
+            return Results.NotFound();
+
+        var response = profile.Talents
+            .Select(talent => talent.ToModel())
+            .ToList();
+
+        return Results.Ok(response);
     }
 
     private async Task<Profile?> GetProfileWithTalent(Guid profileId, CancellationToken cancellationToken)
