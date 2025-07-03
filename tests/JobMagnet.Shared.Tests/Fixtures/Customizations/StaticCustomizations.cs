@@ -112,7 +112,20 @@ public static class StaticCustomizations
         "Adaptable",
         "Detail-Oriented",
         "Strong Communicator",
-        "Analytical"
+        "Analytical",
+        "Innovative",
+        "Leadership",
+        "Time Management",
+        "Critical Thinking",
+        "Self-Motivated",
+        "Resilient",
+        "Empathetic",
+        "Strategic Thinker",
+        "Proactive",
+        "Collaborative",
+        "Results-Oriented",
+        "Customer-Focused",
+        "Tech-Savvy",
     ];
 
     public static readonly string[] JobTitles =
