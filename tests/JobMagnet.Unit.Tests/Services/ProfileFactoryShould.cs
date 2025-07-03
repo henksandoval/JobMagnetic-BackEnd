@@ -107,7 +107,7 @@ public class ProfileFactoryShould
     {
         // --- Given ---
         var profileDto = _profileBuilder
-            .WithResume()
+            .WithProfileHeader()
             .Build()
             .ToProfileParseDto();
 
@@ -151,7 +151,7 @@ public class ProfileFactoryShould
         var contacts = new[] { new ContactInfoRaw(expectedTypeName.ToUpper(),
             expectedValue) };
         var profileDto = _profileBuilder
-            .WithResume()
+            .WithProfileHeader()
             .WithContactInfo(contacts.ToList())
             .Build()
             .ToProfileParseDto();
@@ -192,7 +192,7 @@ public class ProfileFactoryShould
         var contacts = new[] { new ContactInfoRaw(typeAlias,
             expectedValue) };
         var profileDto = _profileBuilder
-            .WithResume()
+            .WithProfileHeader()
             .WithContactInfo(contacts.ToList())
             .Build()
             .ToProfileParseDto();
@@ -227,7 +227,7 @@ public class ProfileFactoryShould
         var contacts = new[] { new ContactInfoRaw(unknownTypeName,
             unknownTypeValue) };
         var profileDto = _profileBuilder
-            .WithResume()
+            .WithProfileHeader()
             .WithContactInfo(contacts.ToList())
             .Build()
             .ToProfileParseDto();
@@ -276,7 +276,7 @@ public class ProfileFactoryShould
             new ContactInfoRaw(unknownTypeName, unknownTypeValue)
         };
         var profileDto = _profileBuilder
-            .WithResume()
+            .WithProfileHeader()
             .WithContactInfo(contacts.ToList())
             .Build()
             .ToProfileParseDto();

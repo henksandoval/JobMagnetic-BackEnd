@@ -127,11 +127,11 @@ public partial class ProfileController(
 
         var entity = await queryRepository
             .WhereCondition(x => x.Id == publicProfile.ProfileId)
-            .WithResume()
+            .WithProfileHeader()
             .WithSkills()
             .WithTalents()
             .WithProject()
-            .WithSummary()
+            .WithCareerHistory()
             .WithTestimonials()
             .BuildFirstOrDefaultAsync(cancellationToken);
 

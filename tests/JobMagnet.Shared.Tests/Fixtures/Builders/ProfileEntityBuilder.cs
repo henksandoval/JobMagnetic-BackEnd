@@ -46,7 +46,7 @@ public class ProfileEntityBuilder
         if (count > ContactTypeSeeder.Count)
             throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available contact types.");
 
-        if (_profileHeader == null) throw new InvalidOperationException("Cannot add contact info without a profileHeader. Call WithResume() first.");
+        if (_profileHeader == null) throw new InvalidOperationException("Cannot add contact info without a profileHeader. Call WithProfileHeader() first.");
 
         var addedContactInfo = new Dictionary<string, ContactType>();
 
@@ -133,7 +133,7 @@ public class ProfileEntityBuilder
 
     public ProfileEntityBuilder WithEducation(int count = 5)
     {
-        if (_careerHistory == null) throw new InvalidOperationException("Cannot add contact info without a careerHistory. Call WithSummary() first.");
+        if (_careerHistory == null) throw new InvalidOperationException("Cannot add contact info without a careerHistory. Call WithCareerHistory() first.");
 
         foreach (var education in _fixture.CreateMany<Qualification>(count).ToList())
             _careerHistory.AddEducation(education);
@@ -143,7 +143,7 @@ public class ProfileEntityBuilder
 
     public ProfileEntityBuilder WithWorkExperience(int count = 5)
     {
-        if (_careerHistory == null) throw new InvalidOperationException("Cannot add contact info without a careerHistory. Call WithSummary() first.");
+        if (_careerHistory == null) throw new InvalidOperationException("Cannot add contact info without a careerHistory. Call WithCareerHistory() first.");
 
         foreach (var workExperience in _fixture.CreateMany<WorkExperience>(count).ToList())
             _careerHistory.AddWorkExperience(workExperience);

@@ -1,14 +1,12 @@
 ﻿using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
-// ReSharper disable once NotAccessedPositionalProperty.Global
-public record SummarySeeder
+public record CareerHistorySeeder(IGuidGenerator GuidGenerator, IClock Clock, CareerHistoryId CareerHistoryId)
 {
-    private readonly HeadlineId _headlineId;
-
-    private readonly IList<WorkExperienceProperties> _value =
+    private static readonly IList<WorkExperienceProperties> WorkExperienceList =
     [
         new("UI/UX Designer",
             "Google",
@@ -48,7 +46,7 @@ public record SummarySeeder
             "Worked as a senior UI/UX designer at Facebook, focusing on user experience research and design.")
     ];
 
-    private readonly IList<EducationProperties> _values =
+    private static readonly IList<EducationProperties> QualificationList =
     [
         new("Bachelor in UI/UX Design",
             "University of California, Berkeley",
@@ -76,44 +74,41 @@ public record SummarySeeder
             "Certificate in Web Development with a focus on front-end development and responsive design.")
     ];
 
-    public SummarySeeder()
-    {
-    }
+    public static int WorkExperienceCount => WorkExperienceList.Count;
+    public static int QualificationCount => QualificationList.Count;
 
-    public SummarySeeder(HeadlineId headlineId)
+    public Qualification[] GetQualifications()
     {
-        _headlineId = headlineId;
-    }
-
-    public Qualification[] GetEducation()
-    {
-        return _values
-            .Select(x => new Qualification(
+        return QualificationList
+            .Select(x => Qualification.CreateInstance(
+                GuidGenerator,
+                Clock,
+                CareerHistoryId,
                 x.Degree,
                 x.InstitutionName,
                 x.InstitutionLocation,
                 x.StartDate,
                 x.EndDate,
-                x.Description,
-                _headlineId,
-                new QualificationId(),
-                Guid.Empty
+                x.Description
             )).ToArray();
     }
 
     public WorkExperience[] GetWorkExperience()
     {
-        return _value
+        return WorkExperienceList
             .Select(item =>
             {
-                var workExperience = WorkExperience.CreateInstance(item.JobTitle,
+                var workExperience = WorkExperience.CreateInstance(
+                    GuidGenerator,
+                    Clock,
+                    CareerHistoryId,
+                    item.JobTitle,
                     item.CompanyName,
                     item.CompanyLocation,
                     item.StartDate,
                     item.EndDate,
-                    item.Description,
-                    _headlineId,
-                    new WorkExperienceId());
+                    item.Description
+                );
 
                 foreach (var description in item.Responsibilities)
                     workExperience.AddResponsibility(new WorkHighlight(description));

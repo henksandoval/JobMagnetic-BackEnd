@@ -1,6 +1,6 @@
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
-public record SkillInfoCollection
+public static class SkillInfoCollection
 {
     public static readonly IReadOnlyList<(string name, ushort proficiencyLevel, ushort rank)> Data =
     [
