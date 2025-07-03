@@ -21,7 +21,7 @@ public class ProfileFactoryShould
     private readonly IGuidGenerator _guidGenerator;
     private readonly ProfileRawBuilder _profileBuilder;
     private readonly ProfileFactory _profileFactory;
-    private readonly Mock<IQueryRepository<SkillCategory, ushort>> _skillCategoryRepositoryMock;
+    private readonly Mock<IQueryRepository<SkillCategory, SkillCategoryId>> _skillCategoryRepositoryMock;
     private readonly Mock<ISkillTypeResolverService> _skillTypeResolverMock;
 
     public ProfileFactoryShould()
@@ -29,7 +29,7 @@ public class ProfileFactoryShould
         _profileBuilder = new ProfileRawBuilder(_fixture);
         _skillTypeResolverMock = new Mock<ISkillTypeResolverService>();
         _contactTypeResolverMock = new Mock<IContactTypeResolverService>();
-        _skillCategoryRepositoryMock = new Mock<IQueryRepository<SkillCategory, ushort>>();
+        _skillCategoryRepositoryMock = new Mock<IQueryRepository<SkillCategory, SkillCategoryId>>();
         _clock = new DeterministicClock();
         _guidGenerator = new SequentialGuidGenerator();
 

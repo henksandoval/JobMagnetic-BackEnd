@@ -8,9 +8,10 @@ using JobMagnet.Application.UseCases.CvParser;
 using JobMagnet.Application.UseCases.CvParser.Commands;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
+using JobMagnet.Domain.Services;
 using JobMagnet.Host.Controllers.Base;
 using JobMagnet.Host.Mappers;
 using JobMagnet.Host.ViewModels.Profile;
@@ -27,10 +28,11 @@ public partial class ProfileController(
     ILogger<ProfileController> logger,
     IProfileQueryRepository queryRepository,
     ICommandRepository<Project> projectCommandRepository,
-    ICommandRepository<Talent> talentCommandRepository,
+    IQueryRepository<SkillCategory, SkillCategoryId> skillCategoryRepository,
     IUnitOfWork unitOfWork,
     IQueryRepository<VanityUrl, long> publicProfileRepository,
-    ICommandRepository<Profile> profileCommandRepository) : BaseController<ProfileController>(logger)
+    ICommandRepository<Profile> profileCommandRepository,
+    ISkillTypeResolverService skillTypeResolverService) : BaseController<ProfileController>(logger)
 {
     [HttpPost]
     [ProducesResponseType(typeof(ProfileResponse), StatusCodes.Status201Created)]
@@ -133,7 +135,7 @@ public partial class ProfileController(
             .WithProject()
             .WithCareerHistory()
             .WithTestimonials()
-            .BuildFirstOrDefaultAsync(cancellationToken);
+            .BuildFirstOrDefaultAsync(cancellationToken, true);
 
         if (entity is null)
             return Results.NotFound();

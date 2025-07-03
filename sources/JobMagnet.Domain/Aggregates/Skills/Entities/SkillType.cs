@@ -36,12 +36,18 @@ public class SkillType : SoftDeletableAggregate<SkillTypeId>
         Id = id;
         Name = name;
         Category = category;
+        CategoryId = category.Id;
         IconUrl = iconUrl;
     }
 
     public static SkillType CreateInstance(IGuidGenerator guidGenerator, IClock clock, string name, SkillCategory category, Uri? iconUrl = null)
     {
         var id = new SkillTypeId(guidGenerator.NewGuid());
+        return new SkillType(id, clock, name, category, iconUrl);
+    }
+
+    internal static SkillType Reconstitute(SkillTypeId id, IClock clock, string name, SkillCategory category, Uri? iconUrl = null)
+    {
         return new SkillType(id, clock, name, category, iconUrl);
     }
 

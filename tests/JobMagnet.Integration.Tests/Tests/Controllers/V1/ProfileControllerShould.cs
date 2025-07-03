@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Net.Mime;
@@ -15,6 +16,7 @@ using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Host.ViewModels.Profile;
+using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Integration.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Fixtures;
@@ -32,19 +34,19 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
 {
     private const string RequestUriController = "api/v1/profile";
     private const string InvalidId = "100";
-    private const int ContactInfoCount = 3;
-    private const int TalentsCount = 8;
-    private const int TestimonialsCount = 6;
-    private const int EducationCount = 4;
-    private const int WorkExperienceCount = 2;
-    private const int SkillDetailsCount = 12;
     private readonly DeterministicClock _clock;
-
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly SequentialGuidGenerator _guidGenerator;
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
-    private int _projectCount = 3;
+    private bool _loadSkillSet = true;
+    private int _contactInfoCount;
+    private int _talentsCount;
+    private int _testimonialsCount;
+    private int _educationCount;
+    private int _workExperienceCount;
+    private int _skillsCount;
+    private int _projectCount;
 
     public ProfileControllerShould(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
@@ -59,6 +61,13 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
     public async Task ReturnRecord_WhenValidNameProvidedAsync()
     {
         // --- Given ---
+        _contactInfoCount = 3;
+        _talentsCount = 8;
+        _testimonialsCount = 6;
+        _educationCount = 4;
+        _workExperienceCount = 2;
+        _skillsCount = 12;
+        _projectCount = 3;
         var entity = await SetupProfileAsync();
         var publicProfile = await SetupPublicProfileAsync(entity);
         var queryParameters = new Dictionary<string, string?>
@@ -81,14 +90,14 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
 
         responseData.About.Should().NotBeNull();
         responseData.SkillSet.Should().NotBeNull();
-        responseData.SkillSet.SkillDetails.Length.Should().Be(SkillDetailsCount);
+        responseData.SkillSet.SkillDetails.Length.Should().Be(_skillsCount);
         responseData.Summary.Should().NotBeNull();
-        responseData.Summary.Education.AcademicBackground.Length.Should().Be(EducationCount);
-        responseData.Summary.WorkExperience.Position.Length.Should().Be(WorkExperienceCount);
+        responseData.Summary.Education.AcademicBackground.Length.Should().Be(_educationCount);
+        responseData.Summary.WorkExperience.Position.Length.Should().Be(_workExperienceCount);
         responseData.PersonalData.Should().NotBeNull();
         responseData.PersonalData.Professions.Should().NotBeNull();
-        responseData.PersonalData.SocialNetworks.Length.Should().Be(ContactInfoCount);
-        responseData.Testimonials!.Length.Should().Be(TestimonialsCount);
+        responseData.PersonalData.SocialNetworks.Length.Should().Be(_contactInfoCount);
+        responseData.Testimonials!.Length.Should().Be(_testimonialsCount);
         responseData.Project!.Length.Should().Be(_projectCount);
     }
 
@@ -229,19 +238,29 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<Profile>>();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        var context = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
 
         var entity = new ProfileEntityBuilder(_fixture)
             .WithResume()
-            .WithContactInfo(ContactInfoCount)
-            .WithTalents(TalentsCount)
+            .WithTalents(_talentsCount)
             .WithProjects(_projectCount)
             .WithSummary()
-            .WithEducation(EducationCount)
-            .WithWorkExperience(WorkExperienceCount)
-            .WithSkillSet()
-            .WithSkills(SkillDetailsCount)
-            .WithTestimonials(TestimonialsCount)
+            .WithEducation(_educationCount)
+            .WithWorkExperience(_workExperienceCount)
+            .WithTestimonials(_testimonialsCount)
+            .WithContactInfo(_contactInfoCount)
+            .WithSkillSet(_loadSkillSet)
+            .WithSkills(_skillsCount)
             .Build();
+
+        var skills = entity.SkillSet?.Skills ?? [];
+        var contactInfo = entity.ProfileHeader?.ContactInfo ?? [];
+
+        foreach (var skill in skills)
+            context.Attach(skill.SkillType);
+
+        foreach (var info in contactInfo)
+            context.Attach(info.ContactType);
 
         await commandRepository.CreateAsync(entity, CancellationToken.None);
         await unitOfWork.SaveChangesAsync(CancellationToken.None);

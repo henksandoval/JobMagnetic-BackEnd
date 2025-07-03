@@ -11,7 +11,7 @@ public class SkillDetailCustomization : ICustomization
 
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<SkillItemBase>(composer =>
+        fixture.Customize<SkillBase>(composer =>
             composer
                 .Do(ApplyCommonProperties)
                 .OmitAutoProperties());

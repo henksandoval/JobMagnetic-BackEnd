@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Shared.Abstractions;
@@ -24,7 +25,7 @@ public class TestDataFactory
         _predefinedSkillTypes = new Lazy<IReadOnlyList<SkillType>>(CreateAllPredefinedSkillTypes);
     }
 
-    private IReadOnlyList<ContactType> CreateAllPredefinedContactTypes()
+    private ReadOnlyCollection<ContactType> CreateAllPredefinedContactTypes()
     {
         var list = new List<ContactType>();
 
@@ -43,7 +44,7 @@ public class TestDataFactory
         return list.AsReadOnly();
     }
 
-    private IReadOnlyList<SkillType> CreateAllPredefinedSkillTypes()
+    private ReadOnlyCollection<SkillType> CreateAllPredefinedSkillTypes()
     {
         var skills = new List<SkillType>();
         var categoryCache = new Dictionary<string, SkillCategory>();

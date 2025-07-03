@@ -21,7 +21,7 @@ public class ProfileFactory(
     IClock clock,
     IContactTypeResolverService contactTypeResolver,
     ISkillTypeResolverService skillTypeResolverService,
-    IQueryRepository<SkillCategory, ushort> skillCategoryRepository) : IProfileFactory
+    IQueryRepository<SkillCategory, SkillCategoryId> skillCategoryRepository) : IProfileFactory
 {
     private ProfileId _profileId;
 
@@ -109,7 +109,7 @@ public class ProfileFactory(
         return resumeEntity;
     }
 
-    private List<Talent> BuildTalents(List<TalentParseDto>? talentDtos)
+    private static List<Talent> BuildTalents(List<TalentParseDto>? talentDtos)
     {
         if (talentDtos is null) return [];
 

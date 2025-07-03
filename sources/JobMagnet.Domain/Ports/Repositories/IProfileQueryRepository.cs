@@ -13,5 +13,5 @@ public interface IProfileQueryRepository : IQueryRepository<Profile, ProfileId>
     IProfileQueryRepository WithProject();
     IProfileQueryRepository WithCareerHistory();
     IProfileQueryRepository WithTestimonials();
-    Task<Profile?> BuildFirstOrDefaultAsync(CancellationToken cancellationToken);
+    Task<Profile?> BuildFirstOrDefaultAsync(CancellationToken cancellationToken, bool asNoTracking = false);
 }

@@ -42,14 +42,15 @@ public class SkillCustomization : ICustomization
             )
         );
 
-        fixture.Customize<SkillItemBase>(composer =>
+        fixture.Customize<SkillBase>(composer =>
             composer
-                .With(x => x.Id, Faker.Random.Guid())
+                .With(x => x.Name, () => Faker.PickRandom(StaticCustomizations.Skills))
+                .With(x => x.ProficiencyLevel, () => Faker.Random.Int(0, 10))
                 .WithAutoProperties()
         );
 
-        fixture.Customize<SkillBase>(composer =>
-            composer.WithAutoProperties()
+        fixture.Customize<SkillSetBase>(composer =>
+            composer.With(x => x.Overview, Faker.Lorem.Sentence())
         );
     }
 }

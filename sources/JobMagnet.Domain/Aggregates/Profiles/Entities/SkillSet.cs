@@ -55,6 +55,6 @@ public class SkillSet : SoftDeletableAggregate<SkillSetId>
     {
         Guard.IsNotNull(skillType);
 
-        return _skills.Any(s => s.SkillTypeId == skillType.Id);
+        return _skills.Any(s => s.SkillTypeId == skillType.Id || s.SkillType.Name == skillType.Name);
     }
 }

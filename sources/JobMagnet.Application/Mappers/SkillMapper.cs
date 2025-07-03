@@ -11,22 +11,27 @@ public static class SkillMapper
 {
     static SkillMapper()
     {
-        TypeAdapterConfig<Skill, SkillItemBase>
+        TypeAdapterConfig<Skill, SkillBase>
             .NewConfig()
             .Map(dest => dest.ProficiencyLevel, src => src.ProficiencyLevel)
-            .Map(dest => dest.Rank, src => src.Rank)
-            .Map(dest => dest.Name, src => src.SkillType.Name)
-            .Map(dest => dest.IconUrl, src => src.SkillType.IconUrl)
-            .Map(dest => dest.Category, src => src.SkillType.Category.Name);
+            .Map(dest => dest.Name, src => src.SkillType.Name);
+
+        TypeAdapterConfig<SkillSet, SkillSetBase>
+            .NewConfig()
+            .Map(dest => dest.ProfileId, src => src.ProfileId.Value);
 
         TypeAdapterConfig<SkillSet, SkillResponse>
             .NewConfig()
-            .Map(dest => dest.SkillData, src => src);
+            .Map(dest => dest.Id, src => src.Id.Value)
+            .Map(dest => dest.SkillSetData, src => src);
 
         TypeAdapterConfig<SkillSet, SkillCommand>
             .NewConfig()
-            .Map(dest => dest.SkillData, src => src);
+            .Map(dest => dest.SkillSetData, src => src);
     }
+
+    public static SkillBase ToModel(this Skill skill) => skill.Adapt<SkillBase>();
+    public static SkillResponse ToModel(this SkillSet skillSet) => skillSet.Adapt<SkillResponse>();
 
     public static SkillResponse ToResponse(this SkillSet set) => set.Adapt<SkillResponse>();
 

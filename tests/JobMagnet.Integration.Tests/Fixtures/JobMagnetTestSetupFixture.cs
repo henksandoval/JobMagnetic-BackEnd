@@ -16,7 +16,14 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
 
     private readonly RespawnerOptions _respawnerOptions = new()
     {
-        WithReseed = true
+        WithReseed = true,
+        TablesToIgnore = [
+            "SkillTypes",
+            "SkillTypeAliases",
+            "SkillCategories",
+            "ContactTypes",
+            "ContactTypeAliases"
+        ]
     };
 
     private string? _connectionString;

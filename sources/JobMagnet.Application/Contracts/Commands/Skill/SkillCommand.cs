@@ -4,5 +4,5 @@ namespace JobMagnet.Application.Contracts.Commands.Skill;
 
 public sealed record SkillCommand
 {
-    public required SkillBase SkillData { get; init; }
+    public required SkillSetBase SkillSetData { get; init; }
 }

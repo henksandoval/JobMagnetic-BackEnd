@@ -69,7 +69,7 @@ public partial class ProfileControllerShould
     }
 
     [Fact(DisplayName = "Should return 404 Not Found when the profile ID does not exist")]
-    public async Task GetNotFound_WhenProfileDoesNotExist()
+    public async Task GetProjectsNotFound_WhenProfileDoesNotExist()
     {
         // --- Given ---
         var nonExistentProfileId = Guid.NewGuid();
@@ -103,6 +103,7 @@ public partial class ProfileControllerShould
     public async Task UpdateProject_WhenProfileAndProjectExistAndPayloadIsValid()
     {
         // --- Given ---
+        _projectCount = 10;
         var profile = await SetupProfileAsync();
         var projectData = GetProjectData(profile.Id.Value);
         var projectToUpdate = profile.Projects.First();

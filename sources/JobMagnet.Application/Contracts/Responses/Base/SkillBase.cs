@@ -2,7 +2,6 @@
 
 public sealed record SkillBase
 {
-    public long ProfileId { get; init; }
-    public string? Overview { get; init; }
-    public IList<SkillItemBase> Skills { get; init; } = Enumerable.Empty<SkillItemBase>().ToList();
+    public ushort ProficiencyLevel { get; init; }
+    public string? Name { get; init; }
 }

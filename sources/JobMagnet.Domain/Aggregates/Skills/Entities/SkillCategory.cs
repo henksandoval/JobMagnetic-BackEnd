@@ -33,4 +33,9 @@ public class SkillCategory : SoftDeletableAggregate<SkillCategoryId>
         var id = new SkillCategoryId(guidGenerator.NewGuid());
         return new SkillCategory(id, clock, name);
     }
+
+    public static SkillCategory Reconstitute(SkillCategoryId id, IClock clock, string name)
+    {
+        return new SkillCategory(id, clock, name);
+    }
 }
