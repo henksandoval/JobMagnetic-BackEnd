@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Domain.Shared.Base;
+using JobMagnet.Domain.Shared.Base.Aggregates;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 

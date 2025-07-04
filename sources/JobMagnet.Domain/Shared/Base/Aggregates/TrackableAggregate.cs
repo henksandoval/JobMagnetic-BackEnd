@@ -1,6 +1,6 @@
 using JobMagnet.Shared.Abstractions;
 
-namespace JobMagnet.Domain.Shared.Base;
+namespace JobMagnet.Domain.Shared.Base.Aggregates;
 
 public abstract class TrackableAggregate<TId> : BaseAggregate<TId>
 {

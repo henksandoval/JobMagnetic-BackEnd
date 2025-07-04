@@ -29,6 +29,7 @@
 
     <ItemGroup>
         <Folder Include="Shared\"/>
+        <Folder Include="Shared\Base\Entities\" />
     </ItemGroup>
 
     <ItemGroup>
