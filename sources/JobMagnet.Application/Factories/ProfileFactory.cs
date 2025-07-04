@@ -50,9 +50,8 @@ public class ProfileFactory(
             profile.TalentShowcase.AddTalent(talent.Description);
 
         foreach (var item in testimonials)
-            profile.SocialProof.AddTestimonial(
+            profile.AddTestimonial(
                 guidGenerator,
-                clock,
                 item.Name,
                 item.JobTitle,
                 item.Feedback,

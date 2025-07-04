@@ -177,9 +177,8 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
     private void AddTestimonials(Profile profile)
     {
         foreach (var item in Testimonials)
-            profile.SocialProof.AddTestimonial(
+            profile.AddTestimonial(
                 guidGenerator,
-                clock,
                 item.Name,
                 item.JobTitle,
                 item.Feedback,

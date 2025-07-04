@@ -25,7 +25,6 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     public virtual ProfileHeader? ProfileHeader { get; private set; }
     public virtual SkillSet? SkillSet { get; private set; }
     public virtual CareerHistory? CareerHistory { get; private set; }
-    public SocialProof SocialProof { get; private set; }
     public VanityUrlManager LinkManager { get; private set; }
     public TalentShowcase TalentShowcase { get; private set; }
     public virtual IReadOnlyCollection<Talent> Talents => _talents;
@@ -37,7 +36,6 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     private Profile(ProfileId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
         base(id, addedAt, lastModifiedAt, deletedAt)
     {
-        SocialProof = new SocialProof(this);
         LinkManager = new VanityUrlManager(this);
         TalentShowcase = new TalentShowcase(this);
     }
@@ -59,7 +57,6 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
         MiddleName = middleName;
         SecondLastName = secondLastName;
 
-        SocialProof = new SocialProof(this);
         LinkManager = new VanityUrlManager(this);
         TalentShowcase = new TalentShowcase(this);
     }
@@ -144,11 +141,10 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
         ProfileHeader = profileHeader;
     }
 
-    internal void AddTestimonial(Testimonial testimonial)
+    public void AddTestimonial(IGuidGenerator guidGenerator, string name, string jobTitle, string feedback, string? photoUrl = null)
     {
-        _testimonials.Add(testimonial);
+        AddTestimonialToCollection(guidGenerator, name, jobTitle, feedback, photoUrl);
     }
-
 
     internal void AddPublicProfileIdentifier(VanityUrl publicProfile)
     {

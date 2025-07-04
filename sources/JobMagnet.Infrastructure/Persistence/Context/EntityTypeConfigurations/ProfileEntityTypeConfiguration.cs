@@ -39,7 +39,6 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<Profile>
             .HasForeignKey(identifier => identifier.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Ignore(p => p.SocialProof);
         builder.HasMany(p => p.Testimonials)
             .WithOne()
             .HasForeignKey(t => t.ProfileId)

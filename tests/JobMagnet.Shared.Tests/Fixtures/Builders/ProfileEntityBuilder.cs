@@ -194,9 +194,8 @@ public class ProfileEntityBuilder
         if (_testimonials.Count <= 0) return;
 
         foreach (var item in _testimonials)
-            profile.SocialProof.AddTestimonial(
+            profile.AddTestimonial(
                 _guidGenerator,
-                _clock,
                 item.Name,
                 item.JobTitle,
                 item.Feedback,
