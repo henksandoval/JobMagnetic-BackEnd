@@ -16,7 +16,7 @@ public partial class ProfileControllerShould
     [Fact(DisplayName = "Should return 201 Created with the new talents when talents are added to a profile")]
     public async Task AddTalentsToProfileAsync()
     {
-        // Arrange
+        // --- Given ---
         var profile = await SetupProfileAsync();
         var talentsData = GetTalentBase(profile.Id.Value);
         var createdTalents = _fixture.Build<TalentCommand>()
@@ -24,10 +24,10 @@ public partial class ProfileControllerShould
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(createdTalents);
 
-        // Act
+        // --- When ---
         var response = await _httpClient.PostAsync($"{RequestUriController}/{profile.Id.Value}/talent", httpContent);
 
-        // Assert
+        // --- Then ---
         response.IsSuccessStatusCode.Should().BeTrue();
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
@@ -53,16 +53,6 @@ public partial class ProfileControllerShould
         createdTalent.ProfileId.Value.Should().Be(talentsData.ProfileId);
         createdTalent.Description.Should().Be(talentsData.Description);
     }
-    
-    
-    private TalentBase GetTalentBase(Guid profileEntityId)
-    {
-        return _fixture
-            .Build<TalentBase>()
-            .With(t => t.ProfileId, profileEntityId)
-            .Create();
-    }
-    
 
     [Fact(DisplayName = "Should return 200 OK with a list of talents when the profile exists and has talents")]
     public async Task GetTalents_WhenProfileExistsAndHasTalents()
@@ -71,10 +61,10 @@ public partial class ProfileControllerShould
         var profileWithTalents = await SetupProfileAsync();
         var expectedTalents = profileWithTalents.Talents.Select(p => p.ToModel());
         
-        // Act
+        // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{profileWithTalents.Id.Value}/talents");
             
-        // assert
+        // --- Then ---
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         
         var responseData = await TestUtilities.DeserializeResponseAsync<List<TalentResponse>>(response);
@@ -82,14 +72,24 @@ public partial class ProfileControllerShould
         responseData.Should().BeEquivalentTo(expectedTalents);
     }
     
-    // private async Task<Talent?> FindTalentByIdAsync(Guid id)
-    // {
-    //     await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-    //     var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
-    //     var entityCreated = await queryRepository
-    //         .WithTalents()
-    //         .GetByIdAsync(profile.Id, CancellationToken.None);
-    //     return entityCreated;
-    // }
+    [Fact(DisplayName = "Should return 404 Not Found when the profile does not exist")] 
+    public async Task GetTalents_WhenProfileDoesNotExist()
+    {
+        // --- Given ---
+        var nonExistentProfileId = Guid.NewGuid();
+        await _testFixture.ResetDatabaseAsync();
+        // --- When ---
+        var response = await _httpClient.GetAsync($"{RequestUriController}/{nonExistentProfileId}/talents");
+        
+        // --- Then ---
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
     
+    private TalentBase GetTalentBase(Guid profileEntityId)
+    {
+        return _fixture
+            .Build<TalentBase>()
+            .With(t => t.ProfileId, profileEntityId)
+            .Create();
+    }
 }
