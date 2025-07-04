@@ -1,11 +1,9 @@
 using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Shared.Base.Entities;
-using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
-
-public readonly record struct CareerHistoryId(Guid Value) : IStronglyTypedId<CareerHistoryId>;
 
 public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
 {

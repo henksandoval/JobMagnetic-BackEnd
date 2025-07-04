@@ -1,4 +1,4 @@
-﻿using JobMagnet.Domain.Aggregates.Skills;
+﻿using JobMagnet.Domain.Aggregates.SkillTypes;
 using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Shared.Data;
 

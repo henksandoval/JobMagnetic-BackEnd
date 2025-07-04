@@ -1,12 +1,10 @@
 using CommunityToolkit.Diagnostics;
-using JobMagnet.Domain.Aggregates.Skills;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Domain.Aggregates.SkillTypes;
 using JobMagnet.Domain.Shared.Base.Entities;
-using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
-
-public readonly record struct SkillId(Guid Value) : IStronglyTypedId<SkillId>;
 
 public class Skill : TrackableEntity<SkillId>
 {

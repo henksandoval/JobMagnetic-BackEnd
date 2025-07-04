@@ -1,4 +1,4 @@
-namespace JobMagnet.Domain.Core.Enums;
+namespace JobMagnet.Domain.Enums;
 
 public enum LinkType
 {

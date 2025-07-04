@@ -1,13 +1,10 @@
 using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Exceptions;
-using JobMagnet.Domain.Shared.Base.Aggregates;
 using JobMagnet.Domain.Shared.Base.Entities;
-using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
-
-public readonly record struct ProjectId(Guid Value) : IStronglyTypedId<ProjectId>;
 
 public class Project : SoftDeletableEntity<ProjectId>
 {

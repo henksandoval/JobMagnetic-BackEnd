@@ -3,7 +3,7 @@ using JobMagnet.Application.Contracts.Commands.Project;
 using JobMagnet.Application.Contracts.Responses.Portfolio;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles;
-using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 

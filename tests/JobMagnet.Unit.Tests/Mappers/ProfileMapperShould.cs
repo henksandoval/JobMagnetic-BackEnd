@@ -3,7 +3,7 @@ using AwesomeAssertions;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
-using JobMagnet.Domain.Aggregates.Skills;
+using JobMagnet.Domain.Aggregates.SkillTypes;
 using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Host.Mappers;
 using JobMagnet.Host.ViewModels.Profile;

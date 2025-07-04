@@ -1,6 +1,6 @@
 ﻿extern alias JobMagnetHost;
 using JobMagnet.Domain.Aggregates.Contact;
-using JobMagnet.Domain.Aggregates.Skills;
+using JobMagnet.Domain.Aggregates.SkillTypes;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Integration.Tests.Factories;
 using JobMagnet.Integration.Tests.TestContainers;

@@ -1,5 +1,6 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Shared.Abstractions;
 using JobMagnet.Shared.Utils;

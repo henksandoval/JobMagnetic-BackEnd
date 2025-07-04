@@ -1,6 +1,6 @@
 using CommunityToolkit.Diagnostics;
 
-namespace JobMagnet.Domain.Aggregates.Skills.ValueObjects;
+namespace JobMagnet.Domain.Aggregates.SkillTypes.ValueObjects;
 
 public record SkillTypeAlias
 {

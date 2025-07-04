@@ -1,6 +1,6 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Core.Enums;
+using JobMagnet.Domain.Enums;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Abstractions;

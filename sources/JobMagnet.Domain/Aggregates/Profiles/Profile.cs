@@ -1,15 +1,12 @@
 ﻿using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
-using JobMagnet.Domain.Core.Enums;
+using JobMagnet.Domain.Enums;
 using JobMagnet.Domain.Services;
 using JobMagnet.Domain.Shared.Base.Aggregates;
-using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles;
-
-public readonly record struct ProfileId(Guid Value) : IStronglyTypedId<ProfileId>;
 
 public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
 {

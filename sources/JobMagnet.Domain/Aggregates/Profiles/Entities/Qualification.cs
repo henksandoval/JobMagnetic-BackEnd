@@ -1,12 +1,9 @@
 using CommunityToolkit.Diagnostics;
-using JobMagnet.Domain.Shared.Base.Aggregates;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Shared.Base.Entities;
-using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
-
-public readonly record struct QualificationId(Guid Value) : IStronglyTypedId<QualificationId>;
 
 public class Qualification : SoftDeletableEntity<QualificationId>
 {
