@@ -181,7 +181,7 @@ public class ProfileEntityBuilder
 
         if (_careerHistory is not null) profile.AddSummary(_careerHistory);
 
-        if (_skillSet is not null) profile.AddSkill(_skillSet);
+        if (_skillSet is not null) profile.AddSkillSet(_skillSet);
 
         LoadTestimonials(profile);
         LoadProjects(profile);

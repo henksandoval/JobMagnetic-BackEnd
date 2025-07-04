@@ -139,7 +139,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
                 throw new JobMagnetInfrastructureException(
                     $"Seeding error: Skill type '{skillName}' not found in database.");
 
-        profile.AddSkill(skillSet);
+        profile.AddSkillSet(skillSet);
     }
 
     private void AddCareerHistory(Profile profile)

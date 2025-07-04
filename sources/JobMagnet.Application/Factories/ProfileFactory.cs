@@ -77,7 +77,7 @@ public class ProfileFactory(
         if (profileDto.SkillSet is not null)
         {
             var skillSet = await BuildSkillSetAsync(profileDto.SkillSet, cancellationToken);
-            profile.AddSkill(skillSet);
+            profile.AddSkillSet(skillSet);
         }
 
         return profile;

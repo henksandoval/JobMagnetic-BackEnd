@@ -10,8 +10,10 @@ using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
+using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Utils;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
@@ -179,14 +181,14 @@ public partial class ProfileControllerShould
     }
 
     [Trait("Profile", "Skills")]
-    [Fact(DisplayName = "Should return 204 No Content when deleting an existing SkillSet")]
-    public async Task DeleteSkillSet_WhenProfileAndSkillSetExist()
+    [Fact(DisplayName = "Should return 204 No Content when delete an existing Skill to SkillSet")]
+    public async Task DeleteSkill_WhenProfileAndSkillSetExist()
     {
         // --- Given ---
         _skillsCount = 5;
         var profile = await SetupProfileAsync();
-        var skillSetToDelete = profile.SkillSet;
-        var requestUri = $"{RequestUriController}/{profile.Id.Value}/skills/{skillSetToDelete!.Id.Value}";
+        var skillToDelete = profile.SkillSet!.Skills.FirstOrDefault();
+        var requestUri = $"{RequestUriController}/{profile.Id.Value}/skills/{skillToDelete!.Id.Value}";
 
         // --- When ---
         var response = await _httpClient.DeleteAsync(requestUri);
@@ -194,11 +196,13 @@ public partial class ProfileControllerShould
         // --- Then ---
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<SkillSet, SkillSetId>>();
-        var skillSets = await queryRepository.FindAsync(p => p.ProfileId == skillSetToDelete.ProfileId, CancellationToken.None);
+        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
+        var skillSets = await dbContext.SkillSets.Include(x => x.Skills)
+            .FirstOrDefaultAsync(x => x.Id == profile.SkillSet.Id);
 
-        skillSets.Should().HaveCount(_skillsCount - 1);
-        skillSets.Should().NotContain(p => p.Id == skillSetToDelete.Id);
+        skillSets.Should().NotBeNull();
+        skillSets.Skills.Should().HaveCount(_skillsCount - 1);
+        skillSets.Skills.Should().NotContain(p => p.Id == skillToDelete.Id);
     }
 
     [Trait("Profile", "Skills")]

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Domain.Shared.Base;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
@@ -33,6 +34,7 @@ public class Profile : SoftDeletableAggregate<ProfileId>
     public virtual IReadOnlyCollection<Project> Projects => _projects;
     public virtual IReadOnlyCollection<Testimonial> Testimonials => _testimonials;
     public virtual IReadOnlyCollection<VanityUrl> VanityUrls => _vanityUrls;
+    public bool HaveSkillSet => SkillSet is not null;
 
     private Profile(ProfileId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
         base(id, addedAt, lastModifiedAt, deletedAt)
@@ -125,7 +127,7 @@ public class Profile : SoftDeletableAggregate<ProfileId>
         _talents.Add(talent);
     }
 
-    public void AddSkill(SkillSet skillSet)
+    public void AddSkillSet(SkillSet skillSet)
     {
         Guard.IsNotNull(skillSet);
 
@@ -165,5 +167,10 @@ public class Profile : SoftDeletableAggregate<ProfileId>
     internal void AddPublicProfileIdentifier(VanityUrl publicProfile)
     {
         _vanityUrls.Add(publicProfile);
+    }
+
+    internal void AddSkillToSkillSet(Skill skill)
+    {
+
     }
 }

@@ -356,7 +356,7 @@ public class ProfileFactoryShould
         var skillSet = SkillSet.CreateInstance1("Test Overview",
             new ProfileId(),
             new SkillSetId());
-        skillSet.AddSkill(10,
+        skillSet.AddSkillSet(10,
             csharpSkill);
         var expectedSkill = skillSet.Skills.ToList();
 
@@ -394,7 +394,7 @@ public class ProfileFactoryShould
         var skillSet = SkillSet.CreateInstance1("Test Overview",
             new ProfileId(),
             new SkillSetId());
-        skillSet.AddSkill(10,
+        skillSet.AddSkillSet(10,
             csharpSkill);
         var expectedSkill = skillSet.Skills.ToList();
 
@@ -432,7 +432,7 @@ public class ProfileFactoryShould
         var skillSet = SkillSet.CreateInstance1("Test Overview",
             new ProfileId(),
             new SkillSetId());
-        skillSet.AddSkill(10,
+        skillSet.AddSkillSet(10,
             expectedAdHocType);
         var expectedSkill = skillSet.Skills.ToList();
 
@@ -497,8 +497,8 @@ public class ProfileFactoryShould
             .ToProfileParseDto();
 
         var skillSet = SkillSet.CreateInstance1("Test Overview", new ProfileId(), new SkillSetId());
-        skillSet.AddSkill(5,csharpSkill);
-        skillSet.AddSkill(2,expectedAdHocType);
+        skillSet.AddSkillSet(5,csharpSkill);
+        skillSet.AddSkillSet(2,expectedAdHocType);
         var expectedSkills = skillSet.Skills.OrderBy(s => s.Rank).ToList();
 
         // --- When ---

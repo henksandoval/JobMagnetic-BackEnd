@@ -57,4 +57,14 @@ public class SkillSet : SoftDeletableAggregate<SkillSetId>
 
         return _skills.Any(s => s.SkillTypeId == skillType.Id || s.SkillType.Name == skillType.Name);
     }
+
+    public void RemoveSkill(SkillId skillId)
+    {
+        var skillToRemove = Skills.FirstOrDefault(p => p.Id == skillId);
+
+        if (skillToRemove is null)
+            throw NotFoundException.For<Skill, SkillId>(skillId);
+
+        _skills.Remove(skillToRemove);
+    }
 }

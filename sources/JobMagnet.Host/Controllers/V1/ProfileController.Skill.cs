@@ -3,7 +3,9 @@ using JobMagnet.Application.Contracts.Responses.Skill;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
+using JobMagnet.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 
@@ -34,7 +36,7 @@ public partial class ProfileController
                 clock,
                 profile.Id,
                 data.Overview ?? string.Empty);
-            profile.AddSkill(skillSet);
+            profile.AddSkillSet(skillSet);
         }
 
         if (data.Skills.Any())
@@ -139,21 +141,24 @@ public partial class ProfileController
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Results.NoContent();
     }
-
-    [HttpDelete("{profileId:guid}/Skills/{SkillSetId:guid}")]
+*/
+    [HttpDelete("{profileId:guid}/Skills/{skillId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> DeleteskillsAsync(Guid profileId, Guid SkillSetId, CancellationToken cancellationToken)
+    public async Task<IResult> DeleteSkillsAsync(Guid profileId, Guid skillId, CancellationToken cancellationToken)
     {
         var profile = await GetProfileWithSkills(profileId, cancellationToken).ConfigureAwait(false);
 
         if (profile is null)
             return Results.NotFound();
 
+        if (!profile.HaveSkillSet)
+            throw new ApplicationException($"The profile {profileId} does not have skills set.");
+
         try
         {
-            var skills = profile.SkillSet.RemoveSkill(new SkillSetId(SkillSetId));
-            skillCommandRepository.Remove(skills);
+            profile.SkillSet!.RemoveSkill(new SkillId(skillId));
+            profileCommandRepository.Update(profile);
         }
         catch (NotFoundException ex)
         {
@@ -163,7 +168,7 @@ public partial class ProfileController
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Results.NoContent();
     }
-*/
+
     private async Task<Profile?> GetProfileWithSkills(Guid profileId, CancellationToken cancellationToken)
     {
         return await queryRepository
