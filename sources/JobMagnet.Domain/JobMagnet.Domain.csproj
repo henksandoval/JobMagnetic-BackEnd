@@ -34,4 +34,10 @@
     <ItemGroup>
         <ProjectReference Include="..\JobMagnet.Shared\JobMagnet.Shared.csproj"/>
     </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Aggregates\Profiles\Profile.*.cs">
+            <DependentUpon>Profile.cs</DependentUpon>
+        </Compile>
+    </ItemGroup>
 </Project>
