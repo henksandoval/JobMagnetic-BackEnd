@@ -5,8 +5,8 @@ using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Aggregates.Skills;
-using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Domain.Aggregates.Skills.ValueObjects;
+using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobMagnet.Infrastructure.Persistence.Context;

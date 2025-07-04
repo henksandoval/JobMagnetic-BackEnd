@@ -2,7 +2,7 @@ using AutoFixture;
 using AwesomeAssertions;
 using JobMagnet.Application.Factories;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
-using JobMagnet.Domain.Aggregates.Skills.Entities;
+using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Abstractions;

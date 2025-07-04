@@ -1,3 +1,4 @@
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Infrastructure.Persistence.Context.ValueConverters;
 using Microsoft.EntityFrameworkCore;

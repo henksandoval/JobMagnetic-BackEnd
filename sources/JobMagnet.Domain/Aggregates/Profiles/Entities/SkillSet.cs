@@ -1,6 +1,5 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Skills;
-using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Domain.Shared.Base.Aggregates;
 using JobMagnet.Domain.Shared.Base.Entities;
@@ -48,7 +47,7 @@ public class SkillSet : SoftDeletableEntity<SkillSetId>
 
         var newRank = (ushort)(_skills.Count + 1);
 
-        var newSkill = Skill.CreateInstance(guidGenerator, clock, Id, skillType, proficiencyLevel, newRank);
+        var newSkill = Skill.CreateInstance(guidGenerator, Id, skillType, proficiencyLevel, newRank);
         _skills.Add(newSkill);
     }
 

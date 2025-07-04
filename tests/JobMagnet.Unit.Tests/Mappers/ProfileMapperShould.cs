@@ -3,7 +3,8 @@ using AwesomeAssertions;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
-using JobMagnet.Domain.Aggregates.Skills.Entities;
+using JobMagnet.Domain.Aggregates.Skills;
+using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Host.Mappers;
 using JobMagnet.Host.ViewModels.Profile;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
@@ -122,7 +123,7 @@ public class ProfileMapperShould
         var clock = new DeterministicClock();
         var skillTypes = SkillSeeder.SeedData.Types.Select(s =>
             {
-                var category = SkillCategory.CreateInstance(sequentialGuidGenerator, clock, SkillCategory.DefaultCategoryName);
+                var category = SkillCategory.CreateInstance(sequentialGuidGenerator, SkillCategory.DefaultCategoryName);
                 return SkillType.CreateInstance(sequentialGuidGenerator, clock, s.Name, category);
             }
         ).ToArray();

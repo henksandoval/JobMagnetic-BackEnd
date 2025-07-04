@@ -1,15 +1,14 @@
 using CommunityToolkit.Diagnostics;
-using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Aggregates.Skills.Entities;
-using JobMagnet.Domain.Shared.Base.Aggregates;
+using JobMagnet.Domain.Aggregates.Skills;
+using JobMagnet.Domain.Shared.Base.Entities;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
-namespace JobMagnet.Domain.Aggregates.Skills;
+namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct SkillId(Guid Value) : IStronglyTypedId<SkillId>;
 
-public class Skill : TrackableAggregateRoot<SkillId>
+public class Skill : TrackableEntity<SkillId>
 {
     public ushort ProficiencyLevel { get; private set; }
     public ushort Rank { get; private set; }
@@ -17,12 +16,12 @@ public class Skill : TrackableAggregateRoot<SkillId>
     public SkillTypeId SkillTypeId { get; private set; }
     public virtual SkillType SkillType { get; private set; }
 
-    private Skill(SkillId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt) :
-        base(id, addedAt, lastModifiedAt)
+    private Skill(SkillId id) :
+        base(id)
     {
     }
 
-    private Skill(SkillId id, IClock clock, SkillSetId skillSetId, SkillType skillType, ushort proficiencyLevel, ushort rank) : base(id, clock)
+    private Skill(SkillId id, SkillSetId skillSetId, SkillType skillType, ushort proficiencyLevel, ushort rank) : base(id)
     {
         Guard.IsBetweenOrEqualTo<ushort>(proficiencyLevel, 0, 10);
         Guard.IsGreaterThan<ushort>(rank, 0);
@@ -36,11 +35,11 @@ public class Skill : TrackableAggregateRoot<SkillId>
         SkillType = skillType;
     }
 
-    internal static Skill CreateInstance(IGuidGenerator guidGenerator, IClock clock, SkillSetId skillSetId, SkillType skillType,
+    internal static Skill CreateInstance(IGuidGenerator guidGenerator, SkillSetId skillSetId, SkillType skillType,
         ushort proficiencyLevel, ushort rank)
     {
         var id = new SkillId(guidGenerator.NewGuid());
-        return new Skill(id, clock, skillSetId, skillType, proficiencyLevel, rank);
+        return new Skill(id, skillSetId, skillType, proficiencyLevel, rank);
     }
 
     internal void UpdateRank(ushort newRank)

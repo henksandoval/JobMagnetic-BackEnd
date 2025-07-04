@@ -1,5 +1,6 @@
-using JobMagnet.Domain.Aggregates.Skills.Entities;
+using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Domain.Aggregates.Skills.ValueObjects;
+using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Infrastructure.Persistence.Context.ValueConverters;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using Microsoft.EntityFrameworkCore;

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using JobMagnet.Domain.Aggregates.Contact;
-using JobMagnet.Domain.Aggregates.Skills.Entities;
+using JobMagnet.Domain.Aggregates.Skills;
+using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Shared.Abstractions;
 using JobMagnet.Shared.Data;
 using JobMagnet.Shared.Tests.Abstractions;
@@ -55,7 +56,6 @@ public class TestDataFactory
             {
                 category = SkillCategory.CreateInstance(
                     _guidGenerator,
-                    _clock,
                     rawDef.Category.Name);
                 categoryCache.Add(rawDef.Category.Name, category);
             }

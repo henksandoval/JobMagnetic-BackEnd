@@ -1,4 +1,5 @@
-﻿using JobMagnet.Domain.Aggregates.Skills.Entities;
+﻿using JobMagnet.Domain.Aggregates.Skills;
+using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Shared.Data;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;

@@ -4,7 +4,7 @@ using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Aggregates.Skills.Entities;
+using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Shared.Abstractions;
 using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Factories;

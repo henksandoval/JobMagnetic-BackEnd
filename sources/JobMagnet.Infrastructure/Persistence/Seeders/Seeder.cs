@@ -2,7 +2,7 @@
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Aggregates.Skills.Entities;
+using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Infrastructure.Exceptions;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
@@ -164,7 +164,6 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
         {
             profile.Portfolio.AddProject(
                 guidGenerator,
-                clock,
                 item.Title,
                 item.Description,
                 item.UrlLink,

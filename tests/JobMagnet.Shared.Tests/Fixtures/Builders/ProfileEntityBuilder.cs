@@ -4,7 +4,7 @@ using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
-using JobMagnet.Domain.Aggregates.Skills.Entities;
+using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Shared.Abstractions;
 using JobMagnet.Shared.Tests.Abstractions;
@@ -210,7 +210,6 @@ public class ProfileEntityBuilder
         foreach (var gallery in _projects)
             profile.Portfolio.AddProject(
                 _guidGenerator,
-                _clock,
                 gallery.Title,
                 gallery.Description,
                 gallery.UrlLink,

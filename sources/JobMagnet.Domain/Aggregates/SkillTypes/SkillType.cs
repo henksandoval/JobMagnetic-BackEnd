@@ -1,11 +1,12 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Skills.ValueObjects;
+using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Domain.Shared.Base.Aggregates;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
-namespace JobMagnet.Domain.Aggregates.Skills.Entities;
+namespace JobMagnet.Domain.Aggregates.Skills;
 
 public readonly record struct SkillTypeId(Guid Value) : IStronglyTypedId<SkillTypeId>;
 

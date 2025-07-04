@@ -27,7 +27,6 @@ public partial class ProfileController
 
         var project = profile.Portfolio.AddProject(
             guidGenerator,
-            clock,
             command.ProjectData.Title ?? string.Empty,
             command.ProjectData.Description ?? string.Empty,
             command.ProjectData.UrlLink ?? string.Empty,

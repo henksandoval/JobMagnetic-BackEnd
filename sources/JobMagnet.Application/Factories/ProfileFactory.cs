@@ -4,7 +4,8 @@ using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
-using JobMagnet.Domain.Aggregates.Skills.Entities;
+using JobMagnet.Domain.Aggregates.Skills;
+using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Abstractions;
@@ -60,7 +61,6 @@ public class ProfileFactory(
         foreach (var item in galleryItems)
             profile.Portfolio.AddProject(
                 guidGenerator,
-                clock,
                 item.Title,
                 item.Description,
                 item.UrlLink,
