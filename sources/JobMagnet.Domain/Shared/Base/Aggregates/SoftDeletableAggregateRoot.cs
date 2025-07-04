@@ -1,8 +1,9 @@
-﻿using JobMagnet.Shared.Abstractions;
+﻿using JobMagnet.Domain.Shared.Base.Interfaces;
+using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Shared.Base.Aggregates;
 
-public abstract class SoftDeletableAggregateRoot<TId> : TrackableAggregateRoot<TId>
+public abstract class SoftDeletableAggregateRoot<TId> : TrackableAggregateRoot<TId>, ISoftDeletable<TId>
 {
     public DateTimeOffset? DeletedAt { get; private set; }
     public bool IsDeleted => DeletedAt.HasValue;

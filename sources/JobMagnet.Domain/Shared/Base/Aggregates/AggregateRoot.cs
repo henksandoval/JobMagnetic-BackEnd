@@ -1,6 +1,8 @@
+using JobMagnet.Domain.Shared.Base.Interfaces;
+
 namespace JobMagnet.Domain.Shared.Base.Aggregates;
 
-public abstract class AggregateRoot<TId>
+public abstract class AggregateRoot<TId> : IHasIdentity<TId>
 {
     private readonly List<IDomainEvent> _domainEvents = [];
 

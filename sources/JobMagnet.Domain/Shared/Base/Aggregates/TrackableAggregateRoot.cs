@@ -1,8 +1,9 @@
+using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Shared.Base.Aggregates;
 
-public abstract class TrackableAggregateRoot<TId> : AggregateRoot<TId>
+public abstract class TrackableAggregateRoot<TId> : AggregateRoot<TId>, ITrackable<TId>
 {
     public DateTimeOffset AddedAt { get; private set; }
     public DateTimeOffset? LastModifiedAt { get; private set; }
