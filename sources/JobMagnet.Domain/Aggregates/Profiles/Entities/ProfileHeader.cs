@@ -9,7 +9,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct ProfileHeaderId(Guid Value) : IStronglyTypedId<ProfileHeaderId>;
 
-public class ProfileHeader : SoftDeletableAggregate<ProfileHeaderId>
+public class ProfileHeader : SoftDeletableAggregateRoot<ProfileHeaderId>
 {
     public const int MaxJobTitleLength = 100;
 

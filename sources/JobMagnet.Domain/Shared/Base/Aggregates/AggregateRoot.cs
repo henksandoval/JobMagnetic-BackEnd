@@ -1,17 +1,17 @@
 namespace JobMagnet.Domain.Shared.Base.Aggregates;
 
-public abstract class BaseAggregate<TId>
+public abstract class AggregateRoot<TId>
 {
     private readonly List<IDomainEvent> _domainEvents = [];
 
     public TId Id { get; protected init; }
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
-    protected BaseAggregate()
+    protected AggregateRoot()
     {
     }
 
-    protected BaseAggregate(TId id)
+    protected AggregateRoot(TId id)
     {
         Id = id;
     }

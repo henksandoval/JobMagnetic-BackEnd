@@ -11,7 +11,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles;
 
 public readonly record struct ProfileId(Guid Value) : IStronglyTypedId<ProfileId>;
 
-public class Profile : SoftDeletableAggregate<ProfileId>
+public class Profile : SoftDeletableAggregateRoot<ProfileId>
 {
     private readonly HashSet<Project> _projects = [];
     private readonly HashSet<Talent> _talents = [];

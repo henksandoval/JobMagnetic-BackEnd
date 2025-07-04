@@ -10,7 +10,7 @@ namespace JobMagnet.Domain.Aggregates.Skills.Entities;
 
 public readonly record struct SkillTypeId(Guid Value) : IStronglyTypedId<SkillTypeId>;
 
-public class SkillType : SoftDeletableAggregate<SkillTypeId>
+public class SkillType : SoftDeletableAggregateRoot<SkillTypeId>
 {
     public const int MaxNameLength = 50;
     private const string DefaultIconUri = "https://jobmagnet.com/default-icon.png";

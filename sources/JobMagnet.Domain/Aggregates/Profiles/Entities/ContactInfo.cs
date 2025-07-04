@@ -9,7 +9,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct ContactInfoId(Guid Value) : IStronglyTypedId<ContactInfoId>;
 
-public class ContactInfo : TrackableAggregate<ContactInfoId>
+public class ContactInfo : TrackableAggregateRoot<ContactInfoId>
 {
     public string Value { get; private set; }
     public ContactTypeId ContactTypeId { get; private set; }

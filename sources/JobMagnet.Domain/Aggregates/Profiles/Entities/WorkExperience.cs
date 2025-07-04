@@ -9,7 +9,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct WorkExperienceId(Guid Value) : IStronglyTypedId<WorkExperienceId>;
 
-public class WorkExperience : SoftDeletableAggregate<WorkExperienceId>
+public class WorkExperience : SoftDeletableAggregateRoot<WorkExperienceId>
 {
     private readonly HashSet<WorkHighlight> _highlights = [];
 

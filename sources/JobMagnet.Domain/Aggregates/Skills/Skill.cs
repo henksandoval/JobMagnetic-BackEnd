@@ -10,7 +10,7 @@ namespace JobMagnet.Domain.Aggregates.Skills;
 
 public readonly record struct SkillId(Guid Value) : IStronglyTypedId<SkillId>;
 
-public class Skill : TrackableAggregate<SkillId>
+public class Skill : TrackableAggregateRoot<SkillId>
 {
     public ushort ProficiencyLevel { get; private set; }
     public ushort Rank { get; private set; }

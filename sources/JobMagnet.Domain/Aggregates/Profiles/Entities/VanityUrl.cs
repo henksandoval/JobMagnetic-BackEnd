@@ -9,7 +9,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct VanityUrlId(Guid Value) : IStronglyTypedId<VanityUrlId>;
 
-public class VanityUrl : TrackableAggregate<VanityUrlId>
+public class VanityUrl : TrackableAggregateRoot<VanityUrlId>
 {
     public const int MaxNameLength = 25;
     public const string DefaultSlug = "profile";

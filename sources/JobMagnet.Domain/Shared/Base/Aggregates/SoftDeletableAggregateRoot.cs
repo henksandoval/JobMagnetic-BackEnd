@@ -2,20 +2,20 @@
 
 namespace JobMagnet.Domain.Shared.Base.Aggregates;
 
-public abstract class SoftDeletableAggregate<TId> : TrackableAggregate<TId>
+public abstract class SoftDeletableAggregateRoot<TId> : TrackableAggregateRoot<TId>
 {
     public DateTimeOffset? DeletedAt { get; private set; }
     public bool IsDeleted => DeletedAt.HasValue;
 
-    protected SoftDeletableAggregate() : base() { }
+    protected SoftDeletableAggregateRoot() : base() { }
 
-    protected SoftDeletableAggregate(TId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
+    protected SoftDeletableAggregateRoot(TId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
         base(id, addedAt, lastModifiedAt)
     {
         DeletedAt = deletedAt?.UtcDateTime;
     }
 
-    protected SoftDeletableAggregate(TId id, IClock clock) : base(id, clock)
+    protected SoftDeletableAggregateRoot(TId id, IClock clock) : base(id, clock)
     {
         DeletedAt = null;
     }
@@ -29,7 +29,7 @@ public abstract class SoftDeletableAggregate<TId> : TrackableAggregate<TId>
         AddDomainEvent(new EntityDeletedEvent(Id, GetType().Name, deleteTimeOffSet));
     }
 
-    public void Restore(IClock clock)
+    protected void Restore(IClock clock)
     {
         if (!IsDeleted) return;
 

@@ -9,7 +9,7 @@ namespace JobMagnet.Domain.Aggregates.Contact;
 
 public readonly record struct ContactTypeId(Guid Value) : IStronglyTypedId<ContactTypeId>;
 
-public class ContactType : SoftDeletableAggregate<ContactTypeId>
+public class ContactType : SoftDeletableAggregateRoot<ContactTypeId>
 {
     public const int MaxNameLength = 20;
     public const int MaxIconClassLength = 20;

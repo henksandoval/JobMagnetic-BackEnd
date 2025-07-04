@@ -9,7 +9,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct ProjectId(Guid Value) : IStronglyTypedId<ProjectId>;
 
-public class Project : SoftDeletableAggregate<ProjectId>
+public class Project : SoftDeletableAggregateRoot<ProjectId>
 {
     public int Position { get; private set; }
     public string Title { get; private set; }

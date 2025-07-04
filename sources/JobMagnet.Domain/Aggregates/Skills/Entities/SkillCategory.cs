@@ -8,7 +8,7 @@ namespace JobMagnet.Domain.Aggregates.Skills.Entities;
 
 public readonly record struct SkillCategoryId(Guid Value) : IStronglyTypedId<SkillCategoryId>;
 
-public class SkillCategory : SoftDeletableAggregate<SkillCategoryId>
+public class SkillCategory : SoftDeletableAggregateRoot<SkillCategoryId>
 {
     private const int MinNameLength = 2;
     public const int MaxNameLength = 50;

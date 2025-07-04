@@ -8,7 +8,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct QualificationId(Guid Value) : IStronglyTypedId<QualificationId>;
 
-public class Qualification : SoftDeletableAggregate<QualificationId>
+public class Qualification : SoftDeletableAggregateRoot<QualificationId>
 {
     public string Degree { get; private set; }
     public string InstitutionName { get; private set; }

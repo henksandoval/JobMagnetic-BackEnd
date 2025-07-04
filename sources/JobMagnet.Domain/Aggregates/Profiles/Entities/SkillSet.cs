@@ -11,7 +11,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct SkillSetId(Guid Value) : IStronglyTypedId<SkillSetId>;
 
-public class SkillSet : SoftDeletableAggregate<SkillSetId>
+public class SkillSet : SoftDeletableAggregateRoot<SkillSetId>
 {
     private readonly HashSet<Skill> _skills = [];
 

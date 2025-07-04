@@ -8,7 +8,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct CareerHistoryId(Guid Value) : IStronglyTypedId<CareerHistoryId>;
 
-public class CareerHistory : SoftDeletableAggregate<CareerHistoryId>
+public class CareerHistory : SoftDeletableAggregateRoot<CareerHistoryId>
 {
     private readonly HashSet<Qualification> _qualifications = [];
     private readonly HashSet<WorkExperience> _workExperiences = [];

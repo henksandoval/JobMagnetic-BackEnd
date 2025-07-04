@@ -8,7 +8,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct TestimonialId(Guid Value) : IStronglyTypedId<TestimonialId>;
 
-public class Testimonial : SoftDeletableAggregate<TestimonialId>
+public class Testimonial : SoftDeletableAggregateRoot<TestimonialId>
 {
     public string Name { get; private set; }
     public string JobTitle { get; private set; }
