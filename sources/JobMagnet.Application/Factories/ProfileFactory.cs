@@ -87,7 +87,6 @@ public class ProfileFactory(
     {
         var resumeEntity = ProfileHeader.CreateInstance(
             guidGenerator,
-            clock,
             _profileId,
             resumeDto.Title ?? string.Empty,
             resumeDto.Suffix ?? string.Empty,
@@ -127,7 +126,6 @@ public class ProfileFactory(
 
         return testimonials.Select(dto => Testimonial.CreateInstance(
                 guidGenerator,
-                clock,
                 _profileId,
                 dto.Name ?? string.Empty,
                 dto.JobTitle ?? string.Empty,
@@ -142,7 +140,6 @@ public class ProfileFactory(
 
         return projectDtos.Select((dto, index) => Project.CreateInstance(
             guidGenerator,
-            clock,
             _profileId,
             dto.Title ?? string.Empty,
             dto.Description ?? string.Empty,
@@ -159,7 +156,6 @@ public class ProfileFactory(
         if (educationDtos is null) return [];
         return educationDtos.Select(dto => Qualification.CreateInstance(
             guidGenerator,
-            clock,
             new CareerHistoryId(),
             dto.Degree ?? string.Empty,
             dto.InstitutionName ?? string.Empty,
@@ -175,7 +171,6 @@ public class ProfileFactory(
         if (experienceDtos is null) return [];
         return experienceDtos.Select(dto => WorkExperience.CreateInstance(
             guidGenerator,
-            clock,
             new CareerHistoryId(),
             dto.JobTitle ?? string.Empty,
             dto.CompanyName ?? string.Empty,
@@ -202,7 +197,6 @@ public class ProfileFactory(
     {
         var skillSetEntity = SkillSet.CreateInstance(
             guidGenerator,
-            clock,
             _profileId,
             skillSetDto.Overview ?? string.Empty
         );

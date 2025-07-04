@@ -21,7 +21,6 @@ public class ProjectCustomization : ICustomization
             composer
                 .FromFactory(() => Project.CreateInstance(
                     _guidGenerator,
-                    _clock,
                     new ProfileId(),
                     Faker.Company.CompanyName(),
                     Faker.Lorem.Sentence(),

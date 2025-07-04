@@ -1,6 +1,7 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Domain.Shared.Base.Aggregates;
+using JobMagnet.Domain.Shared.Base.Entities;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
@@ -8,7 +9,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct ProjectId(Guid Value) : IStronglyTypedId<ProjectId>;
 
-public class Project : SoftDeletableAggregateRoot<ProjectId>
+public class Project : SoftDeletableEntity<ProjectId>
 {
     public int Position { get; private set; }
     public string Title { get; private set; }
@@ -21,9 +22,9 @@ public class Project : SoftDeletableAggregateRoot<ProjectId>
 
     private Project() : base() { }
 
-    private Project(ProjectId id, ProfileId profileId, IClock clock, string title, string description, string urlLink, string urlImage,
+    private Project(ProjectId id, ProfileId profileId, string title, string description, string urlLink, string urlImage,
         string urlVideo,
-        string type, int position) : base(id, clock)
+        string type, int position) : base(id)
     {
         Id = id;
         Title = title;
@@ -38,11 +39,11 @@ public class Project : SoftDeletableAggregateRoot<ProjectId>
         ValidateInvariants();
     }
 
-    internal static Project CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string title, string description,
+    internal static Project CreateInstance(IGuidGenerator guidGenerator, ProfileId profileId, string title, string description,
         string urlLink, string urlImage, string urlVideo, string type, int position)
     {
         var id = new ProjectId(guidGenerator.NewGuid());
-        return new Project(id, profileId, clock, title, description, urlLink, urlImage, urlVideo, type, position);
+        return new Project(id, profileId, title, description, urlLink, urlImage, urlVideo, type, position);
     }
 
     internal Project UpdateDetails(string newTitle, string newDescription, string newUrlLink, string newUrlImage, string newUrlVideo, string newType)

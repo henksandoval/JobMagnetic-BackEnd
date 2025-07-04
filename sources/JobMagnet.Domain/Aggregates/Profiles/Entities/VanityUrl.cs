@@ -1,6 +1,7 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Core.Enums;
 using JobMagnet.Domain.Shared.Base.Aggregates;
+using JobMagnet.Domain.Shared.Base.Entities;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
@@ -8,7 +9,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct VanityUrlId(Guid Value) : IStronglyTypedId<VanityUrlId>;
 
-public class VanityUrl : TrackableAggregateRoot<VanityUrlId>
+public class VanityUrl : TrackableEntity<VanityUrlId>
 {
     public const int MaxNameLength = 25;
     public const string DefaultSlug = "profile";
@@ -20,8 +21,8 @@ public class VanityUrl : TrackableAggregateRoot<VanityUrlId>
 
     private VanityUrl() : base() {}
 
-    private VanityUrl(VanityUrlId id, ProfileId profileId, IClock clock, string slug, LinkType linkType = LinkType.Primary)
-        : base(id, clock)
+    private VanityUrl(VanityUrlId id, ProfileId profileId, string slug, LinkType linkType = LinkType.Primary)
+        : base(id)
     {
         Guard.IsNotNullOrEmpty(slug);
 
@@ -32,10 +33,10 @@ public class VanityUrl : TrackableAggregateRoot<VanityUrlId>
         ViewCount = 0;
     }
 
-    internal static VanityUrl CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string slug,
+    internal static VanityUrl CreateInstance(IGuidGenerator guidGenerator, ProfileId profileId, string slug,
         LinkType linkType = LinkType.Primary)
     {
         var id = new VanityUrlId(guidGenerator.NewGuid());
-        return new VanityUrl(id, profileId, clock, slug, linkType);
+        return new VanityUrl(id, profileId, slug, linkType);
     }
 }

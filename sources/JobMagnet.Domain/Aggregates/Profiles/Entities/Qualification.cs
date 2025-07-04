@@ -1,5 +1,6 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Shared.Base.Aggregates;
+using JobMagnet.Domain.Shared.Base.Entities;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
@@ -7,7 +8,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct QualificationId(Guid Value) : IStronglyTypedId<QualificationId>;
 
-public class Qualification : SoftDeletableAggregateRoot<QualificationId>
+public class Qualification : SoftDeletableEntity<QualificationId>
 {
     public string Degree { get; private set; }
     public string InstitutionName { get; private set; }
@@ -20,7 +21,7 @@ public class Qualification : SoftDeletableAggregateRoot<QualificationId>
     private Qualification() : base() { }
 
     private Qualification(QualificationId id, CareerHistoryId careerHistoryId, string degree, string institutionName, string institutionLocation,
-        DateTime startDate, DateTime? endDate, string description, IClock clock) : base(id, clock)
+        DateTime startDate, DateTime? endDate, string description) : base(id)
     {
         Guard.IsNotNullOrWhiteSpace(degree);
         Guard.IsNotNullOrWhiteSpace(institutionName);
@@ -40,10 +41,10 @@ public class Qualification : SoftDeletableAggregateRoot<QualificationId>
         Description = description;
     }
 
-    public static Qualification CreateInstance(IGuidGenerator guidGenerator, IClock clock, CareerHistoryId careerHistoryId, string degree,
+    public static Qualification CreateInstance(IGuidGenerator guidGenerator, CareerHistoryId careerHistoryId, string degree,
         string institutionName, string institutionLocation, DateTime startDate, DateTime? endDate, string description)
     {
         var id = new QualificationId(guidGenerator.NewGuid());
-        return new Qualification(id, careerHistoryId, degree, institutionName, institutionLocation, startDate, endDate, description, clock);
+        return new Qualification(id, careerHistoryId, degree, institutionName, institutionLocation, startDate, endDate, description);
     }
 }

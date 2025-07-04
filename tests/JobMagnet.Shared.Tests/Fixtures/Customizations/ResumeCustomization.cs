@@ -19,7 +19,6 @@ public class ResumeCustomization : ICustomization
     {
         fixture.Register(() => ProfileHeader.CreateInstance(
             _guidGenerator,
-            _clock,
             new ProfileId(),
             Faker.Name.Prefix(),
             "",

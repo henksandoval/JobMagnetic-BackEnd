@@ -31,7 +31,7 @@ public class VanityUrlManager
     {
         Guard.IsNotNullOrEmpty(slug);
 
-        var publicIdentifier = VanityUrl.CreateInstance(guidGenerator, clock, _profile.Id, slug, type);
+        var publicIdentifier = VanityUrl.CreateInstance(guidGenerator, _profile.Id, slug, type);
 
         _profile.AddPublicProfileIdentifier(publicIdentifier);
     }

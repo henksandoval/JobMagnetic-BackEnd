@@ -33,7 +33,6 @@ public partial class ProfileController
         {
             var skillSet = SkillSet.CreateInstance(
                 guidGenerator,
-                clock,
                 profile.Id,
                 data.Overview ?? string.Empty);
             profile.AddSkillSet(skillSet);

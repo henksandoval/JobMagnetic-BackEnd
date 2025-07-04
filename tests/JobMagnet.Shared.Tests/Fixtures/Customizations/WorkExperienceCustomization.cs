@@ -34,7 +34,6 @@ public class WorkExperienceCustomization : ICustomization
 
         var workExperience = WorkExperience.CreateInstance(
             _guidGenerator,
-            _clock,
             new CareerHistoryId(),
             Faker.PickRandom(StaticCustomizations.JobTitles),
             Faker.PickRandom(StaticCustomizations.CompanyNames),

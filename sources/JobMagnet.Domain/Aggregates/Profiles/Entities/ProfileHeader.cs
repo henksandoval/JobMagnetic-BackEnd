@@ -1,6 +1,7 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Shared.Base.Aggregates;
+using JobMagnet.Domain.Shared.Base.Entities;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
@@ -8,7 +9,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct ProfileHeaderId(Guid Value) : IStronglyTypedId<ProfileHeaderId>;
 
-public class ProfileHeader : SoftDeletableAggregateRoot<ProfileHeaderId>
+public class ProfileHeader : SoftDeletableEntity<ProfileHeaderId>
 {
     public const int MaxJobTitleLength = 100;
 
@@ -30,14 +31,13 @@ public class ProfileHeader : SoftDeletableAggregateRoot<ProfileHeaderId>
     private ProfileHeader(
         ProfileHeaderId id,
         ProfileId profileId,
-        IClock clock,
         string title,
         string suffix,
         string jobTitle,
         string about,
         string summary,
         string overview,
-        string address) : base(id, clock)
+        string address) : base(id)
     {
         Guard.HasSizeLessThanOrEqualTo(jobTitle, MaxJobTitleLength);
 
@@ -52,12 +52,12 @@ public class ProfileHeader : SoftDeletableAggregateRoot<ProfileHeaderId>
         Address = address;
     }
 
-    public static ProfileHeader CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string title, string suffix,
+    public static ProfileHeader CreateInstance(IGuidGenerator guidGenerator, ProfileId profileId, string title, string suffix,
         string jobTitle, string about,
         string summary, string overview, string address)
     {
         var id = new ProfileHeaderId(guidGenerator.NewGuid());
-        return new ProfileHeader(id, profileId, clock, title, suffix, jobTitle, about, summary, overview, address);
+        return new ProfileHeader(id, profileId, title, suffix, jobTitle, about, summary, overview, address);
     }
 
     public void UpdateGeneralInfo(
@@ -89,7 +89,7 @@ public class ProfileHeader : SoftDeletableAggregateRoot<ProfileHeaderId>
         Guard.IsNotNullOrEmpty(value);
         Guard.IsNotNull(contactType);
 
-        var contactInfo = Entities.ContactInfo.CreateInstance(guidGenerator, clock, Id, value, contactType);
+        var contactInfo = Entities.ContactInfo.CreateInstance(guidGenerator, Id, value, contactType);
         _contactInfo?.Add(contactInfo);
     }
 }

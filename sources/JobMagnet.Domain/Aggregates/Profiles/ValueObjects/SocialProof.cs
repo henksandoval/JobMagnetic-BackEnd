@@ -26,7 +26,7 @@ public class SocialProof
         if (Testimonials.Any(t => t.Name == name && t.Feedback == feedback))
             throw new JobMagnetDomainException("This exact testimonial already exists.");
 
-        var testimonial = Testimonial.CreateInstance(guidGenerator, clock, _profile.Id, name, jobTitle, feedback, photoUrl);
+        var testimonial = Testimonial.CreateInstance(guidGenerator, _profile.Id, name, jobTitle, feedback, photoUrl);
 
         _profile.AddTestimonial(testimonial);
     }

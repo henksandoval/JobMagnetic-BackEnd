@@ -29,7 +29,6 @@ public class SkillCustomization : ICustomization
 
         fixture.Register(() => SkillSet.CreateInstance(
             _guidGenerator,
-            _clock,
             new ProfileId(),
             Faker.Lorem.Sentence()));
 

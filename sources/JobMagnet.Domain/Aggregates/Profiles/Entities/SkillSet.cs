@@ -3,6 +3,7 @@ using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Domain.Shared.Base.Aggregates;
+using JobMagnet.Domain.Shared.Base.Entities;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
@@ -10,7 +11,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct SkillSetId(Guid Value) : IStronglyTypedId<SkillSetId>;
 
-public class SkillSet : SoftDeletableAggregateRoot<SkillSetId>
+public class SkillSet : SoftDeletableEntity<SkillSetId>
 {
     private readonly HashSet<Skill> _skills = [];
 
@@ -21,7 +22,7 @@ public class SkillSet : SoftDeletableAggregateRoot<SkillSetId>
 
     private SkillSet() : base() { }
 
-    private SkillSet(SkillSetId id, ProfileId profileId, IClock clock, string overview) : base(id, clock)
+    private SkillSet(SkillSetId id, ProfileId profileId, string overview) : base(id)
     {
         Guard.IsNotNullOrWhiteSpace(overview);
         Guard.IsNotNull(profileId);
@@ -31,10 +32,10 @@ public class SkillSet : SoftDeletableAggregateRoot<SkillSetId>
         ProfileId = profileId;
     }
 
-    public static SkillSet CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string overview)
+    public static SkillSet CreateInstance(IGuidGenerator guidGenerator, ProfileId profileId, string overview)
     {
         var id = new SkillSetId(guidGenerator.NewGuid());
-        return new SkillSet(id, profileId, clock, overview);
+        return new SkillSet(id, profileId, overview);
     }
 
     public void AddSkill(IGuidGenerator guidGenerator, IClock clock, ushort proficiencyLevel, SkillType skillType)

@@ -1,6 +1,7 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Shared.Base.Aggregates;
+using JobMagnet.Domain.Shared.Base.Entities;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
@@ -8,7 +9,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct WorkExperienceId(Guid Value) : IStronglyTypedId<WorkExperienceId>;
 
-public class WorkExperience : SoftDeletableAggregateRoot<WorkExperienceId>
+public class WorkExperience : SoftDeletableEntity<WorkExperienceId>
 {
     private readonly HashSet<WorkHighlight> _highlights = [];
 
@@ -27,13 +28,12 @@ public class WorkExperience : SoftDeletableAggregateRoot<WorkExperienceId>
     private WorkExperience(
         WorkExperienceId id,
         CareerHistoryId careerHistoryId,
-        IClock clock,
         string jobTitle,
         string companyName,
         string companyLocation,
         DateTime startDate,
         DateTime? endDate,
-        string description) : base(id, clock)
+        string description) : base(id)
     {
         Guard.IsNotNullOrWhiteSpace(jobTitle);
         Guard.IsNotNullOrWhiteSpace(companyName);
@@ -54,11 +54,11 @@ public class WorkExperience : SoftDeletableAggregateRoot<WorkExperienceId>
         Description = description;
     }
 
-    public static WorkExperience CreateInstance(IGuidGenerator guidGenerator, IClock clock, CareerHistoryId careerHistoryId, string jobTitle,
+    public static WorkExperience CreateInstance(IGuidGenerator guidGenerator, CareerHistoryId careerHistoryId, string jobTitle,
         string companyName, string companyLocation, DateTime startDate, DateTime? endDate, string description)
     {
         var id = new WorkExperienceId(guidGenerator.NewGuid());
-        return new WorkExperience(id, careerHistoryId, clock, jobTitle, companyName, companyLocation, startDate, endDate, description);
+        return new WorkExperience(id, careerHistoryId, jobTitle, companyName, companyLocation, startDate, endDate, description);
     }
 
     public void AddResponsibility(WorkHighlight highlight)

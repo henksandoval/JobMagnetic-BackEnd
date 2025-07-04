@@ -100,7 +100,6 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
 
         var resume = ProfileHeader.CreateInstance(
             guidGenerator,
-            clock,
             profile.Id,
             "Mr.",
             "",
@@ -129,7 +128,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
                                 I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
                                 I am always eager to learn new technologies and improve my skills.
                                 """;
-        var skillSet = SkillSet.CreateInstance(guidGenerator, clock, profile.Id, overview);
+        var skillSet = SkillSet.CreateInstance(guidGenerator, profile.Id, overview);
 
         foreach (var (skillName, proficiencyLevel, rank) in SkillInfoCollection.Data)
             if (skillTypeMap.TryGetValue(skillName, out var skillType))

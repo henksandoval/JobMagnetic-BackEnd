@@ -29,7 +29,6 @@ public class Portfolio
         var position = GetPosition();
         var project = Project.CreateInstance(
             guidGenerator,
-            clock,
             _profile.Id,
             title,
             description,

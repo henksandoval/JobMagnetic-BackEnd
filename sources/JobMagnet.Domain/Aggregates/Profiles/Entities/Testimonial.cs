@@ -1,5 +1,6 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Shared.Base.Aggregates;
+using JobMagnet.Domain.Shared.Base.Entities;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
@@ -7,7 +8,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct TestimonialId(Guid Value) : IStronglyTypedId<TestimonialId>;
 
-public class Testimonial : SoftDeletableAggregateRoot<TestimonialId>
+public class Testimonial : SoftDeletableEntity<TestimonialId>
 {
     public string Name { get; private set; }
     public string JobTitle { get; private set; }
@@ -19,8 +20,8 @@ public class Testimonial : SoftDeletableAggregateRoot<TestimonialId>
     {
     }
 
-    private Testimonial(TestimonialId id, IClock clock, ProfileId profileId, string name, string jobTitle, string feedback, string? photoUrl) :
-        base(id, clock)
+    private Testimonial(TestimonialId id, ProfileId profileId, string name, string jobTitle, string feedback, string? photoUrl) :
+        base(id)
     {
         Guard.IsNotNullOrWhiteSpace(name);
         Guard.IsNotNullOrWhiteSpace(jobTitle);
@@ -33,10 +34,10 @@ public class Testimonial : SoftDeletableAggregateRoot<TestimonialId>
         PhotoUrl = photoUrl;
     }
 
-    public static Testimonial CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string name, string jobTitle,
+    public static Testimonial CreateInstance(IGuidGenerator guidGenerator, ProfileId profileId, string name, string jobTitle,
         string feedback, string? photoUrl)
     {
         var id = new TestimonialId(guidGenerator.NewGuid());
-        return new Testimonial(id, clock, profileId, name, jobTitle, feedback, photoUrl);
+        return new Testimonial(id, profileId, name, jobTitle, feedback, photoUrl);
     }
 }

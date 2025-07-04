@@ -82,7 +82,6 @@ public record CareerHistorySeeder(IGuidGenerator GuidGenerator, IClock Clock, Ca
         return QualificationList
             .Select(x => Qualification.CreateInstance(
                 GuidGenerator,
-                Clock,
                 CareerHistoryId,
                 x.Degree,
                 x.InstitutionName,
@@ -100,7 +99,6 @@ public record CareerHistorySeeder(IGuidGenerator GuidGenerator, IClock Clock, Ca
             {
                 var workExperience = WorkExperience.CreateInstance(
                     GuidGenerator,
-                    Clock,
                     CareerHistoryId,
                     item.JobTitle,
                     item.CompanyName,

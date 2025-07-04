@@ -21,7 +21,6 @@ public class TestimonialCustomization : ICustomization
             composer
                 .FromFactory(() => Testimonial.CreateInstance(
                     _guidGenerator,
-                    _clock,
                     new ProfileId(),
                     Faker.Name.FullName(),
                     Faker.Name.JobTitle(),
