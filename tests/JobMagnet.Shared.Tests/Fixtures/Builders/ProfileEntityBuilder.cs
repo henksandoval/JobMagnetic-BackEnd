@@ -42,33 +42,20 @@ public class ProfileEntityBuilder
         return this;
     }
 
-    public ProfileEntityBuilder WithContactInfo(int count = 5)
+    public ProfileEntityBuilder WithContactInfo(ContactType[] availableContactTypes, int count = 5)
     {
-        if (count > ContactTypeSeeder.Count)
-            throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available contact types.");
+        if (count > availableContactTypes.Length)
+            throw new ArgumentOutOfRangeException(nameof(count), $"Count exceeds the number of available contact types. ({availableContactTypes.Length})");
 
         if (_profileHeader == null) throw new InvalidOperationException("Cannot add contact info without a profileHeader. Call WithProfileHeader() first.");
 
-        var addedContactInfo = new Dictionary<string, ContactType>();
-
         while (_profileHeader.ContactInfo?.Count < count)
         {
-            var requestedContactType = _fixture.Create<ContactType>();
-            ContactType contactTypeToAdd;
+            var contactType = Faker.PickRandom(availableContactTypes);
+            if (_profileHeader.ContactInfo.Any(ci => ci.ContactType == contactType)) continue;
 
-            if (addedContactInfo.TryGetValue(requestedContactType.Name, out var existingContactType))
-            {
-                contactTypeToAdd = existingContactType;
-            }
-            else
-            {
-                addedContactInfo.Add(requestedContactType.Name, requestedContactType);
-                contactTypeToAdd = requestedContactType;
-            }
-
-            var value = GenerateContactDetails(contactTypeToAdd.Name);
-
-            _profileHeader.AddContactInfo(_guidGenerator, _clock, value, contactTypeToAdd);
+            var value = GenerateContactDetails(contactType.Name);
+            _profileHeader.AddContactInfo(_guidGenerator, _clock, value, contactType);
         }
 
         return this;

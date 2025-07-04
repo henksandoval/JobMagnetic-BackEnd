@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using AwesomeAssertions;
 using JobMagnet.Application.Mappers;
+using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Host.Mappers;
@@ -33,10 +34,11 @@ public class ProfileMapperShould
     [Fact(DisplayName = "Map Profile to ProfileViewModel when PersonalData is defined")]
     public void MapperProfileEntityToProfileViewModelWithPersonalData()
     {
+        var contactTypes = GetContactTypes();
         var profileBuilder = new ProfileEntityBuilder(_fixture)
             .WithTalents()
             .WithResume()
-            .WithContactInfo();
+            .WithContactInfo(contactTypes);
 
         var profile = profileBuilder.Build();
         profile.ChangeMiddleName(string.Empty);
@@ -57,9 +59,10 @@ public class ProfileMapperShould
     [Fact(DisplayName = "Map Profile to ProfileViewModel when About is defined")]
     public void MapperProfileEntityToProfileViewModelWithAbout()
     {
+        var contactTypes = GetContactTypes();
         var profileBuilder = new ProfileEntityBuilder(_fixture)
             .WithResume()
-            .WithContactInfo();
+            .WithContactInfo(contactTypes);
 
         var profile = profileBuilder.Build();
 
@@ -259,5 +262,19 @@ public class ProfileMapperShould
             profile.CareerHistory.Introduction,
             new EducationViewModel(education),
             new WorkExperienceViewModel(workExperiences));
+    }
+
+    private static ContactType[] GetContactTypes()
+    {
+        var sequentialGuidGenerator = new SequentialGuidGenerator();
+        var clock = new DeterministicClock();
+        var contactTypes = ContactTypeSeeder.SeedData.Types.Select(ct => ContactType.CreateInstance(
+            sequentialGuidGenerator,
+            clock,
+            ct.Name,
+            ct.IconClass,
+            ct.IconUrl)
+        ).ToArray();
+        return contactTypes;
     }
 }

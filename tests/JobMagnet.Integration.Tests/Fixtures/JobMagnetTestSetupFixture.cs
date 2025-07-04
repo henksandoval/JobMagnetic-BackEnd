@@ -1,4 +1,5 @@
 ﻿extern alias JobMagnetHost;
+using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Integration.Tests.Factories;
@@ -16,7 +17,7 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
 {
     private readonly MsSqlServerTestContainer _msSqlServerTestContainer = new();
     public IReadOnlyList<SkillType> SeededSkillTypes { get; private set; } = null!;
-    public IReadOnlyList<SkillCategory> SeededSkillCategories { get; private set; } = null!;
+    public IReadOnlyList<ContactType> SeededContactTypes { get; private set; } = null!;
 
     private readonly RespawnerOptions _respawnerOptions = new()
     {
@@ -106,9 +107,7 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         await using var scope = GetProvider().CreateAsyncScope();
         var context = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
 
-        SeededSkillCategories = await context.SkillCategories.ToListAsync();
         SeededSkillTypes = await context.SkillTypes.Include(st => st.Category).ToListAsync();
-
-        _testOutputHelper?.WriteLine($"Loaded {SeededSkillCategories.Count} categories and {SeededSkillTypes.Count} skill types.");
+        SeededContactTypes = await context.ContactTypes.Include(ct => ct.Aliases).ToListAsync();
     }
 }
