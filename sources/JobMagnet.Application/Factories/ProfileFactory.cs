@@ -59,7 +59,7 @@ public class ProfileFactory(
                 item.PhotoUrl);
 
         foreach (var item in galleryItems)
-            profile.Portfolio.AddProject(
+            profile.AddProject(
                 guidGenerator,
                 item.Title,
                 item.Description,

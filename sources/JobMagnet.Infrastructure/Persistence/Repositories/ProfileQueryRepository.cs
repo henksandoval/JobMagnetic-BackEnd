@@ -55,7 +55,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
     public IProfileQueryRepository WithProject()
     {
         _query = _query
-            .Include(p => p.Projects);
+            .Include(p => p.Portfolio);
 
         return this;
     }

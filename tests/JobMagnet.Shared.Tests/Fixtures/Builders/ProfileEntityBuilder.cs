@@ -208,7 +208,7 @@ public class ProfileEntityBuilder
         if (_projects.Count <= 0) return;
 
         foreach (var gallery in _projects)
-            profile.Portfolio.AddProject(
+            profile.AddProject(
                 _guidGenerator,
                 gallery.Title,
                 gallery.Description,

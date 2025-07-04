@@ -26,8 +26,8 @@ public static class ProfileMapper
                 src => src.Testimonials.Select(t => t.Adapt<TestimonialsViewModel>()).ToArray(),
                 src => src.Testimonials.Any())
             .Map(dest => dest.Project,
-                src => src.Projects.Select(p => p.Adapt<ProjectViewModel>()).ToArray(),
-                src => src.Projects.Any())
+                src => src.Portfolio.Select(p => p.Adapt<ProjectViewModel>()).ToArray(),
+                src => src.Portfolio.Any())
             .Map(dest => dest.SkillSet, src => src.SkillSet.Adapt<SkillSetViewModel>(),
                 src => src.SkillSet != null && src.SkillSet.Skills.Count > 0)
             .Map(dest => dest.Summary, src => src.CareerHistory.Adapt<SummaryViewModel>(),

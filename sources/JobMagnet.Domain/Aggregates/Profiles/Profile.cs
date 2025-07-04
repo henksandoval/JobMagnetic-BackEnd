@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
-using JobMagnet.Domain.Aggregates.Skills;
 using JobMagnet.Domain.Shared.Base.Aggregates;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
@@ -10,9 +9,9 @@ namespace JobMagnet.Domain.Aggregates.Profiles;
 
 public readonly record struct ProfileId(Guid Value) : IStronglyTypedId<ProfileId>;
 
-public class Profile : SoftDeletableAggregateRoot<ProfileId>
+public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
 {
-    private readonly HashSet<Project> _projects = [];
+    private readonly HashSet<Project> _portfolio = [];
     private readonly HashSet<Talent> _talents = [];
     private readonly HashSet<Testimonial> _testimonials = [];
     private readonly HashSet<VanityUrl> _vanityUrls = [];
@@ -27,11 +26,10 @@ public class Profile : SoftDeletableAggregateRoot<ProfileId>
     public virtual SkillSet? SkillSet { get; private set; }
     public virtual CareerHistory? CareerHistory { get; private set; }
     public SocialProof SocialProof { get; private set; }
-    public Portfolio Portfolio { get; private set; }
     public VanityUrlManager LinkManager { get; private set; }
     public TalentShowcase TalentShowcase { get; private set; }
     public virtual IReadOnlyCollection<Talent> Talents => _talents;
-    public virtual IReadOnlyCollection<Project> Projects => _projects;
+    public virtual IReadOnlyCollection<Project> Portfolio => _portfolio;
     public virtual IReadOnlyCollection<Testimonial> Testimonials => _testimonials;
     public virtual IReadOnlyCollection<VanityUrl> VanityUrls => _vanityUrls;
     public bool HaveSkillSet => SkillSet is not null;
@@ -40,7 +38,6 @@ public class Profile : SoftDeletableAggregateRoot<ProfileId>
         base(id, addedAt, lastModifiedAt, deletedAt)
     {
         SocialProof = new SocialProof(this);
-        Portfolio = new Portfolio(this);
         LinkManager = new VanityUrlManager(this);
         TalentShowcase = new TalentShowcase(this);
     }
@@ -63,7 +60,6 @@ public class Profile : SoftDeletableAggregateRoot<ProfileId>
         SecondLastName = secondLastName;
 
         SocialProof = new SocialProof(this);
-        Portfolio = new Portfolio(this);
         LinkManager = new VanityUrlManager(this);
         TalentShowcase = new TalentShowcase(this);
     }
@@ -153,24 +149,48 @@ public class Profile : SoftDeletableAggregateRoot<ProfileId>
         _testimonials.Add(testimonial);
     }
 
-    internal void AddProjectToPortfolio(Project project)
-    {
-        _projects.Add(project);
-    }
-
-    internal void RemoveProjectToPortfolio(Project project)
-    {
-        _projects.Remove(project);
-    }
-
 
     internal void AddPublicProfileIdentifier(VanityUrl publicProfile)
     {
         _vanityUrls.Add(publicProfile);
     }
 
-    internal void AddSkillToSkillSet(Skill skill)
+    #region Portfolio
+    public void AddProject(IGuidGenerator guidGenerator, string title, string description, string urlLink, string urlImage, string urlVideo,
+        string type)
     {
-
+        AddProjectToPortfolio(
+            guidGenerator,
+            title,
+            description,
+            urlLink,
+            urlImage,
+            urlVideo,
+            type);
     }
+
+    public void RemoveProject(ProjectId projectId)
+    {
+        RemoveProjectToPortfolio(projectId);
+    }
+
+    public void UpdateProject(ProjectId projectId, string newTitle, string newDescription, string newUrlLink, string newUrlImage, string newUrlVideo,
+        string newType)
+    {
+        UpdateProjectInPortfolio(
+            projectId,
+            newTitle,
+            newDescription,
+            newUrlLink,
+            newUrlImage,
+            newUrlVideo,
+            newType);
+    }
+
+    public void ArrangeProjects(IEnumerable<ProjectId> orderedProjects)
+    {
+        ArrangeProjectsInPortfolio(orderedProjects);
+    }
+
+    #endregion
 }

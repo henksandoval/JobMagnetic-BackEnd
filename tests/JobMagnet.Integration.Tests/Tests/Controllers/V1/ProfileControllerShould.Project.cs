@@ -55,7 +55,7 @@ public partial class ProfileControllerShould
     {
         // --- Given ---
         var profileWithProjects = await SetupProfileAsync();
-        var expectedProjects = profileWithProjects.Projects.Select(p => p.ToModel());
+        var expectedProjects = profileWithProjects.Portfolio.Select(p => p.ToModel());
 
         // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{profileWithProjects.Id.Value}/projects");
@@ -106,7 +106,7 @@ public partial class ProfileControllerShould
         _projectCount = 10;
         var profile = await SetupProfileAsync();
         var projectData = GetProjectData(profile.Id.Value);
-        var projectToUpdate = profile.Projects.First();
+        var projectToUpdate = profile.Portfolio.First();
         var command = _fixture.Build<ProjectCommand>()
             .With(x => x.ProjectData, projectData)
             .Create();
@@ -168,7 +168,7 @@ public partial class ProfileControllerShould
         // --- Given ---
         _projectCount = 5;
         var profile = await SetupProfileAsync();
-        var projectToDelete = profile.Projects.First();
+        var projectToDelete = profile.Portfolio.First();
         var requestUri = $"{RequestUriController}/{profile.Id.Value}/projects/{projectToDelete.Id.Value}";
 
         // --- When ---
@@ -219,7 +219,7 @@ public partial class ProfileControllerShould
         // --- Given ---
         _projectCount = 3;
         var profile = await SetupProfileAsync();
-        var projects = profile.Projects.ToList();
+        var projects = profile.Portfolio.ToList();
         var newOrderExpected = projects.OrderByDescending(x => x.Position).Select(x => x.Id).ToList();
         var newOrderCommand = newOrderExpected.Select(x => x.Value);
 

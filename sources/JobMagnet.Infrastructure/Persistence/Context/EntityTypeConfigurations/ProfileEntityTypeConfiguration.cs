@@ -57,8 +57,7 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<Profile>
                     .HasMaxLength(Talent.MaxNameLength);
             });
 
-        builder.Ignore(p => p.Portfolio);
-        builder.HasMany(p => p.Projects)
+        builder.HasMany(p => p.Portfolio)
             .WithOne()
             .HasForeignKey(p => p.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);

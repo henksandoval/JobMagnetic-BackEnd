@@ -25,7 +25,7 @@ public partial class ProfileController
         if (profile is null)
             return Results.NotFound();
 
-        var project = profile.Portfolio.AddProject(
+        profile.AddProject(
             guidGenerator,
             command.ProjectData.Title ?? string.Empty,
             command.ProjectData.Description ?? string.Empty,
@@ -35,12 +35,10 @@ public partial class ProfileController
             command.ProjectData.Type ?? string.Empty
         );
 
-        await projectCommandRepository.CreateAsync(project, cancellationToken);
+        profileCommandRepository.Update(profile);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        var result = project.ToModel();
-
-        return Results.CreatedAtRoute("GetProjectsByProfile", new { profileId }, result);
+        return Results.CreatedAtRoute("GetProjectsByProfile", new { profileId });
     }
 
     [HttpGet("{profileId:guid}/projects", Name = "GetProjectsByProfile")]
@@ -53,7 +51,7 @@ public partial class ProfileController
         if (profile is null)
             return Results.NotFound();
 
-        var response = profile.Projects
+        var response = profile.Portfolio
             .Select(project => project.ToModel())
             .ToList();
 
@@ -78,7 +76,7 @@ public partial class ProfileController
 
         try
         {
-            var updatedProject = profile.Portfolio.UpdateProject(
+            profile.UpdateProject(
                 new ProjectId(projectId),
                 data.Title ?? string.Empty,
                 data.Description ?? string.Empty,
@@ -88,7 +86,7 @@ public partial class ProfileController
                 data.Type ?? string.Empty
             );
 
-            projectCommandRepository.Update(updatedProject);
+            profileCommandRepository.Update(profile);
         }
         catch (NotFoundException ex)
         {
@@ -114,9 +112,9 @@ public partial class ProfileController
 
             var typedIds = orderedProjectIds.Select(id => new ProjectId(id));
 
-            profile.Portfolio.ArrangeProjects(typedIds);
+            profile.ArrangeProjects(typedIds);
 
-            projectCommandRepository.UpdateRange(profile.Projects);
+            projectCommandRepository.UpdateRange(profile.Portfolio);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Results.NoContent();
@@ -143,8 +141,8 @@ public partial class ProfileController
 
         try
         {
-            var project = profile.Portfolio.RemoveProject(new ProjectId(projectId));
-            projectCommandRepository.Remove(project);
+            profile.RemoveProject(new ProjectId(projectId));
+            profileCommandRepository.Update(profile);
         }
         catch (NotFoundException ex)
         {

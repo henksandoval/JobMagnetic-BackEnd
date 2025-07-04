@@ -162,7 +162,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
     {
         foreach (var item in ProjectRawData.Data)
         {
-            profile.Portfolio.AddProject(
+            profile.AddProject(
                 guidGenerator,
                 item.Title,
                 item.Description,

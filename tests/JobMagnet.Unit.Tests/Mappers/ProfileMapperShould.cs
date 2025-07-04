@@ -219,7 +219,7 @@ public class ProfileMapperShould
 
     private static ProjectViewModel[]? GetProjectViewModel(Profile profile)
     {
-        return profile.Projects.Select(p => new ProjectViewModel(
+        return profile.Portfolio.Select(p => new ProjectViewModel(
                 p.Position,
                 p.Title,
                 p.Description,
