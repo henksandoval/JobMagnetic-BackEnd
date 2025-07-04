@@ -3,13 +3,13 @@ using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Shared.Base.Entities;
 
-public abstract class SoftDeletable<TId> : TrackableEntity<TId>, ISoftDeletable<TId>
+public abstract class SoftDeletableEntity<TId> : TrackableEntity<TId>, ISoftDeletable<TId>
 {
     public DateTimeOffset? DeletedAt { get; private set; }
     public bool IsDeleted => DeletedAt.HasValue;
 
-    protected SoftDeletable() : base() {}
-    protected SoftDeletable(TId id) : base(id) {}
+    protected SoftDeletableEntity() : base() {}
+    protected SoftDeletableEntity(TId id) : base(id) {}
 
     internal void MarkAsDeleted(IClock clock)
     {
