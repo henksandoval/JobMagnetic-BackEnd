@@ -20,7 +20,6 @@ public class SummaryCustomization : ICustomization
             composer
                 .FromFactory(() => CareerHistory.CreateInstance(
                     _guidGenerator,
-                    _clock,
                     new ProfileId(),
                     Faker.Lorem.Paragraph()))
                 .OmitAutoProperties()

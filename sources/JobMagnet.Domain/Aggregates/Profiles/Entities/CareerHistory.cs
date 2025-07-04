@@ -1,5 +1,5 @@
 using CommunityToolkit.Diagnostics;
-using JobMagnet.Domain.Shared.Base.Aggregates;
+using JobMagnet.Domain.Shared.Base.Entities;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
@@ -7,7 +7,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public readonly record struct CareerHistoryId(Guid Value) : IStronglyTypedId<CareerHistoryId>;
 
-public class CareerHistory : SoftDeletableAggregateRoot<CareerHistoryId>
+public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
 {
     private readonly HashSet<Qualification> _qualifications = [];
     private readonly HashSet<WorkExperience> _workExperiences = [];
@@ -19,7 +19,7 @@ public class CareerHistory : SoftDeletableAggregateRoot<CareerHistoryId>
 
     private CareerHistory() : base() { }
 
-    private CareerHistory(CareerHistoryId id, IClock clock, string introduction, ProfileId profileId) : base(id, clock)
+    private CareerHistory(CareerHistoryId id, string introduction, ProfileId profileId) : base(id)
     {
         Guard.IsNotNullOrWhiteSpace(introduction);
 
@@ -28,10 +28,10 @@ public class CareerHistory : SoftDeletableAggregateRoot<CareerHistoryId>
         Introduction = introduction;
     }
 
-    public static CareerHistory CreateInstance(IGuidGenerator guidGenerator, IClock clock, ProfileId profileId, string introduction)
+    public static CareerHistory CreateInstance(IGuidGenerator guidGenerator, ProfileId profileId, string introduction)
     {
         var id = new CareerHistoryId(guidGenerator.NewGuid());
-        return new CareerHistory(id, clock, introduction, profileId);
+        return new CareerHistory(id, introduction, profileId);
     }
 
     public void AddEducation(Qualification education)

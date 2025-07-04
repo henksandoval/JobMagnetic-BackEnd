@@ -192,7 +192,6 @@ public class ProfileFactory(
 
         return CareerHistory.CreateInstance(
             guidGenerator,
-            clock,
             _profileId,
             summaryDto.Introduction ?? string.Empty
         );

@@ -145,7 +145,6 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
     {
         var careerHistory = CareerHistory.CreateInstance(
             guidGenerator,
-            clock,
             profile.Id,
             "Professional with experience in your area or profession, recognized for key skills. Committed to value or professional goal, seeking to contribute to the growth of company or industry.");
 
