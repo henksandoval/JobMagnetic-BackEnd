@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;

@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using AwesomeAssertions;
-using JobMagnet.Application.Contracts.Responses.Profile;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Infrastructure.Persistence.Context;

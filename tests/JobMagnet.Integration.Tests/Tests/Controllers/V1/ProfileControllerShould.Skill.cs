@@ -9,7 +9,6 @@ using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Ports.Repositories;
-using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Utils;

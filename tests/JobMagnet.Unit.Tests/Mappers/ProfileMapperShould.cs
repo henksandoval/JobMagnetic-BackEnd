@@ -7,7 +7,6 @@ using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Host.Mappers;
 using JobMagnet.Host.ViewModels.Profile;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
-using JobMagnet.Shared.Abstractions;
 using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;

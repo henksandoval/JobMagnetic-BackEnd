@@ -1,16 +1,11 @@
 using System.Net;
-using System.Net.Http.Json;
 using AutoFixture;
 using AwesomeAssertions;
 using JobMagnet.Application.Contracts.Commands.Talent;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.TalentShowcase;
 using JobMagnet.Application.Mappers;
-using JobMagnet.Domain.Aggregates.Profiles.Entities;
-using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Ports.Repositories;
-using JobMagnet.Domain.Ports.Repositories.Base;
-using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 

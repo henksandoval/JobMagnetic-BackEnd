@@ -1,6 +1,5 @@
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.TalentShowcase;
-using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using Mapster;
 

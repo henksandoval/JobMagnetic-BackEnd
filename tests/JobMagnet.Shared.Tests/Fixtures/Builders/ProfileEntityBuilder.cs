@@ -6,7 +6,6 @@ using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Aggregates.Skills.Entities;
 using JobMagnet.Infrastructure.Persistence.Context;
-using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using JobMagnet.Shared.Abstractions;
 using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Fixtures.Customizations;
