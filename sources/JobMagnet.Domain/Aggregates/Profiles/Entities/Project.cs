@@ -43,7 +43,7 @@ public class Project : SoftDeletableEntity<ProjectId>
         return new Project(id, profileId, title, description, urlLink, urlImage, urlVideo, type, position);
     }
 
-    internal Project UpdateDetails(string newTitle, string newDescription, string newUrlLink, string newUrlImage, string newUrlVideo, string newType)
+    internal void UpdateDetails(string newTitle, string newDescription, string newUrlLink, string newUrlImage, string newUrlVideo, string newType)
     {
         Title = newTitle;
         Description = newDescription;
@@ -53,8 +53,6 @@ public class Project : SoftDeletableEntity<ProjectId>
         Type = newType;
 
         ValidateInvariants();
-
-        return this;
     }
 
     internal void UpdatePosition(int newPosition)

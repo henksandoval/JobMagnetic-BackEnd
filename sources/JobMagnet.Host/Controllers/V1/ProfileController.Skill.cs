@@ -1,3 +1,4 @@
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Application.Contracts.Commands.Skill;
 using JobMagnet.Application.Contracts.Responses.Skill;
 using JobMagnet.Application.Mappers;
@@ -72,7 +73,6 @@ public partial class ProfileController
 
                 profile.SkillSet!.AddSkill(
                     guidGenerator,
-                    clock,
                     skill.ProficiencyLevel,
                     skillTypeToUse
                 );
@@ -86,7 +86,7 @@ public partial class ProfileController
         return Results.CreatedAtRoute("GetSkillsByProfile", new { profileId }, result);
     }
 
-    [HttpGet("{profileId:guid}/Skills", Name = "GetSkillsByProfile")]
+    [HttpGet("{profileId:guid}/skills", Name = "GetSkillsByProfile")]
     [ProducesResponseType(typeof(IEnumerable<SkillResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetSkillsByProfileAsync(Guid profileId, CancellationToken cancellationToken)
@@ -102,12 +102,12 @@ public partial class ProfileController
 
         return Results.Ok(response);
     }
-/*
-    [HttpPut("{profileId:guid}/Skills/{SkillSetId:guid}")]
+
+    [HttpPut("{profileId:guid}/skills/{skillSetId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IResult> UpdateskillsAsync(Guid profileId, Guid SkillSetId, [FromBody] SkillCommand command,
+    public async Task<IResult> UpdateSkillsAsync(Guid profileId, Guid skillSetId, [FromBody] SkillCommand command,
         CancellationToken cancellationToken)
     {
         var profile = await GetProfileWithSkills(profileId, cancellationToken).ConfigureAwait(false);
@@ -121,17 +121,11 @@ public partial class ProfileController
 
         try
         {
-            var updatedskills = profile.SkillSet.Updateskills(
-                new SkillSetId(SkillSetId),
-                data.Title ?? string.Empty,
-                data.Description ?? string.Empty,
-                data.UrlLink ?? string.Empty,
-                data.UrlImage ?? string.Empty,
-                data.UrlVideo ?? string.Empty,
-                data.Type ?? string.Empty
-            );
+            profile.UpdateSkillSet(data.Overview ?? string.Empty);
+            foreach (var skill in data.Skills)
+                profile.UpdateSkill(new SkillId(skill.Id), skill.ProficiencyLevel);
 
-            skillCommandRepository.Update(updatedskills);
+            profileCommandRepository.Update(profile);
         }
         catch (NotFoundException ex)
         {
@@ -141,8 +135,8 @@ public partial class ProfileController
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Results.NoContent();
     }
-*/
-    [HttpDelete("{profileId:guid}/Skills/{skillId:guid}")]
+
+    [HttpDelete("{profileId:guid}/skills/{skillId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteSkillsAsync(Guid profileId, Guid skillId, CancellationToken cancellationToken)

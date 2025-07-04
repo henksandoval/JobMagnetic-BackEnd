@@ -19,7 +19,6 @@ namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
 
 public partial class ProfileControllerShould
 {
-    [Trait("Profile", "Skills")]
     [Fact(DisplayName = "Should return 201 Created with the new SkillSet when payload is valid for an existing profile")]
     public async Task AddSkillSet_WhenProfileExistsAndPayloadIsValid()
     {
@@ -56,14 +55,13 @@ public partial class ProfileControllerShould
             currentHeader.Contains(expectedHeader, StringComparison.OrdinalIgnoreCase)
         );
 
-        var entityCreated = await FindSkillSetByIdAsync(profile.Id.Value);
+        var entityCreated = await FindSkillSetByIdAsync(profile.Id);
 
         entityCreated.Should().NotBeNull();
         entityCreated.ProfileId.Should().Be(profile.Id);
         entityCreated.Skills.Should().HaveSameCount(createRequest.SkillSetData.Skills);
     }
 
-    [Trait("Profile", "Skills")]
     [Fact(DisplayName = "Should return 200 OK with a list of SkillSets when the profile exists and has SkillSets")]
     public async Task GetSkillSets_WhenProfileExistsAndHasSkillSets()
     {
@@ -81,7 +79,6 @@ public partial class ProfileControllerShould
         responseData.Should().NotBeNull();
     }
 
-    [Trait("Profile", "Skills")]
     [Fact(DisplayName = "Should return 404 Not Found when the profile ID does not exist")]
     public async Task GetSkillsNotFound_WhenProfileDoesNotExist()
     {
@@ -96,7 +93,6 @@ public partial class ProfileControllerShould
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Trait("Profile", "Skills")]
     [Fact(DisplayName = "Should return 200 OK with an empty list when the profile exists but has no SkillSets")]
     public async Task GetOkAndEmptyList_WhenProfileExistsButHasNoSkillSets()
     {
@@ -114,18 +110,27 @@ public partial class ProfileControllerShould
         responseData.Should().NotBeNull().And.BeEmpty();
     }
 
-    [Trait("Profile", "Skills")]
     [Fact(DisplayName = "Should return 204 No Content when updating an existing SkillSet")]
     public async Task UpdateSkillSet_WhenProfileAndSkillSetExistAndPayloadIsValid()
     {
         // --- Given ---
         _skillsCount = 8;
         var profile = await SetupProfileAsync();
-        var skillSetData = GetSkillSetData(profile.Id.Value);
         var skillSetToUpdate = profile.SkillSet!.Skills.First();
-        var command = _fixture.Build<SkillCommand>()
-            .With(x => x.SkillSetData, skillSetData)
+        var newProficiencyLevel = (ushort) (skillSetToUpdate.ProficiencyLevel + 1 >= Skill.MaximumProficiencyLevel
+            ? skillSetToUpdate.ProficiencyLevel - 1
+            : skillSetToUpdate.ProficiencyLevel + 1);
+        var skillsToUpdate = new List<SkillBase>
+        {
+            new() { Id = skillSetToUpdate.Id.Value, ProficiencyLevel = newProficiencyLevel }
+        };
+        var skillSetData = _fixture.Build<SkillSetBase>()
+            .With(s => s.Skills, skillsToUpdate)
             .Create();
+        var command = _fixture.Build<SkillCommand>()
+            .With(c => c.SkillSetData, skillSetData)
+            .Create();
+
         var requestUri = $"{RequestUriController}/{profile.Id.Value}/skills/{skillSetToUpdate.Id.Value}";
 
         // --- When ---
@@ -133,17 +138,16 @@ public partial class ProfileControllerShould
 
         // --- Then ---
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        var skillSetUpdated = await FindSkillSetByIdAsync(skillSetToUpdate.Id.Value);
+        var entityUpdated = await FindSkillSetByIdAsync(profile.Id);
 
-        skillSetUpdated.Should().NotBeNull();
-        skillSetUpdated.ProfileId.Should().Be(profile.Id);
+        entityUpdated.Should().NotBeNull();
+        entityUpdated.ProfileId.Should().Be(profile.Id);
         var commandBase = command.SkillSetData;
-        skillSetUpdated.Should().BeEquivalentTo(commandBase, options => options
-            .Excluding(expect => expect!.ProfileId)
-        );
+        entityUpdated.Skills.Should().HaveSameCount(profile.SkillSet.Skills);
+        var skillUpdated = entityUpdated.Skills.First(x => x.Id == skillSetToUpdate.Id);
+        skillUpdated.ProficiencyLevel.Should().Be(newProficiencyLevel);
     }
 
-    [Trait("Profile", "Skills")]
     [Fact(DisplayName = "Should return 404 Not Found when the profile ID does not exist for an update")]
     public async Task UpdateSkillSet_WhenProfileDoesNotExist()
     {
@@ -159,7 +163,6 @@ public partial class ProfileControllerShould
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Trait("Profile", "Skills")]
     [Fact(DisplayName = "Should return 404 Not Found when the SkillSet does not belong to the profile")]
     public async Task UpdateSkillSet_WhenSkillSetDoesNotExistInProfile()
     {
@@ -179,7 +182,6 @@ public partial class ProfileControllerShould
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Trait("Profile", "Skills")]
     [Fact(DisplayName = "Should return 204 No Content when delete an existing Skill to SkillSet")]
     public async Task DeleteSkill_WhenProfileAndSkillSetExist()
     {
@@ -204,7 +206,6 @@ public partial class ProfileControllerShould
         skillSets.Skills.Should().NotContain(p => p.Id == skillToDelete.Id);
     }
 
-    [Trait("Profile", "Skills")]
     [Fact(DisplayName = "Should return 404 Not Found when the profile ID does not exist for a delete")]
     public async Task DeleteSkillSet_WhenProfileDoesNotExist()
     {
@@ -219,7 +220,6 @@ public partial class ProfileControllerShould
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Trait("Profile", "Skills")]
     [Fact(DisplayName = "Should return 404 Not Found when deleting a SkillSet that does not belong to the profile")]
     public async Task DeleteSkillSet_WhenSkillSetDoesNotExistInProfile()
     {
@@ -246,13 +246,13 @@ public partial class ProfileControllerShould
             .Create();
     }
 
-    private async Task<SkillSet?> FindSkillSetByIdAsync(Guid id)
+    private async Task<SkillSet?> FindSkillSetByIdAsync(ProfileId id)
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
         var entityCreated = await queryRepository
             .WithSkills()
-            .WhereCondition(x => x.Id == new ProfileId(id))
+            .WhereCondition(x => x.Id == id)
             .BuildFirstOrDefaultAsync(CancellationToken.None, true);
 
         return entityCreated!.SkillSet;

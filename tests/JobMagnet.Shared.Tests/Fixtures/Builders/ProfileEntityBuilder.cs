@@ -84,7 +84,7 @@ public class ProfileEntityBuilder
             if (_skillSet.SkillExists(skillsToAdd)) continue;
 
             var proficiencyLevel = (ushort)Faker.Random.Int(1, 10);
-            _skillSet.AddSkill(_guidGenerator, _clock, proficiencyLevel, skillsToAdd);
+            _skillSet.AddSkill(_guidGenerator, proficiencyLevel, skillsToAdd);
         }
 
         return this;
@@ -207,7 +207,7 @@ public class ProfileEntityBuilder
         if (_projects.Count <= 0) return;
 
         foreach (var gallery in _projects)
-            profile.AddProject(
+            _ = profile.AddProject(
                 _guidGenerator,
                 gallery.Title,
                 gallery.Description,

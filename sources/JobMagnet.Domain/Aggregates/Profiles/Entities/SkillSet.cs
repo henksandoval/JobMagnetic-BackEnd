@@ -34,7 +34,7 @@ public class SkillSet : SoftDeletableEntity<SkillSetId>
         return new SkillSet(id, profileId, overview);
     }
 
-    public void AddSkill(IGuidGenerator guidGenerator, IClock clock, ushort proficiencyLevel, SkillType skillType)
+    public void AddSkill(IGuidGenerator guidGenerator, ushort proficiencyLevel, SkillType skillType)
     {
         Guard.IsBetweenOrEqualTo<ushort>(proficiencyLevel, 0, 10);
         Guard.IsNotNull(skillType);
@@ -63,5 +63,26 @@ public class SkillSet : SoftDeletableEntity<SkillSetId>
             throw NotFoundException.For<Skill, SkillId>(skillId);
 
         _skills.Remove(skillToRemove);
+    }
+
+    public void Update(string overview)
+    {
+        Guard.IsNotNullOrEmpty(overview);
+        var isSameOverview = string.Equals(Overview, overview, StringComparison.OrdinalIgnoreCase);
+        if (isSameOverview) return;
+
+        Overview = overview;
+    }
+
+    public void UpdateSkill(SkillId skillId, ushort newProficiencyLevel)
+    {
+        var skillToUpdate = _skills.FirstOrDefault(s => s.Id == skillId);
+
+        if (skillToUpdate is null)
+        {
+            throw new JobMagnetDomainException($"Skill with ID '{skillId.Value}' not found in this profile.");
+        }
+
+        skillToUpdate.UpdateProficiencyLevel(newProficiencyLevel);
     }
 }

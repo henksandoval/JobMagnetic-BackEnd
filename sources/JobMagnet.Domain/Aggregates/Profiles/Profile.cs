@@ -1,7 +1,9 @@
-﻿using CommunityToolkit.Diagnostics;
+﻿using System.Linq.Expressions;
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Enums;
+using JobMagnet.Domain.Exceptions;
 using JobMagnet.Domain.Services;
 using JobMagnet.Domain.Shared.Base.Aggregates;
 using JobMagnet.Shared.Abstractions;
@@ -157,9 +159,9 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     #endregion
 
     #region Portfolio
-    public void AddProject(IGuidGenerator guidGenerator, string title, string description, string urlLink, string urlImage, string urlVideo,
-        string type)
-    {
+
+    public Project AddProject(IGuidGenerator guidGenerator, string title, string description, string urlLink, string urlImage, string urlVideo,
+        string type) =>
         AddProjectToPortfolio(
             guidGenerator,
             title,
@@ -168,7 +170,6 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
             urlImage,
             urlVideo,
             type);
-    }
 
     public void RemoveProject(ProjectId projectId)
     {
@@ -194,4 +195,21 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     }
 
     #endregion
+
+    public void UpdateSkillSet(string overview)
+    {
+        if (!HaveSkillSet)
+            throw new JobMagnetDomainException($"The profile {Id} does not have skills set.");
+
+        SkillSet!.Update(overview);
+    }
+
+
+    public void UpdateSkill(SkillId skillId, ushort skillProficiencyLevel)
+    {
+        if (!HaveSkillSet)
+            throw new JobMagnetDomainException($"The profile {Id} does not have skills set.");
+
+        SkillSet!.UpdateSkill(skillId, skillProficiencyLevel);
+    }
 }

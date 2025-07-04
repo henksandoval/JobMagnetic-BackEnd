@@ -9,7 +9,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles;
 
 public partial class Profile
 {
-    private void AddProjectToPortfolio(IGuidGenerator guidGenerator, string title, string description, string urlLink, string urlImage,
+    private Project AddProjectToPortfolio(IGuidGenerator guidGenerator, string title, string description, string urlLink, string urlImage,
         string urlVideo, string type)
     {
         if (Portfolio.Count >= 20) throw new JobMagnetDomainException("Cannot add more than 20 projects.");
@@ -27,6 +27,8 @@ public partial class Profile
             position);
 
         _portfolio.Add(project);
+
+        return project;
     }
 
     private void UpdateProjectInPortfolio(ProjectId projectId,

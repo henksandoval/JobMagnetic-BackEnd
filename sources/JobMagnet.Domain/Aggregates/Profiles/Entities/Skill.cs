@@ -8,6 +8,9 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public class Skill : TrackableEntity<SkillId>
 {
+    private const ushort MinimumRank = 0;
+    private const ushort MinimumProficiencyLevel = 0;
+    public const ushort MaximumProficiencyLevel = 10;
     public ushort ProficiencyLevel { get; private set; }
     public ushort Rank { get; private set; }
     public SkillSetId SkillSetId { get; private set; }
@@ -21,8 +24,8 @@ public class Skill : TrackableEntity<SkillId>
 
     private Skill(SkillId id, SkillSetId skillSetId, SkillType skillType, ushort proficiencyLevel, ushort rank) : base(id)
     {
-        Guard.IsBetweenOrEqualTo<ushort>(proficiencyLevel, 0, 10);
-        Guard.IsGreaterThan<ushort>(rank, 0);
+        Guard.IsBetweenOrEqualTo<ushort>(proficiencyLevel, MinimumProficiencyLevel, MaximumProficiencyLevel);
+        Guard.IsGreaterThan<ushort>(rank, MinimumRank);
         Guard.IsNotNull(skillType);
 
         Id = id;
@@ -40,10 +43,11 @@ public class Skill : TrackableEntity<SkillId>
         return new Skill(id, skillSetId, skillType, proficiencyLevel, rank);
     }
 
-    internal void UpdateRank(ushort newRank)
+    internal void UpdateProficiencyLevel(ushort newLevel)
     {
-        Guard.IsGreaterThan<ushort>(newRank, 0);
+        Guard.IsBetweenOrEqualTo<ushort>(newLevel, MinimumProficiencyLevel, MaximumProficiencyLevel);
+        if (ProficiencyLevel == newLevel) return;
 
-        Rank = newRank;
+        ProficiencyLevel = newLevel;
     }
 }

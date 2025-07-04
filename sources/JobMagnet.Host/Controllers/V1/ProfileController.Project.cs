@@ -25,7 +25,7 @@ public partial class ProfileController
         if (profile is null)
             return Results.NotFound();
 
-        profile.AddProject(
+        var newProject = profile.AddProject(
             guidGenerator,
             command.ProjectData.Title ?? string.Empty,
             command.ProjectData.Description ?? string.Empty,
@@ -38,7 +38,9 @@ public partial class ProfileController
         profileCommandRepository.Update(profile);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Results.CreatedAtRoute("GetProjectsByProfile", new { profileId });
+        var result = newProject.ToModel();
+
+        return Results.CreatedAtRoute("GetProjectsByProfile", new { profileId }, result);
     }
 
     [HttpGet("{profileId:guid}/projects", Name = "GetProjectsByProfile")]

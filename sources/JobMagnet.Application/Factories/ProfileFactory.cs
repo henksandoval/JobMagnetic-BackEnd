@@ -58,7 +58,7 @@ public class ProfileFactory(
                 item.PhotoUrl);
 
         foreach (var item in galleryItems)
-            profile.AddProject(
+            _ = profile.AddProject(
                 guidGenerator,
                 item.Title,
                 item.Description,
@@ -216,7 +216,7 @@ public class ProfileFactory(
                     skill.Name ?? string.Empty,
                     defaultCategory);
 
-            skillSetEntity.AddSkill(guidGenerator, clock, skill.Level.GetValueOrDefault(), skillType);
+            skillSetEntity.AddSkill(guidGenerator, skill.Level.GetValueOrDefault(), skillType);
         }
 
         return skillSetEntity;

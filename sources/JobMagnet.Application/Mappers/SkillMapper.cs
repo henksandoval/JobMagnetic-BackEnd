@@ -12,6 +12,7 @@ public static class SkillMapper
     {
         TypeAdapterConfig<Skill, SkillBase>
             .NewConfig()
+            .Map(dest => dest.Id, src => src.Id.Value)
             .Map(dest => dest.ProficiencyLevel, src => src.ProficiencyLevel)
             .Map(dest => dest.Name, src => src.SkillType.Name);
 

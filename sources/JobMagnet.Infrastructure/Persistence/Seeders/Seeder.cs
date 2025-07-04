@@ -133,7 +133,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
 
         foreach (var (skillName, proficiencyLevel, rank) in SkillInfoCollection.Data)
             if (skillTypeMap.TryGetValue(skillName, out var skillType))
-                skillSet.AddSkill(guidGenerator, clock, proficiencyLevel, skillType);
+                skillSet.AddSkill(guidGenerator, proficiencyLevel, skillType);
             else
                 throw new JobMagnetInfrastructureException(
                     $"Seeding error: Skill type '{skillName}' not found in database.");
@@ -163,7 +163,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
     {
         foreach (var item in ProjectRawData.Data)
         {
-            profile.AddProject(
+            _ = profile.AddProject(
                 guidGenerator,
                 item.Title,
                 item.Description,
