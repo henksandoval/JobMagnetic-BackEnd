@@ -84,7 +84,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
 
     private void AddPublicIdentifier(Profile profile)
     {
-        profile.LinkManager.AddPublicProfileIdentifier(guidGenerator, clock,"john-doe-1a2b3c");
+        profile.AddVanityUrl(guidGenerator,"john-doe-1a2b3c");
     }
 
     private static void AddTalents(Profile profile)

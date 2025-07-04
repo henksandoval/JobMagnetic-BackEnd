@@ -33,7 +33,6 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<Profile>
             .HasForeignKey<SkillSet>(s => s.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Ignore(p => p.LinkManager);
         builder.HasMany(p => p.VanityUrls)
             .WithOne()
             .HasForeignKey(identifier => identifier.ProfileId)

@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Domain.Core.Enums;
+using JobMagnet.Domain.Services;
 using JobMagnet.Domain.Shared.Base.Aggregates;
 using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
@@ -25,7 +27,6 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     public virtual ProfileHeader? ProfileHeader { get; private set; }
     public virtual SkillSet? SkillSet { get; private set; }
     public virtual CareerHistory? CareerHistory { get; private set; }
-    public VanityUrlManager LinkManager { get; private set; }
     public TalentShowcase TalentShowcase { get; private set; }
     public virtual IReadOnlyCollection<Talent> Talents => _talents;
     public virtual IReadOnlyCollection<Project> Portfolio => _portfolio;
@@ -36,7 +37,6 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     private Profile(ProfileId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
         base(id, addedAt, lastModifiedAt, deletedAt)
     {
-        LinkManager = new VanityUrlManager(this);
         TalentShowcase = new TalentShowcase(this);
     }
 
@@ -57,7 +57,6 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
         MiddleName = middleName;
         SecondLastName = secondLastName;
 
-        LinkManager = new VanityUrlManager(this);
         TalentShowcase = new TalentShowcase(this);
     }
 
@@ -146,10 +145,19 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
         AddTestimonialToCollection(guidGenerator, name, jobTitle, feedback, photoUrl);
     }
 
-    internal void AddPublicProfileIdentifier(VanityUrl publicProfile)
+    #region VanityUrls
+
+    public void AssignDefaultVanityUrl(IGuidGenerator guidGenerator, IProfileSlugGenerator slugGenerator)
     {
-        _vanityUrls.Add(publicProfile);
+        ExecuteAssignDefaultVanityUrl(guidGenerator, slugGenerator);
     }
+
+    public void AddVanityUrl(IGuidGenerator guidGenerator, string slug, LinkType type = LinkType.Primary)
+    {
+        ExecuteAddVanityUrl(guidGenerator, slug, type);
+    }
+
+    #endregion
 
     #region Portfolio
     public void AddProject(IGuidGenerator guidGenerator, string title, string description, string urlLink, string urlImage, string urlVideo,

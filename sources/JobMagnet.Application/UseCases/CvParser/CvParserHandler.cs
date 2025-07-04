@@ -30,7 +30,7 @@ public class CvParserHandler(
     {
         var profileEntity = await BuildProfileFromCvAsync(command, cancellationToken);
 
-        profileEntity.LinkManager.CreateAndAssignPublicIdentifier(guidGenerator, clock, slugGenerator);
+        profileEntity.AssignDefaultVanityUrl(guidGenerator, slugGenerator);
 
         await profileRepository.CreateAsync(profileEntity, cancellationToken);
         await profileRepository.SaveChangesAsync(cancellationToken);
