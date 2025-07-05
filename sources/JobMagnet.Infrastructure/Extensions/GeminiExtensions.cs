@@ -1,12 +1,14 @@
+using System.Text.Json;
 using GeminiDotNET;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Infrastructure.ExternalServices.Gemini;
 using JobMagnet.Infrastructure.Settings;
 using JobMagnet.Shared.Utils;
+using Json.Schema;
+using Json.Schema.Generation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Schema.Generation;
 
 namespace JobMagnet.Infrastructure.Extensions;
 
@@ -31,9 +33,11 @@ internal static class GeminiExtensions
 
     private static string LoadAndFlattenProfileSchema()
     {
-        var generator = new JSchemaGenerator();
-        var schemaJObject = generator.Generate(typeof(ProfileRaw));
-        return schemaJObject.ToString();
+        var schema = new JsonSchemaBuilder()
+            .FromType<ProfileRaw>()
+            .Build();
+
+        return JsonSerializer.Serialize(schema);
     }
 }
 

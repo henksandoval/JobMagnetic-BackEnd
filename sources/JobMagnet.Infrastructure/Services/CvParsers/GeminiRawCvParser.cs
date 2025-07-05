@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 using CSharpFunctionalExtensions;
 using GeminiDotNET;
 using GeminiDotNET.ClientModels;
@@ -10,7 +11,6 @@ using JobMagnet.Infrastructure.Settings;
 using JobMagnet.Shared.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
 namespace JobMagnet.Infrastructure.Services.CvParsers;
 
@@ -74,7 +74,10 @@ public class GeminiCvParser(IGeminiClient geminiClient, IOptions<GeminiSettings>
                 return Maybe<ProfileRaw>.None;
             }
 
-            var profileParsed = JsonConvert.DeserializeObject<ProfileRaw>(jsonResponse.Value);
+            var profileParsed = JsonSerializer.Deserialize<ProfileRaw>(jsonResponse.Value, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
             return Maybe<ProfileRaw>.From(profileParsed);
         }
         catch (Exception ex)
