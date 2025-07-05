@@ -153,11 +153,11 @@ public partial class ProfileControllerShould
     {
         // --- Given ---
         var nonExistentProfileId = Guid.NewGuid();
-        var skillSetData = GetSkillSetData(nonExistentProfileId);
+        var command = _fixture.Create<SkillCommand>();
         var requestUri = $"{RequestUriController}/{nonExistentProfileId}/skills/{nonExistentProfileId}";
 
         // --- When ---
-        var response = await _httpClient.PutAsJsonAsync(requestUri, skillSetData);
+        var response = await _httpClient.PutAsJsonAsync(requestUri, command);
 
         // --- Then ---
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);

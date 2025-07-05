@@ -112,7 +112,7 @@ public partial class ProfileController
     {
         var profile = await GetProfileWithSkills(profileId, cancellationToken).ConfigureAwait(false);
 
-        if (profile is null)
+        if (profile is null || !profile.HaveSkillSet || profile.SkillSet!.Id != new SkillSetId(skillSetId))
             return Results.NotFound();
 
         var data = command.SkillSetData;
