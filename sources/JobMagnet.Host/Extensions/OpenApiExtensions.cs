@@ -16,19 +16,7 @@ public static class OpenApiExtensions
         if (openApiSettings is null ||
             string.IsNullOrWhiteSpace(openApiSettings.Title) ||
             string.IsNullOrWhiteSpace(openApiSettings.Description))
-            throw new InvalidOperationException("OpenApiSettings no está configurado.");
-
-        services.AddApiVersioning(options =>
-        {
-            options.DefaultApiVersion = new ApiVersion(1, 0);
-            options.AssumeDefaultVersionWhenUnspecified = true;
-            options.ReportApiVersions = true;
-            options.ApiVersionReader = new UrlSegmentApiVersionReader();
-        }).AddApiExplorer(options =>
-        {
-            options.GroupNameFormat = "'v'VVV";
-            options.SubstituteApiVersionInUrl = true;
-        });
+            throw new InvalidOperationException("OpenApiSettings is not configured.");
 
         var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
 
