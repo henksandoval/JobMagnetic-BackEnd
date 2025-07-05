@@ -24,7 +24,7 @@ builder.Services
     .AddEndpointsApiExplorer()
     .AddApiVersion()
     .AddSwagger(builder.Configuration)
-    .AddControllers(options => { options.InputFormatters.Insert(0, JsonPatchInputFormatter.GetJsonPatchInputFormatter()); });
+    .AddControllers();
 
 var app = builder.Build();
 
