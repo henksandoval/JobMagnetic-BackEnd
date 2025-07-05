@@ -1,4 +1,4 @@
-namespace JobMagnet.Host.Middleware;
+namespace JobMagnet.Host.Middlewares;
 
 public static class LoguerRespuestaHttpMiddlewareExtensions
 {

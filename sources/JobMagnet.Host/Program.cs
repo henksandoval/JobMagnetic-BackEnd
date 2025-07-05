@@ -23,12 +23,12 @@ builder.Services
     .AddHttpContextAccessor()
     .AddEndpointsApiExplorer()
     .AddApiVersion()
-    .AddSwagger(builder.Configuration)
+    .AddConfiguredOpenApi(builder.Configuration)
     .AddControllers();
 
 var app = builder.Build();
 
-if (builder.Configuration.GetValue<bool>("SwaggerSettings:UseUI")) app.UseOpenApi();
+if (builder.Configuration.GetValue<bool>("OpenApiSettings:UseUI")) app.UseConfiguredOpenApi();
 
 app
     .UseHttpsRedirection()

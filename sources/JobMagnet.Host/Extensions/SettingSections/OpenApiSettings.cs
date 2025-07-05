@@ -1,6 +1,6 @@
 ﻿namespace JobMagnet.Host.Extensions.SettingSections;
 
-public class SwaggerSettings
+public class OpenApiSettings
 {
     public string Url { get; set; } = string.Empty;
     public bool UseUi { get; set; } = false;
