@@ -191,35 +191,51 @@ public class ProfileFactory(
         );
     }
 
-    private async Task<SkillSet> BuildSkillSetAsync(SkillSetParseDto skillSetDto,
-        CancellationToken cancellationToken)
+    private async Task<SkillSet> BuildSkillSetAsync(SkillSetParseDto skillSetDto, CancellationToken cancellationToken)
     {
-        var skillSetEntity = SkillSet.CreateInstance(
+        var skillSet = SkillSet.CreateInstance(
             guidGenerator,
             _profileId,
             skillSetDto.Overview ?? string.Empty
         );
-        var defaultCategory = await skillCategoryRepository
-            .FirstAsync(c => c.Name == SkillCategory.DefaultCategoryName, cancellationToken)
+
+        var defaultCategoryLazy = new Lazy<Task<SkillCategory>>(async () =>
+            await skillCategoryRepository
+                .GetByIdAsync(new SkillCategoryId(SkillCategory.DefaultCategoryId), cancellationToken)
+                .ConfigureAwait(false) ?? throw new InvalidOperationException("The DefaultCategory is missing."));
+
+        var nameSkills = skillSetDto.Skills.DistinctBy(x => x.Name).Select(x => x.Name);
+        var resolvedTypes = await skillTypeResolverService.ResolveAsync(nameSkills!, cancellationToken)
             .ConfigureAwait(false);
 
         foreach (var skill in skillSetDto.Skills.Where(skill => !string.IsNullOrWhiteSpace(skill.Name)))
         {
-            var resolvedType = await skillTypeResolverService.ResolveAsync(skill.Name!, cancellationToken)
-                .ConfigureAwait(false); //TODO: Add method by resolving skills by batch
+            resolvedTypes.TryGetValue(skill.Name!, out var maybeSkillType);
 
-            var skillType = resolvedType.HasValue
-                ? resolvedType.Value
-                : SkillType.CreateInstance(
+            SkillType skillTypeToUse;
+
+            if (maybeSkillType.HasValue)
+                skillTypeToUse = maybeSkillType.Value;
+            else
+            {
+                var defaultCategory = await defaultCategoryLazy.Value;
+
+                skillTypeToUse = SkillType.CreateInstance(
                     guidGenerator,
                     clock,
                     skill.Name ?? string.Empty,
-                    defaultCategory);
+                    defaultCategory
+                );
+            }
 
-            skillSetEntity.AddSkill(guidGenerator, skill.Level.GetValueOrDefault(), skillType);
+            skillSet.AddSkill(
+                guidGenerator,
+                skill.Level.GetValueOrDefault(),
+                skillTypeToUse
+            );
         }
 
-        return skillSetEntity;
+        return skillSet;
     }
 
     private static DateTime ToDateTimeOrDefault(DateOnly? date) => date?.ToDateTime(TimeOnly.MinValue) ?? default;
