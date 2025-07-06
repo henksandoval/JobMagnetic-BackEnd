@@ -188,5 +188,21 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
         SkillSet!.RemoveSkill(skillId);
     }
 
+    public IReadOnlyCollection<Skill> GetSkills()
+    {
+        if (!HaveSkillSet)
+            throw new JobMagnetDomainException($"The profile {Id} does not have skills set.");
+
+        return SkillSet!.Skills;
+    }
+
+    public void ArrangeSkills(IEnumerable<SkillId> orderedSkills)
+    {
+        if (!HaveSkillSet)
+            throw new JobMagnetDomainException($"The profile {Id} does not have skills set.");
+
+        SkillSet!.ArrangeSkills(orderedSkills);
+    }
+
     #endregion
 }

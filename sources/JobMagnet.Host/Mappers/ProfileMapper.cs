@@ -49,6 +49,7 @@ public static class ProfileMapper
         TypeAdapterConfig<Skill, SkillDetailsViewModel>
             .NewConfig()
             .Map(dest => dest.Name, src => src.SkillType.Name)
+            .Map(dest => dest.Rank, src => src.Position)
             .Map(dest => dest.IconUrl, src => src.SkillType.IconUrl);
 
         TypeAdapterConfig<SkillSet, SkillSetViewModel>

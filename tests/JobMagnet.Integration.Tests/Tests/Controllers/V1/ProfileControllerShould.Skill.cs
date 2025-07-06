@@ -235,6 +235,28 @@ public partial class ProfileControllerShould
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
+    [Fact(DisplayName = "Should return 204 No Content when arranging Skills with a valid order")]
+    public async Task ArrangeSkills_WhenProfileExistsAndPayloadIsValid_ShouldUpdatePositionsInDb()
+    {
+        // --- Given ---
+        _skillsCount = 5;
+        var profile = await SetupProfileAsync();
+        var skills = profile.GetSkills();
+        var newOrderExpected = skills.OrderByDescending(x => x.Position).Select(x => x.Id).ToList();
+        var newOrderCommand = newOrderExpected.Select(x => x.Value);
+
+        var requestUri = $"{RequestUriController}/{profile.Id.Value}/Skills/arrange";
+
+        // --- When ---
+        var response = await _httpClient.PutAsJsonAsync(requestUri, newOrderCommand);
+
+        // --- Then ---
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        var skillsUpdated = await FindSkillSetByIdAsync(profile.Id);
+        var skillsOrderedByPosition = skillsUpdated!.Skills.OrderBy(p => p.Position).Select(x => x.Id);
+        skillsOrderedByPosition.Should().BeEquivalentTo(newOrderExpected);
+    }
+
     private SkillSetBase GetSkillSetData(Guid profileEntityId, int skillsQuantity = 3)
     {
         var skills = _fixture.CreateMany<SkillBase>(skillsQuantity).ToList();

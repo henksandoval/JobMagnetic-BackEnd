@@ -137,6 +137,39 @@ public partial class ProfileController
         return Results.NoContent();
     }
 
+    [HttpPut("{profileId:guid}/skills/arrange")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IResult> ArrangeSkillsAsync(Guid profileId, [FromBody] List<Guid> orderedSkillsIds, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var profile = await GetProfileWithSkills(profileId, cancellationToken);
+
+            if (profile is null)
+                return Results.NotFound();
+
+            var typedIds = orderedSkillsIds.Select(id => new SkillId(id));
+
+            profile.ArrangeSkills(typedIds);
+
+            profileCommandRepository.Update(profile);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Results.NoContent();
+        }
+        catch (NotFoundException ex)
+        {
+            return Results.NotFound(new { ex.Message });
+        }
+        catch (BusinessRuleValidationException ex)
+        {
+            return Results.BadRequest(new { ex.Message });
+        }
+    }
+
+
     [HttpDelete("{profileId:guid}/skills/{skillId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

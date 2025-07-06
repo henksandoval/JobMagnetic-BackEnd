@@ -12,7 +12,7 @@ public class Skill : TrackableEntity<SkillId>
     private const ushort MinimumProficiencyLevel = 0;
     public const ushort MaximumProficiencyLevel = 10;
     public ushort ProficiencyLevel { get; private set; }
-    public ushort Rank { get; private set; }
+    public ushort Position { get; private set; }
     public SkillSetId SkillSetId { get; private set; }
     public SkillTypeId SkillTypeId { get; private set; }
     public virtual SkillType SkillType { get; private set; }
@@ -22,25 +22,25 @@ public class Skill : TrackableEntity<SkillId>
     {
     }
 
-    private Skill(SkillId id, SkillSetId skillSetId, SkillType skillType, ushort proficiencyLevel, ushort rank) : base(id)
+    private Skill(SkillId id, SkillSetId skillSetId, SkillType skillType, ushort proficiencyLevel, ushort position) : base(id)
     {
         Guard.IsBetweenOrEqualTo<ushort>(proficiencyLevel, MinimumProficiencyLevel, MaximumProficiencyLevel);
-        Guard.IsGreaterThan<ushort>(rank, MinimumRank);
+        Guard.IsGreaterThan<ushort>(position, MinimumRank);
         Guard.IsNotNull(skillType);
 
         Id = id;
         SkillSetId = skillSetId;
         ProficiencyLevel = proficiencyLevel;
-        Rank = rank;
+        Position = position;
         SkillTypeId = skillType.Id;
         SkillType = skillType;
     }
 
     internal static Skill CreateInstance(IGuidGenerator guidGenerator, SkillSetId skillSetId, SkillType skillType,
-        ushort proficiencyLevel, ushort rank)
+        ushort proficiencyLevel, ushort position)
     {
         var id = new SkillId(guidGenerator.NewGuid());
-        return new Skill(id, skillSetId, skillType, proficiencyLevel, rank);
+        return new Skill(id, skillSetId, skillType, proficiencyLevel, position);
     }
 
     internal void UpdateProficiencyLevel(ushort newLevel)
@@ -49,5 +49,11 @@ public class Skill : TrackableEntity<SkillId>
         if (ProficiencyLevel == newLevel) return;
 
         ProficiencyLevel = newLevel;
+    }
+
+    public void UpdatePosition(ushort newPosition)
+    {
+        Guard.IsGreaterThanOrEqualTo<ushort>(newPosition, 1);
+        Position = newPosition;
     }
 }

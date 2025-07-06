@@ -233,7 +233,7 @@ public class ProfileMapperShould
     private static SkillSetViewModel GetSkillViewModel(Profile profile)
     {
         var skills = profile.SkillSet.Skills
-            .Select(skill => new SkillDetailsViewModel(skill.SkillType.Name, skill.SkillType.IconUrl.AbsoluteUri, skill.Rank))
+            .Select(skill => new SkillDetailsViewModel(skill.SkillType.Name, skill.SkillType.IconUrl.AbsoluteUri, skill.Position))
             .ToArray();
 
         return new SkillSetViewModel(profile.SkillSet.Overview!, skills);
