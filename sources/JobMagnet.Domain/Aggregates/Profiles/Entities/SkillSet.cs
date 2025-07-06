@@ -34,7 +34,7 @@ public class SkillSet : SoftDeletableEntity<SkillSetId>
         return new SkillSet(id, profileId, overview);
     }
 
-    public void AddSkill(IGuidGenerator guidGenerator, ushort proficiencyLevel, SkillType skillType)
+    internal void AddSkill(IGuidGenerator guidGenerator, ushort proficiencyLevel, SkillType skillType)
     {
         Guard.IsBetweenOrEqualTo<ushort>(proficiencyLevel, 0, 10);
         Guard.IsNotNull(skillType);
@@ -48,14 +48,14 @@ public class SkillSet : SoftDeletableEntity<SkillSetId>
         _skills.Add(newSkill);
     }
 
-    public bool SkillExists(SkillType skillType)
+    internal bool SkillExists(SkillType skillType)
     {
         Guard.IsNotNull(skillType);
 
         return _skills.Any(s => s.SkillTypeId == skillType.Id || s.SkillType.Name == skillType.Name);
     }
 
-    public void RemoveSkill(SkillId skillId)
+    internal void RemoveSkill(SkillId skillId)
     {
         var skillToRemove = Skills.FirstOrDefault(p => p.Id == skillId);
 
@@ -65,7 +65,7 @@ public class SkillSet : SoftDeletableEntity<SkillSetId>
         _skills.Remove(skillToRemove);
     }
 
-    public void Update(string overview)
+    internal void Update(string overview)
     {
         Guard.IsNotNullOrEmpty(overview);
         var isSameOverview = string.Equals(Overview, overview, StringComparison.OrdinalIgnoreCase);
@@ -74,7 +74,7 @@ public class SkillSet : SoftDeletableEntity<SkillSetId>
         Overview = overview;
     }
 
-    public void UpdateSkill(SkillId skillId, ushort newProficiencyLevel)
+    internal void UpdateSkill(SkillId skillId, ushort newProficiencyLevel)
     {
         var skillToUpdate = _skills.FirstOrDefault(s => s.Id == skillId);
 

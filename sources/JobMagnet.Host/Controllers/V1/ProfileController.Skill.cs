@@ -71,7 +71,7 @@ public partial class ProfileController
                     );
                 }
 
-                profile.SkillSet!.AddSkill(
+                profile.AddSkill(
                     guidGenerator,
                     skill.ProficiencyLevel,
                     skillTypeToUse
@@ -152,7 +152,7 @@ public partial class ProfileController
 
         try
         {
-            profile.SkillSet!.RemoveSkill(new SkillId(skillId));
+            profile.RemoveSkill(new SkillId(skillId));
             profileCommandRepository.Update(profile);
         }
         catch (NotFoundException ex)

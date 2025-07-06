@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Domain.Aggregates.SkillTypes;
 using JobMagnet.Domain.Enums;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Domain.Services;
@@ -163,6 +164,13 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
         SkillSet!.Update(overview);
     }
 
+    public void AddSkill(IGuidGenerator guidGenerator, ushort proficiencyLevel, SkillType skillType)
+    {
+        if (!HaveSkillSet)
+            throw new JobMagnetDomainException($"The profile {Id} does not have skills set.");
+
+        SkillSet!.AddSkill(guidGenerator, proficiencyLevel, skillType);
+    }
 
     public void UpdateSkill(SkillId skillId, ushort skillProficiencyLevel)
     {
@@ -170,6 +178,14 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
             throw new JobMagnetDomainException($"The profile {Id} does not have skills set.");
 
         SkillSet!.UpdateSkill(skillId, skillProficiencyLevel);
+    }
+
+    public void RemoveSkill(SkillId skillId)
+    {
+        if (!HaveSkillSet)
+            throw new JobMagnetDomainException($"The profile {Id} does not have skills set.");
+
+        SkillSet!.RemoveSkill(skillId);
     }
 
     #endregion
