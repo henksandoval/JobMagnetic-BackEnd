@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using CommunityToolkit.Diagnostics;
+﻿using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Enums;
@@ -118,13 +117,6 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
         _talents.Add(talent);
     }
 
-    public void AddSkillSet(SkillSet skillSet)
-    {
-        Guard.IsNotNull(skillSet);
-
-        SkillSet = skillSet;
-    }
-
     public void AddSummary(CareerHistory careerHistory)
     {
         Guard.IsNotNull(careerHistory);
@@ -139,10 +131,6 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
         ProfileHeader = profileHeader;
     }
 
-    public void AddTestimonial(IGuidGenerator guidGenerator, string name, string jobTitle, string feedback, string? photoUrl = null)
-    {
-        AddTestimonialToCollection(guidGenerator, name, jobTitle, feedback, photoUrl);
-    }
 
     #region VanityUrls
 
@@ -158,43 +146,14 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
 
     #endregion
 
-    #region Portfolio
+    #region Skills
 
-    public Project AddProject(IGuidGenerator guidGenerator, string title, string description, string urlLink, string urlImage, string urlVideo,
-        string type) =>
-        AddProjectToPortfolio(
-            guidGenerator,
-            title,
-            description,
-            urlLink,
-            urlImage,
-            urlVideo,
-            type);
-
-    public void RemoveProject(ProjectId projectId)
+    public void AddSkillSet(SkillSet skillSet)
     {
-        RemoveProjectToPortfolio(projectId);
-    }
+        Guard.IsNotNull(skillSet);
 
-    public void UpdateProject(ProjectId projectId, string newTitle, string newDescription, string newUrlLink, string newUrlImage, string newUrlVideo,
-        string newType)
-    {
-        UpdateProjectInPortfolio(
-            projectId,
-            newTitle,
-            newDescription,
-            newUrlLink,
-            newUrlImage,
-            newUrlVideo,
-            newType);
+        SkillSet = skillSet;
     }
-
-    public void ArrangeProjects(IEnumerable<ProjectId> orderedProjects)
-    {
-        ArrangeProjectsInPortfolio(orderedProjects);
-    }
-
-    #endregion
 
     public void UpdateSkillSet(string overview)
     {
@@ -212,4 +171,6 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
 
         SkillSet!.UpdateSkill(skillId, skillProficiencyLevel);
     }
+
+    #endregion
 }

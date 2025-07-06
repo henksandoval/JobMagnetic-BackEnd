@@ -9,6 +9,40 @@ namespace JobMagnet.Domain.Aggregates.Profiles;
 
 public partial class Profile
 {
+    public Project AddProject(IGuidGenerator guidGenerator, string title, string description, string urlLink, string urlImage, string urlVideo,
+        string type) =>
+        AddProjectToPortfolio(
+            guidGenerator,
+            title,
+            description,
+            urlLink,
+            urlImage,
+            urlVideo,
+            type);
+
+    public void RemoveProject(ProjectId projectId)
+    {
+        RemoveProjectToPortfolio(projectId);
+    }
+
+    public void UpdateProject(ProjectId projectId, string newTitle, string newDescription, string newUrlLink, string newUrlImage, string newUrlVideo,
+        string newType)
+    {
+        UpdateProjectInPortfolio(
+            projectId,
+            newTitle,
+            newDescription,
+            newUrlLink,
+            newUrlImage,
+            newUrlVideo,
+            newType);
+    }
+
+    public void ArrangeProjects(IEnumerable<ProjectId> orderedProjects)
+    {
+        ArrangeProjectsInPortfolio(orderedProjects);
+    }
+
     private Project AddProjectToPortfolio(IGuidGenerator guidGenerator, string title, string description, string urlLink, string urlImage,
         string urlVideo, string type)
     {

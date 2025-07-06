@@ -6,7 +6,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles;
 
 public partial class Profile
 {
-    private void AddTestimonialToCollection(IGuidGenerator guidGenerator, string name, string jobTitle, string feedback, string? photoUrl = null)
+    public void AddTestimonial(IGuidGenerator guidGenerator, string name, string jobTitle, string feedback, string? photoUrl = null)
     {
         if (Testimonials.Count >= 20) throw new JobMagnetDomainException("Cannot add more than 20 testimonials.");
         if (Testimonials.Any(t => t.Name == name && t.Feedback == feedback))
