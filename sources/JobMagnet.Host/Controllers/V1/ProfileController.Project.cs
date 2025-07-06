@@ -116,7 +116,7 @@ public partial class ProfileController
 
             profile.ArrangeProjects(typedIds);
 
-            projectCommandRepository.UpdateRange(profile.Portfolio);
+            profileCommandRepository.Update(profile);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Results.NoContent();

@@ -28,7 +28,6 @@ public partial class ProfileController(
     ICvParserHandler cvParser,
     ILogger<ProfileController> logger,
     IProfileQueryRepository queryRepository,
-    ICommandRepository<Project> projectCommandRepository,
     IQueryRepository<SkillCategory, SkillCategoryId> skillCategoryRepository,
     IUnitOfWork unitOfWork,
     IQueryRepository<VanityUrl, long> publicProfileRepository,

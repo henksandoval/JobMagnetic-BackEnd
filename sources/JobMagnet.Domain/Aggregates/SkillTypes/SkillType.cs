@@ -3,12 +3,9 @@ using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Domain.Aggregates.SkillTypes.ValueObjects;
 using JobMagnet.Domain.Exceptions;
 using JobMagnet.Domain.Shared.Base.Aggregates;
-using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.SkillTypes;
-
-public readonly record struct SkillTypeId(Guid Value) : IStronglyTypedId<SkillTypeId>;
 
 public class SkillType : SoftDeletableAggregateRoot<SkillTypeId>
 {

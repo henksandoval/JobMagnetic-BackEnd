@@ -1,11 +1,8 @@
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Shared.Base.Entities;
-using JobMagnet.Domain.Shared.Base.Interfaces;
 using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Domain.Aggregates.SkillTypes.Entities;
-
-public readonly record struct SkillCategoryId(Guid Value) : IStronglyTypedId<SkillCategoryId>;
 
 public class SkillCategory : SoftDeletableEntity<SkillCategoryId>
 {

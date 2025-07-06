@@ -79,6 +79,7 @@ public partial class ProfileController
             }
         }
 
+        profileCommandRepository.Update(profile);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         var result = profile.SkillSet!.ToModel();
