@@ -37,7 +37,7 @@ public class ProfileMapperShould
         var contactTypes = GetContactTypes();
         var profileBuilder = new ProfileEntityBuilder(_fixture)
             .WithTalents()
-            .WithResume()
+            .WithHeader()
             .WithContactInfo(contactTypes);
 
         var profile = profileBuilder.Build();
@@ -61,7 +61,7 @@ public class ProfileMapperShould
     {
         var contactTypes = GetContactTypes();
         var profileBuilder = new ProfileEntityBuilder(_fixture)
-            .WithResume()
+            .WithHeader()
             .WithContactInfo(contactTypes);
 
         var profile = profileBuilder.Build();
@@ -168,7 +168,7 @@ public class ProfileMapperShould
         return new PersonalDataViewModel(
             $"{entity.FirstName} {entity.LastName}",
             entity.Talents.Select(x => x.Description).ToArray(),
-            entity.ProfileHeader.ContactInfo.Select(c => new SocialNetworksViewModel(
+            entity.Header.ContactInfo.Select(c => new SocialNetworksViewModel(
                 c.ContactType.Name,
                 c.Value,
                 c.ContactType.IconClass ?? string.Empty,
@@ -185,23 +185,23 @@ public class ProfileMapperShould
 
         return new AboutViewModel(
             entity.ProfileImageUrl,
-            entity.ProfileHeader.About,
-            entity.ProfileHeader.JobTitle,
-            entity.ProfileHeader.Overview,
+            entity.Header.About,
+            entity.Header.JobTitle,
+            entity.Header.Overview,
             entity.BirthDate!.Value,
             webSite,
             mobilePhone,
-            entity.ProfileHeader.Address,
+            entity.Header.Address,
             entity.BirthDate.GetAge(),
-            entity.ProfileHeader.Title ?? string.Empty,
+            entity.Header.Title ?? string.Empty,
             email,
-            entity.ProfileHeader.Summary ?? string.Empty,
-            entity.ProfileHeader.Summary
+            entity.Header.Summary ?? string.Empty,
+            entity.Header.Summary
         );
 
         string GetContactValue(string contactTypeName)
         {
-            return entity.ProfileHeader.ContactInfo
+            return entity.Header.ContactInfo
                 .FirstOrDefault(x => x.ContactType.Name == contactTypeName)
                 ?.Value ?? string.Empty;
         }

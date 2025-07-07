@@ -90,7 +90,7 @@ public class AdminControllerShould(
             .WithProfileHeader()
             .WithTalents()
             .WithTestimonials()
-            .WithSkills()
+            .WithProfileHeader()
             .WithProject()
             .WithCareerHistory()
             .WhereCondition(x => x.Id == new ProfileId(profileId))

@@ -52,7 +52,7 @@ public class CvParserHandler(
 
     private static string GetUserEmail(Profile profile)
     {
-        var userEmail = profile.ProfileHeader?.ContactInfo?
+        var userEmail = profile.Header?.ContactInfo?
                             .FirstOrDefault(x => x.ContactType.Name.Equals("Email", StringComparison.OrdinalIgnoreCase))?
                             .Value
                         ?? string.Empty;

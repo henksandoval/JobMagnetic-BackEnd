@@ -99,9 +99,8 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
     {
         var contactTypeMap = await BuildContactTypesMapAsync(cancellationToken).ConfigureAwait(false);
 
-        var resume = ProfileHeader.CreateInstance(
+        profile.AddHeader(
             guidGenerator,
-            profile.Id,
             "Mr.",
             "",
             "UI/UX Designer & Web Developer",
@@ -112,12 +111,10 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
 
         foreach (var (value, contactTypeName) in ContactInfoRawData.Data)
             if (contactTypeMap.TryGetValue(contactTypeName, out var contactType))
-                resume.AddContactInfo(guidGenerator, clock, value, contactType);
+                profile.Header!.AddContactInfo(guidGenerator, value, contactType);
             else
                 throw new JobMagnetInfrastructureException(
                     $"Seeding error: Contact type '{contactTypeName}' not found in database.");
-
-        profile.AddResume(resume);
     }
 
     private async Task AddSkills(Profile profile, CancellationToken cancellationToken)
@@ -156,7 +153,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
         foreach (var workExperience in careerHistorySeeder.GetWorkExperience().ToList())
             careerHistory.AddWorkExperience(workExperience);
 
-        profile.AddSummary(careerHistory);
+        profile.AddCareerHistory(careerHistory);
     }
 
     private void AddProject(Profile profile)

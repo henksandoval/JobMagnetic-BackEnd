@@ -69,8 +69,24 @@ public class ProfileFactory(
 
         if (profileDto.Resume is not null)
         {
-            var resume = await BuildResumeAsync(profileDto.Resume, cancellationToken);
-            profile.AddResume(resume);
+            profile.AddHeader(
+                guidGenerator,
+                profileDto.Resume.Title ?? string.Empty,
+                profileDto.Resume.Suffix ?? string.Empty,
+                profileDto.Resume.JobTitle ?? string.Empty,
+                profileDto.Resume.About ?? string.Empty,
+                profileDto.Resume.Summary ?? string.Empty,
+                profileDto.Resume.Overview ?? string.Empty,
+                profileDto.Resume.Address ?? string.Empty);
+
+            foreach (var dto in profileDto.Resume.ContactInfo.Where(info => !string.IsNullOrWhiteSpace(info.ContactType)))
+            {
+                var resolvedType = await contactTypeResolver.ResolveAsync(dto.ContactType!, cancellationToken);
+
+                var contactType = resolvedType.HasValue ? resolvedType.Value : ContactType.CreateInstance(guidGenerator, clock, dto.ContactType!);
+
+                profile.AddContactInfo(guidGenerator, dto.Value!, contactType);
+            }
         }
 
         if (profileDto.SkillSet is not null)
@@ -82,7 +98,7 @@ public class ProfileFactory(
         return profile;
     }
 
-    private async Task<ProfileHeader> BuildResumeAsync(ResumeParseDto resumeDto, CancellationToken cancellationToken)
+    private async Task<ProfileHeader> BuildHeaderAsync(ResumeParseDto resumeDto, CancellationToken cancellationToken)
     {
         var resumeEntity = ProfileHeader.CreateInstance(
             guidGenerator,
@@ -101,7 +117,7 @@ public class ProfileFactory(
 
             var contactType = resolvedType.HasValue ? resolvedType.Value : ContactType.CreateInstance(guidGenerator, clock, dto.ContactType!);
 
-            resumeEntity.AddContactInfo(guidGenerator, clock, dto.Value!, contactType);
+            resumeEntity.AddContactInfo(guidGenerator, dto.Value!, contactType);
         }
 
         return resumeEntity;

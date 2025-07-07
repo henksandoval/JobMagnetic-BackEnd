@@ -17,7 +17,7 @@ public class ProfileQueryRepository(JobMagnetDbContext dbContext)
     public IProfileQueryRepository WithProfileHeader()
     {
         _query = _query
-            .Include(p => p.ProfileHeader)
+            .Include(p => p.Header)
             .ThenInclude(r => r.ContactInfo)
             .ThenInclude(c => c.ContactType);
 

@@ -4,6 +4,6 @@ namespace JobMagnet.Application.Contracts.Responses.ProfileHeader;
 
 public sealed record ProfileHeaderResponse : IIdentifierBase<Guid>
 {
-    public required ResumeBase ResumeData { get; init; }
+    public required ProfileHeaderBase HeaderData { get; init; }
     public required Guid Id { get; init; }
 }

@@ -40,6 +40,7 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
     private readonly SequentialGuidGenerator _guidGenerator;
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
+    private bool _loadHeader = true;
     private bool _loadSkillSet = true;
     private int _contactInfoCount;
     private int _talentsCount;
@@ -242,7 +243,7 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
         var context = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
 
         var entity = new ProfileEntityBuilder(_fixture)
-            .WithResume()
+            .WithHeader(_loadHeader)
             .WithTalents(_talentsCount)
             .WithProjects(_projectCount)
             .WithSummary()
@@ -264,7 +265,7 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
                 context.Entry(skillType).State = EntityState.Unchanged;
         }
 
-        var contactTypes = _contactInfoCount > 0 ? entity.ProfileHeader?.ContactInfo?.Select(s => s.ContactType).Distinct() : [];
+        var contactTypes = _contactInfoCount > 0 ? entity.Header?.ContactInfo?.Select(s => s.ContactType).Distinct() : [];
         foreach (var contactType in contactTypes!.Distinct())
         {
             if (context.Entry(contactType).State == EntityState.Detached)

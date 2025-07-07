@@ -18,9 +18,9 @@ public class ProfileEntityBuilder
     private readonly IClock _clock;
     private readonly IFixture _fixture;
     private readonly IGuidGenerator _guidGenerator;
-    private CareerHistory _careerHistory = null!;
     private string? _firstName;
     private string? _lastName;
+    private CareerHistory _careerHistory = null!;
     private ProfileHeader _profileHeader = null!;
     private List<Project> _projects = [];
     private SkillSet _skillSet = null!;
@@ -34,15 +34,19 @@ public class ProfileEntityBuilder
         _guidGenerator = new SequentialGuidGenerator();
     }
 
-
-    public ProfileEntityBuilder WithResume()
+    public ProfileEntityBuilder WithHeader(bool loadProfileHeader = true)
     {
-        _profileHeader = _fixture.Create<ProfileHeader>();
+        if (loadProfileHeader)
+            _profileHeader = _fixture.Create<ProfileHeader>();
+
         return this;
     }
 
     public ProfileEntityBuilder WithContactInfo(ContactType[] availableContactTypes, int count = 5)
     {
+        if (count == 0)
+            return this;
+
         if (count > availableContactTypes.Length)
             throw new ArgumentOutOfRangeException(nameof(count), $"Count exceeds the number of available contact types. ({availableContactTypes.Length})");
 
@@ -54,7 +58,7 @@ public class ProfileEntityBuilder
             if (_profileHeader.ContactInfo.Any(ci => ci.ContactType == contactType)) continue;
 
             var value = GenerateContactDetails(contactType.Name);
-            _profileHeader.AddContactInfo(_guidGenerator, _clock, value, contactType);
+            _profileHeader.AddContactInfo(_guidGenerator, value, contactType);
         }
 
         return this;
@@ -124,12 +128,6 @@ public class ProfileEntityBuilder
         return this;
     }
 
-    public ProfileEntityBuilder WithSummary(CareerHistory careerHistory)
-    {
-        _careerHistory = careerHistory;
-        return this;
-    }
-
     public ProfileEntityBuilder WithEducation(int count = 5)
     {
         if (_careerHistory == null) throw new InvalidOperationException("Cannot add contact info without a careerHistory. Call WithCareerHistory() first.");
@@ -176,17 +174,32 @@ public class ProfileEntityBuilder
 
         if (_lastName is not null) profile.ChangeLastName(_lastName);
 
-        if (_profileHeader is not null) profile.AddResume(_profileHeader);
-
-        if (_careerHistory is not null) profile.AddSummary(_careerHistory);
+        if (_careerHistory is not null) profile.AddCareerHistory(_careerHistory);
 
         if (_skillSet is not null) profile.AddSkillSet(_skillSet);
 
+        LoadHeader(profile);
         LoadTestimonials(profile);
         LoadProjects(profile);
         LoadTalents(profile);
 
         return profile;
+    }
+
+    private void LoadHeader(Profile profile)
+    {
+        if (_profileHeader is null) return;
+
+        profile.AddHeader(
+            _guidGenerator,
+            _profileHeader.Title,
+            _profileHeader.Suffix,
+            _profileHeader.JobTitle,
+            _profileHeader.About,
+            _profileHeader.Summary,
+            _profileHeader.Overview,
+            _profileHeader.Address
+        );
     }
 
     private void LoadTestimonials(Profile profile)

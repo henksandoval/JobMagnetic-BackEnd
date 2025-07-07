@@ -79,7 +79,6 @@ public class ProfileHeader : SoftDeletableEntity<ProfileHeaderId>
 
     public void AddContactInfo(
         IGuidGenerator guidGenerator,
-        IClock clock,
         string value,
         ContactType contactType)
     {

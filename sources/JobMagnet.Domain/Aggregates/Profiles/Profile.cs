@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Aggregates.SkillTypes;
@@ -23,7 +24,7 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     public string? MiddleName { get; private set; }
     public string? SecondLastName { get; private set; }
 
-    public virtual ProfileHeader? ProfileHeader { get; private set; }
+    public virtual ProfileHeader? Header { get; private set; }
     public virtual SkillSet? SkillSet { get; private set; }
     public virtual CareerHistory? CareerHistory { get; private set; }
     public TalentShowcase TalentShowcase { get; private set; }
@@ -31,6 +32,7 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     public virtual IReadOnlyCollection<Project> Portfolio => _portfolio;
     public virtual IReadOnlyCollection<Testimonial> Testimonials => _testimonials;
     public virtual IReadOnlyCollection<VanityUrl> VanityUrls => _vanityUrls;
+    public bool HaveHeader => Header is not null;
     public bool HaveSkillSet => SkillSet is not null;
 
     private Profile(ProfileId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
@@ -118,18 +120,27 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
         _talents.Add(talent);
     }
 
-    public void AddSummary(CareerHistory careerHistory)
+    public void AddCareerHistory(CareerHistory careerHistory)
     {
         Guard.IsNotNull(careerHistory);
 
         CareerHistory = careerHistory;
     }
 
-    public void AddResume(ProfileHeader profileHeader)
+    public void AddHeader(IGuidGenerator guidGenerator, string title, string suffix, string jobTitle, string about, string summary, string overview, string address)
     {
-        Guard.IsNotNull(profileHeader);
+        var header = ProfileHeader.CreateInstance(
+            guidGenerator,
+            Id,
+            title,
+            suffix,
+            jobTitle,
+            about,
+            summary,
+            overview,
+            address);
 
-        ProfileHeader = profileHeader;
+        Header = header;
     }
 
 
@@ -205,4 +216,12 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     }
 
     #endregion
+
+    public void AddContactInfo(IGuidGenerator guidGenerator, string value, ContactType contactType)
+    {
+        if (!HaveHeader)
+            throw new JobMagnetDomainException($"The profile {Id} does not have a header.");
+
+        Header!.AddContactInfo(guidGenerator, value, contactType);
+    }
 }
