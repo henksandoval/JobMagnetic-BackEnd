@@ -116,7 +116,7 @@ public partial class ProfileControllerShould
         // --- Given ---
         _skillsCount = 8;
         var profile = await SetupProfileAsync();
-        var skillSetToUpdate = profile.SkillSet!.Skills.First();
+        var skillSetToUpdate = profile.GetSkills().First();
         var newProficiencyLevel = (ushort) (skillSetToUpdate.ProficiencyLevel + 1 >= Skill.MaximumProficiencyLevel
             ? skillSetToUpdate.ProficiencyLevel - 1
             : skillSetToUpdate.ProficiencyLevel + 1);
@@ -143,7 +143,7 @@ public partial class ProfileControllerShould
         entityUpdated.Should().NotBeNull();
         entityUpdated.ProfileId.Should().Be(profile.Id);
         var commandBase = command.SkillSetData;
-        entityUpdated.Skills.Should().HaveSameCount(profile.SkillSet.Skills);
+        entityUpdated.Skills.Should().HaveSameCount(profile.GetSkills());
         var skillUpdated = entityUpdated.Skills.First(x => x.Id == skillSetToUpdate.Id);
         skillUpdated.ProficiencyLevel.Should().Be(newProficiencyLevel);
     }
@@ -188,7 +188,7 @@ public partial class ProfileControllerShould
         // --- Given ---
         _skillsCount = 5;
         var profile = await SetupProfileAsync();
-        var skillToDelete = profile.SkillSet!.Skills.FirstOrDefault();
+        var skillToDelete = profile.GetSkills().FirstOrDefault();
         var requestUri = $"{RequestUriController}/{profile.Id.Value}/skills/{skillToDelete!.Id.Value}";
 
         // --- When ---

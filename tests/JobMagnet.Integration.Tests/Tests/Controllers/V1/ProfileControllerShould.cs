@@ -254,7 +254,7 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
             .WithSkills(_testFixture.SeededSkillTypes.ToArray(), _skillsCount)
             .Build();
 
-        var skillTypes = entity.SkillSet?.Skills.Select(s => s.SkillType) ?? [];
+        var skillTypes = _skillsCount > 0 ? entity.GetSkills().Select(s => s.SkillType) : [];
         foreach (var skillType in skillTypes.Distinct())
         {
             if (context.Entry(skillType.Category).State == EntityState.Detached)
@@ -264,8 +264,8 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
                 context.Entry(skillType).State = EntityState.Unchanged;
         }
 
-        var contactTypes = entity.ProfileHeader?.ContactInfo?.Select(s => s.ContactType).Distinct() ?? [];
-        foreach (var contactType in contactTypes.Distinct())
+        var contactTypes = _contactInfoCount > 0 ? entity.ProfileHeader?.ContactInfo?.Select(s => s.ContactType).Distinct() : [];
+        foreach (var contactType in contactTypes!.Distinct())
         {
             if (context.Entry(contactType).State == EntityState.Detached)
                 context.Entry(contactType).State = EntityState.Unchanged;

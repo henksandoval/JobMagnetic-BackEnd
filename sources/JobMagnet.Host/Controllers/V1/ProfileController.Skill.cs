@@ -31,7 +31,7 @@ public partial class ProfileController
 
         var data = command.SkillSetData;
 
-        if (profile.SkillSet is null)
+        if (!profile.HaveSkillSet)
         {
             var skillSet = SkillSet.CreateInstance(
                 guidGenerator,
@@ -97,7 +97,7 @@ public partial class ProfileController
         if (profile is null)
             return Results.NotFound();
 
-        var response = profile.SkillSet!.Skills
+        var response = profile.GetSkills()
             .Select(skills => skills.ToModel())
             .ToList();
 
