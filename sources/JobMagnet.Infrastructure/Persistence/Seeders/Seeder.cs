@@ -92,7 +92,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
     {
         var talentsCollection = new TalentsSeeder().GetTalents();
         foreach (var talent in talentsCollection)
-            profile.TalentShowcase.AddTalent(talent.Description);
+            profile.AddTalent(talent.Description);
     }
 
     private async Task AddProfileHeaderAsync(Profile profile, CancellationToken cancellationToken)
