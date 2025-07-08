@@ -222,7 +222,7 @@ public class ProfileEntityBuilder
         if (_talents.Count <= 0) return;
 
         foreach (var talent in _talents)
-            profile.TalentShowcase.AddTalent(talent.Description);
+            profile.AddTalent(talent.Description);
     }
 
     private static string GenerateContactDetails(string contactType)
