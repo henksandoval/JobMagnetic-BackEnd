@@ -167,7 +167,7 @@ public class ProfileMapperShould
     {
         return new PersonalDataViewModel(
             $"{entity.FirstName} {entity.LastName}",
-            entity.Talents.Select(x => x.Description).ToArray(),
+            entity.TalentShowcase.Select(x => x.Description).ToArray(),
             entity.ProfileHeader.ContactInfo.Select(c => new SocialNetworksViewModel(
                 c.ContactType.Name,
                 c.Value,
