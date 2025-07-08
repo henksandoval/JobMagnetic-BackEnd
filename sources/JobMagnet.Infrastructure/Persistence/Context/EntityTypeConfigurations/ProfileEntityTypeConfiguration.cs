@@ -44,7 +44,7 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<Profile>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Ignore(p => p.TalentShowcase);
-        builder.OwnsMany(c => c.Talents,
+        builder.OwnsMany(c => c.TalentShowcase,
             talentBuilder =>
             {
                 talentBuilder.WithOwner().HasForeignKey(x => x.ProfileId);
