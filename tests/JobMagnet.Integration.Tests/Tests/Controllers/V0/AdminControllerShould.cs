@@ -100,7 +100,7 @@ public class AdminControllerShould(
         profile.GetSkills().Should().HaveSameCount(SkillInfoCollection.Data);
         profile.CareerHistory!.Qualifications.Should().HaveCount(CareerHistorySeeder.QualificationCount);
         profile.CareerHistory!.WorkExperiences.Should().HaveCount(CareerHistorySeeder.WorkExperienceCount);
-        profile.Talents.Should().HaveSameCount(new TalentsSeeder().GetTalents());
+        profile.TalentShowcase.Should().HaveSameCount(new TalentsSeeder().GetTalents());
         profile.Testimonials.Count.Should().Be(Seeder.TestimonialsCount);
         profile.Portfolio.Should().HaveSameCount(ProjectRawData.Data);
     }
