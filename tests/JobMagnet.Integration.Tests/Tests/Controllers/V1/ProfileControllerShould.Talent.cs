@@ -47,9 +47,9 @@ public partial class ProfileControllerShould
             .WithTalents()
             .GetByIdAsync(profile.Id, CancellationToken.None);
         entityCreated.Should().NotBeNull();
-        entityCreated.Talents.Should().NotBeNull();
-        entityCreated.Talents.Should().HaveCount(1);
-        var createdTalent = entityCreated.Talents.First();
+        entityCreated.TalentShowcase.Should().NotBeNull();
+        entityCreated.TalentShowcase.Should().HaveCount(1);
+        var createdTalent = entityCreated.TalentShowcase.First();
         createdTalent.ProfileId.Value.Should().Be(talentsData.ProfileId);
         createdTalent.Description.Should().Be(talentsData.Description);
     }
@@ -59,7 +59,7 @@ public partial class ProfileControllerShould
     {
         // --- Given ---
         var profileWithTalents = await SetupProfileAsync();
-        var expectedTalents = profileWithTalents.Talents.Select(p => p.ToModel());
+        var expectedTalents = profileWithTalents.TalentShowcase.Select(p => p.ToModel());
         
         // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{profileWithTalents.Id.Value}/talents");
