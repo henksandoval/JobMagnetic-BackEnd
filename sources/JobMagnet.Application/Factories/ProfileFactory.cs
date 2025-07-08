@@ -47,7 +47,7 @@ public class ProfileFactory(
         var galleryItems = BuildProjects(profileDto.Project);
 
         foreach (var talent in talents)
-            profile.TalentShowcase.AddTalent(talent.Description);
+            profile.AddTalent(talent.Description);
 
         foreach (var item in testimonials)
             profile.AddTestimonial(
