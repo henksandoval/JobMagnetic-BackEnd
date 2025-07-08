@@ -74,9 +74,9 @@ public class ProfileFactoryShould
 
         // --- Then ---
         profile.Should().NotBeNull();
-        profile.Talents.Should().NotBeNull();
+        profile.TalentShowcase.Should().NotBeNull();
 
-        profile.Talents.Should().BeEquivalentTo(profileDto.Talents,
+        profile.TalentShowcase.Should().BeEquivalentTo(profileDto.Talents,
             options => options);
     }
 
