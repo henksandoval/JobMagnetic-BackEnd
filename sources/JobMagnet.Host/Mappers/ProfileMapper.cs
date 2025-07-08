@@ -124,7 +124,7 @@ public static class ProfileMapper
                 c.ContactType.IconUrl?.AbsoluteUri ?? string.Empty))
             .ToArray() ?? [];
 
-        var professions = src.Talents?.Select(t => t.Description).ToArray() ?? [];
+        var professions = src.TalentShowcase?.Select(t => t.Description).ToArray() ?? [];
 
         return new PersonalDataViewModel(
             GetFullName(src),
