@@ -21,7 +21,7 @@ public partial class ProfileController
         if (profile is null)
             return Results.NotFound();
         
-        var talent = profile.TalentShowcase.AddTalent(
+        var talent = profile.AddTalent(
             command.TalentData.Description ?? string.Empty
         );
 
@@ -43,7 +43,7 @@ public partial class ProfileController
         if (profile is null)
             return Results.NotFound();
 
-        var response = profile.Talents
+        var response = profile.TalentShowcase
             .Select(talent => talent.ToModel())
             .ToList();
 
