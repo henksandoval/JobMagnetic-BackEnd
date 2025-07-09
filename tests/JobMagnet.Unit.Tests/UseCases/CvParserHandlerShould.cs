@@ -68,7 +68,6 @@ public class CvParserHandlerShould
         var contactInfoEmail = contactInfoRaw.FirstOrDefault(c => c.ContactType == "EMAIL");
         var header = _fixture.Create<ProfileHeader>();
         var contactType = ContactType.CreateInstance(_guidGenerator, _clock, contactInfoEmail!.ContactType ?? string.Empty);
-        header.AddContactInfo(_guidGenerator, contactInfoEmail.Value!, contactType);
 
         var profileEntity = Profile.CreateInstance(
             _guidGenerator,
@@ -85,6 +84,8 @@ public class CvParserHandlerShould
             header.Summary,
             header.Overview,
             header.Address);
+
+        profileEntity.AddContactInfo(_guidGenerator, contactInfoEmail.Value!, contactType);
 
         _rawCvParserMock.Setup(p => p.ParseAsync(It.IsAny<Stream>()))
             .ReturnsAsync(profileRaw);

@@ -15,7 +15,6 @@ namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 public class ProfileEntityBuilder
 {
     private static readonly Faker Faker = FixtureBuilder.Faker;
-    private readonly IClock _clock;
     private readonly IFixture _fixture;
     private readonly IGuidGenerator _guidGenerator;
     private string? _firstName;
@@ -26,11 +25,11 @@ public class ProfileEntityBuilder
     private SkillSet _skillSet = null!;
     private List<Talent> _talents = [];
     private List<Testimonial> _testimonials = [];
+    private readonly List<(string value, ContactType contactType)> _contactInfo = [];
 
     public ProfileEntityBuilder(IFixture fixture, JobMagnetDbContext context = null!)
     {
         _fixture = fixture;
-        _clock = new DeterministicClock();
         _guidGenerator = new SequentialGuidGenerator();
     }
 
@@ -52,13 +51,13 @@ public class ProfileEntityBuilder
 
         if (_profileHeader == null) throw new InvalidOperationException("Cannot add contact info without a profileHeader. Call WithProfileHeader() first.");
 
-        while (_profileHeader.ContactInfo?.Count < count)
+        while (_contactInfo.Count < count)
         {
             var contactType = Faker.PickRandom(availableContactTypes);
-            if (_profileHeader.ContactInfo.Any(ci => ci.ContactType == contactType)) continue;
+            if (_contactInfo.Any(ci => ci.contactType == contactType)) continue;
 
             var value = GenerateContactDetails(contactType.Name);
-            _profileHeader.AddContactInfo(_guidGenerator, value, contactType);
+            _contactInfo.Add((value, contactType));
         }
 
         return this;
@@ -179,6 +178,7 @@ public class ProfileEntityBuilder
         if (_skillSet is not null) profile.AddSkillSet(_skillSet);
 
         LoadHeader(profile);
+        LoadContactInfo(profile);
         LoadTestimonials(profile);
         LoadProjects(profile);
         LoadTalents(profile);
@@ -200,6 +200,14 @@ public class ProfileEntityBuilder
             _profileHeader.Overview,
             _profileHeader.Address
         );
+    }
+
+    private void LoadContactInfo(Profile profile)
+    {
+        if (_contactInfo.Count <= 0) return;
+
+        foreach (var contactInfo in _contactInfo)
+            profile.AddContactInfo(_guidGenerator, contactInfo.value, contactInfo.contactType);
     }
 
     private void LoadTestimonials(Profile profile)

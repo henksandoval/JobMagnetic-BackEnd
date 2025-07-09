@@ -35,7 +35,6 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
 {
     private const string RequestUriController = "api/v1/profile";
     private const string InvalidId = "100";
-    private readonly DeterministicClock _clock;
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly SequentialGuidGenerator _guidGenerator;
     private readonly HttpClient _httpClient;
@@ -55,7 +54,6 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
         _testFixture = testFixture;
         _httpClient = _testFixture.GetClient();
         _guidGenerator = new SequentialGuidGenerator();
-        _clock = new DeterministicClock();
         _testFixture.SetTestOutputHelper(testOutputHelper);
     }
 
@@ -63,6 +61,7 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
     public async Task ReturnRecord_WhenValidNameProvidedAsync()
     {
         // --- Given ---
+        _loadHeader = true;
         _contactInfoCount = 3;
         _talentsCount = 8;
         _testimonialsCount = 6;
@@ -244,13 +243,13 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
 
         var entity = new ProfileEntityBuilder(_fixture)
             .WithHeader(_loadHeader)
+            .WithContactInfo(_testFixture.SeededContactTypes.ToArray(), _contactInfoCount)
             .WithTalents(_talentsCount)
             .WithProjects(_projectCount)
             .WithSummary()
             .WithEducation(_educationCount)
             .WithWorkExperience(_workExperienceCount)
             .WithTestimonials(_testimonialsCount)
-            .WithContactInfo(_testFixture.SeededContactTypes.ToArray(), _contactInfoCount)
             .WithSkillSet(_loadSkillSet)
             .WithSkills(_testFixture.SeededSkillTypes.ToArray(), _skillsCount)
             .Build();

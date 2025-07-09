@@ -92,6 +92,7 @@ public class AdminControllerShould(
             .WithTestimonials()
             .WithProfileHeader()
             .WithProject()
+            .WithSkills()
             .WithCareerHistory()
             .WhereCondition(x => x.Id == new ProfileId(profileId))
             .BuildFirstOrDefaultAsync(CancellationToken.None);
