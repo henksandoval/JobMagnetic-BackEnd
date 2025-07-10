@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Domain.Exceptions;
 
-namespace JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public record Talent
 {
@@ -11,16 +13,33 @@ public record Talent
     
     private Talent() { }
 
+    // TalentId id,
+   // Id = id.Value;
     private Talent(string description)
     {
         Guard.IsNotNullOrWhiteSpace(description);
         Guard.IsLessThanOrEqualTo(description.Length, MaxNameLength);
-
+        
         Description = description;
     }
 
     public static Talent CreateInstance(string description)
     {
         return new Talent(description);
+    }
+    
+    internal void UpdateDetails(string description)
+    {
+        Description = description;
+        
+        ValidateInvariants();
+    }
+    
+    private void ValidateInvariants()
+    {
+        Guard.IsNotNullOrEmpty(Description);
+
+        if (string.IsNullOrEmpty(Description))
+            throw new JobMagnetDomainException("The description cannot be empty or null.");
     }
 }
