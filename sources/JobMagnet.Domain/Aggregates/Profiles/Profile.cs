@@ -13,7 +13,7 @@ namespace JobMagnet.Domain.Aggregates.Profiles;
 public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
 {
     private readonly HashSet<Project> _portfolio = [];
-    private readonly HashSet<Talent> _talents = [];
+    private readonly HashSet<Talent> _talentShowcase = [];
     private readonly HashSet<Testimonial> _testimonials = [];
     private readonly HashSet<VanityUrl> _vanityUrls = [];
     public string? FirstName { get; private set; }
@@ -26,8 +26,7 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     public virtual ProfileHeader? ProfileHeader { get; private set; }
     public virtual SkillSet? SkillSet { get; private set; }
     public virtual CareerHistory? CareerHistory { get; private set; }
-    public TalentShowcase TalentShowcase { get; private set; }
-    public virtual IReadOnlyCollection<Talent> Talents => _talents;
+    public virtual IReadOnlyCollection<Talent> TalentShowcase => _talentShowcase;
     public virtual IReadOnlyCollection<Project> Portfolio => _portfolio;
     public virtual IReadOnlyCollection<Testimonial> Testimonials => _testimonials;
     public virtual IReadOnlyCollection<VanityUrl> VanityUrls => _vanityUrls;
@@ -36,7 +35,6 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     private Profile(ProfileId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
         base(id, addedAt, lastModifiedAt, deletedAt)
     {
-        TalentShowcase = new TalentShowcase(this);
     }
 
     private Profile(
@@ -55,8 +53,6 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
         BirthDate = birthDate;
         MiddleName = middleName;
         SecondLastName = secondLastName;
-
-        TalentShowcase = new TalentShowcase(this);
     }
 
     public static Profile CreateInstance(IGuidGenerator guidGenerator, IClock clock, string? firstName, string? lastName,
@@ -112,12 +108,6 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     {
         SecondLastName = secondLastName;
     }
-
-    public void AddTalent(Talent talent)
-    {
-        _talents.Add(talent);
-    }
-
     public void AddSummary(CareerHistory careerHistory)
     {
         Guard.IsNotNull(careerHistory);
@@ -131,8 +121,7 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
 
         ProfileHeader = profileHeader;
     }
-
-
+    
     #region VanityUrls
 
     public void AssignDefaultVanityUrl(IGuidGenerator guidGenerator, IProfileSlugGenerator slugGenerator)
