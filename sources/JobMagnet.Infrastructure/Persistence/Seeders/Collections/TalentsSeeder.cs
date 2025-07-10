@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
-using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
+
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
