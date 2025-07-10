@@ -9,6 +9,16 @@ namespace JobMagnet.Domain.Aggregates.Profiles;
 
 public partial class Profile
 {
+    public void AssignDefaultVanityUrl(IGuidGenerator guidGenerator, IProfileSlugGenerator slugGenerator)
+    {
+        ExecuteAssignDefaultVanityUrl(guidGenerator, slugGenerator);
+    }
+
+    public void AddVanityUrl(IGuidGenerator guidGenerator, string slug, LinkType type = LinkType.Primary)
+    {
+        ExecuteAddVanityUrl(guidGenerator, slug, type);
+    }
+
     private void ExecuteAssignDefaultVanityUrl(IGuidGenerator guidGenerator, IProfileSlugGenerator slugGenerator)
     {
         if (_vanityUrls.Any(p => p.Type == LinkType.Primary)) return;
