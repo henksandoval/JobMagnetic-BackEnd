@@ -1,13 +1,17 @@
 using System.Net;
+using System.Net.Http.Json;
 using AutoFixture;
 using AwesomeAssertions;
 using JobMagnet.Application.Contracts.Commands.ProfileHeader;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.ProfileHeader;
+using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Ports.Repositories;
+using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Shared.Tests.Utils;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
@@ -59,22 +63,23 @@ public partial class ProfileControllerShould
             .With(x => x.ProfileId, idValue)
             .Create();
     }
-    /*
+
     [Fact(DisplayName = "Should return 200 OK with a list of ProfileHeader when the profile exists and has ProfileHeader")]
     public async Task GetProfileHeader_WhenProfileExistsAndHasProfileHeader()
     {
         // --- Given ---
         var profileWithProfileHeader = await SetupProfileAsync();
-        var expectedProfileHeader = profileWithProfileHeader.ProfileHeader!.ToModel();
+        var expectedProfileHeader = profileWithProfileHeader.Header!.ToModel();
 
         // --- When ---
-        var response = await _httpClient.GetAsync($"{RequestUriController}/{profileWithProfileHeader.Id.Value}/ProfileHeader");
+        var response = await _httpClient.GetAsync($"{RequestUriController}/{profileWithProfileHeader.Id.Value}/header");
 
         // --- Then ---
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<List<ProfileHeaderResponse>>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<ProfileHeaderResponse>(response);
         responseData.Should().NotBeNull();
+        responseData.Should().BeEquivalentTo(expectedProfileHeader);
     }
 
     [Fact(DisplayName = "Should return 404 Not Found when the profile ID does not exist")]
@@ -85,27 +90,24 @@ public partial class ProfileControllerShould
         await _testFixture.ResetDatabaseAsync();
 
         // --- When ---
-        var response = await _httpClient.GetAsync($"{RequestUriController}/{nonExistentProfileId}/ProfileHeader");
+        var response = await _httpClient.GetAsync($"{RequestUriController}/{nonExistentProfileId}/header");
 
         // --- Then ---
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Should return 200 OK with an empty list when the profile exists but has no ProfileHeader")]
-    public async Task GetOkAndEmptyList_WhenProfileExistsButHasNoProfileHeader()
+    [Fact(DisplayName = "Should return 404 Not Found when the profile exists but has no ProfileHeader")]
+    public async Task GetProfileHeaderNotFound_WhenProfileExistsButHasNoProfileHeader()
     {
         // --- Given ---
-
+        _loadHeader = false;
         var profileWithoutProfileHeader = await SetupProfileAsync();
 
         // --- When ---
-        var response = await _httpClient.GetAsync($"{RequestUriController}/{profileWithoutProfileHeader.Id.Value}/ProfileHeader");
+        var response = await _httpClient.GetAsync($"{RequestUriController}/{profileWithoutProfileHeader.Id.Value}/header");
 
         // --- Then ---
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        var responseData = await TestUtilities.DeserializeResponseAsync<List<ProfileHeaderResponse>>(response);
-        responseData.Should().NotBeNull().And.BeEmpty();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact(DisplayName = "Should return 204 No Content when updating an existing ProfileHeader")]
@@ -113,22 +115,14 @@ public partial class ProfileControllerShould
     {
         // --- Given ---
         var profile = await SetupProfileAsync();
-        var profileHeaderToUpdate = profile.GetProfileHeader().First();
-        var newProficiencyLevel = (ushort) (profileHeaderToUpdate.ProficiencyLevel + 1 >= ProfileHeader.MaximumProficiencyLevel
-            ? profileHeaderToUpdate.ProficiencyLevel - 1
-            : profileHeaderToUpdate.ProficiencyLevel + 1);
-        var ProfileHeaderToUpdate = new List<ProfileHeaderBase>
-        {
-            new() { Id = profileHeaderToUpdate.Id.Value, ProficiencyLevel = newProficiencyLevel }
-        };
         var profileHeaderData = _fixture.Build<ProfileHeaderBase>()
-            .With(s => s.ProfileHeader, ProfileHeaderToUpdate)
+            .With(x => x.ProfileId, profile.Id.Value)
             .Create();
         var command = _fixture.Build<ProfileHeaderCommand>()
             .With(c => c.ProfileHeaderData, profileHeaderData)
             .Create();
 
-        var requestUri = $"{RequestUriController}/{profile.Id.Value}/ProfileHeader/{profileHeaderToUpdate.Id.Value}";
+        var requestUri = $"{RequestUriController}/{profile.Id.Value}/header";
 
         // --- When ---
         var response = await _httpClient.PutAsJsonAsync(requestUri, command);
@@ -139,10 +133,6 @@ public partial class ProfileControllerShould
 
         entityUpdated.Should().NotBeNull();
         entityUpdated.ProfileId.Should().Be(profile.Id);
-        var commandBase = command.ProfileHeaderData;
-        entityUpdated.ProfileHeader.Should().HaveSameCount(profile.GetProfileHeader());
-        var profileHeaderUpdated = entityUpdated.ProfileHeader.First(x => x.Id == profileHeaderToUpdate.Id);
-        profileHeaderUpdated.ProficiencyLevel.Should().Be(newProficiencyLevel);
     }
 
     [Fact(DisplayName = "Should return 404 Not Found when the profile ID does not exist for an update")]
@@ -150,27 +140,13 @@ public partial class ProfileControllerShould
     {
         // --- Given ---
         var nonExistentProfileId = Guid.NewGuid();
-        var command = _fixture.Create<ProfileHeaderCommand>();
-        var requestUri = $"{RequestUriController}/{nonExistentProfileId}/ProfileHeader/{nonExistentProfileId}";
-
-        // --- When ---
-        var response = await _httpClient.PutAsJsonAsync(requestUri, command);
-
-        // --- Then ---
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-    }
-
-    [Fact(DisplayName = "Should return 404 Not Found when the ProfileHeader does not belong to the profile")]
-    public async Task UpdateProfileHeader_WhenProfileHeaderDoesNotExistInProfile()
-    {
-        // --- Given ---
-        var profile = await SetupProfileAsync();
-        var profileHeaderData = GetProfileHeaderData(profile.Id.Value);
-        var nonExistentProfileHeaderId = Guid.NewGuid();
-        var command = _fixture.Build<ProfileHeaderCommand>()
-            .With(x => x.ProfileHeaderData, profileHeaderData)
+        var profileHeaderData = _fixture.Build<ProfileHeaderBase>()
+            .With(x => x.ProfileId, nonExistentProfileId)
             .Create();
-        var requestUri = $"{RequestUriController}/{profile.Id.Value}/ProfileHeader/{nonExistentProfileHeaderId}";
+        var command = _fixture.Build<ProfileHeaderCommand>()
+            .With(c => c.ProfileHeaderData, profileHeaderData)
+            .Create();
+        var requestUri = $"{RequestUriController}/{nonExistentProfileId}/header";
 
         // --- When ---
         var response = await _httpClient.PutAsJsonAsync(requestUri, command);
@@ -184,8 +160,8 @@ public partial class ProfileControllerShould
     {
         // --- Given ---
         var profile = await SetupProfileAsync();
-        var profileHeaderToDelete = profile.GetProfileHeader().FirstOrDefault();
-        var requestUri = $"{RequestUriController}/{profile.Id.Value}/ProfileHeader/{profileHeaderToDelete!.Id.Value}";
+        var profileHeaderToDelete = profile.Header;
+        var requestUri = $"{RequestUriController}/{profile.Id.Value}/header/{profileHeaderToDelete!.Id.Value}";
 
         // --- When ---
         var response = await _httpClient.DeleteAsync(requestUri);
@@ -194,12 +170,10 @@ public partial class ProfileControllerShould
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
-        var ProfileHeader = await dbContext.ProfileHeader.Include(x => x.ProfileHeader)
-            .FirstOrDefaultAsync(x => x.Id == profile.ProfileHeader.Id);
+        var header = await dbContext.ProfileHeaders.FindAsync(profile.Header!.Id);
 
-        ProfileHeader.Should().NotBeNull();
-        ProfileHeader.ProfileHeader.Should().HaveCount(_ProfileHeaderCount - 1);
-        ProfileHeader.ProfileHeader.Should().NotContain(p => p.Id == profileHeaderToDelete.Id);
+        header.Should().NotBeNull();
+        header.IsDeleted.Should().BeTrue();
     }
 
     [Fact(DisplayName = "Should return 404 Not Found when the profile ID does not exist for a delete")]
@@ -207,7 +181,7 @@ public partial class ProfileControllerShould
     {
         // --- Given ---
         var nonExistentProfileId = Guid.NewGuid();
-        var requestUri = $"{RequestUriController}/{nonExistentProfileId}/ProfileHeader/{Guid.NewGuid()}";
+        var requestUri = $"{RequestUriController}/{nonExistentProfileId}/header/{Guid.NewGuid()}";
 
         // --- When ---
         var response = await _httpClient.DeleteAsync(requestUri);
@@ -215,43 +189,6 @@ public partial class ProfileControllerShould
         // --- Then ---
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
-
-    [Fact(DisplayName = "Should return 404 Not Found when deleting a ProfileHeader that does not belong to the profile")]
-    public async Task DeleteProfileHeader_WhenProfileHeaderDoesNotExistInProfile()
-    {
-        // --- Given ---
-        var profile = await SetupProfileAsync();
-        var nonExistentProfileHeaderId = Guid.NewGuid();
-        var requestUri = $"{RequestUriController}/{profile.Id.Value}/ProfileHeader/{nonExistentProfileHeaderId}";
-
-        // --- When ---
-        var response = await _httpClient.DeleteAsync(requestUri);
-
-        // --- Then ---
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-    }
-
-    [Fact(DisplayName = "Should return 204 No Content when arranging ProfileHeader with a valid order")]
-    public async Task ArrangeProfileHeader_WhenProfileExistsAndPayloadIsValid_ShouldUpdatePositionsInDb()
-    {
-        // --- Given ---
-        var profile = await SetupProfileAsync();
-        var ProfileHeader = profile.GetProfileHeader();
-        var newOrderExpected = ProfileHeader.OrderByDescending(x => x.Position).Select(x => x.Id).ToList();
-        var newOrderCommand = newOrderExpected.Select(x => x.Value);
-
-        var requestUri = $"{RequestUriController}/{profile.Id.Value}/ProfileHeader/arrange";
-
-        // --- When ---
-        var response = await _httpClient.PutAsJsonAsync(requestUri, newOrderCommand);
-
-        // --- Then ---
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        var ProfileHeaderUpdated = await FindProfileHeaderByIdAsync(profile.Id);
-        var ProfileHeaderOrderedByPosition = ProfileHeaderUpdated!.ProfileHeader.OrderBy(p => p.Position).Select(x => x.Id);
-        ProfileHeaderOrderedByPosition.Should().BeEquivalentTo(newOrderExpected);
-    }
-*/
 
     private async Task<ProfileHeader?> FindProfileHeaderByIdAsync(ProfileId id)
     {

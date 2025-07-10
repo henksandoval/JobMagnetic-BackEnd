@@ -97,6 +97,9 @@ public partial class ProfileController
         if (profile is null)
             return Results.NotFound();
 
+        if (!profile.HaveSkillSet)
+            return Results.NoContent();
+
         var response = profile.GetSkills()
             .Select(skills => skills.ToModel())
             .ToList();
@@ -169,11 +172,10 @@ public partial class ProfileController
         }
     }
 
-
     [HttpDelete("{profileId:guid}/skills/{skillId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> DeleteSkillsAsync(Guid profileId, Guid skillId, CancellationToken cancellationToken)
+    public async Task<IResult> DeleteSkillsAsync(Guid profileId, Guid headerId, CancellationToken cancellationToken)
     {
         var profile = await GetProfileWithSkills(profileId, cancellationToken).ConfigureAwait(false);
 
@@ -185,7 +187,7 @@ public partial class ProfileController
 
         try
         {
-            profile.RemoveSkill(new SkillId(skillId));
+            profile.RemoveSkill(new SkillId(headerId));
             profileCommandRepository.Update(profile);
         }
         catch (NotFoundException ex)

@@ -224,4 +224,25 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
 
         Header!.AddContactInfo(guidGenerator, value, contactType);
     }
+
+    public void UpdateHeader(
+        string title,
+        string suffix,
+        string jobTitle,
+        string about,
+        string summary,
+        string overview,
+        string address)
+    {
+        if (HaveHeader)
+            Header!.UpdateGeneralInfo(title, suffix, jobTitle, about, summary, overview, address);
+    }
+
+    public void RemoveHeader(IClock clock)
+    {
+        if (!HaveHeader)
+            throw new JobMagnetDomainException($"The profile {Id} does not have a header.");
+
+        Header!.MarkAsDeleted(clock);
+    }
 }
