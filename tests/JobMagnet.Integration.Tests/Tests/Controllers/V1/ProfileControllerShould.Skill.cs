@@ -26,11 +26,11 @@ public partial class ProfileControllerShould
         _loadSkillSet = false;
         _skillsCount = 0;
         var profile = await SetupProfileAsync();
-        var skillSetData = GetSkillSetData(profile.Id.Value,5);
+        var skillSetData = GetSkillSetData(profile.Id.Value, 5);
         var skillNotRegistered = new SkillBase
         {
             Name = "Cunnilingus",
-            ProficiencyLevel = (ushort) FixtureBuilder.Faker.Random.Short(0, 10)
+            ProficiencyLevel = (ushort)FixtureBuilder.Faker.Random.Short(0, 10)
         };
         skillSetData.Skills.Add(skillNotRegistered);
         var createRequest = _fixture.Build<SkillCommand>()
@@ -117,7 +117,7 @@ public partial class ProfileControllerShould
         _skillsCount = 8;
         var profile = await SetupProfileAsync();
         var skillSetToUpdate = profile.GetSkills().First();
-        var newProficiencyLevel = (ushort) (skillSetToUpdate.ProficiencyLevel + 1 >= Skill.MaximumProficiencyLevel
+        var newProficiencyLevel = (ushort)(skillSetToUpdate.ProficiencyLevel + 1 >= Skill.MaximumProficiencyLevel
             ? skillSetToUpdate.ProficiencyLevel - 1
             : skillSetToUpdate.ProficiencyLevel + 1);
         var skillsToUpdate = new List<SkillBase>

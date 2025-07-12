@@ -15,17 +15,17 @@ namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 public class ProfileEntityBuilder
 {
     private static readonly Faker Faker = FixtureBuilder.Faker;
+    private readonly List<(string value, ContactType contactType)> _contactInfo = [];
     private readonly IFixture _fixture;
     private readonly IGuidGenerator _guidGenerator;
+    private CareerHistory _careerHistory = null!;
     private string? _firstName;
     private string? _lastName;
-    private CareerHistory _careerHistory = null!;
     private ProfileHeader _profileHeader = null!;
     private List<Project> _projects = [];
     private SkillSet _skillSet = null!;
     private List<Talent> _talents = [];
     private List<Testimonial> _testimonials = [];
-    private readonly List<(string value, ContactType contactType)> _contactInfo = [];
 
     public ProfileEntityBuilder(IFixture fixture, JobMagnetDbContext context = null!)
     {
@@ -47,9 +47,11 @@ public class ProfileEntityBuilder
             return this;
 
         if (count > availableContactTypes.Length)
-            throw new ArgumentOutOfRangeException(nameof(count), $"Count exceeds the number of available contact types. ({availableContactTypes.Length})");
+            throw new ArgumentOutOfRangeException(nameof(count),
+                $"Count exceeds the number of available contact types. ({availableContactTypes.Length})");
 
-        if (_profileHeader == null) throw new InvalidOperationException("Cannot add contact info without a profileHeader. Call WithProfileHeader() first.");
+        if (_profileHeader == null)
+            throw new InvalidOperationException("Cannot add contact info without a profileHeader. Call WithProfileHeader() first.");
 
         while (_contactInfo.Count < count)
         {
@@ -77,7 +79,8 @@ public class ProfileEntityBuilder
             return this;
 
         if (count > availableSkillTypes.Length)
-            throw new ArgumentOutOfRangeException(nameof(count), $"Count exceeds the number of available skill types. ({availableSkillTypes.Length})");
+            throw new ArgumentOutOfRangeException(nameof(count),
+                $"Count exceeds the number of available skill types. ({availableSkillTypes.Length})");
 
         if (_skillSet == null) throw new InvalidOperationException("Cannot add skills without a skill set. Call WithSkillSet() first.");
 

@@ -11,7 +11,6 @@ using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Shared.Tests.Utils;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;

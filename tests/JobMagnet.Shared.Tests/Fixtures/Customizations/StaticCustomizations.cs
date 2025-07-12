@@ -125,7 +125,7 @@ public static class StaticCustomizations
         "Collaborative",
         "Results-Oriented",
         "Customer-Focused",
-        "Tech-Savvy",
+        "Tech-Savvy"
     ];
 
     public static readonly string[] JobTitles =

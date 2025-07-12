@@ -60,19 +60,19 @@ public partial class ProfileControllerShould
         // --- Given ---
         var profileWithTalents = await SetupProfileAsync();
         var expectedTalents = profileWithTalents.Talents.Select(p => p.ToModel());
-        
+
         // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{profileWithTalents.Id.Value}/talents");
-            
+
         // --- Then ---
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        
+
         var responseData = await TestUtilities.DeserializeResponseAsync<List<TalentResponse>>(response);
         responseData.Should().NotBeNull();
         responseData.Should().BeEquivalentTo(expectedTalents);
     }
-    
-    [Fact(DisplayName = "Should return 404 Not Found when the profile does not exist")] 
+
+    [Fact(DisplayName = "Should return 404 Not Found when the profile does not exist")]
     public async Task GetTalents_WhenProfileDoesNotExist()
     {
         // --- Given ---
@@ -80,11 +80,11 @@ public partial class ProfileControllerShould
         await _testFixture.ResetDatabaseAsync();
         // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{nonExistentProfileId}/talents");
-        
+
         // --- Then ---
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
-    
+
     private TalentBase GetTalentBase(Guid profileEntityId)
     {
         return _fixture

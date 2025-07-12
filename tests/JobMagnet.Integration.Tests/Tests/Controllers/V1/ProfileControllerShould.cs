@@ -39,16 +39,16 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
     private readonly SequentialGuidGenerator _guidGenerator;
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
-    private bool _loadHeader = true;
-    private bool _loadCareerHistory = true;
-    private bool _loadSkillSet = true;
     private int _contactInfoCount;
+    private int _educationCount;
+    private bool _loadCareerHistory = true;
+    private bool _loadHeader = true;
+    private bool _loadSkillSet = true;
+    private int _projectCount;
+    private int _skillsCount;
     private int _talentsCount;
     private int _testimonialsCount;
-    private int _educationCount;
     private int _workExperienceCount;
-    private int _skillsCount;
-    private int _projectCount;
 
     public ProfileControllerShould(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
@@ -267,10 +267,8 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
 
         var contactTypes = _contactInfoCount > 0 ? entity.Header?.ContactInfo?.Select(s => s.ContactType).Distinct() : [];
         foreach (var contactType in contactTypes!.Distinct())
-        {
             if (context.Entry(contactType).State == EntityState.Detached)
                 context.Entry(contactType).State = EntityState.Unchanged;
-        }
 
         await commandRepository.CreateAsync(entity, CancellationToken.None);
         await unitOfWork.SaveChangesAsync(CancellationToken.None);
