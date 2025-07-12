@@ -120,11 +120,4 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     {
         _talents.Add(talent);
     }
-
-    public void AddCareerHistory(CareerHistory careerHistory)
-    {
-        Guard.IsNotNull(careerHistory);
-
-        CareerHistory = careerHistory;
-    }
 }

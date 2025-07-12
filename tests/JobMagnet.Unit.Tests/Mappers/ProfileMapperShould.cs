@@ -241,7 +241,7 @@ public class ProfileMapperShould
 
     private static SummaryViewModel GetSummaryViewModel(Profile profile)
     {
-        var education = profile.CareerHistory.Qualifications
+        var education = profile.CareerHistory.AcademicDegree
             .Select(e => new AcademicBackgroundViewModel(
                 e.Degree,
                 e.StartDate.ToString("yyyy-MM-dd"),

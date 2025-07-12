@@ -26,7 +26,7 @@ public partial class ProfileControllerShould
 
         var workExperienceBases = _fixture.CreateMany<WorkExperienceBase>(5)
             .ToList();
-        var educationBases = _fixture.CreateMany<QualificationBase>(5).ToList();
+        var educationBases = _fixture.CreateMany<AcademicDegreeBase>(5).ToList();
         var careerHistoryBase = _fixture.Build<CareerHistoryBase>()
             .With(x => x.ProfileId, profile.Id.Value)
             .With(x => x.WorkExperiences, workExperienceBases)
@@ -66,7 +66,7 @@ public partial class ProfileControllerShould
 
             entityCreated.Should().NotBeNull();
             entityCreated!.WorkExperiences.Should().HaveCount(workExperienceBases.Count);
-            entityCreated.Qualifications.Should().HaveCount(educationBases.Count);
+            entityCreated.AcademicDegree.Should().HaveCount(educationBases.Count);
         }
     }
 
@@ -78,7 +78,7 @@ public partial class ProfileControllerShould
         var profile = await SetupProfileAsync();
 
         var workExperienceBases = _fixture.CreateMany<WorkExperienceBase>(3).ToList();
-        var educationBases = _fixture.CreateMany<QualificationBase>(3).ToList();
+        var educationBases = _fixture.CreateMany<AcademicDegreeBase>(3).ToList();
         var careerHistoryBase = _fixture.Build<CareerHistoryBase>()
             .With(x => x.ProfileId, profile.Id.Value)
             .With(x => x.Introduction, "Another career history attempt")
@@ -211,7 +211,7 @@ public partial class ProfileControllerShould
         _educationCount = 2;
         var profile = await SetupProfileAsync();
 
-        var qualificationData = _fixture.Build<QualificationBase>()
+        var qualificationData = _fixture.Build<AcademicDegreeBase>()
             .With(x => x.Degree, "Master of Computer Science")
             .With(x => x.InstitutionName, "Stanford University")
             .With(x => x.InstitutionLocation, "Stanford, CA")
@@ -220,13 +220,13 @@ public partial class ProfileControllerShould
             .With(x => x.Description, "Advanced degree in Computer Science")
             .Create();
 
-        var command = _fixture.Build<QualificationCommand>()
-            .With(x => x.QualificationData, qualificationData)
+        var command = _fixture.Build<AcademicDegreeCommand>()
+            .With(x => x.AcademicDegreeData, qualificationData)
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(command);
 
         // --- When ---
-        var response = await _httpClient.PostAsync($"{RequestUriController}/{profile.Id.Value}/career-history/qualifications", httpContent);
+        var response = await _httpClient.PostAsync($"{RequestUriController}/{profile.Id.Value}/career-history/academic-degree", httpContent);
 
         // --- Then ---
         using (new AssertionScope())
@@ -234,7 +234,7 @@ public partial class ProfileControllerShould
             response.IsSuccessStatusCode.Should().BeTrue();
             response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-            var responseData = await TestUtilities.DeserializeResponseAsync<QualificationBase>(response);
+            var responseData = await TestUtilities.DeserializeResponseAsync<AcademicDegreeBase>(response);
             responseData.Should().NotBeNull();
             responseData.Should().BeEquivalentTo(qualificationData, options => options
                 .Excluding(x => x.Id)
@@ -242,8 +242,8 @@ public partial class ProfileControllerShould
 
             var entityUpdated = await FindCareerHistoryByIdAsync(profile.Id);
             entityUpdated.Should().NotBeNull();
-            entityUpdated!.Qualifications.Should().HaveCount(_educationCount + 1);
-            entityUpdated.Qualifications.Should().Contain(q =>
+            entityUpdated!.AcademicDegree.Should().HaveCount(_educationCount + 1);
+            entityUpdated.AcademicDegree.Should().Contain(q =>
                 q.Degree == qualificationData.Degree &&
                 q.InstitutionName == qualificationData.InstitutionName
             );
@@ -258,21 +258,21 @@ public partial class ProfileControllerShould
         _educationCount = 1;
         var profile = await SetupProfileAsync();
 
-        var existingQualification = profile.CareerHistory!.Qualifications.First();
+        var existingQualification = profile.CareerHistory!.AcademicDegree.First();
 
-        var qualificationData = _fixture.Build<QualificationBase>()
+        var qualificationData = _fixture.Build<AcademicDegreeBase>()
             .With(x => x.Degree, existingQualification.Degree)
             .With(x => x.InstitutionName, existingQualification.InstitutionName)
             .With(x => x.StartDate, DateTime.Now.AddYears(-1))
             .Create();
 
-        var command = _fixture.Build<QualificationCommand>()
-            .With(x => x.QualificationData, qualificationData)
+        var command = _fixture.Build<AcademicDegreeCommand>()
+            .With(x => x.AcademicDegreeData, qualificationData)
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(command);
 
         // --- When ---
-        var response = await _httpClient.PostAsync($"{RequestUriController}/{profile.Id.Value}/career-history/qualifications", httpContent);
+        var response = await _httpClient.PostAsync($"{RequestUriController}/{profile.Id.Value}/career-history/academic-degree", httpContent);
 
         // --- Then ---
         using (new AssertionScope())
@@ -289,9 +289,9 @@ public partial class ProfileControllerShould
         _loadCareerHistory = true;
         _educationCount = 3;
         var profile = await SetupProfileAsync();
-        var qualification = profile.CareerHistory!.Qualifications.First();
+        var qualification = profile.CareerHistory!.AcademicDegree.First();
 
-        var updatedData = _fixture.Build<QualificationBase>()
+        var updatedData = _fixture.Build<AcademicDegreeBase>()
             .With(x => x.Degree, "Updated Computer Science Degree")
             .With(x => x.InstitutionName, "Updated University Name")
             .With(x => x.InstitutionLocation, "New Location, CA")
@@ -300,14 +300,14 @@ public partial class ProfileControllerShould
             .With(x => x.Description, "Updated description")
             .Create();
 
-        var command = _fixture.Build<QualificationCommand>()
-            .With(x => x.QualificationData, updatedData)
+        var command = _fixture.Build<AcademicDegreeCommand>()
+            .With(x => x.AcademicDegreeData, updatedData)
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(command);
 
         // --- When ---
         var response = await _httpClient.PutAsync(
-            $"{RequestUriController}/{profile.Id.Value}/career-history/qualifications/{qualification.Id.Value}",
+            $"{RequestUriController}/{profile.Id.Value}/career-history/academic-degree/{qualification.Id.Value}",
             httpContent);
 
         // --- Then ---
@@ -319,7 +319,7 @@ public partial class ProfileControllerShould
             var entityUpdated = await FindCareerHistoryByIdAsync(profile.Id);
             entityUpdated.Should().NotBeNull();
 
-            var updatedQualification = entityUpdated!.Qualifications.FirstOrDefault(q => q.Id == qualification.Id);
+            var updatedQualification = entityUpdated!.AcademicDegree.FirstOrDefault(q => q.Id == qualification.Id);
             updatedQualification.Should().NotBeNull();
             updatedQualification!.Degree.Should().Be(updatedData.Degree);
             updatedQualification.InstitutionName.Should().Be(updatedData.InstitutionName);
@@ -333,12 +333,12 @@ public partial class ProfileControllerShould
         _loadCareerHistory = true;
         _educationCount = 3;
         var profile = await SetupProfileAsync();
-        var qualificationToDelete = profile.CareerHistory!.Qualifications.First();
+        var qualificationToDelete = profile.CareerHistory!.AcademicDegree.First();
         var qualificationId = qualificationToDelete.Id.Value;
 
         // --- When ---
         var response = await _httpClient.DeleteAsync(
-            $"{RequestUriController}/{profile.Id.Value}/career-history/qualifications/{qualificationId}");
+            $"{RequestUriController}/{profile.Id.Value}/career-history/academic-degree/{qualificationId}");
 
         // --- Then ---
         using (new AssertionScope())
@@ -348,8 +348,8 @@ public partial class ProfileControllerShould
 
             var entityUpdated = await FindCareerHistoryByIdAsync(profile.Id);
             entityUpdated.Should().NotBeNull();
-            entityUpdated!.Qualifications.Should().HaveCount(_educationCount - 1);
-            entityUpdated.Qualifications.Should().NotContain(q => q.Id.Value == qualificationId);
+            entityUpdated!.AcademicDegree.Should().HaveCount(_educationCount - 1);
+            entityUpdated.AcademicDegree.Should().NotContain(q => q.Id.Value == qualificationId);
         }
     }
 

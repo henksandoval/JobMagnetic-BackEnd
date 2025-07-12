@@ -8,12 +8,12 @@ namespace JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
 {
-    private readonly HashSet<Qualification> _qualifications = [];
+    private readonly HashSet<AcademicDegree> _academicDegree = [];
     private readonly HashSet<WorkExperience> _workExperiences = [];
 
     public string Introduction { get; private set; }
     public ProfileId ProfileId { get; private set; }
-    public virtual IReadOnlyCollection<Qualification> Qualifications => _qualifications;
+    public virtual IReadOnlyCollection<AcademicDegree> AcademicDegree => _academicDegree;
     public virtual IReadOnlyCollection<WorkExperience> WorkExperiences => _workExperiences;
 
     private CareerHistory() : base() { }
@@ -39,18 +39,18 @@ public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
         Introduction = introduction;
     }
 
-    public Qualification AddEducation(IGuidGenerator guidGenerator, string degree, string institutionName,
+    public AcademicDegree AddEducation(IGuidGenerator guidGenerator, string degree, string institutionName,
         string institutionLocation, DateTime startDate, DateTime? endDate, string description)
     {
         Guard.IsNotNull(guidGenerator);
 
-        if (_qualifications.Count >= 10)
-            throw new BusinessRuleValidationException("Cannot add more than 10 qualifications.");
+        if (_academicDegree.Count >= 10)
+            throw new BusinessRuleValidationException("Cannot add more than 10 AcademicDegrees.");
 
-        if (_qualifications.Any(q => q.Degree == degree && q.InstitutionName == institutionName))
-            throw new BusinessRuleValidationException("A qualification with this degree and institution already exists.");
+        if (_academicDegree.Any(q => q.Degree == degree && q.InstitutionName == institutionName))
+            throw new BusinessRuleValidationException("A AcademicDegree with this degree and institution already exists.");
 
-        var qualification = Qualification.CreateInstance(
+        var academicDegree = Entities.AcademicDegree.CreateInstance(
             guidGenerator,
             Id,
             degree,
@@ -60,30 +60,30 @@ public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
             endDate,
             description);
 
-        _qualifications.Add(qualification);
-        return qualification;
+        _academicDegree.Add(academicDegree);
+        return academicDegree;
     }
 
-    public void UpdateEducation(QualificationId qualificationId, string degree, string institutionName,
+    public void UpdateAcademicDegree(AcademicDegreeId academicDegreeId, string degree, string institutionName,
         string institutionLocation, DateTime startDate, DateTime? endDate, string description)
     {
-        var qualification = _qualifications.FirstOrDefault(q => q.Id == qualificationId);
-        if (qualification is null)
-            throw NotFoundException.For<Qualification, QualificationId>(qualificationId);
+        var AcademicDegree = _academicDegree.FirstOrDefault(q => q.Id == academicDegreeId);
+        if (AcademicDegree is null)
+            throw NotFoundException.For<AcademicDegree, AcademicDegreeId>(academicDegreeId);
 
-        if (_qualifications.Any(q => q.Id != qualificationId && q.Degree == degree && q.InstitutionName == institutionName))
-            throw new BusinessRuleValidationException("A qualification with this degree and institution already exists.");
+        if (_academicDegree.Any(q => q.Id != academicDegreeId && q.Degree == degree && q.InstitutionName == institutionName))
+            throw new BusinessRuleValidationException("A AcademicDegree with this degree and institution already exists.");
 
-        qualification.Update(degree, institutionName, institutionLocation, startDate, endDate, description);
+        AcademicDegree.Update(degree, institutionName, institutionLocation, startDate, endDate, description);
     }
 
-    public void RemoveEducation(QualificationId qualificationId)
+    public void RemoveAcademicDegree(AcademicDegreeId academicDegreeId)
     {
-        var qualification = _qualifications.FirstOrDefault(q => q.Id == qualificationId);
-        if (qualification is null)
-            throw NotFoundException.For<Qualification, QualificationId>(qualificationId);
+        var AcademicDegree = _academicDegree.FirstOrDefault(q => q.Id == academicDegreeId);
+        if (AcademicDegree is null)
+            throw NotFoundException.For<AcademicDegree, AcademicDegreeId>(academicDegreeId);
 
-        _qualifications.Remove(qualification);
+        _academicDegree.Remove(AcademicDegree);
     }
 
     public WorkExperience AddWorkExperience(IGuidGenerator guidGenerator, string jobTitle, string companyName,

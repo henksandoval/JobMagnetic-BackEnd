@@ -87,7 +87,7 @@ public static class ProfileMapper
 
     private static EducationViewModel EducationViewModelMap(CareerHistory src)
     {
-        var academicBackground = src.Qualifications?.Select(e => new AcademicBackgroundViewModel(
+        var academicBackground = src.AcademicDegree?.Select(e => new AcademicBackgroundViewModel(
             e.Degree,
             e.StartDate.ToString("yyyy-MM-dd"),
             e.InstitutionName,

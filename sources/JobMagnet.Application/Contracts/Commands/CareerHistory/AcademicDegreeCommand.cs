@@ -2,7 +2,7 @@ using JobMagnet.Application.Contracts.Responses.Base;
 
 namespace JobMagnet.Application.Contracts.Commands.CareerHistory;
 
-public sealed record QualificationCommand
+public sealed record AcademicDegreeCommand
 {
-    public required QualificationBase QualificationData { get; init; }
+    public required AcademicDegreeBase AcademicDegreeData { get; init; }
 }

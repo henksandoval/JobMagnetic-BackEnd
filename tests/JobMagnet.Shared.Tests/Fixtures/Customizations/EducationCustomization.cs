@@ -17,7 +17,7 @@ public class EducationCustomization : ICustomization
 
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<Qualification>(composer => composer
+        fixture.Customize<AcademicDegree>(composer => composer
             .FromFactory(EducationFactory)
             .OmitAutoProperties());
 
@@ -25,13 +25,13 @@ public class EducationCustomization : ICustomization
         fixture.Register(EducationBaseFactory);
     }
 
-    private Qualification EducationFactory()
+    private AcademicDegree EducationFactory()
     {
         var startDate = Faker.Date.Past(20, DateTime.Now.AddYears(-5));
         var endDate = Faker.Date.Between(startDate, startDate.AddYears(5))
             .OrNull(Faker, 0.25f);
 
-        var education = Qualification.CreateInstance(
+        var education = AcademicDegree.CreateInstance(
             _guidGenerator,
             new CareerHistoryId(),
             Faker.PickRandom(StaticCustomizations.Degrees),
@@ -63,13 +63,13 @@ public class EducationCustomization : ICustomization
         return education;
     }
 
-    private static QualificationBase EducationBaseFactory()
+    private static AcademicDegreeBase EducationBaseFactory()
     {
         var startDate = Faker.Date.Past(20, DateTime.Now.AddYears(-5));
         var endDate = Faker.Date.Between(startDate, startDate.AddYears(5))
             .OrNull(Faker, 0.25f);
 
-        var education = new QualificationBase(
+        var education = new AcademicDegreeBase(
             Faker.PickRandom(StaticCustomizations.Degrees),
             Faker.PickRandom(StaticCustomizations.Universities),
             Faker.Address.FullAddress(),

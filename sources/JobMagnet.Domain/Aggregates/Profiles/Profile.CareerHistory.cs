@@ -1,3 +1,4 @@
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Exceptions;
@@ -7,6 +8,14 @@ namespace JobMagnet.Domain.Aggregates.Profiles;
 
 public partial class Profile
 {
+
+    public void AddCareerHistory(CareerHistory careerHistory)
+    {
+        Guard.IsNotNull(careerHistory);
+
+        CareerHistory = careerHistory;
+    }
+
     public void CreateCareerHistory(IGuidGenerator guidGenerator, string introduction)
     {
         if (CareerHistory is not null)
@@ -32,7 +41,7 @@ public partial class Profile
         CareerHistory = null;
     }
 
-    public Qualification AddQualificationToCareerHistory(IGuidGenerator guidGenerator, string degree,
+    public AcademicDegree AddAcademicDegreeToCareerHistory(IGuidGenerator guidGenerator, string degree,
         string institutionName, string institutionLocation, DateTime startDate, DateTime? endDate, string description)
     {
         if (CareerHistory is null)
@@ -42,22 +51,22 @@ public partial class Profile
             startDate, endDate, description);
     }
 
-    public void UpdateQualificationInCareerHistory(QualificationId qualificationId, string degree,
+    public void UpdateAcademicDegreeInCareerHistory(AcademicDegreeId academicDegreeId, string degree,
         string institutionName, string institutionLocation, DateTime startDate, DateTime? endDate, string description)
     {
         if (CareerHistory is null)
             throw NotFoundException.For<CareerHistory, ProfileId>(Id);
 
-        CareerHistory.UpdateEducation(qualificationId, degree, institutionName, institutionLocation,
+        CareerHistory.UpdateAcademicDegree(academicDegreeId, degree, institutionName, institutionLocation,
             startDate, endDate, description);
     }
 
-    public void RemoveQualificationFromCareerHistory(QualificationId qualificationId)
+    public void RemoveAcademicDegreeFromCareerHistory(AcademicDegreeId academicDegreeId)
     {
         if (CareerHistory is null)
             throw NotFoundException.For<CareerHistory, ProfileId>(Id);
 
-        CareerHistory.RemoveEducation(qualificationId);
+        CareerHistory.RemoveAcademicDegree(academicDegreeId);
     }
 
     public WorkExperience AddWorkExperienceToCareerHistory(IGuidGenerator guidGenerator, string jobTitle,

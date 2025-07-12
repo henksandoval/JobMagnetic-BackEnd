@@ -166,10 +166,10 @@ public class ProfileFactory(
         )).ToList();
     }
 
-    private List<Qualification> BuildEducationHistory(List<EducationParseDto>? educationDtos)
+    private List<AcademicDegree> BuildEducationHistory(List<EducationParseDto>? educationDtos)
     {
         if (educationDtos is null) return [];
-        return educationDtos.Select(dto => Qualification.CreateInstance(
+        return educationDtos.Select(dto => AcademicDegree.CreateInstance(
             guidGenerator,
             new CareerHistoryId(),
             dto.Degree ?? string.Empty,

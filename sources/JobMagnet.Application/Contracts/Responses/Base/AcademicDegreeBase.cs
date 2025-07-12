@@ -1,6 +1,6 @@
 ﻿namespace JobMagnet.Application.Contracts.Responses.Base;
 
-public sealed record QualificationBase(
+public sealed record AcademicDegreeBase(
     string? Degree,
     string? InstitutionName,
     string? InstitutionLocation,

@@ -134,7 +134,7 @@ public class ProfileEntityBuilder
         if (_careerHistory == null && count > 0)
             throw new InvalidOperationException("Cannot add education without a careerHistory. Call WithCareerHistory() first.");
 
-        foreach (var education in _fixture.CreateMany<Qualification>(count).ToList())
+        foreach (var education in _fixture.CreateMany<AcademicDegree>(count).ToList())
             _careerHistory!.AddEducation(
                 _guidGenerator,
                 education.Degree,

@@ -14,13 +14,13 @@ public static class CareerHistoryMapper
             .NewConfig()
             .Map(dest => dest.Id, src => src.Id.Value);
 
-        TypeAdapterConfig<Qualification, QualificationBase>
+        TypeAdapterConfig<AcademicDegree, AcademicDegreeBase>
             .NewConfig()
             .Map(dest => dest.Id, src => src.Id.Value);
 
         TypeAdapterConfig<CareerHistory, CareerHistoryBase>
             .NewConfig()
-            .Map(dest => dest.Education, src => src.Qualifications.Adapt<List<QualificationBase>>())
+            .Map(dest => dest.Education, src => src.AcademicDegree.Adapt<List<AcademicDegreeBase>>())
             .Map(dest => dest.ProfileId, src => src.ProfileId.Value);
 
         TypeAdapterConfig<CareerHistory, CareerHistoryResponse>
