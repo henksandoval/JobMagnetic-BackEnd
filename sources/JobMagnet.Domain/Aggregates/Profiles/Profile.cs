@@ -30,6 +30,11 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     public bool HaveSkillSet => SkillSet is not null;
     public bool HaveCareerHistory => CareerHistory is not null;
 
+    private Profile() : base()
+    {
+        TalentShowcase = new TalentShowcase(this);
+    }
+
     private Profile(ProfileId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
         base(id, addedAt, lastModifiedAt, deletedAt)
     {
