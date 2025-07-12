@@ -39,7 +39,7 @@ public class SkillTypeResolverService(
 
         var aliasesMap = foundSkillTypes
             .SelectMany(skillType => skillType.Aliases
-                    .Select(alias => (Name: alias.Alias, SkillType: skillType))
+                .Select(alias => (Name: alias.Alias, SkillType: skillType))
             );
 
         var resolutionMap = namesMap.Concat(aliasesMap)

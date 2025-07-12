@@ -13,7 +13,9 @@ public class ContactInfo : TrackableEntity<ContactInfoId>
     public ProfileHeaderId ProfileHeaderId { get; private set; }
     public virtual ContactType ContactType { get; private set; }
 
-    private ContactInfo() : base() { }
+    private ContactInfo()
+    {
+    }
 
     private ContactInfo(ContactInfoId id, string value, ContactType contactType, ProfileHeaderId profileHeaderId) : base(id)
     {

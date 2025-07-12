@@ -8,7 +8,6 @@ namespace JobMagnet.Domain.Aggregates.Profiles;
 
 public partial class Profile
 {
-
     public void AddCareerHistory(CareerHistory careerHistory)
     {
         Guard.IsNotNull(careerHistory);

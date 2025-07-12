@@ -34,6 +34,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
                                      In my free time I enjoy hiking, reading science fiction novels, and experimenting with new technologies.
                                      I am always eager to learn new things and take on exciting challenges.",
                                      """;
+
     private static readonly IList<(string Name, string JobTitle, string PhotoUrl, string Feedback)> Testimonials =
     [
         ("Jane Smith", "Portfolio Manager", "https://randomuser.me/api/portraits/women/28.jpg",
@@ -85,7 +86,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
 
     private void AddPublicIdentifier(Profile profile)
     {
-        profile.AddVanityUrl(guidGenerator,"john-doe-1a2b3c");
+        profile.AddVanityUrl(guidGenerator, "john-doe-1a2b3c");
     }
 
     private static void AddTalents(Profile profile)
@@ -174,7 +175,6 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
     private void AddProject(Profile profile)
     {
         foreach (var item in ProjectRawData.Data)
-        {
             _ = profile.AddProject(
                 guidGenerator,
                 item.Title,
@@ -184,7 +184,6 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
                 item.UrlVideo,
                 item.Type
             );
-        }
     }
 
     private void AddTestimonials(Profile profile)

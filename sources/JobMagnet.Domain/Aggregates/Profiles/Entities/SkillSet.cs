@@ -17,7 +17,9 @@ public class SkillSet : SoftDeletableEntity<SkillSetId>
 
     public ProfileId ProfileId { get; private set; }
 
-    private SkillSet() : base() { }
+    private SkillSet()
+    {
+    }
 
     private SkillSet(SkillSetId id, ProfileId profileId, string overview) : base(id)
     {
@@ -101,10 +103,7 @@ public class SkillSet : SoftDeletableEntity<SkillSetId>
     {
         var skillToUpdate = _skills.FirstOrDefault(s => s.Id == skillId);
 
-        if (skillToUpdate is null)
-        {
-            throw new JobMagnetDomainException($"Skill with ID '{skillId.Value}' not found in this profile.");
-        }
+        if (skillToUpdate is null) throw new JobMagnetDomainException($"Skill with ID '{skillId.Value}' not found in this profile.");
 
         skillToUpdate.UpdateProficiencyLevel(newProficiencyLevel);
     }

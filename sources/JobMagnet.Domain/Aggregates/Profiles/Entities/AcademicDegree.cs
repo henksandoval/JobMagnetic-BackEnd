@@ -15,7 +15,9 @@ public class AcademicDegree : SoftDeletableEntity<AcademicDegreeId>
     public string Description { get; private set; }
     public CareerHistoryId CareerHistoryId { get; private set; }
 
-    private AcademicDegree() : base() { }
+    private AcademicDegree()
+    {
+    }
 
     private AcademicDegree(AcademicDegreeId id, CareerHistoryId careerHistoryId, string degree, string institutionName, string institutionLocation,
         DateTime startDate, DateTime? endDate, string description) : base(id)

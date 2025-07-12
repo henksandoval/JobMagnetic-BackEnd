@@ -21,7 +21,9 @@ public class SkillType : SoftDeletableAggregateRoot<SkillTypeId>
     public virtual IReadOnlyCollection<SkillTypeAlias> Aliases => _aliases.AsReadOnly();
     public virtual SkillCategory Category { get; private set; }
 
-    private SkillType() : base() {}
+    private SkillType()
+    {
+    }
 
     private SkillType(SkillTypeId id, IClock clock, string name, SkillCategory category, Uri? iconUrl = null) : base(id, clock)
     {
@@ -44,10 +46,8 @@ public class SkillType : SoftDeletableAggregateRoot<SkillTypeId>
         return new SkillType(id, clock, name, category, iconUrl);
     }
 
-    internal static SkillType Reconstitute(SkillTypeId id, IClock clock, string name, SkillCategory category, Uri? iconUrl = null)
-    {
-        return new SkillType(id, clock, name, category, iconUrl);
-    }
+    internal static SkillType Reconstitute(SkillTypeId id, IClock clock, string name, SkillCategory category, Uri? iconUrl = null) =>
+        new(id, clock, name, category, iconUrl);
 
     public void AddAlias(string alias)
     {

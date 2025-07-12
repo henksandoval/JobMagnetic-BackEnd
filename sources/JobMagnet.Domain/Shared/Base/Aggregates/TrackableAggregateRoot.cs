@@ -5,10 +5,9 @@ namespace JobMagnet.Domain.Shared.Base.Aggregates;
 
 public abstract class TrackableAggregateRoot<TId> : AggregateRoot<TId>, ITrackable<TId>
 {
-    public DateTimeOffset AddedAt { get; private set; }
-    public DateTimeOffset? LastModifiedAt { get; private set; }
-
-    protected TrackableAggregateRoot() : base() {}
+    protected TrackableAggregateRoot()
+    {
+    }
 
     protected TrackableAggregateRoot(TId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt) : base(id)
     {
@@ -21,6 +20,9 @@ public abstract class TrackableAggregateRoot<TId> : AggregateRoot<TId>, ITrackab
         AddedAt = clock.UtcNow;
         AddDomainEvent(new EntityCreatedEvent(Id, GetType().Name, clock.UtcNow));
     }
+
+    public DateTimeOffset AddedAt { get; }
+    public DateTimeOffset? LastModifiedAt { get; private set; }
 
     protected void UpdateModificationDetails(IClock clock)
     {

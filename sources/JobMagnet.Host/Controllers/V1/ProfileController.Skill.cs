@@ -58,7 +58,9 @@ public partial class ProfileController
                 SkillType skillTypeToUse;
 
                 if (maybeSkillType.HasValue)
+                {
                     skillTypeToUse = maybeSkillType.Value;
+                }
                 else
                 {
                     var defaultCategory = await defaultCategoryLazy.Value;

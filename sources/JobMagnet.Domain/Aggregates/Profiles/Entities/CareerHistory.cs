@@ -16,7 +16,9 @@ public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
     public virtual IReadOnlyCollection<AcademicDegree> AcademicDegree => _academicDegree;
     public virtual IReadOnlyCollection<WorkExperience> WorkExperiences => _workExperiences;
 
-    private CareerHistory() : base() { }
+    private CareerHistory()
+    {
+    }
 
     private CareerHistory(CareerHistoryId id, string introduction, ProfileId profileId) : base(id)
     {
@@ -95,7 +97,7 @@ public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
             throw new BusinessRuleValidationException("Cannot add more than 15 work experiences.");
 
         if (_workExperiences.Any(w => w.JobTitle == jobTitle && w.CompanyName == companyName &&
-            w.StartDate == startDate))
+                                      w.StartDate == startDate))
             throw new BusinessRuleValidationException("A work experience with this job title, company and start date already exists.");
 
         var workExperience = WorkExperience.CreateInstance(
@@ -120,7 +122,7 @@ public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
             throw NotFoundException.For<WorkExperience, WorkExperienceId>(workExperienceId);
 
         if (_workExperiences.Any(w => w.Id != workExperienceId && w.JobTitle == jobTitle &&
-            w.CompanyName == companyName && w.StartDate == startDate))
+                                      w.CompanyName == companyName && w.StartDate == startDate))
             throw new BusinessRuleValidationException("A work experience with this job title, company and start date already exists.");
 
         workExperience.Update(jobTitle, companyName, companyLocation, startDate, endDate, description);

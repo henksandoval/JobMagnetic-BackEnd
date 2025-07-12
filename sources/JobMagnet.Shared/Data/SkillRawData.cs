@@ -4,6 +4,7 @@ public record RawSkillDefinition(int SkillId, string Name, string Uri, RawSimple
 
 public static class SkillRawData
 {
+    private const string DefaultIconUri = "https://jobmagnet.com/default-icon.png";
     private static readonly RawSimpleDefinition CatSoftwareDev = new(2, "Software Development");
     private static readonly RawSimpleDefinition CatDatabases = new(3, "Bases de Datos");
     private static readonly RawSimpleDefinition CatCloudDevOps = new(4, "Cloud y DevOps");
@@ -12,7 +13,6 @@ public static class SkillRawData
     private static readonly RawSimpleDefinition CatDataScience = new(7, "Data Science y ML");
     private static readonly RawSimpleDefinition CatMethodologies = new(8, "Metodologías y Gestión");
     private static readonly RawSimpleDefinition CatSoftSkills = new(9, "Habilidades Blandas");
-    private const string DefaultIconUri = "https://jobmagnet.com/default-icon.png";
 
     public static readonly IReadOnlyList<RawSkillDefinition> Data =
     [

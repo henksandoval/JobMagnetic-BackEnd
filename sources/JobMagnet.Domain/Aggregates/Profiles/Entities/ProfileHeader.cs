@@ -23,7 +23,9 @@ public class ProfileHeader : SoftDeletableEntity<ProfileHeaderId>
 
     public virtual IReadOnlyCollection<ContactInfo>? ContactInfo => _contactInfo;
 
-    private ProfileHeader() : base() { }
+    private ProfileHeader()
+    {
+    }
 
     private ProfileHeader(
         ProfileHeaderId id,

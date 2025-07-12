@@ -16,7 +16,9 @@ public class VanityUrl : TrackableEntity<VanityUrlId>
     public ProfileId ProfileId { get; private set; }
     public long ViewCount { get; private set; }
 
-    private VanityUrl() : base() {}
+    private VanityUrl()
+    {
+    }
 
     private VanityUrl(VanityUrlId id, ProfileId profileId, string slug, LinkType linkType = LinkType.Primary)
         : base(id)

@@ -17,7 +17,9 @@ public class Project : SoftDeletableEntity<ProjectId>
     public string Type { get; private set; }
     public ProfileId ProfileId { get; private set; }
 
-    private Project() : base() { }
+    private Project()
+    {
+    }
 
     private Project(ProjectId id, ProfileId profileId, string title, string description, string urlLink, string urlImage,
         string urlVideo,

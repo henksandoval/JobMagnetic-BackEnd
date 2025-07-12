@@ -3,7 +3,6 @@ using JobMagnet.Application.Contracts.Commands.ProfileHeader;
 using JobMagnet.Application.Contracts.Responses.ProfileHeader;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles;
-using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +16,8 @@ public partial class ProfileController
     [ProducesResponseType(typeof(ProfileHeaderResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IResult> AddProfileHeaderToProfileAsync(Guid profileId, [FromBody] ProfileHeaderCommand command, CancellationToken cancellationToken)
+    public async Task<IResult> AddProfileHeaderToProfileAsync(Guid profileId, [FromBody] ProfileHeaderCommand command,
+        CancellationToken cancellationToken)
     {
         if (profileId != command.ProfileHeaderData?.ProfileId)
             throw new ArgumentException($"{nameof(command.ProfileHeaderData.ProfileId)} must be equal to profileId.");

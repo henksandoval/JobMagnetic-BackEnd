@@ -7,7 +7,8 @@ namespace JobMagnet.Domain.Aggregates.Profiles;
 
 public partial class Profile
 {
-    public void AddHeader(IGuidGenerator guidGenerator, string title, string suffix, string jobTitle, string about, string summary, string overview, string address)
+    public void AddHeader(IGuidGenerator guidGenerator, string title, string suffix, string jobTitle, string about, string summary, string overview,
+        string address)
     {
         var header = ProfileHeader.CreateInstance(
             guidGenerator,

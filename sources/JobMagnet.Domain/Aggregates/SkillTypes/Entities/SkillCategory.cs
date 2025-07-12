@@ -13,7 +13,9 @@ public class SkillCategory : SoftDeletableEntity<SkillCategoryId>
 
     public string Name { get; private set; }
 
-    private SkillCategory() : base() {}
+    private SkillCategory()
+    {
+    }
 
     private SkillCategory(SkillCategoryId id, string name) : base(id)
     {

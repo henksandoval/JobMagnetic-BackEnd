@@ -19,7 +19,9 @@ public class WorkExperience : SoftDeletableEntity<WorkExperienceId>
 
     public virtual IReadOnlyCollection<WorkHighlight> Highlights => _highlights;
 
-    private WorkExperience() : base() { }
+    private WorkExperience()
+    {
+    }
 
     private WorkExperience(
         WorkExperienceId id,

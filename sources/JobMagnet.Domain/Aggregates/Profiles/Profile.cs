@@ -1,11 +1,5 @@
-﻿using CommunityToolkit.Diagnostics;
-using JobMagnet.Domain.Aggregates.Contact;
-using JobMagnet.Domain.Aggregates.Profiles.Entities;
+﻿using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
-using JobMagnet.Domain.Aggregates.SkillTypes;
-using JobMagnet.Domain.Enums;
-using JobMagnet.Domain.Exceptions;
-using JobMagnet.Domain.Services;
 using JobMagnet.Domain.Shared.Base.Aggregates;
 using JobMagnet.Shared.Abstractions;
 

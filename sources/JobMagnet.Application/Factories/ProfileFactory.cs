@@ -231,7 +231,9 @@ public class ProfileFactory(
             SkillType skillTypeToUse;
 
             if (maybeSkillType.HasValue)
+            {
                 skillTypeToUse = maybeSkillType.Value;
+            }
             else
             {
                 var defaultCategory = await defaultCategoryLazy.Value;
