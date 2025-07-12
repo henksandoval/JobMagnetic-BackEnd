@@ -121,28 +121,46 @@ public class ProfileEntityBuilder
         return this;
     }
 
-    public ProfileEntityBuilder WithSummary()
+    public ProfileEntityBuilder WithCareerHistory(bool loadCareerHistory = true)
     {
-        _careerHistory = _fixture.Create<CareerHistory>();
+        if (loadCareerHistory)
+            _careerHistory = _fixture.Create<CareerHistory>();
+
         return this;
     }
 
     public ProfileEntityBuilder WithEducation(int count = 5)
     {
-        if (_careerHistory == null) throw new InvalidOperationException("Cannot add contact info without a careerHistory. Call WithCareerHistory() first.");
+        if (_careerHistory == null && count > 0)
+            throw new InvalidOperationException("Cannot add education without a careerHistory. Call WithCareerHistory() first.");
 
         foreach (var education in _fixture.CreateMany<Qualification>(count).ToList())
-            _careerHistory.AddEducation(education);
+            _careerHistory!.AddEducation(
+                _guidGenerator,
+                education.Degree,
+                education.InstitutionName,
+                education.InstitutionLocation,
+                education.StartDate,
+                education.EndDate,
+                education.Description);
 
         return this;
     }
 
     public ProfileEntityBuilder WithWorkExperience(int count = 5)
     {
-        if (_careerHistory == null) throw new InvalidOperationException("Cannot add contact info without a careerHistory. Call WithCareerHistory() first.");
+        if (_careerHistory == null && count > 0)
+            throw new InvalidOperationException("Cannot add work experience without a careerHistory. Call WithCareerHistory() first.");
 
         foreach (var workExperience in _fixture.CreateMany<WorkExperience>(count).ToList())
-            _careerHistory.AddWorkExperience(workExperience);
+            _careerHistory!.AddWorkExperience(
+                _guidGenerator,
+                workExperience.JobTitle,
+                workExperience.CompanyName,
+                workExperience.CompanyLocation,
+                workExperience.StartDate,
+                workExperience.EndDate,
+                workExperience.Description);
 
         return this;
     }

@@ -148,7 +148,7 @@ public class ProfileMapperShould
     public void MapperProfileEntityToSummaryViewModelWithProject()
     {
         var profile = new ProfileEntityBuilder(_fixture)
-            .WithSummary()
+            .WithCareerHistory()
             .Build();
 
         var profileExpected = new ProfileViewModel();

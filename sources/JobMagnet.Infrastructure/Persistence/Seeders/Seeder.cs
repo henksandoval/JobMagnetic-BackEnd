@@ -148,10 +148,25 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
         var careerHistorySeeder = new CareerHistorySeeder(guidGenerator, clock, careerHistory.Id);
 
         foreach (var education in careerHistorySeeder.GetQualifications().ToList())
-            careerHistory.AddEducation(education);
+            careerHistory.AddEducation(
+                guidGenerator,
+                education.Degree,
+                education.InstitutionName,
+                education.InstitutionLocation,
+                education.StartDate,
+                education.EndDate,
+                education.Description);
 
         foreach (var workExperience in careerHistorySeeder.GetWorkExperience().ToList())
-            careerHistory.AddWorkExperience(workExperience);
+            careerHistory.AddWorkExperience(
+                guidGenerator,
+                workExperience.JobTitle,
+                workExperience.CompanyName,
+                workExperience.CompanyLocation,
+                workExperience.StartDate,
+                workExperience.EndDate,
+                workExperience.Description
+            );
 
         profile.AddCareerHistory(careerHistory);
     }

@@ -40,6 +40,7 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
     private bool _loadHeader = true;
+    private bool _loadCareerHistory = true;
     private bool _loadSkillSet = true;
     private int _contactInfoCount;
     private int _talentsCount;
@@ -246,7 +247,7 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
             .WithContactInfo(_testFixture.SeededContactTypes.ToArray(), _contactInfoCount)
             .WithTalents(_talentsCount)
             .WithProjects(_projectCount)
-            .WithSummary()
+            .WithCareerHistory(_loadCareerHistory)
             .WithEducation(_educationCount)
             .WithWorkExperience(_workExperienceCount)
             .WithTestimonials(_testimonialsCount)

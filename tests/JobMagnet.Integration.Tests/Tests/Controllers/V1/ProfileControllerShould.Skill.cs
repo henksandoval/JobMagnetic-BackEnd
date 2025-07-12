@@ -186,6 +186,7 @@ public partial class ProfileControllerShould
     public async Task DeleteSkill_WhenProfileAndSkillSetExist()
     {
         // --- Given ---
+        _loadSkillSet = true;
         _skillsCount = 5;
         var profile = await SetupProfileAsync();
         var skillToDelete = profile.GetSkills().FirstOrDefault();

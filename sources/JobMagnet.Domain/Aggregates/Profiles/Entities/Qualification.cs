@@ -44,4 +44,24 @@ public class Qualification : SoftDeletableEntity<QualificationId>
         var id = new QualificationId(guidGenerator.NewGuid());
         return new Qualification(id, careerHistoryId, degree, institutionName, institutionLocation, startDate, endDate, description);
     }
+
+    public void Update(string degree, string institutionName, string institutionLocation,
+        DateTime startDate, DateTime? endDate, string description)
+    {
+        Guard.IsNotNullOrWhiteSpace(degree);
+        Guard.IsNotNullOrWhiteSpace(institutionName);
+        Guard.IsNotNullOrWhiteSpace(institutionLocation);
+        Guard.IsNotNullOrWhiteSpace(description);
+        Guard.IsNotNull(startDate);
+
+        if (endDate.HasValue)
+            Guard.IsGreaterThan(endDate.Value, startDate);
+
+        Degree = degree;
+        InstitutionName = institutionName;
+        InstitutionLocation = institutionLocation;
+        StartDate = startDate;
+        EndDate = endDate;
+        Description = description;
+    }
 }

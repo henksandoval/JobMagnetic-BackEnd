@@ -79,7 +79,8 @@ public class WorkExperienceCustomization : ICustomization
             startDate,
             endDate,
             Faker.Lorem.Sentences(),
-            []
+            [],
+            Guid.NewGuid()
         );
 
         return workExperience;

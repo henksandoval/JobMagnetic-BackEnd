@@ -34,6 +34,7 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     public virtual IReadOnlyCollection<VanityUrl> VanityUrls => _vanityUrls;
     public bool HaveHeader => Header is not null;
     public bool HaveSkillSet => SkillSet is not null;
+    public bool HaveCareerHistory => CareerHistory is not null;
 
     private Profile(ProfileId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
         base(id, addedAt, lastModifiedAt, deletedAt)
