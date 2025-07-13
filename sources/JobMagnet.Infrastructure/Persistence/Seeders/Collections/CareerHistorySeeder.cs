@@ -116,7 +116,7 @@ public record CareerHistorySeeder(IGuidGenerator GuidGenerator, IClock Clock, Ca
             .ToArray();
     }
 
-    private record EducationProperties(
+    private sealed record EducationProperties(
         string Degree,
         string InstitutionName,
         string InstitutionLocation,
@@ -125,7 +125,7 @@ public record CareerHistorySeeder(IGuidGenerator GuidGenerator, IClock Clock, Ca
         string Description
     );
 
-    private record WorkExperienceProperties(
+    private sealed record WorkExperienceProperties(
         string JobTitle,
         string CompanyName,
         string CompanyLocation,

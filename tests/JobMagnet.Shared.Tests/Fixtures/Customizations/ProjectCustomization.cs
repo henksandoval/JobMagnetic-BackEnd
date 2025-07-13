@@ -12,7 +12,6 @@ public class ProjectCustomization : ICustomization
 {
     private static readonly Faker Faker = FixtureBuilder.Faker;
     private static int _autoIncrementId = 1;
-    private readonly IClock _clock = new DeterministicClock();
     private readonly IGuidGenerator _guidGenerator = new SequentialGuidGenerator();
 
     public void Customize(IFixture fixture)

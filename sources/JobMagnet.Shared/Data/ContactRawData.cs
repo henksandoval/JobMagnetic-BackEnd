@@ -1,6 +1,6 @@
 namespace JobMagnet.Shared.Data;
 
-public record RawContactDefinition(int id, string Name, string IconClass, RawSimpleDefinition[] Aliases);
+public record RawContactDefinition(int Id, string Name, string IconClass, RawSimpleDefinition[] Aliases);
 
 public static class ContactRawData
 {

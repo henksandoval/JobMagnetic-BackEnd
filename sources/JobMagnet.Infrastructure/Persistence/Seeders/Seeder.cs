@@ -129,7 +129,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
                                 """;
         var skillSet = SkillSet.CreateInstance(guidGenerator, profile.Id, overview);
 
-        foreach (var (skillName, proficiencyLevel, rank) in SkillInfoCollection.Data)
+        foreach (var (skillName, proficiencyLevel, _) in SkillInfoCollection.Data)
             if (skillTypeMap.TryGetValue(skillName, out var skillType))
                 skillSet.AddSkill(guidGenerator, proficiencyLevel, skillType);
             else

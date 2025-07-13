@@ -64,23 +64,3 @@ public class LowerCaseRoutesTransformer : IOpenApiDocumentTransformer
         return Task.CompletedTask;
     }
 }
-
-/*
-public class EnumSchemaTransformer : IOpenApiSchemaTransformer
-{
-    public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
-    {
-        if (context.Type.IsEnum)
-        {
-            schema.Type = "string"; // Asegura que el tipo base sea string
-            schema.Enum.Clear();
-            foreach (var name in Enum.GetNames(context.Type))
-            {
-                schema.Enum.Add(new OpenApiString(name));
-            }
-        }
-
-        return Task.CompletedTask;
-    }
-}
-*/

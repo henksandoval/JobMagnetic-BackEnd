@@ -69,23 +69,23 @@ public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
     public void UpdateAcademicDegree(AcademicDegreeId academicDegreeId, string degree, string institutionName,
         string institutionLocation, DateTime startDate, DateTime? endDate, string description)
     {
-        var AcademicDegree = _academicDegree.FirstOrDefault(q => q.Id == academicDegreeId);
-        if (AcademicDegree is null)
+        var academicDegreeToUpdate = _academicDegree.FirstOrDefault(q => q.Id == academicDegreeId);
+        if (academicDegreeToUpdate is null)
             throw NotFoundException.For<AcademicDegree, AcademicDegreeId>(academicDegreeId);
 
         if (_academicDegree.Any(q => q.Id != academicDegreeId && q.Degree == degree && q.InstitutionName == institutionName))
             throw new BusinessRuleValidationException("A AcademicDegree with this degree and institution already exists.");
 
-        AcademicDegree.Update(degree, institutionName, institutionLocation, startDate, endDate, description);
+        academicDegreeToUpdate.Update(degree, institutionName, institutionLocation, startDate, endDate, description);
     }
 
     public void RemoveAcademicDegree(AcademicDegreeId academicDegreeId)
     {
-        var AcademicDegree = _academicDegree.FirstOrDefault(q => q.Id == academicDegreeId);
-        if (AcademicDegree is null)
+        var academicDegreeToRemove = _academicDegree.FirstOrDefault(q => q.Id == academicDegreeId);
+        if (academicDegreeToRemove is null)
             throw NotFoundException.For<AcademicDegree, AcademicDegreeId>(academicDegreeId);
 
-        _academicDegree.Remove(AcademicDegree);
+        _academicDegree.Remove(academicDegreeToRemove);
     }
 
     public WorkExperience AddWorkExperience(IGuidGenerator guidGenerator, string jobTitle, string companyName,
