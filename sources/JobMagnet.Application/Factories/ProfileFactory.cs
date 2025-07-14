@@ -47,7 +47,7 @@ public class ProfileFactory(
         var galleryItems = BuildProjects(profileDto.Project);
 
         foreach (var talent in talents)
-            profile.AddTalent(talent.Description);
+            profile.AddTalent(guidGenerator, talent.Description);
 
         foreach (var item in testimonials)
             profile.AddTestimonial(
@@ -107,16 +107,17 @@ public class ProfileFactory(
         return resumeEntity;
     }
 
-    private static List<Talent> BuildTalents(List<TalentParseDto>? talentDtos)
+    private List<Talent> BuildTalents(List<TalentParseDto>? talentDtos)
     {
         if (talentDtos is null) return [];
 
-        foreach (var talentDto in talentDtos)
-            if (string.IsNullOrWhiteSpace(talentDto.Description))
-                throw new ArgumentException("Talent description cannot be null or whitespace.", nameof(talentDtos));
+        if (talentDtos.Any(talentDto => string.IsNullOrWhiteSpace(talentDto.Description)))
+        {
+            throw new ArgumentException("Talent description cannot be null or whitespace.", nameof(talentDtos));
+        }
 
         return talentDtos
-            .Select(dto => Talent.CreateInstance(dto.Description ?? string.Empty)).ToList();
+            .Select(dto => Talent.CreateInstance(guidGenerator, _profileId, dto.Description ?? string.Empty)).ToList();
     }
 
     private List<Testimonial> BuildTestimonials(List<TestimonialParseDto>? testimonials)
