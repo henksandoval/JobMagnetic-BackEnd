@@ -1,3 +1,4 @@
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Application.Contracts.Commands.Talent;
 using JobMagnet.Application.Contracts.Responses.TalentShowcase;
 using JobMagnet.Application.Mappers;
@@ -22,6 +23,7 @@ public partial class ProfileController
             return Results.NotFound();
         
         var talent = profile.AddTalent(
+            guidGenerator,
             command.TalentData.Description ?? string.Empty
         );
 
@@ -48,6 +50,39 @@ public partial class ProfileController
             .ToList();
 
         return Results.Ok(response);
+    }
+    
+    [HttpPut("{profileId:guid}/talents/{talentId:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IResult> UpdateTalentAsync(Guid profileId, Guid talentId, [FromBody] TalentCommand command, CancellationToken cancellationToken)
+    {
+        if (profileId != command.TalentData?.ProfileId)
+            throw new ArgumentException($"{nameof(command.TalentData.ProfileId)} does not match the profileId in the route.");
+
+        var profile = await GetProfileWithTalent(profileId, cancellationToken).ConfigureAwait(false);
+
+        if (profile is null)
+            return Results.NotFound();
+
+        var talentData = command.TalentData;
+        Guard.IsNotNull(talentData);
+
+        try
+        {
+            profile.UpdateTalent(
+                new TalentId(talentId),
+                talentData.Description ?? string.Empty
+            );
+            
+            profileCommandRepository.Update(profile);
+        }
+        catch (Exception ex)
+        {
+            return Results.NotFound(new {ex.Message});
+        }
+        
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Results.NoContent();
     }
 
     private async Task<Profile?> GetProfileWithTalent(Guid profileId, CancellationToken cancellationToken)
