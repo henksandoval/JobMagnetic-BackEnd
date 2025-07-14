@@ -36,6 +36,7 @@ internal static class PersistenceExtensions
             .AddTransient<IQueryRepository<SkillSet, SkillSetId>, Repository<SkillSet, SkillSetId>>()
             .AddTransient<IQueryRepository<SkillType, int>, Repository<SkillType, int>>()
             .AddTransient<IQueryRepository<SkillTypeAlias, int>, Repository<SkillTypeAlias, int>>()
+            .AddTransient<IQueryRepository<Talent, TalentId>, Repository<Talent, TalentId>>()
             .AddTransient<IQueryRepository<Project, ProjectId>, Repository<Project, ProjectId>>()
             .AddTransient<IQueryRepository<Skill, long>, Repository<Skill, long>>()
             .AddTransient<IQueryRepository<CareerHistory, long>, Repository<CareerHistory, long>>()
