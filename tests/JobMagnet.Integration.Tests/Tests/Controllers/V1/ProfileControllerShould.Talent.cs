@@ -131,12 +131,25 @@ public partial class ProfileControllerShould
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
     
-    private async Task<Talent?> FindTalentByIdAsync(Guid id)
+    [Fact(DisplayName = "Should return 204 No Content when deleting an existing talent")]
+    public async Task DeleteTalent_WhenProfileExistsAndHasTalents()
     {
+        // --- Given ---
+        _talentsCount = 4;
+        var profile = await SetupProfileAsync();
+        var talentToDelete = profile.TalentShowcase.First();
+        var requestUri = $"{RequestUriController}/{profile.Id.Value}/talents/{talentToDelete.Id.Value}";
+
+        // --- When ---
+        var response = await _httpClient.DeleteAsync(requestUri);
+
+        // --- Then ---
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Talent, TalentId>>();
-        var entityUpdated = await queryRepository.GetByIdAsync(new TalentId(id), CancellationToken.None);
-        return entityUpdated;
+        var talents = await queryRepository.FindAsync(t => t.ProfileId == talentToDelete.ProfileId , CancellationToken.None);
+        talents.Should().HaveCount(_talentsCount - 1);
+        talents.Should().NotContain(t => t.Id == talentToDelete.Id);
     }
     
     private TalentBase GetTalentBase(Guid profileEntityId)
@@ -145,5 +158,13 @@ public partial class ProfileControllerShould
             .Build<TalentBase>()
             .With(t => t.ProfileId, profileEntityId)
             .Create();
+    }
+    
+    private async Task<Talent?> FindTalentByIdAsync(Guid id)
+    {
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Talent, TalentId>>();
+        var entityUpdated = await queryRepository.GetByIdAsync(new TalentId(id), CancellationToken.None);
+        return entityUpdated;
     }
 }
