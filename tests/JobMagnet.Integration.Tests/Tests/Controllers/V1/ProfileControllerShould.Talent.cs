@@ -1,11 +1,15 @@
 using System.Net;
+using System.Net.Http.Json;
 using AutoFixture;
 using AwesomeAssertions;
 using JobMagnet.Application.Contracts.Commands.Talent;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.TalentShowcase;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Application.Mappers;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Ports.Repositories;
+using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -83,6 +87,41 @@ public partial class ProfileControllerShould
         
         // --- Then ---
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+    
+    [Fact(DisplayName = "Should return 204 ok when updating an existing project")]
+    public async Task UpdateTalents_WhenProfileExistsAndHasTalents()
+    {
+        // --- Given ---
+        _talentsCount = 4;
+        var profile = await SetupProfileAsync();
+        var updatedTalentData = GetTalentBase(profile.Id.Value);
+        var talentToUpdate = profile.TalentShowcase.First();
+        var updateCommand = _fixture.Build<TalentCommand>()
+            .With(t => t.TalentData, updatedTalentData)
+            .Create();
+        var responseuri = $"{RequestUriController}/{profile.Id.Value}/talents/{talentToUpdate.Id.Value}";
+
+        // --- When ---
+        var response = await _httpClient.PutAsJsonAsync(responseuri, updateCommand);
+        
+        // --- Then ---
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        var talentUpdated = await FindTalentByIdAsync(talentToUpdate.Id.Value);
+        talentUpdated.Should().NotBeNull();
+        talentUpdated.ProfileId.Should().Be(profile.Id);
+        var commandBase = updateCommand.TalentData;
+        talentUpdated.Should().BeEquivalentTo(commandBase, options =>
+            options
+        );
+    }
+    
+    private async Task<Talent?> FindTalentByIdAsync(Guid id)
+    {
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IQueryRepository<Talent, TalentId>>();
+        var entityUpdated = await queryRepository.GetByIdAsync(new TalentId(id), CancellationToken.None);
+        return entityUpdated;
     }
     
     private TalentBase GetTalentBase(Guid profileEntityId)
