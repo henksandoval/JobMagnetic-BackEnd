@@ -56,9 +56,6 @@ public partial class ProfileController
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IResult> UpdateTalentAsync(Guid profileId, Guid talentId, [FromBody] TalentCommand command, CancellationToken cancellationToken)
     {
-        if (profileId != command.TalentData?.ProfileId)
-            throw new ArgumentException($"{nameof(command.TalentData.ProfileId)} does not match the profileId in the route.");
-
         var profile = await GetProfileWithTalent(profileId, cancellationToken).ConfigureAwait(false);
 
         if (profile is null)
