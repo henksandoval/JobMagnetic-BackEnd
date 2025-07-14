@@ -22,6 +22,8 @@ public class Talent : TrackableEntity<TalentId>
         Id = id;
         Description = description;
         ProfileId = profileId;
+        
+        ValidateInvariants();
     }
 
     public static Talent CreateInstance(IGuidGenerator guidGenerator, ProfileId profileId, string description)
