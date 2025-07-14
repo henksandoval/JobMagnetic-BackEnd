@@ -1,4 +1,3 @@
-using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using JobMagnet.Host.Extensions.SettingSections;
 using Microsoft.AspNetCore.OpenApi;
@@ -21,12 +20,7 @@ public static class OpenApiExtensions
         var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
 
         foreach (var description in provider.ApiVersionDescriptions)
-        {
-            services.AddOpenApi(description.GroupName, options =>
-            {
-                options.AddDocumentTransformer<LowerCaseRoutesTransformer>();
-            });
-        }
+            services.AddOpenApi(description.GroupName, options => { options.AddDocumentTransformer<LowerCaseRoutesTransformer>(); });
 
         return services;
     }
@@ -48,10 +42,7 @@ public static class OpenApiExtensions
 
             var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
-            foreach (var description in provider.ApiVersionDescriptions.Reverse())
-            {
-                options.AddDocument(description.GroupName);
-            }
+            foreach (var description in provider.ApiVersionDescriptions.Reverse()) options.AddDocument(description.GroupName);
         });
 
         return app;
@@ -68,31 +59,8 @@ public class LowerCaseRoutesTransformer : IOpenApiDocumentTransformer
         );
 
         document.Paths = new OpenApiPaths();
-        foreach (var (key, value) in paths)
-        {
-            document.Paths.Add(key, value);
-        }
+        foreach (var (key, value) in paths) document.Paths.Add(key, value);
 
         return Task.CompletedTask;
     }
 }
-
-/*
-public class EnumSchemaTransformer : IOpenApiSchemaTransformer
-{
-    public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
-    {
-        if (context.Type.IsEnum)
-        {
-            schema.Type = "string"; // Asegura que el tipo base sea string
-            schema.Enum.Clear();
-            foreach (var name in Enum.GetNames(context.Type))
-            {
-                schema.Enum.Add(new OpenApiString(name));
-            }
-        }
-
-        return Task.CompletedTask;
-    }
-}
-*/

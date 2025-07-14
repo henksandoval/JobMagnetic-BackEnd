@@ -25,7 +25,7 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
     public DbSet<ContactTypeAlias> ContactTypeAliases { get; set; }
     public DbSet<Profile> Profiles { get; set; }
     public DbSet<VanityUrl> VanityUrls { get; set; }
-    public DbSet<Qualification> Qualification { get; set; }
+    public DbSet<AcademicDegree> AcademicDegree { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<Talent> Talents { get; set; }
     public DbSet<ProfileHeader> ProfileHeaders { get; set; }

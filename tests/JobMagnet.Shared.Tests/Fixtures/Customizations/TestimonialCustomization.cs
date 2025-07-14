@@ -11,7 +11,6 @@ namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 public class TestimonialCustomization : ICustomization
 {
-    private readonly IClock _clock = new DeterministicClock();
     private readonly IGuidGenerator _guidGenerator = new SequentialGuidGenerator();
     private readonly Faker Faker = FixtureBuilder.Faker;
 

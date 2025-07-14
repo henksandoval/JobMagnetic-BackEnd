@@ -69,25 +69,25 @@ public static class ProfileMapper
 
         var viewModel = new AboutViewModel(
             entity.ProfileImageUrl ?? string.Empty,
-            entity.ProfileHeader?.About ?? string.Empty,
-            entity.ProfileHeader?.JobTitle ?? string.Empty,
-            entity.ProfileHeader?.Overview ?? string.Empty,
+            entity.Header?.About ?? string.Empty,
+            entity.Header?.JobTitle ?? string.Empty,
+            entity.Header?.Overview ?? string.Empty,
             entity.BirthDate,
             GetContactValue(entity, "Website"),
             GetContactValue(entity, "Phone"),
-            entity.ProfileHeader?.Address ?? string.Empty,
+            entity.Header?.Address ?? string.Empty,
             entity.BirthDate.GetAge(),
-            entity.ProfileHeader?.Title ?? string.Empty,
+            entity.Header?.Title ?? string.Empty,
             GetContactValue(entity, "Email"),
-            entity.ProfileHeader?.Summary ?? string.Empty,
-            entity.ProfileHeader?.Summary ?? string.Empty
+            entity.Header?.Summary ?? string.Empty,
+            entity.Header?.Summary ?? string.Empty
         );
         return viewModel;
     }
 
     private static EducationViewModel EducationViewModelMap(CareerHistory src)
     {
-        var academicBackground = src.Qualifications?.Select(e => new AcademicBackgroundViewModel(
+        var academicBackground = src.AcademicDegree?.Select(e => new AcademicBackgroundViewModel(
             e.Degree,
             e.StartDate.ToString("yyyy-MM-dd"),
             e.InstitutionName,
@@ -117,7 +117,7 @@ public static class ProfileMapper
 
     private static PersonalDataViewModel PersonalDataViewModelMap(Profile src)
     {
-        var socialNetworks = src.ProfileHeader?.ContactInfo?.Select(c => new SocialNetworksViewModel(
+        var socialNetworks = src.Header?.ContactInfo?.Select(c => new SocialNetworksViewModel(
                 c.ContactType.Name,
                 c.Value,
                 c.ContactType.IconClass ?? string.Empty,
@@ -141,7 +141,7 @@ public static class ProfileMapper
 
     private static string GetContactValue(Profile entity, string contactTypeName)
     {
-        return entity.ProfileHeader?.ContactInfo?
+        return entity.Header?.ContactInfo?
             .FirstOrDefault(c => string.Equals(c.ContactType.Name, contactTypeName, StringComparison.OrdinalIgnoreCase))
             ?.Value ?? string.Empty;
     }

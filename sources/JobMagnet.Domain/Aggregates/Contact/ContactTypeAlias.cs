@@ -14,4 +14,15 @@ public record ContactTypeAlias
 
         Alias = alias;
     }
+
+    public virtual bool Equals(ContactTypeAlias? other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+
+        return string.Equals(Alias, other.Alias, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public override int GetHashCode() =>
+        Alias.GetHashCode(StringComparison.OrdinalIgnoreCase);
 }

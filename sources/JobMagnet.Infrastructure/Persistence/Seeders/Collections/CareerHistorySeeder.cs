@@ -46,7 +46,7 @@ public record CareerHistorySeeder(IGuidGenerator GuidGenerator, IClock Clock, Ca
             "Worked as a senior UI/UX designer at Facebook, focusing on user experience research and design.")
     ];
 
-    private static readonly IList<EducationProperties> QualificationList =
+    private static readonly IList<EducationProperties> AcademicDegreeList =
     [
         new("Bachelor in UI/UX Design",
             "University of California, Berkeley",
@@ -75,12 +75,12 @@ public record CareerHistorySeeder(IGuidGenerator GuidGenerator, IClock Clock, Ca
     ];
 
     public static int WorkExperienceCount => WorkExperienceList.Count;
-    public static int QualificationCount => QualificationList.Count;
+    public static int AcademicDegreeCount => AcademicDegreeList.Count;
 
-    public Qualification[] GetQualifications()
+    public AcademicDegree[] GetAcademicDegrees()
     {
-        return QualificationList
-            .Select(x => Qualification.CreateInstance(
+        return AcademicDegreeList
+            .Select(x => AcademicDegree.CreateInstance(
                 GuidGenerator,
                 CareerHistoryId,
                 x.Degree,
@@ -116,7 +116,7 @@ public record CareerHistorySeeder(IGuidGenerator GuidGenerator, IClock Clock, Ca
             .ToArray();
     }
 
-    private record EducationProperties(
+    private sealed record EducationProperties(
         string Degree,
         string InstitutionName,
         string InstitutionLocation,
@@ -125,7 +125,7 @@ public record CareerHistorySeeder(IGuidGenerator GuidGenerator, IClock Clock, Ca
         string Description
     );
 
-    private record WorkExperienceProperties(
+    private sealed record WorkExperienceProperties(
         string JobTitle,
         string CompanyName,
         string CompanyLocation,

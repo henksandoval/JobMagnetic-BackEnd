@@ -15,7 +15,7 @@ namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 public class ProfileEntityBuilder
 {
     private static readonly Faker Faker = FixtureBuilder.Faker;
-    private readonly IClock _clock;
+    private readonly List<(string value, ContactType contactType)> _contactInfo = [];
     private readonly IFixture _fixture;
     private readonly IGuidGenerator _guidGenerator;
     private CareerHistory _careerHistory = null!;
@@ -30,31 +30,36 @@ public class ProfileEntityBuilder
     public ProfileEntityBuilder(IFixture fixture, JobMagnetDbContext context = null!)
     {
         _fixture = fixture;
-        _clock = new DeterministicClock();
         _guidGenerator = new SequentialGuidGenerator();
     }
 
-
-    public ProfileEntityBuilder WithResume()
+    public ProfileEntityBuilder WithHeader(bool loadProfileHeader = true)
     {
-        _profileHeader = _fixture.Create<ProfileHeader>();
+        if (loadProfileHeader)
+            _profileHeader = _fixture.Create<ProfileHeader>();
+
         return this;
     }
 
     public ProfileEntityBuilder WithContactInfo(ContactType[] availableContactTypes, int count = 5)
     {
+        if (count == 0)
+            return this;
+
         if (count > availableContactTypes.Length)
-            throw new ArgumentOutOfRangeException(nameof(count), $"Count exceeds the number of available contact types. ({availableContactTypes.Length})");
+            throw new ArgumentOutOfRangeException(nameof(count),
+                $"Count exceeds the number of available contact types. ({availableContactTypes.Length})");
 
-        if (_profileHeader == null) throw new InvalidOperationException("Cannot add contact info without a profileHeader. Call WithProfileHeader() first.");
+        if (_profileHeader == null)
+            throw new InvalidOperationException("Cannot add contact info without a profileHeader. Call WithProfileHeader() first.");
 
-        while (_profileHeader.ContactInfo?.Count < count)
+        while (_contactInfo.Count < count)
         {
             var contactType = Faker.PickRandom(availableContactTypes);
-            if (_profileHeader.ContactInfo.Any(ci => ci.ContactType == contactType)) continue;
+            if (_contactInfo.Any(ci => ci.contactType == contactType)) continue;
 
             var value = GenerateContactDetails(contactType.Name);
-            _profileHeader.AddContactInfo(_guidGenerator, _clock, value, contactType);
+            _contactInfo.Add((value, contactType));
         }
 
         return this;
@@ -74,7 +79,8 @@ public class ProfileEntityBuilder
             return this;
 
         if (count > availableSkillTypes.Length)
-            throw new ArgumentOutOfRangeException(nameof(count), $"Count exceeds the number of available skill types. ({availableSkillTypes.Length})");
+            throw new ArgumentOutOfRangeException(nameof(count),
+                $"Count exceeds the number of available skill types. ({availableSkillTypes.Length})");
 
         if (_skillSet == null) throw new InvalidOperationException("Cannot add skills without a skill set. Call WithSkillSet() first.");
 
@@ -118,34 +124,46 @@ public class ProfileEntityBuilder
         return this;
     }
 
-    public ProfileEntityBuilder WithSummary()
+    public ProfileEntityBuilder WithCareerHistory(bool loadCareerHistory = true)
     {
-        _careerHistory = _fixture.Create<CareerHistory>();
-        return this;
-    }
+        if (loadCareerHistory)
+            _careerHistory = _fixture.Create<CareerHistory>();
 
-    public ProfileEntityBuilder WithSummary(CareerHistory careerHistory)
-    {
-        _careerHistory = careerHistory;
         return this;
     }
 
     public ProfileEntityBuilder WithEducation(int count = 5)
     {
-        if (_careerHistory == null) throw new InvalidOperationException("Cannot add contact info without a careerHistory. Call WithCareerHistory() first.");
+        if (_careerHistory == null && count > 0)
+            throw new InvalidOperationException("Cannot add education without a careerHistory. Call WithCareerHistory() first.");
 
-        foreach (var education in _fixture.CreateMany<Qualification>(count).ToList())
-            _careerHistory.AddEducation(education);
+        foreach (var education in _fixture.CreateMany<AcademicDegree>(count).ToList())
+            _careerHistory!.AddEducation(
+                _guidGenerator,
+                education.Degree,
+                education.InstitutionName,
+                education.InstitutionLocation,
+                education.StartDate,
+                education.EndDate,
+                education.Description);
 
         return this;
     }
 
     public ProfileEntityBuilder WithWorkExperience(int count = 5)
     {
-        if (_careerHistory == null) throw new InvalidOperationException("Cannot add contact info without a careerHistory. Call WithCareerHistory() first.");
+        if (_careerHistory == null && count > 0)
+            throw new InvalidOperationException("Cannot add work experience without a careerHistory. Call WithCareerHistory() first.");
 
         foreach (var workExperience in _fixture.CreateMany<WorkExperience>(count).ToList())
-            _careerHistory.AddWorkExperience(workExperience);
+            _careerHistory!.AddWorkExperience(
+                _guidGenerator,
+                workExperience.JobTitle,
+                workExperience.CompanyName,
+                workExperience.CompanyLocation,
+                workExperience.StartDate,
+                workExperience.EndDate,
+                workExperience.Description);
 
         return this;
     }
@@ -176,17 +194,41 @@ public class ProfileEntityBuilder
 
         if (_lastName is not null) profile.ChangeLastName(_lastName);
 
-        if (_profileHeader is not null) profile.AddResume(_profileHeader);
-
-        if (_careerHistory is not null) profile.AddSummary(_careerHistory);
+        if (_careerHistory is not null) profile.AddCareerHistory(_careerHistory);
 
         if (_skillSet is not null) profile.AddSkillSet(_skillSet);
 
+        LoadHeader(profile);
+        LoadContactInfo(profile);
         LoadTestimonials(profile);
         LoadProjects(profile);
         LoadTalents(profile);
 
         return profile;
+    }
+
+    private void LoadHeader(Profile profile)
+    {
+        if (_profileHeader is null) return;
+
+        profile.AddHeader(
+            _guidGenerator,
+            _profileHeader.Title,
+            _profileHeader.Suffix,
+            _profileHeader.JobTitle,
+            _profileHeader.About,
+            _profileHeader.Summary,
+            _profileHeader.Overview,
+            _profileHeader.Address
+        );
+    }
+
+    private void LoadContactInfo(Profile profile)
+    {
+        if (_contactInfo.Count <= 0) return;
+
+        foreach (var contactInfo in _contactInfo)
+            profile.AddContactInfo(_guidGenerator, contactInfo.value, contactInfo.contactType);
     }
 
     private void LoadTestimonials(Profile profile)

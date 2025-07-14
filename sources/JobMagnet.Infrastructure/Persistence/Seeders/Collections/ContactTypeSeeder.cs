@@ -21,7 +21,7 @@ public static class ContactTypeSeeder
 
         foreach (var rawDef in ContactRawData.Data)
         {
-            var typeId = new ContactTypeId(SeederSequentialGuidGenerator.FromInt(rawDef.id));
+            var typeId = new ContactTypeId(SeederSequentialGuidGenerator.FromInt(rawDef.Id));
 
             types.Add(new ContactTypeSeedData(
                 typeId,

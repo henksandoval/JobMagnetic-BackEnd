@@ -10,7 +10,7 @@ public static class TestUtilities
 {
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     public static async Task<T?> DeserializeResponseAsync<T>(HttpResponseMessage response) =>

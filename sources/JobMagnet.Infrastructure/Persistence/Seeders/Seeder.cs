@@ -34,6 +34,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
                                      In my free time I enjoy hiking, reading science fiction novels, and experimenting with new technologies.
                                      I am always eager to learn new things and take on exciting challenges.",
                                      """;
+
     private static readonly IList<(string Name, string JobTitle, string PhotoUrl, string Feedback)> Testimonials =
     [
         ("Jane Smith", "Portfolio Manager", "https://randomuser.me/api/portraits/women/28.jpg",
@@ -85,7 +86,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
 
     private void AddPublicIdentifier(Profile profile)
     {
-        profile.AddVanityUrl(guidGenerator,"john-doe-1a2b3c");
+        profile.AddVanityUrl(guidGenerator, "john-doe-1a2b3c");
     }
 
     private void AddTalents(Profile profile)
@@ -101,9 +102,8 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
     {
         var contactTypeMap = await BuildContactTypesMapAsync(cancellationToken).ConfigureAwait(false);
 
-        var resume = ProfileHeader.CreateInstance(
+        profile.AddHeader(
             guidGenerator,
-            profile.Id,
             "Mr.",
             "",
             "UI/UX Designer & Web Developer",
@@ -114,12 +114,10 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
 
         foreach (var (value, contactTypeName) in ContactInfoRawData.Data)
             if (contactTypeMap.TryGetValue(contactTypeName, out var contactType))
-                resume.AddContactInfo(guidGenerator, clock, value, contactType);
+                profile.Header!.AddContactInfo(guidGenerator, value, contactType);
             else
                 throw new JobMagnetInfrastructureException(
                     $"Seeding error: Contact type '{contactTypeName}' not found in database.");
-
-        profile.AddResume(resume);
     }
 
     private async Task AddSkills(Profile profile, CancellationToken cancellationToken)
@@ -133,7 +131,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
                                 """;
         var skillSet = SkillSet.CreateInstance(guidGenerator, profile.Id, overview);
 
-        foreach (var (skillName, proficiencyLevel, rank) in SkillInfoCollection.Data)
+        foreach (var (skillName, proficiencyLevel, _) in SkillInfoCollection.Data)
             if (skillTypeMap.TryGetValue(skillName, out var skillType))
                 skillSet.AddSkill(guidGenerator, proficiencyLevel, skillType);
             else
@@ -152,19 +150,33 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
 
         var careerHistorySeeder = new CareerHistorySeeder(guidGenerator, clock, careerHistory.Id);
 
-        foreach (var education in careerHistorySeeder.GetQualifications().ToList())
-            careerHistory.AddEducation(education);
+        foreach (var education in careerHistorySeeder.GetAcademicDegrees().ToList())
+            careerHistory.AddEducation(
+                guidGenerator,
+                education.Degree,
+                education.InstitutionName,
+                education.InstitutionLocation,
+                education.StartDate,
+                education.EndDate,
+                education.Description);
 
         foreach (var workExperience in careerHistorySeeder.GetWorkExperience().ToList())
-            careerHistory.AddWorkExperience(workExperience);
+            careerHistory.AddWorkExperience(
+                guidGenerator,
+                workExperience.JobTitle,
+                workExperience.CompanyName,
+                workExperience.CompanyLocation,
+                workExperience.StartDate,
+                workExperience.EndDate,
+                workExperience.Description
+            );
 
-        profile.AddSummary(careerHistory);
+        profile.AddCareerHistory(careerHistory);
     }
 
     private void AddProject(Profile profile)
     {
         foreach (var item in ProjectRawData.Data)
-        {
             _ = profile.AddProject(
                 guidGenerator,
                 item.Title,
@@ -174,7 +186,6 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
                 item.UrlVideo,
                 item.Type
             );
-        }
     }
 
     private void AddTestimonials(Profile profile)

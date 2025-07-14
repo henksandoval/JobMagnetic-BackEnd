@@ -190,7 +190,7 @@ public class GeminiCvParser(IGeminiClient geminiClient, IOptions<GeminiSettings>
             "  - Aim for a concise list of the most prominent and relevant talents, written in the same language as the 'CV Text'.");
         promptBuilder.AppendLine("Skills Instructions:");
         promptBuilder.AppendLine(
-            "  - Infer skills for the 'skills' array from the WorkExperience, Qualifications, and Courses sections of the 'CV Text'.");
+            "  - Infer skills for the 'skills' array from the WorkExperience, AcademicDegree, and Courses sections of the 'CV Text'.");
         promptBuilder.AppendLine(
             "  - For each skill, assign a numeric `level` (scale 0-10, where 10 is expert) if the CV provides any indication (e.g., 'advanced' could be 8, 'expert' 10, 'basic' 3).");
         promptBuilder.AppendLine("  - If no clear indication of skill level is found, assign a default `level` of `5`.");

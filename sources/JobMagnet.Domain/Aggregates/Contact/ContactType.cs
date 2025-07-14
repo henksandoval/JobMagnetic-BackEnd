@@ -14,14 +14,16 @@ public class ContactType : SoftDeletableAggregateRoot<ContactTypeId>
     public const int MaxIconClassLength = 20;
     public const string DefaultIconClass = "bx bx-link-alt";
 
-    private readonly HashSet<ContactTypeAlias> _aliases = new(new ContactTypeAliasComparer());
+    private readonly HashSet<ContactTypeAlias> _aliases = [];
 
     public string Name { get; private set; }
     public string? IconClass { get; private set; }
     public Uri? IconUrl { get; private set; }
     public virtual IReadOnlyCollection<ContactTypeAlias> Aliases => _aliases;
 
-    private ContactType() : base() { }
+    private ContactType()
+    {
+    }
 
     private ContactType(ContactTypeId id, IClock clock, string name, string? iconClass = null, Uri? iconUrl = null)
         : base(id, clock)
@@ -84,16 +86,4 @@ public class ContactType : SoftDeletableAggregateRoot<ContactTypeId>
             throw new JobMagnetDomainException(
                 $"A {nameof(ContactType)} must have either an {nameof(IconClass)} or an {nameof(IconUrl)}. Both cannot be empty.");
     }
-}
-
-public class ContactTypeAliasComparer : IEqualityComparer<ContactTypeAlias>
-{
-    public bool Equals(ContactTypeAlias? x, ContactTypeAlias? y)
-    {
-        if (ReferenceEquals(x, y)) return true;
-        if (x is null || y is null) return false;
-        return string.Equals(x.Alias, y.Alias, StringComparison.OrdinalIgnoreCase);
-    }
-
-    public int GetHashCode(ContactTypeAlias obj) => obj.Alias.GetHashCode(StringComparison.OrdinalIgnoreCase);
 }

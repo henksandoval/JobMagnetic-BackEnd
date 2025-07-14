@@ -1,4 +1,5 @@
 ﻿using JobMagnet.Application.Contracts.Commands.ProfileHeader;
+using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.ProfileHeader;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using Mapster;
@@ -9,9 +10,14 @@ public static class ProfileHeaderMapper
 {
     static ProfileHeaderMapper()
     {
+        TypeAdapterConfig<ProfileHeader, ProfileHeaderBase>
+            .NewConfig()
+            .Map(dest => dest.ProfileId, src => src.ProfileId.Value);
+
         TypeAdapterConfig<ProfileHeader, ProfileHeaderResponse>
             .NewConfig()
-            .Map(dest => dest.ResumeData, src => src);
+            .Map(dest => dest.Id, src => src.Id.Value)
+            .Map(dest => dest.HeaderData, src => src);
 
         TypeAdapterConfig<ProfileHeader, ProfileHeaderCommand>
             .NewConfig()

@@ -18,7 +18,7 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<Profile>
 
         builder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
-        builder.HasOne<ProfileHeader>(p => p.ProfileHeader)
+        builder.HasOne<ProfileHeader>(p => p.Header)
             .WithOne()
             .HasForeignKey<ProfileHeader>(r => r.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);

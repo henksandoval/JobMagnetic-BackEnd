@@ -75,8 +75,8 @@ public partial class ProfileControllerShould
         responseData.Should().NotBeNull();
         responseData.Should().BeEquivalentTo(expectedTalents);
     }
-    
-    [Fact(DisplayName = "Should return 404 Not Found when the profile does not exist")] 
+
+    [Fact(DisplayName = "Should return 404 Not Found when the profile does not exist")]
     public async Task GetTalents_WhenProfileDoesNotExist()
     {
         // --- Given ---

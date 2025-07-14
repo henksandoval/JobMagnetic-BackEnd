@@ -8,4 +8,4 @@ public sealed record WorkExperienceBase(
     DateTime? EndDate,
     string? Description,
     ICollection<string>? Responsibilities,
-    long Id = 0);
+    Guid Id);

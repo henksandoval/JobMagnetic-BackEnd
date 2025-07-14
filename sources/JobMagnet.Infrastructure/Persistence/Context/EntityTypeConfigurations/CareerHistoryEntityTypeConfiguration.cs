@@ -17,7 +17,7 @@ public class CareerHistoryEntityTypeConfiguration : IEntityTypeConfiguration<Car
 
         builder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
-        builder.HasMany(s => s.Qualifications)
+        builder.HasMany(s => s.AcademicDegree)
             .WithOne()
             .HasForeignKey(e => e.CareerHistoryId)
             .OnDelete(DeleteBehavior.Cascade);

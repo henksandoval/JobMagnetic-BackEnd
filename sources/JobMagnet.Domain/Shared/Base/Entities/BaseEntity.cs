@@ -4,12 +4,14 @@ namespace JobMagnet.Domain.Shared.Base.Entities;
 
 public abstract class BaseEntity<TId> : IHasIdentity<TId>
 {
-    public TId Id { get; protected init; }
-
-    protected BaseEntity() {}
+    protected BaseEntity()
+    {
+    }
 
     protected BaseEntity(TId id)
     {
         Id = id;
     }
+
+    public TId Id { get; protected init; }
 }

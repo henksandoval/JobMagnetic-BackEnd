@@ -6,14 +6,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobMagnet.Infrastructure.Persistence.Context.EntityTypeConfigurations;
 
-public class QualificationEntityTypeConfiguration : IEntityTypeConfiguration<Qualification>
+public class QualificationEntityTypeConfiguration : IEntityTypeConfiguration<AcademicDegree>
 {
-    public void Configure(EntityTypeBuilder<Qualification> builder)
+    public void Configure(EntityTypeBuilder<AcademicDegree> builder)
     {
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-            .HasConversion(new StronglyTypedIdValueConverter<QualificationId, Guid>());
+            .HasConversion(new StronglyTypedIdValueConverter<AcademicDegreeId, Guid>());
 
         builder.Property(x => x.CareerHistoryId)
             .HasConversion(new StronglyTypedIdValueConverter<CareerHistoryId, Guid>());

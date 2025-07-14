@@ -23,7 +23,9 @@ public class ProfileHeader : SoftDeletableEntity<ProfileHeaderId>
 
     public virtual IReadOnlyCollection<ContactInfo>? ContactInfo => _contactInfo;
 
-    private ProfileHeader() : base() { }
+    private ProfileHeader()
+    {
+    }
 
     private ProfileHeader(
         ProfileHeaderId id,
@@ -79,7 +81,6 @@ public class ProfileHeader : SoftDeletableEntity<ProfileHeaderId>
 
     public void AddContactInfo(
         IGuidGenerator guidGenerator,
-        IClock clock,
         string value,
         ContactType contactType)
     {

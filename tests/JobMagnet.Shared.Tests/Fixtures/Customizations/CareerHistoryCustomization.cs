@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using Bogus;
+using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
@@ -8,10 +9,9 @@ using JobMagnet.Shared.Tests.Abstractions;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
-public class SummaryCustomization : ICustomization
+public class CareerHistoryCustomization : ICustomization
 {
     private static readonly Faker Faker = FixtureBuilder.Faker;
-    private readonly IClock _clock = new DeterministicClock();
     private readonly IGuidGenerator _guidGenerator = new SequentialGuidGenerator();
 
     public void Customize(IFixture fixture)
@@ -22,6 +22,12 @@ public class SummaryCustomization : ICustomization
                     _guidGenerator,
                     new ProfileId(),
                     Faker.Lorem.Paragraph()))
+                .OmitAutoProperties()
+        );
+
+        fixture.Customize<CareerHistoryBase>(composer =>
+            composer
+                .With(x => x.Introduction, Faker.Lorem.Paragraph())
                 .OmitAutoProperties()
         );
 

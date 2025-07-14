@@ -16,13 +16,12 @@ namespace JobMagnet.Integration.Tests.Fixtures;
 public class JobMagnetTestSetupFixture : IAsyncLifetime
 {
     private readonly MsSqlServerTestContainer _msSqlServerTestContainer = new();
-    public IReadOnlyList<SkillType> SeededSkillTypes { get; private set; } = null!;
-    public IReadOnlyList<ContactType> SeededContactTypes { get; private set; } = null!;
 
     private readonly RespawnerOptions _respawnerOptions = new()
     {
         WithReseed = true,
-        TablesToIgnore = [
+        TablesToIgnore =
+        [
             "SkillTypes",
             "SkillTypeAliases",
             "SkillCategories",
@@ -34,6 +33,8 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
     private string? _connectionString;
     private ITestOutputHelper? _testOutputHelper;
     private HostWebApplicationFactory<Program> _webApplicationFactory = null!;
+    public IReadOnlyList<SkillType> SeededSkillTypes { get; private set; } = null!;
+    public IReadOnlyList<ContactType> SeededContactTypes { get; private set; } = null!;
 
     public async Task InitializeAsync()
     {

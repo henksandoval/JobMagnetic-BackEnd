@@ -9,10 +9,9 @@ using JobMagnet.Shared.Tests.Utils;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
-public class ResumeCustomization : ICustomization
+public class ProfileHeaderCustomization : ICustomization
 {
     private static readonly Faker Faker = FixtureBuilder.Faker;
-    private readonly IClock _clock = new DeterministicClock();
     private readonly IGuidGenerator _guidGenerator = new SequentialGuidGenerator();
 
     public void Customize(IFixture fixture)

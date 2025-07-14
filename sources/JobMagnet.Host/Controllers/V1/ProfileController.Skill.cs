@@ -58,7 +58,9 @@ public partial class ProfileController
                 SkillType skillTypeToUse;
 
                 if (maybeSkillType.HasValue)
+                {
                     skillTypeToUse = maybeSkillType.Value;
+                }
                 else
                 {
                     var defaultCategory = await defaultCategoryLazy.Value;
@@ -96,6 +98,9 @@ public partial class ProfileController
 
         if (profile is null)
             return Results.NotFound();
+
+        if (!profile.HaveSkillSet)
+            return Results.NoContent();
 
         var response = profile.GetSkills()
             .Select(skills => skills.ToModel())
@@ -168,7 +173,6 @@ public partial class ProfileController
             return Results.BadRequest(new { ex.Message });
         }
     }
-
 
     [HttpDelete("{profileId:guid}/skills/{skillId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

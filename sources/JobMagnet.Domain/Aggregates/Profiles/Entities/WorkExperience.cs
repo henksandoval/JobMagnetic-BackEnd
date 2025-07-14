@@ -19,7 +19,9 @@ public class WorkExperience : SoftDeletableEntity<WorkExperienceId>
 
     public virtual IReadOnlyCollection<WorkHighlight> Highlights => _highlights;
 
-    private WorkExperience() : base() { }
+    private WorkExperience()
+    {
+    }
 
     private WorkExperience(
         WorkExperienceId id,
@@ -62,5 +64,25 @@ public class WorkExperience : SoftDeletableEntity<WorkExperienceId>
         Guard.IsNotNull(highlight);
 
         _highlights.Add(highlight);
+    }
+
+    public void Update(string jobTitle, string companyName, string companyLocation,
+        DateTime startDate, DateTime? endDate, string description)
+    {
+        Guard.IsNotNullOrWhiteSpace(jobTitle);
+        Guard.IsNotNullOrWhiteSpace(companyName);
+        Guard.IsNotNullOrWhiteSpace(companyLocation);
+        Guard.IsNotNullOrWhiteSpace(description);
+        Guard.IsNotNull(startDate);
+
+        if (endDate.HasValue)
+            Guard.IsGreaterThan(endDate.Value, startDate);
+
+        JobTitle = jobTitle;
+        CompanyName = companyName;
+        CompanyLocation = companyLocation;
+        StartDate = startDate;
+        EndDate = endDate;
+        Description = description;
     }
 }

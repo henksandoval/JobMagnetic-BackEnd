@@ -13,7 +13,6 @@ namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 public class WorkExperienceCustomization : ICustomization
 {
     private static readonly Faker Faker = FixtureBuilder.Faker;
-    private readonly IClock _clock = new DeterministicClock();
     private readonly IGuidGenerator _guidGenerator = new SequentialGuidGenerator();
 
     public void Customize(IFixture fixture)
@@ -79,7 +78,8 @@ public class WorkExperienceCustomization : ICustomization
             startDate,
             endDate,
             Faker.Lorem.Sentences(),
-            []
+            [],
+            Guid.NewGuid()
         );
 
         return workExperience;

@@ -1,10 +1,5 @@
-﻿using CommunityToolkit.Diagnostics;
-using JobMagnet.Domain.Aggregates.Profiles.Entities;
+﻿using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
-using JobMagnet.Domain.Aggregates.SkillTypes;
-using JobMagnet.Domain.Enums;
-using JobMagnet.Domain.Exceptions;
-using JobMagnet.Domain.Services;
 using JobMagnet.Domain.Shared.Base.Aggregates;
 using JobMagnet.Shared.Abstractions;
 
@@ -23,14 +18,21 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     public string? MiddleName { get; private set; }
     public string? SecondLastName { get; private set; }
 
-    public virtual ProfileHeader? ProfileHeader { get; private set; }
+    public virtual ProfileHeader? Header { get; private set; }
     public virtual SkillSet? SkillSet { get; private set; }
     public virtual CareerHistory? CareerHistory { get; private set; }
     public virtual IReadOnlyCollection<Talent> TalentShowcase => _talentShowcase;
     public virtual IReadOnlyCollection<Project> Portfolio => _portfolio;
     public virtual IReadOnlyCollection<Testimonial> Testimonials => _testimonials;
     public virtual IReadOnlyCollection<VanityUrl> VanityUrls => _vanityUrls;
+    public bool HaveHeader => Header is not null;
     public bool HaveSkillSet => SkillSet is not null;
+    public bool HaveCareerHistory => CareerHistory is not null;
+
+    private Profile() : base()
+    {
+        TalentShowcase = new TalentShowcase(this);
+    }
 
     private Profile(ProfileId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
         base(id, addedAt, lastModifiedAt, deletedAt)
@@ -108,6 +110,12 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     {
         SecondLastName = secondLastName;
     }
+
+    public void AddTalent(Talent talent)
+    {
+        _talents.Add(talent);
+    }
+
     public void AddSummary(CareerHistory careerHistory)
     {
         Guard.IsNotNull(careerHistory);
@@ -121,7 +129,8 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
 
         ProfileHeader = profileHeader;
     }
-    
+
+
     #region VanityUrls
 
     public void AssignDefaultVanityUrl(IGuidGenerator guidGenerator, IProfileSlugGenerator slugGenerator)
