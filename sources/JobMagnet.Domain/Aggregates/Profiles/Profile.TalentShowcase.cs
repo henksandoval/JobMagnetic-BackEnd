@@ -42,5 +42,13 @@ public partial class Profile
         updatedTalent.UpdateDetails(description);
         
     }
+
+    public void RemoveTalent(TalentId talentId)
+    {
+        var deleteTalent = TalentShowcase.FirstOrDefault(t => t.Id == talentId);
+        if (deleteTalent is null)
+            throw NotFoundException.For<Talent, TalentId>(talentId);
+        _talentShowcase.Remove(deleteTalent);
+    }
 }
 
