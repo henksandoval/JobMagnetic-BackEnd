@@ -4,6 +4,7 @@ using JobMagnet.Application.Contracts.Responses.TalentShowcase;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Host.Controllers.V1;
@@ -54,6 +55,7 @@ public partial class ProfileController
     
     [HttpPut("{profileId:guid}/talents/{talentId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> UpdateTalentAsync(Guid profileId, Guid talentId, [FromBody] TalentCommand command, CancellationToken cancellationToken)
     {
         var profile = await GetProfileWithTalent(profileId, cancellationToken).ConfigureAwait(false);
@@ -81,7 +83,7 @@ public partial class ProfileController
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Results.NoContent();
     }
-
+    
     private async Task<Profile?> GetProfileWithTalent(Guid profileId, CancellationToken cancellationToken)
     {
         return await queryRepository
@@ -89,5 +91,28 @@ public partial class ProfileController
             .WithTalents()
             .BuildFirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
+    }
+    
+    [HttpDelete("{profileId:guid}/talents/{talentId:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IResult> DeleteTalentAsync(Guid profileId, Guid talentId, CancellationToken cancellationToken)
+    {
+        var profile = await GetProfileWithTalent(profileId, cancellationToken).ConfigureAwait(false);
+
+        if (profile is null)
+            return Results.NotFound();
+
+        try
+        {
+            profile.RemoveTalent(new TalentId(talentId));
+            profileCommandRepository.Update(profile);
+        }
+        catch (NotFoundException ex)
+        {
+            return Results.NotFound(new { ex.Message });
+        }
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Results.NoContent();
     }
 }
