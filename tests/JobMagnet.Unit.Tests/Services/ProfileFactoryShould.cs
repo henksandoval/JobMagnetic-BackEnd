@@ -1,12 +1,15 @@
 using AutoFixture;
 using AwesomeAssertions;
+using AwesomeAssertions.Execution;
 using JobMagnet.Application.Factories;
+using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Abstractions;
 using JobMagnet.Shared.Tests.Abstractions;
+using JobMagnet.Shared.Tests.AssertionExtensions;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using Moq;
@@ -19,14 +22,14 @@ public class ProfileFactoryShould
     private readonly Mock<IContactTypeResolverService> _contactTypeResolverMock;
     private readonly IFixture _fixture = FixtureBuilder.Build();
     private readonly IGuidGenerator _guidGenerator;
-    private readonly ProfileRawBuilder _profileBuilder;
+    private readonly ProfileRawBuilder _profileRawBuilder;
     private readonly ProfileFactory _profileFactory;
     private readonly Mock<IQueryRepository<SkillCategory, SkillCategoryId>> _skillCategoryRepositoryMock;
     private readonly Mock<ISkillTypeResolverService> _skillTypeResolverMock;
 
     public ProfileFactoryShould()
     {
-        _profileBuilder = new ProfileRawBuilder(_fixture);
+        _profileRawBuilder = new ProfileRawBuilder(_fixture);
         _skillTypeResolverMock = new Mock<ISkillTypeResolverService>();
         _contactTypeResolverMock = new Mock<IContactTypeResolverService>();
         _skillCategoryRepositoryMock = new Mock<IQueryRepository<SkillCategory, SkillCategoryId>>();
@@ -45,7 +48,7 @@ public class ProfileFactoryShould
     public async Task MapRootProperties_FromSimpleDto()
     {
         // --- Given ---
-        var profileDto = _profileBuilder
+        var profileDto = _profileRawBuilder
             .Build()
             .ToProfileParseDto();
 
@@ -54,16 +57,18 @@ public class ProfileFactoryShould
             CancellationToken.None);
 
         // --- Then ---
-        profile.Should().NotBeNull();
-        profile.Should().BeEquivalentTo(profileDto,
-            options => options.ExcludingMissingMembers());
+        using (new AssertionScope())
+        {
+            profile.Should().NotBeNull();
+            profile.ShouldBeEquivalentToDto(profileDto);
+        }
     }
 
     [Fact(DisplayName = "Map talents collection when the DTO provides them")]
     public async Task CreateProfileFromDtoAsync_WhenDtoContainsTalents_ShouldCreateProfileWithCorrectTalentCollection()
     {
         // --- Given ---
-        var profileDto = _profileBuilder
+        var profileDto = _profileRawBuilder
             .WithTalents()
             .Build()
             .ToProfileParseDto();
@@ -84,7 +89,7 @@ public class ProfileFactoryShould
     public async Task MapTestimonials_WhenDtoProvidesThem()
     {
         // --- Given ---
-        var profileDto = _profileBuilder
+        var profileDto = _profileRawBuilder
             .WithTestimonials()
             .Build()
             .ToProfileParseDto();
@@ -106,7 +111,7 @@ public class ProfileFactoryShould
     public async Task MapResume_WhenDtoProvidesThem()
     {
         // --- Given ---
-        var profileDto = _profileBuilder
+        var profileDto = _profileRawBuilder
             .WithProfileHeader()
             .Build()
             .ToProfileParseDto();
@@ -150,7 +155,7 @@ public class ProfileFactoryShould
 
         var contacts = new[] { new ContactInfoRaw(expectedTypeName.ToUpper(),
             expectedValue) };
-        var profileDto = _profileBuilder
+        var profileDto = _profileRawBuilder
             .WithProfileHeader()
             .WithContactInfo(contacts.ToList())
             .Build()
@@ -191,7 +196,7 @@ public class ProfileFactoryShould
 
         var contacts = new[] { new ContactInfoRaw(typeAlias,
             expectedValue) };
-        var profileDto = _profileBuilder
+        var profileDto = _profileRawBuilder
             .WithProfileHeader()
             .WithContactInfo(contacts.ToList())
             .Build()
@@ -226,7 +231,7 @@ public class ProfileFactoryShould
 
         var contacts = new[] { new ContactInfoRaw(unknownTypeName,
             unknownTypeValue) };
-        var profileDto = _profileBuilder
+        var profileDto = _profileRawBuilder
             .WithProfileHeader()
             .WithContactInfo(contacts.ToList())
             .Build()
@@ -275,7 +280,7 @@ public class ProfileFactoryShould
             new ContactInfoRaw(knownTypeName, knownTypeValue),
             new ContactInfoRaw(unknownTypeName, unknownTypeValue)
         };
-        var profileDto = _profileBuilder
+        var profileDto = _profileRawBuilder
             .WithProfileHeader()
             .WithContactInfo(contacts.ToList())
             .Build()
@@ -315,7 +320,7 @@ public class ProfileFactoryShould
     public async Task MapSkillSet_WhenDtoProvidesThem()
     {
         // --- Given ---
-        var profileDto = _profileBuilder
+        var profileDto = _profileRawBuilder
             .WithSkillSet()
             .Build()
             .ToProfileParseDto();
@@ -347,7 +352,7 @@ public class ProfileFactoryShould
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(csharpSkill));
 
-        var profileDto = _profileBuilder
+        var profileDto = _profileRawBuilder
             .WithSkillSet()
             .WithSkills(skills)
             .Build()
@@ -385,7 +390,7 @@ public class ProfileFactoryShould
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(Maybe.From(csharpSkill));
 
-        var profileDto = _profileBuilder
+        var profileDto = _profileRawBuilder
             .WithSkillSet()
             .WithSkills(skills)
             .Build()
@@ -436,7 +441,7 @@ public class ProfileFactoryShould
             expectedAdHocType);
         var expectedSkill = skillSet.Skills.ToList();
 
-        var profileDto = _profileBuilder
+        var profileDto = _profileRawBuilder
             .WithSkillSet()
             .WithSkills(skills)
             .Build()
@@ -490,7 +495,7 @@ public class ProfileFactoryShould
             new SkillRaw(knownSkillAlias, "5"),
             new SkillRaw(unknownSkill, "2")
         };
-        var profileDto = _profileBuilder
+        var profileDto = _profileRawBuilder
             .WithSkillSet()
             .WithSkills(skills.ToList())
             .Build()

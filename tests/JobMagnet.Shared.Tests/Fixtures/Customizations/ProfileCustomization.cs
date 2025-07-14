@@ -1,7 +1,9 @@
 using AutoFixture;
 using Bogus;
+using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Shared.Abstractions;
 using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Utils;
@@ -16,18 +18,20 @@ public class ProfileCustomization : ICustomization
 
     public void Customize(IFixture fixture)
     {
+        fixture.Customize<ProfileBase>(composer =>
+            composer
+                .With(x => x.FirstName, Faker.Name.FirstName())
+                .With(x => x.LastName, Faker.Name.LastName())
+                .With(x => x.BirthDate, () => GenerateAdultBirthDate())
+                .With(x => x.ProfileImageUrl, Faker.Image.PicsumUrl())
+                .With(x => x.MiddleName, TestUtilities.OptionalValue(Faker, f => f.Name.FirstName()))
+                .With(x => x.SecondLastName, TestUtilities.OptionalValue(Faker, f => f.Name.LastName()))
+                .OmitAutoProperties()
+        );
+
         fixture.Customize<Profile>(composer =>
             composer
-                .FromFactory(() => Profile.CreateInstance(
-                    _guidGenerator,
-                    _clock,
-                    Faker.Name.FirstName(),
-                    Faker.Name.LastName(),
-                    Faker.Image.PicsumUrl(200, 200),
-                    DateOnly.FromDateTime(Faker.Date.Past(30)),
-                    TestUtilities.OptionalValue(Faker, f => f.Name.FirstName()),
-                    TestUtilities.OptionalValue(Faker, f => f.Name.LastName()
-                    )))
+                .FromFactory(() => CreateProfileInstance(fixture))
                 .OmitAutoProperties()
         );
 
@@ -35,7 +39,7 @@ public class ProfileCustomization : ICustomization
             composer
                 .With(x => x.FirstName, Faker.Name.FirstName())
                 .With(x => x.LastName, Faker.Name.LastName())
-                .With(x => x.BirthDate, DateOnly.FromDateTime(Faker.Date.Past(30)).ToShortDateString())
+                .With(x => x.BirthDate, GenerateAdultBirthDateString)
                 .With(x => x.ProfileImageUrl, Faker.Image.PicsumUrl())
                 .With(x => x.MiddleName, TestUtilities.OptionalValue(Faker, f => f.Name.FirstName()))
                 .With(x => x.SecondLastName, TestUtilities.OptionalValue(Faker, f => f.Name.LastName()))
@@ -48,5 +52,30 @@ public class ProfileCustomization : ICustomization
                 .With(x => x.Testimonials, () => [])
                 .OmitAutoProperties()
         );
+    }
+
+    private Profile CreateProfileInstance(IFixture fixture)
+    {
+        var name = fixture.Create<PersonName>();
+        var birthDate = fixture.Create<BirthDate>();
+        var profileImage = fixture.Create<ProfileImage>();
+
+        return Profile.CreateInstance(_guidGenerator,_clock, name, birthDate, profileImage);
+    }
+
+    private static string GenerateAdultBirthDateString()
+    {
+        var birthDateTime = GenerateAdultBirthDate();
+        return birthDateTime.ToShortDateString();
+    }
+
+    private static DateOnly GenerateAdultBirthDate()
+    {
+        var today = DateTime.UtcNow;
+        var minBirthDate = today.AddYears(-BirthDate.MaximumAge);
+        var maxBirthDate = today.AddYears(-BirthDate.MinimumAge);
+
+        var birthDateTime = Faker.Date.Between(minBirthDate, maxBirthDate);
+        return DateOnly.FromDateTime(birthDateTime);
     }
 }

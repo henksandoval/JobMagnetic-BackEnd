@@ -9,6 +9,7 @@ using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Shared.Abstractions;
 using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Fixtures.Customizations;
+// ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 
 namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
@@ -19,13 +20,12 @@ public class ProfileEntityBuilder
     private readonly IFixture _fixture;
     private readonly IGuidGenerator _guidGenerator;
     private CareerHistory _careerHistory = null!;
-    private string? _firstName;
-    private string? _lastName;
+    private SkillSet _skillSet = null!;
     private ProfileHeader _profileHeader = null!;
     private List<Project> _projects = [];
-    private SkillSet _skillSet = null!;
     private List<Talent> _talents = [];
     private List<Testimonial> _testimonials = [];
+    private PersonName _personName;
 
     public ProfileEntityBuilder(IFixture fixture, JobMagnetDbContext context = null!)
     {
@@ -174,42 +174,42 @@ public class ProfileEntityBuilder
         return this;
     }
 
-    public ProfileEntityBuilder WithName(string? firstName)
+    public ProfileEntityBuilder WithName(string? firstName, string? lastName)
     {
-        _firstName = firstName;
-        return this;
-    }
+        _personName = new PersonName(firstName, lastName, applyValidations: false);
 
-    public ProfileEntityBuilder WithLastName(string? lastName)
-    {
-        _lastName = lastName;
         return this;
     }
 
     public Profile Build()
     {
-        var profile = _fixture.Create<Profile>();
-
-        if (_firstName is not null) profile.ChangeFirstName(_firstName);
-
-        if (_lastName is not null) profile.ChangeLastName(_lastName);
-
-        if (_careerHistory is not null) profile.AddCareerHistory(_careerHistory);
-
-        if (_skillSet is not null) profile.AddSkillSet(_skillSet);
+        var profile = BuildBasicProfile();
 
         LoadHeader(profile);
         LoadContactInfo(profile);
         LoadTestimonials(profile);
         LoadProjects(profile);
+        LoadCareerHistory(profile);
+        LoadSkillSet(profile);
         LoadTalents(profile);
+
+        return profile;
+    }
+
+    private Profile BuildBasicProfile()
+    {
+        var profile = _fixture.Create<Profile>();
+
+        if (_personName is not null)
+            profile.ChangeName(_personName, new DeterministicClock());
 
         return profile;
     }
 
     private void LoadHeader(Profile profile)
     {
-        if (_profileHeader is null) return;
+        if (_profileHeader is null)
+            return;
 
         profile.AddHeader(
             _guidGenerator,
@@ -229,6 +229,22 @@ public class ProfileEntityBuilder
 
         foreach (var contactInfo in _contactInfo)
             profile.AddContactInfo(_guidGenerator, contactInfo.value, contactInfo.contactType);
+    }
+
+    private void LoadSkillSet(Profile profile)
+    {
+        if (_skillSet is null)
+            return;
+
+        profile.AddSkillSet(_skillSet);
+    }
+
+    private void LoadCareerHistory(Profile profile)
+    {
+        if (_careerHistory is null)
+            return;
+
+        profile.AddCareerHistory(_careerHistory);
     }
 
     private void LoadTestimonials(Profile profile)

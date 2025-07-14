@@ -1,4 +1,5 @@
-﻿using JobMagnet.Domain.Aggregates.Profiles.Entities;
+﻿using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Shared.Base.Aggregates;
 using JobMagnet.Shared.Abstractions;
@@ -11,12 +12,10 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     private readonly HashSet<Talent> _talents = [];
     private readonly HashSet<Testimonial> _testimonials = [];
     private readonly HashSet<VanityUrl> _vanityUrls = [];
-    public string? FirstName { get; private set; }
-    public string? LastName { get; private set; }
-    public string? ProfileImageUrl { get; private set; }
-    public DateOnly? BirthDate { get; private set; }
-    public string? MiddleName { get; private set; }
-    public string? SecondLastName { get; private set; }
+
+    public PersonName Name { get; private set; }
+    public ProfileImage ProfileImage { get; private set; }
+    public BirthDate BirthDate { get; private set; }
 
     public virtual ProfileHeader? Header { get; private set; }
     public virtual SkillSet? SkillSet { get; private set; }
@@ -44,75 +43,68 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     private Profile(
         ProfileId id,
         IClock clock,
-        string? firstName,
-        string? lastName,
-        string? profileImageUrl = null,
-        DateOnly? birthDate = null,
-        string? middleName = null,
-        string? secondLastName = null) : base(id, clock)
+        PersonName name,
+        ProfileImage profileImage,
+        BirthDate birthDate) : base(id, clock)
     {
-        FirstName = firstName;
-        LastName = lastName;
-        ProfileImageUrl = profileImageUrl;
+        Name = name;
+        ProfileImage = profileImage;
         BirthDate = birthDate;
-        MiddleName = middleName;
-        SecondLastName = secondLastName;
-
         TalentShowcase = new TalentShowcase(this);
     }
 
-    public static Profile CreateInstance(IGuidGenerator guidGenerator, IClock clock, string? firstName, string? lastName,
-        string? profileImageUrl = null, DateOnly? birthDate = null, string? middleName = null, string? secondLastName = null)
+    public static Profile CreateInstance(
+        IGuidGenerator guidGenerator,
+        IClock clock,
+        PersonName name,
+        BirthDate birthDate,
+        ProfileImage profileImage)
     {
+        Guard.IsNotNull(name);
+        Guard.IsNotNull(birthDate);
+        Guard.IsNotNull(profileImage);
+
         var id = new ProfileId(guidGenerator.NewGuid());
 
-        return new Profile(id, clock, firstName, lastName, profileImageUrl, birthDate, middleName, secondLastName);
+        return new Profile(id, clock, name, profileImage, birthDate);
     }
 
     public void Update(
-        string? firstName,
-        string? lastName,
-        string? middleName,
-        string? secondLastName,
-        DateOnly? birthDate,
-        string? profileImageUrl)
+        PersonName name,
+        BirthDate birthDate,
+        ProfileImage profileImage,
+        IClock clock)
     {
-        ChangeFirstName(firstName);
-        ChangeLastName(lastName);
-        ChangeMiddleName(middleName);
-        ChangeSecondLastName(secondLastName);
-        ChangeBirthDate(birthDate);
-        ChangeProfileImageUrl(profileImageUrl);
-    }
+        Guard.IsNotNull(name);
+        Guard.IsNotNull(birthDate);
+        Guard.IsNotNull(profileImage);
 
-    public void ChangeFirstName(string? firstName)
-    {
-        FirstName = firstName;
-    }
-
-    public void ChangeLastName(string? lastName)
-    {
-        LastName = lastName;
-    }
-
-    public void ChangeProfileImageUrl(string? profileImageUrl)
-    {
-        ProfileImageUrl = profileImageUrl;
-    }
-
-    public void ChangeBirthDate(DateOnly? birthDate)
-    {
+        Name = name;
         BirthDate = birthDate;
+        ProfileImage = profileImage;
+
+        UpdateModificationDetails(clock);
     }
 
-    public void ChangeMiddleName(string? middleName)
+    public void ChangeName(PersonName newName, IClock clock)
     {
-        MiddleName = middleName;
+        Guard.IsNotNull(newName);
+        Name = newName;
+        UpdateModificationDetails(clock);
     }
 
-    public void ChangeSecondLastName(string? secondLastName)
+    public void ChangeProfileImage(ProfileImage newImage, IClock clock)
     {
-        SecondLastName = secondLastName;
+        Guard.IsNotNull(newImage);
+        ProfileImage = newImage;
+        UpdateModificationDetails(clock);
+    }
+
+    public void ChangeBirthDate(BirthDate newBirthDate, IClock clock)
+    {
+        Guard.IsNotNull(newBirthDate);
+        BirthDate = newBirthDate;
+        UpdateModificationDetails(clock);
     }
 
     public void AddTalent(Talent talent)

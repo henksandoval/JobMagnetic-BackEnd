@@ -18,6 +18,41 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<Profile>
 
         builder.UsePropertyAccessMode(PropertyAccessMode.Field);
 
+        builder.OwnsOne(p => p.Name, name =>
+        {
+            name.Property(n => n.FirstName)
+                .HasColumnName(nameof(PersonName.FirstName))
+                .HasMaxLength(PersonName.MaxNameLength);
+
+            name.Property(n => n.MiddleName)
+                .HasColumnName(nameof(PersonName.MiddleName))
+                .HasMaxLength(PersonName.MaxNameLength);
+
+            name.Property(n => n.LastName)
+                .HasColumnName(nameof(PersonName.LastName))
+                .HasMaxLength(PersonName.MaxNameLength);
+
+            name.Property(n => n.SecondLastName)
+                .HasColumnName(nameof(PersonName.SecondLastName))
+                .HasMaxLength(PersonName.MaxNameLength);
+        });
+
+        builder.OwnsOne(p => p.BirthDate, birthDate =>
+        {
+            birthDate.Property(b => b.Value)
+                .HasColumnName(nameof(BirthDate));
+        });
+
+        builder.OwnsOne(p => p.ProfileImage, image =>
+        {
+            image.Property(i => i.Url)
+                .HasColumnName(nameof(ProfileImage))
+                .HasConversion(
+                    url => url != null ? url.ToString() : null,
+                    value => value != null ? new Uri(value) : null
+                );
+        });
+
         builder.HasOne<ProfileHeader>(p => p.Header)
             .WithOne()
             .HasForeignKey<ProfileHeader>(r => r.ProfileId)

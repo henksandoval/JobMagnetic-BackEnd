@@ -9,7 +9,7 @@ public record AboutViewModel(
     string Website,
     string PhoneNumber,
     string City,
-    ushort Age,
+    int? Age,
     string Degree,
     string Email,
     string Freelance,

@@ -11,6 +11,7 @@ using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Shared.Abstractions;
@@ -68,12 +69,11 @@ public class CvParserHandlerShould
         var contactInfoEmail = contactInfoRaw.FirstOrDefault(c => c.ContactType == "EMAIL");
         var header = _fixture.Create<ProfileHeader>();
         var contactType = ContactType.CreateInstance(_guidGenerator, _clock, contactInfoEmail!.ContactType ?? string.Empty);
+        var name = new PersonName(profileRaw.FirstName, profileRaw.LastName, profileRaw.MiddleName, profileRaw.SecondLastName);
+        var birthDate = BirthDate.Empty;
+        var profileImage = ProfileImage.Empty;
 
-        var profileEntity = Profile.CreateInstance(
-            _guidGenerator,
-            _clock,
-            profileRaw.FirstName,
-            profileRaw.LastName);
+        var profileEntity = Profile.CreateInstance(_guidGenerator, _clock, name, birthDate, profileImage);
 
         profileEntity.AddHeader(
             _guidGenerator,

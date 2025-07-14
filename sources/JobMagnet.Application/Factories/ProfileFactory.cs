@@ -14,7 +14,7 @@ namespace JobMagnet.Application.Factories;
 
 public interface IProfileFactory
 {
-    Task<Profile> CreateProfileFromDtoAsync(ProfileParseDto profileDto, CancellationToken cancellationToken);
+    Task<Profile> CreateProfileFromDtoAsync(ProfileParseDto dto, CancellationToken cancellationToken);
 }
 
 public class ProfileFactory(
@@ -26,25 +26,20 @@ public class ProfileFactory(
 {
     private ProfileId _profileId;
 
-    public async Task<Profile> CreateProfileFromDtoAsync(ProfileParseDto profileDto, CancellationToken cancellationToken)
+    public async Task<Profile> CreateProfileFromDtoAsync(ProfileParseDto dto, CancellationToken cancellationToken)
     {
-        Guard.IsNotNull(profileDto);
+        Guard.IsNotNull(dto);
+        var name = new PersonName(dto.FirstName, dto.LastName, dto.MiddleName, dto.SecondLastName);
+        var birthDate = new BirthDate(dto.BirthDate);
+        var profileImageUrl = new ProfileImage(dto.ProfileImageUrl);
 
-        var profile = Profile.CreateInstance(
-            guidGenerator,
-            clock,
-            profileDto.FirstName,
-            profileDto.LastName,
-            profileDto.ProfileImageUrl,
-            profileDto.BirthDate,
-            profileDto.MiddleName,
-            profileDto.SecondLastName);
+        var profile = Profile.CreateInstance(guidGenerator, clock, name, birthDate, profileImageUrl);
 
         _profileId = profile.Id;
 
-        var talents = BuildTalents(profileDto.Talents);
-        var testimonials = BuildTestimonials(profileDto.Testimonials);
-        var galleryItems = BuildProjects(profileDto.Project);
+        var talents = BuildTalents(dto.Talents);
+        var testimonials = BuildTestimonials(dto.Testimonials);
+        var galleryItems = BuildProjects(dto.Project);
 
         foreach (var talent in talents)
             profile.TalentShowcase.AddTalent(talent.Description);
@@ -67,31 +62,31 @@ public class ProfileFactory(
                 item.UrlVideo,
                 item.Type);
 
-        if (profileDto.Resume is not null)
+        if (dto.Resume is not null)
         {
             profile.AddHeader(
                 guidGenerator,
-                profileDto.Resume.Title ?? string.Empty,
-                profileDto.Resume.Suffix ?? string.Empty,
-                profileDto.Resume.JobTitle ?? string.Empty,
-                profileDto.Resume.About ?? string.Empty,
-                profileDto.Resume.Summary ?? string.Empty,
-                profileDto.Resume.Overview ?? string.Empty,
-                profileDto.Resume.Address ?? string.Empty);
+                dto.Resume.Title ?? string.Empty,
+                dto.Resume.Suffix ?? string.Empty,
+                dto.Resume.JobTitle ?? string.Empty,
+                dto.Resume.About ?? string.Empty,
+                dto.Resume.Summary ?? string.Empty,
+                dto.Resume.Overview ?? string.Empty,
+                dto.Resume.Address ?? string.Empty);
 
-            foreach (var dto in profileDto.Resume.ContactInfo.Where(info => !string.IsNullOrWhiteSpace(info.ContactType)))
+            foreach (var info in dto.Resume.ContactInfo.Where(info => !string.IsNullOrWhiteSpace(info.ContactType)))
             {
-                var resolvedType = await contactTypeResolver.ResolveAsync(dto.ContactType!, cancellationToken);
+                var resolvedType = await contactTypeResolver.ResolveAsync(info.ContactType!, cancellationToken);
 
-                var contactType = resolvedType.HasValue ? resolvedType.Value : ContactType.CreateInstance(guidGenerator, clock, dto.ContactType!);
+                var contactType = resolvedType.HasValue ? resolvedType.Value : ContactType.CreateInstance(guidGenerator, clock, info.ContactType!);
 
-                profile.AddContactInfo(guidGenerator, dto.Value!, contactType);
+                profile.AddContactInfo(guidGenerator, info.Value!, contactType);
             }
         }
 
-        if (profileDto.SkillSet is not null)
+        if (dto.SkillSet is not null)
         {
-            var skillSet = await BuildSkillSetAsync(profileDto.SkillSet, cancellationToken);
+            var skillSet = await BuildSkillSetAsync(dto.SkillSet, cancellationToken);
             profile.AddSkillSet(skillSet);
         }
 

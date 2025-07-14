@@ -53,7 +53,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
 
     public async Task<Maybe<ProfileId>> RegisterProfileAsync(CancellationToken cancellationToken)
     {
-        if (await context.Profiles.AnyAsync(p => p.FirstName == "John" && p.LastName == "Doe", cancellationToken))
+        if (await context.Profiles.AnyAsync(p => p.Name.FirstName == "John" && p.Name.LastName == "Doe", cancellationToken))
             return Maybe<ProfileId>.None;
 
         var sampleProfile = await BuildSampleProfileAsync(cancellationToken);
@@ -65,13 +65,10 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
 
     private async Task<Profile> BuildSampleProfileAsync(CancellationToken cancellationToken)
     {
-        var profile = Profile.CreateInstance(
-            guidGenerator,
-            clock,
-            "John",
-            "Doe",
-            "https://bootstrapmade.com/content/demo/MyResume/assets/img/profile-img.jpg",
-            new DateOnly(1990, 04, 01));
+        var name = new PersonName("John", "Doe", string.Empty, string.Empty);
+        var profileImage = new ProfileImage("https://bootstrapmade.com/content/demo/MyResume/assets/img/profile-img.jpg");
+        var birthDate = new BirthDate(new DateOnly(1990, 04, 01));
+        var profile = Profile.CreateInstance(guidGenerator, clock, name, birthDate, profileImage);
 
         AddPublicIdentifier(profile);
         AddTalents(profile);

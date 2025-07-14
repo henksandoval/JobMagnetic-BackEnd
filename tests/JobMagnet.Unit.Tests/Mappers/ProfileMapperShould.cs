@@ -3,6 +3,7 @@ using AwesomeAssertions;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Aggregates.SkillTypes;
 using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Host.Mappers;
@@ -41,8 +42,6 @@ public class ProfileMapperShould
             .WithContactInfo(contactTypes);
 
         var profile = profileBuilder.Build();
-        profile.ChangeMiddleName(string.Empty);
-        profile.ChangeSecondLastName(string.Empty);
 
         var profileExpected = new ProfileViewModel();
 
@@ -60,11 +59,11 @@ public class ProfileMapperShould
     public void MapperProfileEntityToProfileViewModelWithAbout()
     {
         var contactTypes = GetContactTypes();
-        var profileBuilder = new ProfileEntityBuilder(_fixture)
-            .WithHeader()
-            .WithContactInfo(contactTypes);
 
-        var profile = profileBuilder.Build();
+        var profile = new ProfileEntityBuilder(_fixture)
+            .WithHeader()
+            .WithContactInfo(contactTypes)
+            .Build();
 
         var profileExpected = new ProfileViewModel();
 
@@ -166,7 +165,7 @@ public class ProfileMapperShould
     private static PersonalDataViewModel GetPersonalDataViewModel(Profile entity)
     {
         return new PersonalDataViewModel(
-            $"{entity.FirstName} {entity.LastName}",
+            $"{entity.Name.GetFullName()}",
             entity.Talents.Select(x => x.Description).ToArray(),
             entity.Header.ContactInfo.Select(c => new SocialNetworksViewModel(
                 c.ContactType.Name,
@@ -184,7 +183,7 @@ public class ProfileMapperShould
         var mobilePhone = GetContactValue("Phone");
 
         return new AboutViewModel(
-            entity.ProfileImageUrl,
+            entity.ProfileImage.Url?.AbsolutePath ?? string.Empty,
             entity.Header.About,
             entity.Header.JobTitle,
             entity.Header.Overview,

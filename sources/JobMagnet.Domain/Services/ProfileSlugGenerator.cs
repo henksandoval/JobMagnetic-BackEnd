@@ -19,8 +19,8 @@ public partial class ProfileSlugGenerator : IProfileSlugGenerator
     {
         ArgumentNullException.ThrowIfNull(profile, nameof(profile));
 
-        var rawFirstName = GetFirstSignificantWord(profile.FirstName);
-        var rawLastName = GetFirstSignificantWord(profile.LastName);
+        var rawFirstName = GetFirstSignificantWord(profile.Name.FirstName);
+        var rawLastName = GetFirstSignificantWord(profile.Name.LastName);
 
         rawFirstName = CleanStringForUrl(rawFirstName);
         rawLastName = CleanStringForUrl(rawLastName);

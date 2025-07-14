@@ -68,15 +68,15 @@ public static class ProfileMapper
         ArgumentException.ThrowIfNullOrEmpty(nameof(Profile), "Profile cannot be null.");
 
         var viewModel = new AboutViewModel(
-            entity.ProfileImageUrl ?? string.Empty,
+            entity.ProfileImage.Url?.AbsolutePath ?? string.Empty,
             entity.Header?.About ?? string.Empty,
             entity.Header?.JobTitle ?? string.Empty,
             entity.Header?.Overview ?? string.Empty,
-            entity.BirthDate,
+            entity.BirthDate.Value,
             GetContactValue(entity, "Website"),
             GetContactValue(entity, "Phone"),
             entity.Header?.Address ?? string.Empty,
-            entity.BirthDate.GetAge(),
+            entity.BirthDate.GetAge()?.Value,
             entity.Header?.Title ?? string.Empty,
             GetContactValue(entity, "Email"),
             entity.Header?.Summary ?? string.Empty,
@@ -133,11 +133,8 @@ public static class ProfileMapper
         );
     }
 
-    private static string GetFullName(Profile entity)
-    {
-        return string.Join(" ", new[] { entity.FirstName, entity.MiddleName, entity.LastName, entity.SecondLastName }
-            .Where(x => !string.IsNullOrWhiteSpace(x)));
-    }
+    private static string GetFullName(Profile entity) =>
+        entity.Name.GetFullName();
 
     private static string GetContactValue(Profile entity, string contactTypeName)
     {

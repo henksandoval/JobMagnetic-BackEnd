@@ -27,8 +27,7 @@ public partial class ProfileSlugGeneratorShould
     {
         // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
-            .WithName(firstName)
-            .WithLastName(lastName)
+            .WithName(firstName, lastName)
             .Build();
 
         // --- When ---
@@ -47,8 +46,7 @@ public partial class ProfileSlugGeneratorShould
     {
         // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
-            .WithName("María")
-            .WithLastName("Ñíguez")
+            .WithName("María", "Ñíguez")
             .Build();
 
         // --- When ---
@@ -66,8 +64,7 @@ public partial class ProfileSlugGeneratorShould
     {
         // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
-            .WithName("José María")
-            .WithLastName("López-Ñíguez")
+            .WithName("José María", "López-Ñíguez")
             .Build();
 
         // --- When ---
@@ -88,9 +85,8 @@ public partial class ProfileSlugGeneratorShould
     {
         // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
+            .WithName(firstName, lastName)
             .Build();
-        profile.ChangeFirstName(firstName);
-        profile.ChangeLastName(lastName!);
 
         // --- When ---
         var slug = _subject.GenerateProfileSlug(profile);
@@ -110,10 +106,8 @@ public partial class ProfileSlugGeneratorShould
     {
         // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
+            .WithName(firstName, lastName)
             .Build();
-
-        profile.ChangeFirstName(firstName);
-        profile.ChangeLastName(lastName);
 
         // --- When ---
         var slug = _subject.GenerateProfileSlug(profile);
@@ -133,9 +127,8 @@ public partial class ProfileSlugGeneratorShould
     {
         // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
+            .WithName(firstName, lastName)
             .Build();
-        profile.ChangeFirstName(firstName);
-        profile.ChangeLastName(lastName);
 
         // --- When ---
         var slug = _subject.GenerateProfileSlug(profile);
@@ -155,8 +148,7 @@ public partial class ProfileSlugGeneratorShould
     {
         // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
-            .WithName(firstName)
-            .WithLastName(lastName)
+            .WithName(firstName, lastName)
             .Build();
 
         // --- When ---
@@ -174,8 +166,7 @@ public partial class ProfileSlugGeneratorShould
     {
         // --- Given ---
         var profile = new ProfileEntityBuilder(_fixture)
-            .WithName("!@#$%")
-            .WithLastName("^&*()")
+            .WithName("!@#$%", "^&*()")
             .Build();
 
         // --- When ---

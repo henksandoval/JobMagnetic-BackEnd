@@ -39,16 +39,11 @@ public partial class ProfileController(
     public async Task<IResult> CreateAsync([FromBody] ProfileCommand createCommand, CancellationToken cancellationToken)
     {
         var data = createCommand.ProfileData;
-        var entity = Profile.CreateInstance(
-            guidGenerator,
-            clock,
-            data.FirstName,
-            data.LastName,
-            data.ProfileImageUrl,
-            data.BirthDate,
-            data.MiddleName,
-            data.SecondLastName
-        );
+        var name = new PersonName(data.FirstName, data.LastName, data.MiddleName, data.SecondLastName);
+        var profileImage = new ProfileImage(data.ProfileImageUrl);
+        var birthDate = new BirthDate(data.BirthDate);
+
+        var entity = Profile.CreateInstance(guidGenerator, clock, name, birthDate, profileImage);
         await profileCommandRepository.CreateAsync(entity, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         var newRecord = entity.ToModel();
@@ -97,14 +92,11 @@ public partial class ProfileController(
             return Results.NotFound();
 
         var data = command.ProfileData;
-        entity.Update(
-            data.FirstName,
-            data.LastName,
-            data.MiddleName,
-            data.SecondLastName,
-            data.BirthDate,
-            data.ProfileImageUrl
-        );
+        var name = new PersonName(data.FirstName, data.LastName, data.MiddleName, data.SecondLastName);
+        var profileImage = new ProfileImage(data.ProfileImageUrl);
+        var birthDate = new BirthDate(data.BirthDate);
+
+        entity.Update(name, birthDate, profileImage, clock);
 
         await unitOfWork
             .SaveChangesAsync(cancellationToken)
