@@ -111,9 +111,24 @@ public partial class ProfileControllerShould
         talentUpdated.Should().NotBeNull();
         talentUpdated.ProfileId.Should().Be(profile.Id);
         var commandBase = updateCommand.TalentData;
-        talentUpdated.Should().BeEquivalentTo(commandBase, options =>
-            options
+        talentUpdated.Should().BeEquivalentTo(commandBase, options => options
+            .Excluding(expect => expect!.ProfileId)
         );
+    }
+    
+    [Fact(DisplayName = "Should return 404 Not Found when the profileId does not exist for an update")]
+    public async Task UpdateTalent_WhenProfileDoesNotExist()
+    {
+        // --- Given ---
+        var nonExistentProfileId = Guid.NewGuid();
+        var talentData = GetTalentBase(nonExistentProfileId);
+        var requestUri = $"{RequestUriController}/{nonExistentProfileId}/talents/{nonExistentProfileId}";
+
+        // --- When ---
+        var response = await _httpClient.PutAsJsonAsync(requestUri, talentData);
+
+        // --- Then ---
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
     
     private async Task<Talent?> FindTalentByIdAsync(Guid id)
