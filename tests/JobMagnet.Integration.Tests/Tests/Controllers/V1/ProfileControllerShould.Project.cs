@@ -54,6 +54,7 @@ public partial class ProfileControllerShould
     public async Task GetProjects_WhenProfileExistsAndHasProjects()
     {
         // --- Given ---
+        _projectCount = 5;
         var profileWithProjects = await SetupProfileAsync();
         var expectedProjects = profileWithProjects.Portfolio.Select(p => p.ToModel());
 
