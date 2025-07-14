@@ -1,4 +1,5 @@
-﻿using JobMagnet.Domain.Aggregates.Profiles.Entities;
+﻿using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Shared.Base.Aggregates;
 using JobMagnet.Shared.Abstractions;
@@ -31,7 +32,6 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
 
     private Profile() : base()
     {
-        TalentShowcase = new TalentShowcase(this);
     }
 
     private Profile(ProfileId id, DateTimeOffset addedAt, DateTimeOffset? lastModifiedAt, DateTimeOffset? deletedAt) :
@@ -110,97 +110,4 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     {
         SecondLastName = secondLastName;
     }
-
-    public void AddTalent(Talent talent)
-    {
-        _talents.Add(talent);
-    }
-
-    public void AddSummary(CareerHistory careerHistory)
-    {
-        Guard.IsNotNull(careerHistory);
-
-        CareerHistory = careerHistory;
-    }
-
-    public void AddResume(ProfileHeader profileHeader)
-    {
-        Guard.IsNotNull(profileHeader);
-
-        ProfileHeader = profileHeader;
-    }
-
-
-    #region VanityUrls
-
-    public void AssignDefaultVanityUrl(IGuidGenerator guidGenerator, IProfileSlugGenerator slugGenerator)
-    {
-        ExecuteAssignDefaultVanityUrl(guidGenerator, slugGenerator);
-    }
-
-    public void AddVanityUrl(IGuidGenerator guidGenerator, string slug, LinkType type = LinkType.Primary)
-    {
-        ExecuteAddVanityUrl(guidGenerator, slug, type);
-    }
-
-    #endregion
-
-    #region Skills
-
-    public void AddSkillSet(SkillSet skillSet)
-    {
-        Guard.IsNotNull(skillSet);
-
-        SkillSet = skillSet;
-    }
-
-    public void UpdateSkillSet(string overview)
-    {
-        if (!HaveSkillSet)
-            throw new JobMagnetDomainException($"The profile {Id} does not have skills set.");
-
-        SkillSet!.Update(overview);
-    }
-
-    public void AddSkill(IGuidGenerator guidGenerator, ushort proficiencyLevel, SkillType skillType)
-    {
-        if (!HaveSkillSet)
-            throw new JobMagnetDomainException($"The profile {Id} does not have skills set.");
-
-        SkillSet!.AddSkill(guidGenerator, proficiencyLevel, skillType);
-    }
-
-    public void UpdateSkill(SkillId skillId, ushort skillProficiencyLevel)
-    {
-        if (!HaveSkillSet)
-            throw new JobMagnetDomainException($"The profile {Id} does not have skills set.");
-
-        SkillSet!.UpdateSkill(skillId, skillProficiencyLevel);
-    }
-
-    public void RemoveSkill(SkillId skillId)
-    {
-        if (!HaveSkillSet)
-            throw new JobMagnetDomainException($"The profile {Id} does not have skills set.");
-
-        SkillSet!.RemoveSkill(skillId);
-    }
-
-    public IReadOnlyCollection<Skill> GetSkills()
-    {
-        if (!HaveSkillSet)
-            throw new JobMagnetDomainException($"The profile {Id} does not have skills set.");
-
-        return SkillSet!.Skills;
-    }
-
-    public void ArrangeSkills(IEnumerable<SkillId> orderedSkills)
-    {
-        if (!HaveSkillSet)
-            throw new JobMagnetDomainException($"The profile {Id} does not have skills set.");
-
-        SkillSet!.ArrangeSkills(orderedSkills);
-    }
-
-    #endregion
 }
