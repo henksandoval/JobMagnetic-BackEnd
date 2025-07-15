@@ -16,9 +16,6 @@ public class Talent : TrackableEntity<TalentId>
     
     private Talent(TalentId id, ProfileId profileId, string description)
     {
-        Guard.IsNotNullOrWhiteSpace(description);
-        Guard.IsLessThanOrEqualTo(description.Length, MaxNameLength);
-        
         Id = id;
         Description = description;
         ProfileId = profileId;
@@ -26,7 +23,7 @@ public class Talent : TrackableEntity<TalentId>
         ValidateInvariants();
     }
 
-    public static Talent CreateInstance(IGuidGenerator guidGenerator, ProfileId profileId, string description)
+    internal static Talent CreateInstance(IGuidGenerator guidGenerator, ProfileId profileId, string description)
     {
         var id = new TalentId(guidGenerator.NewGuid());
         return new Talent(id, profileId, description);
@@ -41,6 +38,8 @@ public class Talent : TrackableEntity<TalentId>
     
     private void ValidateInvariants()
     {
+        Guard.IsNotNullOrWhiteSpace(Description);
+        Guard.IsLessThanOrEqualTo(Description.Length, MaxNameLength);
         Guard.IsNotNullOrEmpty(Description);
 
         if (string.IsNullOrEmpty(Description))
