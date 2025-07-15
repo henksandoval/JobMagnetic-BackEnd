@@ -15,6 +15,7 @@ public static class TalentMapper
 
         TypeAdapterConfig<Talent, TalentResponse>
             .NewConfig()
+            .Map(dest => dest.Id, src => src.Id.Value)
             .Map(dest => dest.TalentBase, src => src);
     }
 
