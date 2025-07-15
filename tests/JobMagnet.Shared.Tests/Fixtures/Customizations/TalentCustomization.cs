@@ -20,9 +20,11 @@ public class TalentCustomization : ICustomization
             composer
                 .FromFactory(() => 
                 {
-                    var profileId = new ProfileId();
                     var description = Faker.PickRandom(StaticCustomizations.Talents);
-                    return Talent.CreateInstance(_guidGenerator, profileId, description);
+                    return Talent.CreateInstance(
+                        _guidGenerator, 
+                        new ProfileId(),
+                        description);
                 })
                 .OmitAutoProperties()
         );
