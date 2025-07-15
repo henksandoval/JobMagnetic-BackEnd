@@ -95,6 +95,7 @@ public partial class ProfileController
     
     [HttpDelete("{profileId:guid}/talents/{talentId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> DeleteTalentAsync(Guid profileId, Guid talentId, CancellationToken cancellationToken)
     {
         var profile = await GetProfileWithTalent(profileId, cancellationToken).ConfigureAwait(false);

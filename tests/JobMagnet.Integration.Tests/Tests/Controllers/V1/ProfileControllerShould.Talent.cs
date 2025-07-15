@@ -152,6 +152,22 @@ public partial class ProfileControllerShould
         talents.Should().NotContain(t => t.Id == talentToDelete.Id);
     }
     
+    [Fact(DisplayName = "Should return 404 Not Found when deleting a talent that does not exist")]
+    public async Task DeleteTalent_WhenTalentDoesNotExist()
+    {
+        // --- Given ---
+        var nonExistentProfileId = Guid.NewGuid();
+        var requestUri = $"{RequestUriController}/{nonExistentProfileId}/talents/{nonExistentProfileId}";
+
+        // --- When ---
+        var response = await _httpClient.DeleteAsync(requestUri);
+
+        // --- Then ---
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+    
+    
+    
     private TalentBase GetTalentBase(Guid profileEntityId)
     {
         return _fixture
