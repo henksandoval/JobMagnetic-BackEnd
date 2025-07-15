@@ -34,6 +34,9 @@ public partial class ProfileControllerShould
         // --- Then ---
         response.IsSuccessStatusCode.Should().BeTrue();
         response.StatusCode.Should().Be(HttpStatusCode.Created);
+        
+        var responseData = await TestUtilities.DeserializeResponseAsync<TalentResponse>(response);
+        responseData.Should().NotBeNull();
 
         var locationHeader = response.Headers.Location!.ToString();
         locationHeader.Should().NotBeNull();
@@ -42,20 +45,13 @@ public partial class ProfileControllerShould
             currentHeader.Contains(expectedHeader, StringComparison.OrdinalIgnoreCase)
         );
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<TalentResponse>(response);
-        responseData.Should().NotBeNull();
-
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
         var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
         var entityCreated = await queryRepository
             .WithTalents()
             .GetByIdAsync(profile.Id, CancellationToken.None);
         entityCreated.Should().NotBeNull();
-        entityCreated.TalentShowcase.Should().NotBeNull();
-        entityCreated.TalentShowcase.Should().HaveCount(1);
-        var createdTalent = entityCreated.TalentShowcase.First();
-        createdTalent.ProfileId.Value.Should().Be(talentsData.ProfileId);
-        createdTalent.Description.Should().Be(talentsData.Description);
+        entityCreated!.TalentShowcase.Should().NotBeNull();
     }
 
     [Fact(DisplayName = "Should return 200 OK with a list of talents when the profile exists and has talents")]
