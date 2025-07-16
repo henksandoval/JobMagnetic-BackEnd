@@ -24,11 +24,15 @@ builder.Services
     .AddEndpointsApiExplorer()
     .AddApiVersion()
     .AddConfiguredOpenApi(builder.Configuration)
+    .AddSwagger()
     .AddControllers();
 
 var app = builder.Build();
 
-if (builder.Configuration.GetValue<bool>("OpenApiSettings:UseUI")) app.UseConfiguredOpenApi();
+if (builder.Configuration.GetValue<bool>("OpenApiSettings:UseUI"))
+{
+    app.UseScalar().UseSwagger();
+}
 
 app
     .UseHttpsRedirection()

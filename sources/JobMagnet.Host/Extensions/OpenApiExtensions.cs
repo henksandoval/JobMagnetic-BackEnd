@@ -25,7 +25,7 @@ public static class OpenApiExtensions
         return services;
     }
 
-    public static WebApplication UseConfiguredOpenApi(this WebApplication app)
+    public static WebApplication UseScalar(this WebApplication app)
     {
         var openApiSettings = app.Configuration.GetSection("OpenApiSettings").Get<OpenApiSettings>();
         if (openApiSettings is null || !openApiSettings.UseUi)
