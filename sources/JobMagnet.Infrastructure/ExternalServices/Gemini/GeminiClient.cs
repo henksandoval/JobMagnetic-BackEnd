@@ -13,7 +13,7 @@ public class GeminiClient(IOptions<GeminiSettings> options, ILogger<GeminiClient
 {
     private readonly GeminiSettings _settings = options.Value;
 
-    public async Task<Maybe<ModelResponse>> GenerateContentAsync(ApiRequest request, ModelVersion modelVersion)
+    public async Task<Maybe<ModelResponse>> GenerateContentAsync(ApiRequest request, ModelVersion modelVersion = ModelVersion.Gemini_20_Flash)
     {
         var generator = new Generator(_settings.ApiKey!);
         logger.LogInformation("Sending request to Gemini API with model version: {ModelVersion}", modelVersion);

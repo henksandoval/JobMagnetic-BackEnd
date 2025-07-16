@@ -1,9 +1,15 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace JobMagnet.Shared.Data;
 
 public record RawSkillDefinition(int SkillId, string Name, string Uri, RawSimpleDefinition Category, List<RawSimpleDefinition> Aliases);
 
 public static class SkillRawData
 {
+    [SuppressMessage(
+        "SonarQube",
+        "S1075:URIs should not be hardcoded",
+        Justification = "Seeder data constants")]
     private const string DefaultIconUri = "https://jobmagnet.com/default-icon.png";
     private static readonly RawSimpleDefinition CatSoftwareDev = new(2, "Software Development");
     private static readonly RawSimpleDefinition CatDatabases = new(3, "Bases de Datos");

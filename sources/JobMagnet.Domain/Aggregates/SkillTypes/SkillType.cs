@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Domain.Aggregates.SkillTypes.ValueObjects;
@@ -10,6 +11,10 @@ namespace JobMagnet.Domain.Aggregates.SkillTypes;
 public class SkillType : SoftDeletableAggregateRoot<SkillTypeId>
 {
     public const int MaxNameLength = 50;
+    [SuppressMessage(
+        "SonarQube",
+        "S1075:URIs should not be hardcoded",
+        Justification = "Seeder data constants")]
     private const string DefaultIconUri = "https://jobmagnet.com/default-icon.png";
 
     private readonly List<SkillTypeAlias> _aliases = [];

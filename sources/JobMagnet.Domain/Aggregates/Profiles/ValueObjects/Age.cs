@@ -1,5 +1,7 @@
 using CommunityToolkit.Diagnostics;
 
+namespace JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+
 public record Age
 {
     private readonly ushort _value;

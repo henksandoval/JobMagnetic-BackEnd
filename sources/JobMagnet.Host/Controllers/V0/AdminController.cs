@@ -4,6 +4,7 @@ using JobMagnet.Host.Controllers.Base;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders;
 using Microsoft.AspNetCore.Mvc;
+using Light.GuardClauses;
 
 namespace JobMagnet.Host.Controllers.V0;
 
@@ -11,8 +12,9 @@ namespace JobMagnet.Host.Controllers.V0;
 public class AdminController(
     ILogger<AdminController> logger,
     JobMagnetDbContext dbContext,
-    ISeeder seeder) : BaseController<AdminController>(logger)
+    ISeeder seeder) : BaseController<AdminController>()
 {
+    private readonly ILogger<AdminController> _logger = logger.MustNotBeNull();
     private const string PongMessage = "Pong";
 
     [HttpGet("ping")]
@@ -20,7 +22,7 @@ public class AdminController(
     [Produces(MediaTypeNames.Text.Plain)]
     public IResult Ping()
     {
-        Logger.LogInformation(PongMessage);
+        _logger.LogInformation(PongMessage);
         return Results.Text(PongMessage);
     }
 

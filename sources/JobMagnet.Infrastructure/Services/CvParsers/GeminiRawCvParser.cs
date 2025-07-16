@@ -16,6 +16,9 @@ namespace JobMagnet.Infrastructure.Services.CvParsers;
 
 public class GeminiCvParser(IGeminiClient geminiClient, IOptions<GeminiSettings> options, ILogger<GeminiCvParser> logger) : IRawCvParser
 {
+    private const string JsonCodeBlockMarker = "```json";
+    private const string CodeBlockMarker = "```";
+    private const string JsonHint = "json";
     private readonly GeminiSettings _settings = options.Value;
 
     public async Task<Maybe<ProfileRaw>> ParseAsync(Stream cvFile)
@@ -129,18 +132,8 @@ public class GeminiCvParser(IGeminiClient geminiClient, IOptions<GeminiSettings>
         if (string.IsNullOrWhiteSpace(contentToClean)) return Maybe<string>.None;
 
         var jsonOutput = contentToClean;
-
-        if (jsonOutput.StartsWith("```") && jsonOutput.EndsWith("```"))
-            jsonOutput = jsonOutput.StartsWith("```json", StringComparison.OrdinalIgnoreCase)
-                ? jsonOutput.Substring("```json".Length, jsonOutput.Length - "```json".Length - "```".Length).Trim()
-                : jsonOutput.Substring(3, jsonOutput.Length - 6).Trim();
-
-        if (jsonOutput.StartsWith("json", StringComparison.OrdinalIgnoreCase))
-        {
-            var tempJson = jsonOutput["json".Length..].TrimStart();
-            if (tempJson.StartsWith("{") || tempJson.StartsWith("[")) jsonOutput = tempJson;
-        }
-
+        jsonOutput = RemoveCodeBlockMarkers(jsonOutput);
+        jsonOutput = RemoveJsonPrefix(jsonOutput);
         jsonOutput = jsonOutput.Trim();
 
         if (jsonOutput.IsJsonValid())
@@ -153,6 +146,32 @@ public class GeminiCvParser(IGeminiClient geminiClient, IOptions<GeminiSettings>
         logger.LogError("Content after manual cleanup is not valid JSON. Final snippet: {Snippet}",
             jsonOutput.GetSnippet());
         return Maybe<string>.None;
+    }
+
+    private static string RemoveCodeBlockMarkers(string input)
+    {
+        if (!input.StartsWith(CodeBlockMarker) || !input.EndsWith(CodeBlockMarker))
+            return input;
+
+        if (input.StartsWith(JsonCodeBlockMarker, StringComparison.OrdinalIgnoreCase))
+        {
+            return input.Substring(JsonCodeBlockMarker.Length,
+                input.Length - JsonCodeBlockMarker.Length - CodeBlockMarker.Length).Trim();
+        }
+
+        return input.Substring(CodeBlockMarker.Length,
+            input.Length - 2 * CodeBlockMarker.Length).Trim();
+    }
+
+    private static string RemoveJsonPrefix(string input)
+    {
+        if (!input.StartsWith(JsonHint, StringComparison.OrdinalIgnoreCase))
+            return input;
+
+        var withoutPrefix = input[JsonHint.Length..].TrimStart();
+        return (withoutPrefix.StartsWith("{") || withoutPrefix.StartsWith("["))
+            ? withoutPrefix
+            : input;
     }
 
     private async Task<ModelResponse?> CallGeminiServiceAsync(string cvTextContent)
@@ -200,11 +219,11 @@ public class GeminiCvParser(IGeminiClient geminiClient, IOptions<GeminiSettings>
         promptBuilder.AppendLine("\nCV Text:");
         promptBuilder.AppendLine("```text");
         promptBuilder.AppendLine(cvTextContent);
-        promptBuilder.AppendLine("```");
+        promptBuilder.AppendLine(CodeBlockMarker);
         promptBuilder.AppendLine("\nTarget JSON Structure (flattened):");
-        promptBuilder.AppendLine("```json");
+        promptBuilder.AppendLine(JsonCodeBlockMarker);
         promptBuilder.AppendLine(_settings.FlattenedProfileSchema);
-        promptBuilder.AppendLine("```");
+        promptBuilder.AppendLine(CodeBlockMarker);
         promptBuilder.AppendLine("\nExtracted JSON:");
         return promptBuilder.ToString();
     }

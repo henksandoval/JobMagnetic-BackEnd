@@ -32,7 +32,7 @@ public partial class ProfileController(
     IUnitOfWork unitOfWork,
     IQueryRepository<VanityUrl, long> publicProfileRepository,
     ICommandRepository<Profile> profileCommandRepository,
-    ISkillTypeResolverService skillTypeResolverService) : BaseController<ProfileController>(logger)
+    ISkillTypeResolverService skillTypeResolverService) : BaseController<ProfileController>()
 {
     [HttpPost]
     [ProducesResponseType(typeof(ProfileResponse), StatusCodes.Status201Created)]
