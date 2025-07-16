@@ -1,8 +1,10 @@
+using CommunityToolkit.Diagnostics;
 using JobMagnet.Application.Contracts.Commands.Talent;
 using JobMagnet.Application.Contracts.Responses.TalentShowcase;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Host.Controllers.V1;
@@ -21,7 +23,8 @@ public partial class ProfileController
         if (profile is null)
             return Results.NotFound();
         
-        var talent = profile.TalentShowcase.AddTalent(
+        var talent = profile.AddTalent(
+            guidGenerator,
             command.TalentData.Description ?? string.Empty
         );
 
@@ -43,13 +46,44 @@ public partial class ProfileController
         if (profile is null)
             return Results.NotFound();
 
-        var response = profile.Talents
+        var response = profile.TalentShowcase
             .Select(talent => talent.ToModel())
             .ToList();
 
         return Results.Ok(response);
     }
+    
+    [HttpPut("{profileId:guid}/talents/{talentId:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> UpdateTalentAsync(Guid profileId, Guid talentId, [FromBody] TalentCommand command, CancellationToken cancellationToken)
+    {
+        var profile = await GetProfileWithTalent(profileId, cancellationToken).ConfigureAwait(false);
 
+        if (profile is null)
+            return Results.NotFound();
+
+        var talentData = command.TalentData;
+        Guard.IsNotNull(talentData);
+
+        try
+        {
+            profile.UpdateTalent(
+                new TalentId(talentId),
+                talentData.Description ?? string.Empty
+            );
+            
+            profileCommandRepository.Update(profile);
+        }
+        catch (Exception ex)
+        {
+            return Results.NotFound(new {ex.Message});
+        }
+        
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Results.NoContent();
+    }
+    
     private async Task<Profile?> GetProfileWithTalent(Guid profileId, CancellationToken cancellationToken)
     {
         return await queryRepository
@@ -57,5 +91,29 @@ public partial class ProfileController
             .WithTalents()
             .BuildFirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
+    }
+    
+    [HttpDelete("{profileId:guid}/talents/{talentId:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> DeleteTalentAsync(Guid profileId, Guid talentId, CancellationToken cancellationToken)
+    {
+        var profile = await GetProfileWithTalent(profileId, cancellationToken).ConfigureAwait(false);
+
+        if (profile is null)
+            return Results.NotFound();
+
+        try
+        {
+            profile.RemoveTalent(new TalentId(talentId));
+            profileCommandRepository.Update(profile);
+        }
+        catch (NotFoundException ex)
+        {
+            return Results.NotFound(new { ex.Message });
+        }
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Results.NoContent();
     }
 }

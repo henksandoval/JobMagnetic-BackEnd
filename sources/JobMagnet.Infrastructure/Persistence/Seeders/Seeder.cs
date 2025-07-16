@@ -86,11 +86,13 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
         profile.AddVanityUrl(guidGenerator, "john-doe-1a2b3c");
     }
 
-    private static void AddTalents(Profile profile)
+    private void AddTalents(Profile profile)
     {
-        var talentsCollection = new TalentsSeeder().GetTalents();
-        foreach (var talent in talentsCollection)
-            profile.TalentShowcase.AddTalent(talent.Description);
+        var talentsSeeder = new TalentsSeeder(guidGenerator, profile.Id);
+        var talentsCollection = talentsSeeder.GetTalents();
+         foreach (var talent in talentsCollection)
+                   profile.AddTalent(guidGenerator, talent.Description);
+               
     }
 
     private async Task AddProfileHeaderAsync(Profile profile, CancellationToken cancellationToken)

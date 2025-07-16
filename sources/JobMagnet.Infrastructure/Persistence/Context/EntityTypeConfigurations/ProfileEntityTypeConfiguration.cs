@@ -77,22 +77,15 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<Profile>
             .WithOne()
             .HasForeignKey(t => t.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Ignore(p => p.TalentShowcase);
-        builder.OwnsMany(c => c.Talents,
-            talentBuilder =>
-            {
-                talentBuilder.WithOwner().HasForeignKey(x => x.ProfileId);
-                talentBuilder.HasKey(x => x.Id);
-                talentBuilder.Property(x => x.Id).ValueGeneratedOnAdd();
-                talentBuilder.Property(t => t.Description)
-                    .IsRequired()
-                    .HasMaxLength(Talent.MaxNameLength);
-            });
-
+        
         builder.HasMany(p => p.Portfolio)
             .WithOne()
             .HasForeignKey(p => p.ProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasMany(p => p.TalentShowcase)
+            .WithOne()
+            .HasForeignKey(t => t.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

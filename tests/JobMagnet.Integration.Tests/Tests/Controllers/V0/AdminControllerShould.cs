@@ -6,7 +6,9 @@ using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using JobMagnet.Integration.Tests.Fixtures;
+using JobMagnet.Shared.Abstractions;
 using JobMagnet.Shared.Data;
+using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
@@ -20,6 +22,7 @@ public class AdminControllerShould(
 {
     private const string RequestUriController = "api/v0.1/admin";
     private readonly HttpClient _httpClient = testFixture.GetClient();
+    private readonly IGuidGenerator _guidGenerator = new SequentialGuidGenerator();
     private readonly ITestOutputHelper _testOutputHelper = testFixture.SetTestOutputHelper(testOutputHelper);
 
     [Fact(DisplayName = "Return 200 and Pong when GET ping request is called")]
@@ -101,7 +104,7 @@ public class AdminControllerShould(
         profile.GetSkills().Should().HaveSameCount(SkillInfoCollection.Data);
         profile.CareerHistory!.AcademicDegree.Should().HaveCount(CareerHistorySeeder.AcademicDegreeCount);
         profile.CareerHistory!.WorkExperiences.Should().HaveCount(CareerHistorySeeder.WorkExperienceCount);
-        profile.Talents.Should().HaveSameCount(new TalentsSeeder().GetTalents());
+        profile.TalentShowcase.Should().HaveSameCount(new TalentsSeeder(_guidGenerator, new ProfileId()).GetTalents());
         profile.Testimonials.Count.Should().Be(Seeder.TestimonialsCount);
         profile.Portfolio.Should().HaveSameCount(ProjectRawData.Data);
     }
