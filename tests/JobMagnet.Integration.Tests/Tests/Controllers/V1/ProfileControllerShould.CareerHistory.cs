@@ -203,15 +203,15 @@ public partial class ProfileControllerShould
         }
     }
 
-    [Fact(DisplayName = "Should return 201 Created when adding a qualification")]
-    public async Task AddQualification_WhenCareerHistoryExists()
+    [Fact(DisplayName = "Should return 201 Created when adding a AcademicDegree")]
+    public async Task AddAcademicDegree_WhenCareerHistoryExists()
     {
         // --- Given ---
         _loadCareerHistory = true;
         _educationCount = 2;
         var profile = await SetupProfileAsync();
 
-        var qualificationData = _fixture.Build<AcademicDegreeBase>()
+        var academicDegreeData = _fixture.Build<AcademicDegreeBase>()
             .With(x => x.Degree, "Master of Computer Science")
             .With(x => x.InstitutionName, "Stanford University")
             .With(x => x.InstitutionLocation, "Stanford, CA")
@@ -221,7 +221,7 @@ public partial class ProfileControllerShould
             .Create();
 
         var command = _fixture.Build<AcademicDegreeCommand>()
-            .With(x => x.AcademicDegreeData, qualificationData)
+            .With(x => x.AcademicDegreeData, academicDegreeData)
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(command);
 
@@ -236,7 +236,7 @@ public partial class ProfileControllerShould
 
             var responseData = await TestUtilities.DeserializeResponseAsync<AcademicDegreeBase>(response);
             responseData.Should().NotBeNull();
-            responseData.Should().BeEquivalentTo(qualificationData, options => options
+            responseData.Should().BeEquivalentTo(academicDegreeData, options => options
                 .Excluding(x => x.Id)
             );
 
@@ -244,30 +244,30 @@ public partial class ProfileControllerShould
             entityUpdated.Should().NotBeNull();
             entityUpdated!.AcademicDegree.Should().HaveCount(_educationCount + 1);
             entityUpdated.AcademicDegree.Should().Contain(q =>
-                q.Degree == qualificationData.Degree &&
-                q.InstitutionName == qualificationData.InstitutionName
+                q.Degree == academicDegreeData.Degree &&
+                q.InstitutionName == academicDegreeData.InstitutionName
             );
         }
     }
 
-    [Fact(DisplayName = "Should return 400 Bad Request when adding duplicate qualification")]
-    public async Task AddQualification_WhenDuplicateQualification()
+    [Fact(DisplayName = "Should return 400 Bad Request when adding duplicate AcademicDegree")]
+    public async Task AddAcademicDegree_WhenDuplicateAcademicDegree()
     {
         // --- Given ---
         _loadCareerHistory = true;
         _educationCount = 1;
         var profile = await SetupProfileAsync();
 
-        var existingQualification = profile.CareerHistory!.AcademicDegree.First();
+        var existingAcademicDegree = profile.CareerHistory!.AcademicDegree.First();
 
-        var qualificationData = _fixture.Build<AcademicDegreeBase>()
-            .With(x => x.Degree, existingQualification.Degree)
-            .With(x => x.InstitutionName, existingQualification.InstitutionName)
+        var academicDegreeData = _fixture.Build<AcademicDegreeBase>()
+            .With(x => x.Degree, existingAcademicDegree.Degree)
+            .With(x => x.InstitutionName, existingAcademicDegree.InstitutionName)
             .With(x => x.StartDate, DateTime.Now.AddYears(-1))
             .Create();
 
         var command = _fixture.Build<AcademicDegreeCommand>()
-            .With(x => x.AcademicDegreeData, qualificationData)
+            .With(x => x.AcademicDegreeData, academicDegreeData)
             .Create();
         var httpContent = TestUtilities.SerializeRequestContent(command);
 
@@ -282,14 +282,14 @@ public partial class ProfileControllerShould
         }
     }
 
-    [Fact(DisplayName = "Should return 204 No Content when updating a qualification")]
-    public async Task UpdateQualification_WhenQualificationExists()
+    [Fact(DisplayName = "Should return 204 No Content when updating a AcademicDegree")]
+    public async Task UpdateAcademicDegree_WhenAcademicDegreeExists()
     {
         // --- Given ---
         _loadCareerHistory = true;
         _educationCount = 3;
         var profile = await SetupProfileAsync();
-        var qualification = profile.CareerHistory!.AcademicDegree.First();
+        var academicDegree = profile.CareerHistory!.AcademicDegree.First();
 
         var updatedData = _fixture.Build<AcademicDegreeBase>()
             .With(x => x.Degree, "Updated Computer Science Degree")
@@ -307,7 +307,7 @@ public partial class ProfileControllerShould
 
         // --- When ---
         var response = await _httpClient.PutAsync(
-            $"{RequestUriController}/{profile.Id.Value}/career-history/academic-degree/{qualification.Id.Value}",
+            $"{RequestUriController}/{profile.Id.Value}/career-history/academic-degree/{academicDegree.Id.Value}",
             httpContent);
 
         // --- Then ---
@@ -319,26 +319,26 @@ public partial class ProfileControllerShould
             var entityUpdated = await FindCareerHistoryByIdAsync(profile.Id);
             entityUpdated.Should().NotBeNull();
 
-            var updatedQualification = entityUpdated!.AcademicDegree.FirstOrDefault(q => q.Id == qualification.Id);
-            updatedQualification.Should().NotBeNull();
-            updatedQualification!.Degree.Should().Be(updatedData.Degree);
-            updatedQualification.InstitutionName.Should().Be(updatedData.InstitutionName);
+            var updatedAcademicDegree = entityUpdated!.AcademicDegree.FirstOrDefault(q => q.Id == academicDegree.Id);
+            updatedAcademicDegree.Should().NotBeNull();
+            updatedAcademicDegree!.Degree.Should().Be(updatedData.Degree);
+            updatedAcademicDegree.InstitutionName.Should().Be(updatedData.InstitutionName);
         }
     }
 
-    [Fact(DisplayName = "Should return 204 No Content when deleting a qualification")]
-    public async Task DeleteQualification_WhenQualificationExists()
+    [Fact(DisplayName = "Should return 204 No Content when deleting a AcademicDegree")]
+    public async Task DeleteAcademicDegree_WhenAcademicDegreeExists()
     {
         // --- Given ---
         _loadCareerHistory = true;
         _educationCount = 3;
         var profile = await SetupProfileAsync();
-        var qualificationToDelete = profile.CareerHistory!.AcademicDegree.First();
-        var qualificationId = qualificationToDelete.Id.Value;
+        var academicDegreeToDelete = profile.CareerHistory!.AcademicDegree.First();
+        var academicDegreeId = academicDegreeToDelete.Id.Value;
 
         // --- When ---
         var response = await _httpClient.DeleteAsync(
-            $"{RequestUriController}/{profile.Id.Value}/career-history/academic-degree/{qualificationId}");
+            $"{RequestUriController}/{profile.Id.Value}/career-history/academic-degree/{academicDegreeId}");
 
         // --- Then ---
         using (new AssertionScope())
@@ -349,7 +349,7 @@ public partial class ProfileControllerShould
             var entityUpdated = await FindCareerHistoryByIdAsync(profile.Id);
             entityUpdated.Should().NotBeNull();
             entityUpdated!.AcademicDegree.Should().HaveCount(_educationCount - 1);
-            entityUpdated.AcademicDegree.Should().NotContain(q => q.Id.Value == qualificationId);
+            entityUpdated.AcademicDegree.Should().NotContain(q => q.Id.Value == academicDegreeId);
         }
     }
 

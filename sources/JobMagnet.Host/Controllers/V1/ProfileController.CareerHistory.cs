@@ -137,7 +137,7 @@ public partial class ProfileController
     [ProducesResponseType(typeof(AcademicDegreeBase), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IResult> AddQualificationAsync(Guid profileId, [FromBody] AcademicDegreeCommand command, CancellationToken cancellationToken)
+    public async Task<IResult> AddAcademicDegreeAsync(Guid profileId, [FromBody] AcademicDegreeCommand command, CancellationToken cancellationToken)
     {
         var profile = await GetProfileWithCareerHistory(profileId, cancellationToken).ConfigureAwait(false);
 
@@ -149,7 +149,7 @@ public partial class ProfileController
             var data = command.AcademicDegreeData;
             Guard.IsNotNull(data);
 
-            var qualification = profile.AddAcademicDegreeToCareerHistory(
+            var academicDegree = profile.AddAcademicDegreeToCareerHistory(
                 guidGenerator,
                 data.Degree ?? string.Empty,
                 data.InstitutionName ?? string.Empty,
@@ -163,13 +163,13 @@ public partial class ProfileController
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             var result = new AcademicDegreeBase(
-                qualification.Degree,
-                qualification.InstitutionName,
-                qualification.InstitutionLocation,
-                qualification.Description,
-                qualification.StartDate,
-                qualification.EndDate,
-                qualification.Id.Value
+                academicDegree.Degree,
+                academicDegree.InstitutionName,
+                academicDegree.InstitutionLocation,
+                academicDegree.Description,
+                academicDegree.StartDate,
+                academicDegree.EndDate,
+                academicDegree.Id.Value
             );
 
             return Results.CreatedAtRoute("GetCareerHistory", new { profileId }, result);
@@ -184,11 +184,11 @@ public partial class ProfileController
         }
     }
 
-    [HttpPut("{profileId:guid}/career-history/academic-degree/{qualificationId:guid}")]
+    [HttpPut("{profileId:guid}/career-history/academic-degree/{academicDegreeId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IResult> UpdateAcademicDegreeAsync(Guid profileId, Guid qualificationId, [FromBody] AcademicDegreeCommand command,
+    public async Task<IResult> UpdateAcademicDegreeAsync(Guid profileId, Guid academicDegreeId, [FromBody] AcademicDegreeCommand command,
         CancellationToken cancellationToken)
     {
         var profile = await GetProfileWithCareerHistory(profileId, cancellationToken).ConfigureAwait(false);
@@ -202,7 +202,7 @@ public partial class ProfileController
         try
         {
             profile.UpdateAcademicDegreeInCareerHistory(
-                new AcademicDegreeId(qualificationId),
+                new AcademicDegreeId(academicDegreeId),
                 data.Degree ?? string.Empty,
                 data.InstitutionName ?? string.Empty,
                 data.InstitutionLocation ?? string.Empty,
@@ -229,7 +229,7 @@ public partial class ProfileController
     [HttpDelete("{profileId:guid}/career-history/academic-degree/{academicDegreeId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> DeleteQualificationAsync(Guid profileId, Guid academicDegreeId, CancellationToken cancellationToken)
+    public async Task<IResult> DeleteAcademicDegreeAsync(Guid profileId, Guid academicDegreeId, CancellationToken cancellationToken)
     {
         var profile = await GetProfileWithCareerHistory(profileId, cancellationToken).ConfigureAwait(false);
 

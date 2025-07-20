@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobMagnet.Infrastructure.Persistence.Context.EntityTypeConfigurations;
 
-public class QualificationEntityTypeConfiguration : IEntityTypeConfiguration<AcademicDegree>
+public class AcademicDegreeEntityTypeConfiguration : IEntityTypeConfiguration<AcademicDegree>
 {
     public void Configure(EntityTypeBuilder<AcademicDegree> builder)
     {
