@@ -43,16 +43,18 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Mocks\CvParsedResponse.md"/>
-        <EmbeddedResource Include="Mocks\CvParsedResponse.md">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </EmbeddedResource>
-    </ItemGroup>
-
-    <ItemGroup>
         <Compile Update="Tests\Controllers\V1\ProfileControllerShould.*.cs">
             <DependentUpon>ProfileControllerShould.cs</DependentUpon>
         </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="Files\Markdown\*.md">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Include="Files\CV\*.*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

@@ -5,6 +5,7 @@ using System.Net.Mime;
 using System.Text;
 using AutoFixture;
 using AwesomeAssertions;
+using AwesomeAssertions.Execution;
 using JobMagnet.Application.Contracts.Commands.Profile;
 using JobMagnet.Application.Contracts.Queries.Profile;
 using JobMagnet.Application.Contracts.Responses.Profile;
@@ -16,8 +17,10 @@ using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Host.ViewModels.Profile;
+using JobMagnet.Infrastructure.ExternalServices.Gemini;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Integration.Tests.Fixtures;
+using JobMagnet.Integration.Tests.Mocks;
 using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
@@ -26,6 +29,7 @@ using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit.Abstractions;
 
@@ -200,33 +204,41 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Create a new profile and return 201 when a valid CV file is loaded")]
-    public async Task ReturnCreatedAndPersistData_WhenIsValidCVFileAsync()
+    [Theory(DisplayName = "Create a new profile and return 201 when a valid CV file is loaded")]
+    [InlineData("CvContentLaura.txt", "cv_laura_gomez.pdf", "CvParsedResponseLaura.md", "laura.gomez.dev@example.net", "laura-gomez-")]
+    public async Task ReturnCreatedAndPersistData_WhenIsValidCVFileAsync(
+        string cvDataPath, string fileName, string resourceName, string expectedEmail, string expectedSlugPrefix)
     {
         // --- Given ---
-        const string fileName = "cv_laura_gomez.pdf";
-        const string cvContent = StaticCustomizations.CvContent;
-        var fileBytes = Encoding.UTF8.GetBytes(cvContent);
-        var memoryStream = new MemoryStream(fileBytes);
+        var cvPath = Path.Combine("Files/CV", cvDataPath);
+        var markdownResponse = Path.Combine("Files/Markdown", resourceName);
+        var fileBytes = await File.ReadAllBytesAsync(cvPath);
+
+        await using var memoryStream = new MemoryStream(fileBytes);
 
         using var multipartContent = new MultipartFormDataContent();
         var fileStreamContent = new StreamContent(memoryStream);
         fileStreamContent.Headers.ContentType = new MediaTypeHeaderValue(MediaTypeNames.Text.Plain);
-
         multipartContent.Add(fileStreamContent, "cvFile", fileName);
+
+        _httpClient.DefaultRequestHeaders.Add("X-Test-Resource", markdownResponse);
 
         // --- When ---
         var response = await _httpClient.PostAsync(RequestUriController + "/create-from-cv", multipartContent);
 
         // --- Then ---
-        response.EnsureSuccessStatusCode();
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
-        var responseData = await response.Content.ReadFromJsonAsync<CreateProfileResponse>();
-        responseData.Should().NotBeNull();
-        responseData.UserEmail.Should().NotBeNullOrEmpty();
-        responseData.ProfileUrl.Should().NotBeNullOrEmpty();
-        responseData.UserEmail.Should().Be("laura.gomez.dev@example.net");
-        responseData.ProfileUrl.Should().StartWith("laura-gomez-");
+        using (new AssertionScope())
+        {
+            response.EnsureSuccessStatusCode();
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+            var responseData = await response.Content.ReadFromJsonAsync<CreateProfileResponse>();
+            responseData.Should().NotBeNull()
+                .And.Subject.Should().BeOfType<CreateProfileResponse>();
+            responseData.UserEmail.Should().NotBeNullOrEmpty();
+            responseData.ProfileUrl.Should().NotBeNullOrEmpty();
+            responseData.UserEmail.Should().Be(expectedEmail);
+            responseData.ProfileUrl.Should().StartWith(expectedSlugPrefix);
+        }
     }
 
     private async Task<Profile> SetupProfileAsync()
