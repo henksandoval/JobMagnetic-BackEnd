@@ -21,72 +21,80 @@ public partial class ProfileController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IResult> AddSkillToProfileAsync(Guid profileId, [FromBody] SkillCommand command, CancellationToken cancellationToken)
     {
-        if (profileId != command.SkillSetData?.ProfileId)
-            throw new ArgumentException($"{nameof(command.SkillSetData.ProfileId)} must be equal to profileId.");
-
-        var profile = await GetProfileWithSkills(profileId, cancellationToken).ConfigureAwait(false);
-
-        if (profile is null)
-            return Results.NotFound();
-
-        var data = command.SkillSetData;
-
-        if (!profile.HaveSkillSet)
+        try
         {
-            var skillSet = SkillSet.CreateInstance(
-                guidGenerator,
-                profile.Id,
-                data.Overview ?? string.Empty);
-            profile.AddSkillSet(skillSet);
-        }
+            if (profileId != command.SkillSetData?.ProfileId)
+                throw new ArgumentException($"{nameof(command.SkillSetData.ProfileId)} must be equal to profileId.");
 
-        if (data.Skills.Any())
-        {
-            var defaultCategoryLazy = new Lazy<Task<SkillCategory>>(async () =>
-                await skillCategoryRepository
-                    .GetByIdAsync(new SkillCategoryId(SkillCategory.DefaultCategoryId), cancellationToken)
-                    .ConfigureAwait(false) ?? throw new InvalidOperationException("The DefaultCategory is missing."));
+            var profile = await GetProfileWithSkills(profileId, cancellationToken).ConfigureAwait(false);
 
-            var nameSkills = data.Skills.DistinctBy(x => x.Name).Select(x => x.Name);
-            var resolvedTypes = await skillTypeResolverService.ResolveAsync(nameSkills!, cancellationToken)
-                .ConfigureAwait(false);
+            if (profile is null)
+                return Results.NotFound();
 
-            foreach (var skill in data.Skills.Where(skill => !string.IsNullOrWhiteSpace(skill.Name)))
+            var data = command.SkillSetData;
+
+            if (!profile.HaveSkillSet)
             {
-                resolvedTypes.TryGetValue(skill.Name!, out var maybeSkillType);
+                var skillSet = SkillSet.CreateInstance(
+                    guidGenerator,
+                    profile.Id,
+                    data.Overview ?? string.Empty);
+                profile.AddSkillSet(skillSet);
+            }
 
-                SkillType skillTypeToUse;
+            if (data.Skills.Any())
+            {
+                var defaultCategoryLazy = new Lazy<Task<SkillCategory>>(async () =>
+                    await skillCategoryRepository
+                        .GetByIdAsync(new SkillCategoryId(SkillCategory.DefaultCategoryId), cancellationToken)
+                        .ConfigureAwait(false) ?? throw new InvalidOperationException("The DefaultCategory is missing."));
 
-                if (maybeSkillType.HasValue)
+                var nameSkills = data.Skills.DistinctBy(x => x.Name).Select(x => x.Name);
+                var resolvedTypes = await skillTypeResolverService.ResolveAsync(nameSkills!, cancellationToken)
+                    .ConfigureAwait(false);
+
+                foreach (var skill in data.Skills.Where(skill => !string.IsNullOrWhiteSpace(skill.Name)))
                 {
-                    skillTypeToUse = maybeSkillType.Value;
-                }
-                else
-                {
-                    var defaultCategory = await defaultCategoryLazy.Value;
+                    resolvedTypes.TryGetValue(skill.Name!, out var maybeSkillType);
 
-                    skillTypeToUse = SkillType.CreateInstance(
+                    SkillType skillTypeToUse;
+
+                    if (maybeSkillType.HasValue)
+                    {
+                        skillTypeToUse = maybeSkillType.Value;
+                    }
+                    else
+                    {
+                        var defaultCategory = await defaultCategoryLazy.Value;
+
+                        skillTypeToUse = SkillType.CreateInstance(
+                            guidGenerator,
+                            clock,
+                            skill.Name ?? string.Empty,
+                            defaultCategory
+                        );
+                    }
+
+                    profile.AddSkill(
                         guidGenerator,
-                        clock,
-                        skill.Name ?? string.Empty,
-                        defaultCategory
+                        skill.ProficiencyLevel,
+                        skillTypeToUse
                     );
                 }
-
-                profile.AddSkill(
-                    guidGenerator,
-                    skill.ProficiencyLevel,
-                    skillTypeToUse
-                );
             }
+
+            profileCommandRepository.Update(profile);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            var result = profile.SkillSet!.ToModel();
+
+            return Results.CreatedAtRoute("GetSkillsByProfile", new { profileId }, result);
         }
-
-        profileCommandRepository.Update(profile);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        var result = profile.SkillSet!.ToModel();
-
-        return Results.CreatedAtRoute("GetSkillsByProfile", new { profileId }, result);
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     [HttpGet("{profileId:guid}/skills", Name = "GetSkillsByProfile")]
