@@ -2,7 +2,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Net.Mime;
-using System.Text;
 using AutoFixture;
 using AwesomeAssertions;
 using AwesomeAssertions.Execution;
@@ -17,19 +16,15 @@ using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Host.ViewModels.Profile;
-using JobMagnet.Infrastructure.ExternalServices.Gemini;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Integration.Tests.Fixtures;
-using JobMagnet.Integration.Tests.Mocks;
 using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
-using JobMagnet.Shared.Tests.Fixtures.Customizations;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Moq;
 using Xunit.Abstractions;
 
@@ -45,7 +40,7 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
     private readonly JobMagnetTestSetupFixture _testFixture;
     private int _contactInfoCount;
     private int _educationCount;
-    private bool _loadCareerHistory = true;
+    private bool _loadCareerHistory;
     private bool _loadHeader = true;
     private bool _loadSkillSet = true;
     private int _projectCount;
@@ -67,6 +62,8 @@ public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupF
     {
         // --- Given ---
         _loadHeader = true;
+        _loadSkillSet = true;
+        _loadCareerHistory = true;
         _contactInfoCount = 3;
         _talentsCount = 8;
         _testimonialsCount = 6;

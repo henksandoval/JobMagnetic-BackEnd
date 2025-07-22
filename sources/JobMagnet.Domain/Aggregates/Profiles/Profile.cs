@@ -3,6 +3,7 @@ using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Shared.Base.Aggregates;
 using JobMagnet.Shared.Abstractions;
+using JobMagnet.Shared.Utils;
 
 namespace JobMagnet.Domain.Aggregates.Profiles;
 
@@ -25,6 +26,7 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
     public virtual IReadOnlyCollection<Testimonial> Testimonials => _testimonials;
     public virtual IReadOnlyCollection<VanityUrl> VanityUrls => _vanityUrls;
     public bool HaveHeader => Header is not null;
+    public bool HaveName => Name.NotEmpty;
     public bool HaveSkillSet => SkillSet is not null;
     public bool HaveCareerHistory => CareerHistory is not null;
 
@@ -47,6 +49,16 @@ public partial class Profile : SoftDeletableAggregateRoot<ProfileId>
         Name = name;
         ProfileImage = profileImage;
         BirthDate = birthDate;
+    }
+
+    public static Profile CreateEmptyInstance(IGuidGenerator guidGenerator, IClock clock)
+    {
+        var id = new ProfileId(guidGenerator.NewGuid());
+
+        return new Profile(id, clock,
+            PersonName.Empty,
+            ProfileImage.Empty,
+            BirthDate.Empty);
     }
 
     public static Profile CreateInstance(

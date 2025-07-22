@@ -17,6 +17,14 @@ public partial record PersonName
     {
     }
 
+    public static PersonName Empty => new(null, null, null, null, false);
+
+    public bool NotEmpty =>
+        FirstName is not null ||
+        MiddleName is not null ||
+        LastName is not null ||
+        SecondLastName is not null;
+
     public PersonName(string? firstName, string? lastName, string? middleName = null, string? secondLastName = null, bool applyValidations = true)
     {
         if (applyValidations)

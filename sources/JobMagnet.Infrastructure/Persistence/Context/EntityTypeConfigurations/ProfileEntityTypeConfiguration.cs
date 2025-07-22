@@ -82,10 +82,13 @@ public class ProfileEntityTypeConfiguration : IEntityTypeConfiguration<Profile>
             .WithOne()
             .HasForeignKey(p => p.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         builder.HasMany(p => p.TalentShowcase)
             .WithOne()
             .HasForeignKey(t => t.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Ignore(p => p.AcademicDegreesInCareerHistory);
+        builder.Ignore(p => p.WorkExperiencesInCareerHistory);
     }
 }

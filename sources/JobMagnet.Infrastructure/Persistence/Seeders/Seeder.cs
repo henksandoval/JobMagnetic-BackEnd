@@ -148,7 +148,7 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
         var careerHistorySeeder = new CareerHistorySeeder(guidGenerator, clock, careerHistory.Id);
 
         foreach (var education in careerHistorySeeder.GetAcademicDegrees().ToList())
-            careerHistory.AddEducation(
+            careerHistory.AddAcademicDegree(
                 guidGenerator,
                 education.Degree,
                 education.InstitutionName,

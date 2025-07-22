@@ -102,9 +102,7 @@ public partial class ProfileController
         if (!profile.HaveSkillSet)
             return Results.NoContent();
 
-        var response = profile.GetSkills()
-            .Select(skills => skills.ToModel())
-            .ToList();
+        var response = profile.SkillSet!.ToModel();
 
         return Results.Ok(response);
     }

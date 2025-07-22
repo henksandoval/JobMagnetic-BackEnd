@@ -1,6 +1,6 @@
 namespace JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 
-public sealed record EducationRaw(
+public sealed record AcademicDegreeRaw(
     string? Degree,
     string? InstitutionName,
     string? InstitutionLocation,

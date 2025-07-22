@@ -26,7 +26,7 @@ public static class FixtureBuilder
         fixture
             .Customize(new ContactInfoCustomization())
             .Customize(new ContactTypeCustomization())
-            .Customize(new EducationCustomization())
+            .Customize(new AcademicDegreeCustomization())
             .Customize(new ProjectCustomization())
             .Customize(new ProfileCustomization())
             .Customize(new PersonNameCustomization())

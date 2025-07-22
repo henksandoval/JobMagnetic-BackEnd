@@ -32,6 +32,14 @@ public partial class Profile
         SkillSet!.AddSkill(guidGenerator, proficiencyLevel, skillType);
     }
 
+    public bool SkillExists(SkillType skillType)
+    {
+        if (!HaveSkillSet)
+            throw new JobMagnetDomainException($"The profile {Id} does not have skills set.");
+
+        return SkillSet!.SkillExists(skillType);
+    }
+
     public void UpdateSkill(SkillId skillId, ushort skillProficiencyLevel)
     {
         if (!HaveSkillSet)
