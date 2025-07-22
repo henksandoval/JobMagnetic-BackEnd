@@ -20,17 +20,17 @@ public interface ISeeder
 
 public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IClock clock) : ISeeder
 {
-    private const string? About = """
+    private const string About = """
                                   ¡Hello! I'm Johnson Brandon, a passionate web developer who loves creating dynamic, easy-to-use websites.
                                   I have over 5 years of experience in the technology industry, working with a variety of clients to make their visions a reality.
                                   """;
 
-    private const string? Summary = """
+    private const string Summary = """
                                     Developed and maintained web applications for various clients, focusing on front-end development and user experience.
                                     Assisted in the development of websites and applications, learning best practices and improving coding skills.",
                                     """;
 
-    private const string? Overview = """
+    private const string Overview = """
                                      In my free time I enjoy hiking, reading science fiction novels, and experimenting with new technologies.
                                      I am always eager to learn new things and take on exciting challenges.",
                                      """;
@@ -104,9 +104,9 @@ public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IC
             "Mr.",
             "",
             "UI/UX Designer & Web Developer",
-            About ?? null,
-            Summary ?? null,
-            Overview ?? null,
+            About,
+            Summary,
+            Overview,
             "123 Main St, Springfield, USA");
 
         foreach (var (value, contactTypeName) in ContactInfoRawData.Data)
