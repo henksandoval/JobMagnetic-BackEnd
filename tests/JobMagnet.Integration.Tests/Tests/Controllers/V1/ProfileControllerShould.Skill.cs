@@ -110,8 +110,9 @@ public partial class ProfileControllerShould
         // --- Then ---
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<List<SkillResponse>>(response);
-        responseData.Should().NotBeNull().And.BeEmpty();
+        var responseData = await TestUtilities.DeserializeResponseAsync<SkillResponse>(response);
+        responseData.Should().NotBeNull();
+        responseData.SkillSetData.Skills.Should().BeEmpty();
     }
 
     [Fact(DisplayName = "Should return 204 No Content when updating an existing SkillSet")]
