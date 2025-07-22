@@ -2,269 +2,314 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Net.Mime;
-using System.Text;
 using AutoFixture;
-using FluentAssertions;
+using AwesomeAssertions;
+using AwesomeAssertions.Execution;
 using JobMagnet.Application.Contracts.Commands.Profile;
 using JobMagnet.Application.Contracts.Queries.Profile;
 using JobMagnet.Application.Contracts.Responses.Profile;
 using JobMagnet.Application.UseCases.CvParser.Responses;
-using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
 using JobMagnet.Host.ViewModels.Profile;
+using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Integration.Tests.Fixtures;
+using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
-using JobMagnet.Shared.Tests.Fixtures.Customizations;
 using JobMagnet.Shared.Tests.Utils;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Shouldly;
 using Xunit.Abstractions;
 
 namespace JobMagnet.Integration.Tests.Tests.Controllers.V1;
 
-public class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
+public partial class ProfileControllerShould : IClassFixture<JobMagnetTestSetupFixture>
 {
     private const string RequestUriController = "api/v1/profile";
     private const string InvalidId = "100";
-    private const int ContactInfoCount = 3;
-    private const int TalentsCount = 8;
-    private const int PortfolioCount = 3;
-    private const int TestimonialsCount = 6;
-    private const int EducationCount = 4;
-    private const int WorkExperienceCount = 2;
-    private const int SkillDetailsCount = 12;
-    private const int ServiceDetailsCount = 3;
-
     private readonly IFixture _fixture = FixtureBuilder.Build();
+    private readonly SequentialGuidGenerator _guidGenerator;
     private readonly HttpClient _httpClient;
     private readonly JobMagnetTestSetupFixture _testFixture;
+    private int _contactInfoCount;
+    private int _educationCount;
+    private bool _loadCareerHistory;
+    private bool _loadHeader = true;
+    private bool _loadSkillSet = true;
+    private int _projectCount;
+    private int _skillsCount;
+    private int _talentsCount;
+    private int _testimonialsCount;
+    private int _workExperienceCount;
 
     public ProfileControllerShould(JobMagnetTestSetupFixture testFixture, ITestOutputHelper testOutputHelper)
     {
         _testFixture = testFixture;
         _httpClient = _testFixture.GetClient();
+        _guidGenerator = new SequentialGuidGenerator();
         _testFixture.SetTestOutputHelper(testOutputHelper);
     }
 
     [Fact(DisplayName = "Return the record and return 200 when GET request with valid Name is provided")]
     public async Task ReturnRecord_WhenValidNameProvidedAsync()
     {
-        // Given
-        var entity = await SetupEntityAsync();
+        // --- Given ---
+        _loadHeader = true;
+        _loadSkillSet = true;
+        _loadCareerHistory = true;
+        _contactInfoCount = 3;
+        _talentsCount = 8;
+        _testimonialsCount = 6;
+        _educationCount = 4;
+        _workExperienceCount = 2;
+        _skillsCount = 12;
+        _projectCount = 3;
+        var entity = await SetupProfileAsync();
         var publicProfile = await SetupPublicProfileAsync(entity);
         var queryParameters = new Dictionary<string, string?>
         {
             { nameof(ProfileQueryParameters.ProfileSlug), publicProfile.ProfileSlugUrl }
         };
 
-        var requestUrl = QueryHelpers.AddQueryString(RequestUriController, queryParameters!);
+        var requestUrl = QueryHelpers.AddQueryString(RequestUriController, queryParameters);
 
-        // When
+        // --- When ---
         var response = await _httpClient.GetAsync(requestUrl);
 
-        // Then
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        // --- Then ---
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var responseData = await TestUtilities.DeserializeResponseAsync<ProfileViewModel>(response);
-        responseData.ShouldNotBeNull();
-        responseData.ShouldBeAssignableTo<ProfileViewModel>();
+        responseData.Should().NotBeNull();
+        responseData.Should().BeAssignableTo<ProfileViewModel>();
 
-        responseData.About.ShouldNotBeNull();
-        responseData.Service.ShouldNotBeNull();
-        responseData.Service.ServiceDetails.Length.ShouldBe(ServiceDetailsCount);
-        responseData.SkillSet.ShouldNotBeNull();
-        responseData.SkillSet.SkillDetails.Length.ShouldBe(SkillDetailsCount);
-        responseData.Summary.ShouldNotBeNull();
-        responseData.Summary.Education.AcademicBackground.Length.ShouldBe(EducationCount);
-        responseData.Summary.WorkExperience.Position.Length.ShouldBe(WorkExperienceCount);
-        responseData.PersonalData.ShouldNotBeNull();
-        responseData.PersonalData.SocialNetworks.Length.ShouldBe(ContactInfoCount);
-        responseData.Testimonials!.Length.ShouldBe(TestimonialsCount);
-        responseData.PortfolioGallery!.Length.ShouldBe(PortfolioCount);
+        responseData.About.Should().NotBeNull();
+        responseData.SkillSet.Should().NotBeNull();
+        responseData.SkillSet.SkillDetails.Length.Should().Be(_skillsCount);
+        responseData.Summary.Should().NotBeNull();
+        responseData.Summary.Education.AcademicBackground.Length.Should().Be(_educationCount);
+        responseData.Summary.WorkExperience.Position.Length.Should().Be(_workExperienceCount);
+        responseData.PersonalData.Should().NotBeNull();
+        responseData.PersonalData.Professions.Should().NotBeNull();
+        responseData.PersonalData.SocialNetworks.Length.Should().Be(_contactInfoCount);
+        responseData.Testimonials!.Length.Should().Be(_testimonialsCount);
+        responseData.Project!.Length.Should().Be(_projectCount);
     }
 
     [Fact(DisplayName = "Create a new record and return 201 when the POST request is valid")]
     public async Task ReturnCreatedAndPersistData_WhenRequestIsValidAsync()
     {
-        // Given
-        await _testFixture.ResetDatabaseAsync();
+        // --- Given ---
         var createRequest = _fixture.Build<ProfileCommand>().Create();
         var httpContent = TestUtilities.SerializeRequestContent(createRequest);
 
-        // When
+        // --- When ---
         var response = await _httpClient.PostAsync(RequestUriController, httpContent);
 
-        // Then
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        // --- Then ---
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
 
         var responseData = await TestUtilities.DeserializeResponseAsync<ProfileResponse>(response);
-        responseData.ShouldNotBeNull();
+        responseData.Should().NotBeNull();
 
         var locationHeader = response.Headers.Location!.ToString();
-        locationHeader.ShouldNotBeNull();
-        locationHeader.ShouldContain($"{RequestUriController}/{responseData.Id}");
+        locationHeader.Should().NotBeNull();
+        var expectedHeader = $"{RequestUriController}/{responseData.Id}";
+        locationHeader.Should().Match(currentHeader =>
+            currentHeader.Contains(expectedHeader, StringComparison.OrdinalIgnoreCase)
+        );
 
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
-        var entityCreated = await queryRepository.GetByIdAsync(responseData.Id);
+        var entityCreated = await FindProfileByIdAsync(responseData.Id);
 
-        entityCreated.ShouldNotBeNull();
+        entityCreated.Should().NotBeNull();
         entityCreated.Should().BeEquivalentTo(createRequest, options => options.ExcludingMissingMembers());
     }
 
     [Fact(DisplayName = "Return the record and return 200 when GET request with valid ID is provided")]
     public async Task ReturnRecord_WhenValidIdIsProvidedAsync()
     {
-        // Given
-        var entity = await SetupEntityAsync();
+        // --- Given ---
+        var entity = await SetupProfileAsync();
 
-        // When
-        var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id}");
+        // --- When ---
+        var response = await _httpClient.GetAsync($"{RequestUriController}/{entity.Id.Value}");
 
-        // Then
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        // --- Then ---
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var responseData = await TestUtilities.DeserializeResponseAsync<ProfileResponse>(response);
-        responseData.ShouldNotBeNull();
+        responseData.Should().NotBeNull();
         responseData.Should().BeEquivalentTo(entity, options => options.ExcludingMissingMembers());
     }
 
     [Fact(DisplayName = "Return 404 when GET request with invalid ID is provided")]
     public async Task ReturnNotFound_WhenInvalidIdIsProvidedAsync()
     {
-        // Given
-        _ = await SetupEntityAsync();
+        // --- Given ---
+        _ = await SetupProfileAsync();
 
-        // When
+        // --- When ---
         var response = await _httpClient.GetAsync($"{RequestUriController}/{InvalidId}");
 
-        // Then
-        response.IsSuccessStatusCode.ShouldBeFalse();
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        // --- Then ---
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact(DisplayName = "Return 204 when a valid PUT request is provided")]
     public async Task ReturnNotContent_WhenReceivedValidPutRequestAsync()
     {
-        // Given
-        var entity = await SetupEntityAsync();
+        // --- Given ---
+        var entity = await SetupProfileAsync();
         var updateRequest = _fixture.Build<ProfileCommand>()
             .Create();
 
-        // When
-        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id}", updateRequest);
+        // --- When ---
+        var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{entity.Id.Value}", updateRequest);
 
-        // Then
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        // --- Then ---
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
-        var dbEntity = await queryRepository.GetByIdAsync(entity.Id);
-        dbEntity.ShouldNotBeNull();
-        dbEntity.Should().BeEquivalentTo(updateRequest, options => options.ExcludingMissingMembers());
+        var updatedProfile = await FindProfileByIdAsync(entity.Id.Value);
+        updatedProfile.Should().NotBeNull();
+        updatedProfile.Should().BeEquivalentTo(updateRequest, options => options.ExcludingMissingMembers());
     }
 
     [Fact(DisplayName = "Return 404 when a PUT request with invalid ID is provided")]
     public async Task ReturnNotFound_WhenPutRequestWithInvalidIdIsProvidedAsync()
     {
-        // Given
+        // --- Given ---
         await _testFixture.ResetDatabaseAsync();
         var updatedEntity = _fixture.Build<ProfileCommand>().Create();
 
-        // When
+        // --- When ---
         var response = await _httpClient.PutAsJsonAsync($"{RequestUriController}/{InvalidId}", updatedEntity);
 
-        // Then
-        response.IsSuccessStatusCode.ShouldBeFalse();
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        // --- Then ---
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact(DisplayName = "Create a new profile and return 201 when a valid CV file is loaded")]
-    public async Task ReturnCreatedAndPersistData_WhenIsValidCVFileAsync()
+    [Theory(DisplayName = "Create a new profile and return 201 when a valid CV file is loaded")]
+    [InlineData("CvContentLaura.txt", "cv_laura_gomez.pdf", "CvParsedResponseLaura.md", "laura.gomez.dev@example.net", "laura-gomez-")]
+    public async Task ReturnCreatedAndPersistData_WhenIsValidCVFileAsync(
+        string cvDataPath, string fileName, string resourceName, string expectedEmail, string expectedSlugPrefix)
     {
-        // Given
-        await _testFixture.ResetDatabaseAsync();
+        // --- Given ---
+        var cvPath = Path.Combine("Files/CV", cvDataPath);
+        var markdownResponse = Path.Combine("Files/Markdown", resourceName);
+        var fileBytes = await File.ReadAllBytesAsync(cvPath);
 
-        const string fileName = "cv_laura_gomez.pdf";
-        const string cvContent = StaticCustomizations.CvContent;
-        var fileBytes = Encoding.UTF8.GetBytes(cvContent);
-        var memoryStream = new MemoryStream(fileBytes);
+        await using var memoryStream = new MemoryStream(fileBytes);
 
         using var multipartContent = new MultipartFormDataContent();
         var fileStreamContent = new StreamContent(memoryStream);
         fileStreamContent.Headers.ContentType = new MediaTypeHeaderValue(MediaTypeNames.Text.Plain);
-
         multipartContent.Add(fileStreamContent, "cvFile", fileName);
 
-        // When
+        _httpClient.DefaultRequestHeaders.Add("X-Test-Resource", markdownResponse);
+
+        // --- When ---
         var response = await _httpClient.PostAsync(RequestUriController + "/create-from-cv", multipartContent);
 
-        // Then
-        response.EnsureSuccessStatusCode();
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var responseData = await response.Content.ReadFromJsonAsync<CreateProfileResponse>();
-        responseData.ShouldNotBeNull();
-        responseData.UserEmail.ShouldNotBeNullOrEmpty();
-        responseData.ProfileUrl.ShouldNotBeNullOrEmpty();
-        responseData.UserEmail.Should().Be("laura.gomez.dev@example.net");
-        responseData.ProfileUrl.Should().StartWith("laura-gomez-");
+        // --- Then ---
+        using (new AssertionScope())
+        {
+            response.EnsureSuccessStatusCode();
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+            var responseData = await response.Content.ReadFromJsonAsync<CreateProfileResponse>();
+            responseData.Should().NotBeNull()
+                .And.Subject.Should().BeOfType<CreateProfileResponse>();
+            responseData.UserEmail.Should().NotBeNullOrEmpty();
+            responseData.ProfileUrl.Should().NotBeNullOrEmpty();
+            responseData.UserEmail.Should().Be(expectedEmail);
+            responseData.ProfileUrl.Should().StartWith(expectedSlugPrefix);
+        }
     }
 
-    private async Task<ProfileEntity> SetupEntityAsync()
+    private async Task<Profile> SetupProfileAsync()
     {
         await _testFixture.ResetDatabaseAsync();
         return await CreateAndPersistEntityAsync();
     }
 
-    private async Task<ProfileEntity> CreateAndPersistEntityAsync()
+    private async Task<Profile> CreateAndPersistEntityAsync()
     {
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<ProfileEntity>>();
+        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<Profile>>();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        var context = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
 
         var entity = new ProfileEntityBuilder(_fixture)
-            .WithResume()
-            .WithContactInfo(ContactInfoCount)
-            .WithTalents(TalentsCount)
-            .WithPortfolio(PortfolioCount)
-            .WithSummary()
-            .WithEducation(EducationCount)
-            .WithWorkExperience(WorkExperienceCount)
-            .WithServices()
-            .WithSkills()
-            .WithSkillDetails(SkillDetailsCount)
-            .WithTestimonials(TestimonialsCount)
+            .WithHeader(_loadHeader)
+            .WithContactInfo(_testFixture.SeededContactTypes.ToArray(), _contactInfoCount)
+            .WithTalents(_talentsCount)
+            .WithProjects(_projectCount)
+            .WithCareerHistory(_loadCareerHistory)
+            .WithEducation(_educationCount)
+            .WithWorkExperience(_workExperienceCount)
+            .WithTestimonials(_testimonialsCount)
+            .WithSkillSet(_loadSkillSet)
+            .WithSkills(_testFixture.SeededSkillTypes.ToArray(), _skillsCount)
             .Build();
 
-        await commandRepository.CreateAsync(entity);
-        await commandRepository.SaveChangesAsync();
+        var skillTypes = _skillsCount > 0 ? entity.GetSkills().Select(s => s.SkillType) : [];
+        foreach (var skillType in skillTypes.Distinct())
+        {
+            if (context.Entry(skillType.Category).State == EntityState.Detached)
+                context.Entry(skillType.Category).State = EntityState.Unchanged;
+
+            if (context.Entry(skillType).State == EntityState.Detached)
+                context.Entry(skillType).State = EntityState.Unchanged;
+        }
+
+        var contactTypes = _contactInfoCount > 0 ? entity.Header?.ContactInfo?.Select(s => s.ContactType).Distinct() : [];
+        foreach (var contactType in contactTypes!.Distinct())
+            if (context.Entry(contactType).State == EntityState.Detached)
+                context.Entry(contactType).State = EntityState.Unchanged;
+
+        await commandRepository.CreateAsync(entity, CancellationToken.None);
+        await unitOfWork.SaveChangesAsync(CancellationToken.None);
 
         return entity;
     }
 
-    private async Task<PublicProfileIdentifierEntity> SetupPublicProfileAsync(ProfileEntity profile)
+    private async Task<VanityUrl> SetupPublicProfileAsync(Profile profile)
     {
         var slugGenerator = new Mock<IProfileSlugGenerator>();
+        const string slug = "alexander-gonzalez-6ca66d";
+        profile.AddVanityUrl(_guidGenerator, slug);
         slugGenerator
-            .Setup(sg => sg.GenerateProfileSlug(It.IsAny<ProfileEntity>()))
-            .Returns("alexander-gonzalez-6ca66d");
+            .Setup(sg => sg.GenerateProfileSlug(It.IsAny<Profile>()))
+            .Returns(slug);
 
         await using var scope = _testFixture.GetProvider().CreateAsyncScope();
-        var commandRepository = scope.ServiceProvider.GetRequiredService<ICommandRepository<PublicProfileIdentifierEntity>>();
-        var publicProfile = new PublicProfileIdentifierEntity(profile, slugGenerator.Object)
-        {
-            ProfileEntity = null!
-        };
-        await commandRepository.CreateAsync(publicProfile);
+        var commandRepository =
+            scope.ServiceProvider.GetRequiredService<IGenericCommandRepository<VanityUrl>>();
+
+        await commandRepository.CreateRangeAsync(profile.VanityUrls, CancellationToken.None);
         await commandRepository.SaveChangesAsync();
-        return publicProfile;
+
+        return profile.VanityUrls.FirstOrDefault() ??
+               throw new InvalidOperationException("Public profile identifier was not created.");
+    }
+
+    private async Task<Profile?> FindProfileByIdAsync(Guid id)
+    {
+        await using var scope = _testFixture.GetProvider().CreateAsyncScope();
+        var queryRepository = scope.ServiceProvider.GetRequiredService<IProfileQueryRepository>();
+        var entityCreated = await queryRepository.GetByIdAsync(new ProfileId(id), CancellationToken.None);
+        return entityCreated;
     }
 }

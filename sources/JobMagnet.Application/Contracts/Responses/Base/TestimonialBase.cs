@@ -2,7 +2,7 @@
 
 public sealed record TestimonialBase
 {
-    public long ProfileId { get; init; }
+    public Guid ProfileId { get; init; }
     public string? Name { get; init; }
     public string? JobTitle { get; init; }
     public string? PhotoUrl { get; init; }

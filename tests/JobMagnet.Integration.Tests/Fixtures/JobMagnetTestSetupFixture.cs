@@ -1,9 +1,11 @@
 ﻿extern alias JobMagnetHost;
+using JobMagnet.Domain.Aggregates.Contact;
+using JobMagnet.Domain.Aggregates.SkillTypes;
 using JobMagnet.Infrastructure.Persistence.Context;
-using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 using JobMagnet.Integration.Tests.Factories;
 using JobMagnet.Integration.Tests.TestContainers;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Respawn;
 using Xunit.Abstractions;
@@ -17,12 +19,22 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
 
     private readonly RespawnerOptions _respawnerOptions = new()
     {
-        WithReseed = true
+        WithReseed = true,
+        TablesToIgnore =
+        [
+            "SkillTypes",
+            "SkillTypeAliases",
+            "SkillCategories",
+            "ContactTypes",
+            "ContactTypeAliases"
+        ]
     };
 
     private string? _connectionString;
     private ITestOutputHelper? _testOutputHelper;
     private HostWebApplicationFactory<Program> _webApplicationFactory = null!;
+    public IReadOnlyList<SkillType> SeededSkillTypes { get; private set; } = null!;
+    public IReadOnlyList<ContactType> SeededContactTypes { get; private set; } = null!;
 
     public async Task InitializeAsync()
     {
@@ -31,6 +43,7 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         SetConnectionString();
         _webApplicationFactory = new HostWebApplicationFactory<Program>(_connectionString);
         await EnsureDatabaseCreatedAsync();
+        await LoadSeedDataAsync();
     }
 
     public async Task DisposeAsync()
@@ -55,8 +68,6 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
 
             var respawn = await Respawner.CreateAsync(connection, _respawnerOptions);
             await respawn.ResetAsync(connection);
-
-            await SeedMasterTableDbContextAsync();
         }
         catch (SqlException sqlEx)
         {
@@ -70,15 +81,9 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         }
     }
 
-    public IServiceProvider GetProvider()
-    {
-        return _webApplicationFactory?.Services!;
-    }
+    public IServiceProvider GetProvider() => _webApplicationFactory?.Services!;
 
-    public HttpClient GetClient()
-    {
-        return _webApplicationFactory?.CreateClient()!;
-    }
+    public HttpClient GetClient() => _webApplicationFactory?.CreateClient()!;
 
     private void SetConnectionString()
     {
@@ -87,7 +92,7 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
             InitialCatalog = $"JobMagnetTestDb_{Guid.NewGuid()}"
         }.ConnectionString;
 
-        _testOutputHelper?.WriteLine(_connectionString);
+        _testOutputHelper?.WriteLine("Successful connection to the database: {0}", _connectionString);
     }
 
     private async Task EnsureDatabaseCreatedAsync()
@@ -97,11 +102,13 @@ public class JobMagnetTestSetupFixture : IAsyncLifetime
         await dbContext.Database.EnsureCreatedAsync();
     }
 
-    private async Task SeedMasterTableDbContextAsync()
+    private async Task LoadSeedDataAsync()
     {
-        using var scope = _webApplicationFactory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
-        await dbContext.ContactTypes.AddRangeAsync(new ContactTypesCollection().GetContactTypes());
-        await dbContext.SaveChangesAsync();
+        _testOutputHelper?.WriteLine("Loading seed data from database into fixture");
+        await using var scope = GetProvider().CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<JobMagnetDbContext>();
+
+        SeededSkillTypes = await context.SkillTypes.Include(st => st.Category).ToListAsync();
+        SeededContactTypes = await context.ContactTypes.Include(ct => ct.Aliases).ToListAsync();
     }
 }

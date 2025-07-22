@@ -1,6 +1,59 @@
-@JobMagnet_HostAddress = http://localhost:5287
-
-GET {{JobMagnet_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{JobMagnet_HostAddress}}/api/v0.1/admin
 
 ###
+DELETE {{JobMagnet_HostAddress}}/api/v0.1/admin
+
+###
+GET {{JobMagnet_HostAddress}}/api/v0.1/admin/ping
+
+###
+POST {{JobMagnet_HostAddress}}/api/v0.1/admin/seedprofile
+
+###
+GET {{JobMagnet_HostAddress}}/api/v1/profile?
+    ProfileSlug={{$placeholder}}
+
+###
+POST {{JobMagnet_HostAddress}}/api/v1/profile
+
+###
+POST {{JobMagnet_HostAddress}}/api/v1/profile/create-from-cv
+
+###
+GET {{JobMagnet_HostAddress}}/api/v1/profile/{{id}}
+
+###
+PUT {{JobMagnet_HostAddress}}/api/v1/profile/{{id}}
+
+###
+POST {{JobMagnet_HostAddress}}/api/v1/profile/{{profileId}}/project
+
+###
+GET {{JobMagnet_HostAddress}}/api/v1/profile/{{profileId}}/projects
+
+###
+PUT {{JobMagnet_HostAddress}}/api/v1/profile/{{profileId}}/projects/arrange
+
+###
+PUT {{JobMagnet_HostAddress}}/api/v1/profile/{{profileId}}/projects/{{projectId}}
+
+###
+DELETE {{JobMagnet_HostAddress}}/api/v1/profile/{{profileId}}/projects/{{projectId}}
+
+###
+GET {{JobMagnet_HostAddress}}/api/v1/profile/{{profileId}}/skills
+
+###
+POST {{JobMagnet_HostAddress}}/api/v1/profile/{{profileId}}/skills
+
+###
+DELETE {{JobMagnet_HostAddress}}/api/v1/profile/{{profileId}}/skills/{{skillId}}
+
+###
+PUT {{JobMagnet_HostAddress}}/api/v1/profile/{{profileId}}/skills/{{skillSetId}}
+
+###
+POST {{JobMagnet_HostAddress}}/api/v1/profile/{{profileId}}/talent
+
+###
+GET {{JobMagnet_HostAddress}}/api/v1/profile/{{profileId}}/talents

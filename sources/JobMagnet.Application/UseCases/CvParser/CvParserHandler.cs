@@ -1,12 +1,14 @@
 using JobMagnet.Application.Exceptions;
+using JobMagnet.Application.Factories;
 using JobMagnet.Application.UseCases.CvParser.Commands;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Application.UseCases.CvParser.Responses;
-using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Core.Enums;
+using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Enums;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Domain.Services;
+using JobMagnet.Shared.Abstractions;
 
 namespace JobMagnet.Application.UseCases.CvParser;
 
@@ -16,122 +18,49 @@ public interface ICvParserHandler
 }
 
 public class CvParserHandler(
+    IGuidGenerator guidGenerator,
+    IClock clock,
     IRawCvParser cvParser,
-    IUnitOfWork unitOfWork,
+    IGenericCommandRepository<Profile> profileRepository,
     IProfileSlugGenerator slugGenerator,
-    IQueryRepository<ContactTypeEntity, long> contactTypeQueryRepository)
+    IProfileFactory profileFactory)
     : ICvParserHandler
 {
-    private readonly IRawCvParser _cvParser = cvParser ?? throw new ArgumentNullException(nameof(cvParser));
-    private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-    private readonly IQueryRepository<ContactTypeEntity, long> _contactTypeQueryRepository = contactTypeQueryRepository ?? throw new ArgumentNullException(nameof(contactTypeQueryRepository));
-
     public async Task<CreateProfileResponse> ParseAsync(CvParserCommand command, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(command);
-        var profileEntity = await ParseCvToProfileEntity(command);
-        await PersistProfileAsync(profileEntity, cancellationToken);
+        var profileEntity = await BuildProfileFromCvAsync(command, cancellationToken);
+
+        profileEntity.AssignDefaultVanityUrl(guidGenerator, slugGenerator);
+
+        await profileRepository.CreateAsync(profileEntity, cancellationToken);
+        await profileRepository.SaveChangesAsync(cancellationToken);
+
         var userEmail = GetUserEmail(profileEntity);
         var profileUrl = GetProfileSlugUrl(profileEntity);
-        return new CreateProfileResponse(userEmail, profileUrl);
+
+        return new CreateProfileResponse(profileEntity.Id.Value, userEmail, profileUrl);
     }
 
-    private async Task<ProfileEntity> ParseCvToProfileEntity(CvParserCommand command)
+    private async Task<Profile> BuildProfileFromCvAsync(CvParserCommand command, CancellationToken cancellationToken)
     {
-        var rawProfile = await _cvParser.ParseAsync(command.Stream);
+        var rawProfile = await cvParser.ParseAsync(command.Stream);
+        if (rawProfile.HasNoValue) throw new JobMagnetApplicationException("Failed to parse the CV.");
 
-        if (rawProfile.HasNoValue)
-        {
-            throw new JobMagnetApplicationException("Failed to parse the CV. The raw profile is empty.");
-        }
-
-        var parsedProfileDto = rawProfile.Value.ToProfileParseDto();
-        var profileEntity = parsedProfileDto.ToProfileEntity();
-        return profileEntity;
+        var profileParse = rawProfile.Value.ToProfileParseDto();
+        return await profileFactory.CreateProfileFromDtoAsync(profileParse, cancellationToken);
     }
 
-    private async Task PersistProfileAsync(ProfileEntity profileEntity, CancellationToken cancellationToken)
+    private static string GetUserEmail(Profile profile)
     {
-        await _unitOfWork.ExecuteOperationInTransactionAsync(async () =>
-        {
-            if (profileEntity.Resume?.ContactInfo is { Count: > 0 })
-            {
-                await ResolveContactTypesAsync(profileEntity.Resume.ContactInfo, cancellationToken).ConfigureAwait(false);
-            }
-
-            await _unitOfWork.ProfileRepository
-                .CreateAsync(profileEntity, cancellationToken)
-                .ConfigureAwait(false);
-
-            var publicIdentifierEntity = new PublicProfileIdentifierEntity(profileEntity, slugGenerator);
-
-            await _unitOfWork.PublicProfileIdentifierRepository
-                .CreateAsync(publicIdentifierEntity, cancellationToken)
-                .ConfigureAwait(false);
-
-            profileEntity.AddPublicProfileIdentifier(publicIdentifierEntity);
-        }, cancellationToken);
-    }
-
-    private static string GetUserEmail(ProfileEntity profileEntity)
-    {
-        var userEmail = profileEntity.Resume?.ContactInfo?
+        var userEmail = profile.Header?.ContactInfo?
                             .FirstOrDefault(x => x.ContactType.Name.Equals("Email", StringComparison.OrdinalIgnoreCase))?
                             .Value
                         ?? string.Empty;
         return userEmail;
     }
 
-    private static string GetProfileSlugUrl(ProfileEntity profileEntity)
+    private static string GetProfileSlugUrl(Profile profile)
     {
-        return profileEntity.PublicProfileIdentifiers!.SingleOrDefault(x => x.Type == LinkType.Primary)!.ProfileSlugUrl;
-    }
-
-    private void SetAuditingFields(ProfileEntity profile)
-    {
-        //TODO: Implement auditing fields setting logic
-    }
-
-    private async Task ResolveContactTypesAsync(
-        ICollection<ContactInfoEntity>? contactInfo,
-        CancellationToken cancellationToken = default)
-    {
-        if (contactInfo is null || contactInfo.Count == 0)
-        {
-            return;
-        }
-
-        var contactTypesFromDto = contactInfo
-            .Select(inf => inf.ContactType.Name)
-            .Where(name => !string.IsNullOrEmpty(name))
-            .Distinct()
-            .ToList();
-
-        var existingContactTypes = await _contactTypeQueryRepository
-            .FindAsync(type => contactTypesFromDto.Contains(type.Name), cancellationToken)
-            .ConfigureAwait(false);
-
-        var existingContactTypeNamesDictionary = existingContactTypes.ToDictionary(
-            contactType => contactType.Name,
-            contactType => contactType,
-            StringComparer.OrdinalIgnoreCase);
-
-        foreach (var info in contactInfo)
-        {
-            var typeName = info.ContactType.Name;
-
-            if (existingContactTypeNamesDictionary.TryGetValue(typeName, out var existingContactType))
-            {
-                info.ContactType = existingContactType;
-                info.ContactTypeId = existingContactType.Id;
-                continue;
-            }
-
-            info.ContactType = new ContactTypeEntity
-            {
-                Id = 0,
-                Name = typeName
-            };
-        }
+        return profile.VanityUrls.SingleOrDefault(x => x.Type == LinkType.Primary)!.ProfileSlugUrl;
     }
 }

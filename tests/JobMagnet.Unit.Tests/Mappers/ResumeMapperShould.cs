@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
 using AutoFixture;
 using FluentAssertions;
-using JobMagnet.Application.Contracts.Commands.Resume;
 using JobMagnet.Application.Mappers;
-using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
+
 using JobMagnet.Shared.Tests.Fixtures;
 
 namespace JobMagnet.Unit.Tests.Mappers;
@@ -15,56 +15,40 @@ public class ResumeMapperShould
     [Fact]
     public void MapResumeEntityToResumeModelCorrectly()
     {
-        // Given
-        var entity = _fixture.Create<ResumeEntity>();
+        // --- Given ---
+        var entity = _fixture.Create<Headline>();
 
-        // When
+        // --- When ---
         var resumeModel = entity.ToModel();
 
-        // Then
+        // --- Then ---
         resumeModel.Should().NotBeNull();
-        resumeModel.Id.Should().Be(entity.Id);
+        resumeModel.Id.Should().Be(entity.Id.Value);
         resumeModel.ResumeData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
     }
 
     [Fact]
-    public void MapResumeCommandToResumeEntityCorrectly()
-    {
-        // Given
-        var createCommand = _fixture.Create<ResumeCommand>();
-
-        // When
-        var entity = createCommand.ToEntity();
-
-        // Then
-        entity.Should().NotBeNull();
-        entity.Should().BeEquivalentTo(createCommand.ResumeData, options =>
-            options.ExcludingMissingMembers());
-    }
-
-    [Fact]
     public void MapResumeEntityToResumeUpdateCommandCorrectly()
     {
-        // Given
-        var entity = _fixture.Create<ResumeEntity>();
+        // --- Given ---
+        var entity = _fixture.Create<Headline>();
 
-        // When
+        // --- When ---
         var updateCommand = entity.ToUpdateRequest();
 
-        // Then
+        // --- Then ---
         updateCommand.Should().NotBeNull();
         updateCommand.ResumeData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
     }
 
-    private static Expression<Func<ResumeEntity, object>> GetExcludeEntityProperties()
+    private static Expression<Func<Headline, object>> GetExcludeEntityProperties()
     {
         return e => new
         {
             e.Id,
             e.IsDeleted,
-            e.Profile,
             e.AddedAt,
             e.AddedBy,
             e.DeletedAt,

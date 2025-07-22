@@ -2,7 +2,7 @@ namespace JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
 
 public class ResumeParseDto
 {
-    public IEnumerable<ContactInfoParseDto> ContactInfo { get; set; }
+    public List<ContactInfoParseDto> ContactInfo { get; set; }
     public string? JobTitle { get; set; }
     public string? About { get; set; }
     public string? Summary { get; set; }

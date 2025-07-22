@@ -1,18 +1,18 @@
 ﻿using System.Linq.Expressions;
-using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Ports.Repositories.Base;
 
 namespace JobMagnet.Domain.Ports.Repositories;
 
-public interface IProfileQueryRepository : IQueryRepository<ProfileEntity, long>
+public interface IProfileQueryRepository : IQueryRepository<Profile, ProfileId>
 {
-    IProfileQueryRepository WhereCondition(Expression<Func<ProfileEntity, bool>> expression);
-    IProfileQueryRepository WithResume();
+    IProfileQueryRepository WhereCondition(Expression<Func<Profile, bool>> expression);
+    IProfileQueryRepository WithProfileHeader();
     IProfileQueryRepository WithSkills();
     IProfileQueryRepository WithTalents();
-    IProfileQueryRepository WithPortfolioGallery();
-    IProfileQueryRepository WithSummary();
-    IProfileQueryRepository WithServices();
+    IProfileQueryRepository WithProject();
+    IProfileQueryRepository WithCareerHistory();
     IProfileQueryRepository WithTestimonials();
-    Task<ProfileEntity?> BuildFirstOrDefaultAsync();
+    Task<Profile?> BuildFirstOrDefaultAsync(CancellationToken cancellationToken, bool asNoTracking = false);
 }

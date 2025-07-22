@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace JobMagnet.Infrastructure.Persistence.Repositories.Base;
 
 public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
-    : IQueryRepository<TEntity, TKey>, ICommandRepository<TEntity>
+    : IQueryRepository<TEntity, TKey>, IGenericCommandRepository<TEntity>
     where TEntity : class
 {
     private readonly DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
@@ -16,51 +16,44 @@ public class Repository<TEntity, TKey>(JobMagnetDbContext dbContext)
         await _dbSet.AddAsync(entity, cancellationToken).ConfigureAwait(false);
     }
 
-    public ICommandRepository<TEntity> Update(TEntity entity)
+    public async Task CreateRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+    {
+        await _dbSet.AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
+    }
+
+    public IGenericCommandRepository<TEntity> Update(TEntity entity)
     {
         _dbSet.Update(entity);
         return this;
     }
 
-    public ICommandRepository<TEntity> HardDelete(TEntity entity)
+    public IGenericCommandRepository<TEntity> HardDelete(TEntity entity)
     {
         _dbSet.Remove(entity);
         return this;
     }
 
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        return await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-    }
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
+        await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-    public async Task<TEntity?> GetByIdAsync(TKey id)
+    public async Task<TEntity?> GetByIdAsync(TKey id, CancellationToken cancellationToken)
     {
-        var entity = await _dbSet.FindAsync(id).ConfigureAwait(false);
+        var entity = await _dbSet.FindAsync([id], cancellationToken).ConfigureAwait(false);
         return entity;
     }
 
-    public async Task<IReadOnlyCollection<TEntity>> GetAllAsync()
-    {
-        return await _dbSet.ToListAsync().ConfigureAwait(false);
-    }
+    public async Task<IReadOnlyCollection<TEntity>> GetAllAsync() => await _dbSet.ToListAsync().ConfigureAwait(false);
 
-    public async Task<IReadOnlyCollection<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
-    {
-        return await _dbSet.Where(predicate).ToListAsync(cancellationToken).ConfigureAwait(false);
-    }
+    public async Task<IReadOnlyCollection<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken) =>
+        await _dbSet.Where(predicate).ToListAsync(cancellationToken).ConfigureAwait(false);
 
-    public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
-    {
-        return await _dbSet.FirstOrDefaultAsync(predicate).ConfigureAwait(false);
-    }
+    public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken) =>
+        await _dbSet.FirstOrDefaultAsync(predicate, cancellationToken).ConfigureAwait(false);
 
-    public async Task<int> CountAsync()
-    {
-        return await _dbSet.CountAsync().ConfigureAwait(false);
-    }
+    public async Task<TEntity> FirstAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken) =>
+        await _dbSet.FirstAsync(predicate, cancellationToken).ConfigureAwait(false);
 
-    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
-    {
-        return await _dbSet.AnyAsync(predicate).ConfigureAwait(false);
-    }
+    public async Task<int> CountAsync() => await _dbSet.CountAsync().ConfigureAwait(false);
+
+    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate) => await _dbSet.AnyAsync(predicate).ConfigureAwait(false);
 }

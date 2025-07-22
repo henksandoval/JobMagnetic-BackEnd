@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
 using Bogus;
-using JobMagnet.Shared.Tests.Fixtures.Customizations.Entities;
-using JobMagnet.Shared.Tests.Fixtures.Customizations.Raws;
+using JobMagnet.Shared.Tests.Fixtures.Customizations;
 
 namespace JobMagnet.Shared.Tests.Fixtures;
 
@@ -13,8 +12,7 @@ public static class FixtureBuilder
     {
         var fixture = new Fixture();
         fixture
-            .RegisterEntityCustomizations()
-            .RegisterParseDtoCustomizations()
+            .RegisterCustomizations()
             .Register(() => DateOnly.FromDateTime(Faker.Date.Past(30)));
 
         fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(b => fixture.Behaviors.Remove(b));
@@ -23,43 +21,24 @@ public static class FixtureBuilder
         return fixture;
     }
 
-    private static Fixture RegisterEntityCustomizations(this Fixture fixture)
+    private static Fixture RegisterCustomizations(this Fixture fixture)
     {
         fixture
-            .Customize(new ProfileEntityCustomization())
-            .Customize(new ContactTypeEntityCustomization())
-            .Customize(new SummaryEntityCustomization())
-            .Customize(new SkillItemEntityCustomization())
-            .Customize(new ServiceGalleryItemEntityCustomization())
-            .Customize(new EducationEntityCustomization())
-            .Customize(new WorkExperienceEntityCustomization())
-            .Customize(new TalentEntityCustomization())
-            .Customize(new ServiceEntityCustomization())
-            .Customize(new PortfolioEntityCustomization())
-            .Customize(new SkillEntityCustomization())
-            .Customize(new TestimonialEntityCustomization())
-            .Customize(new ResumeEntityCustomization())
-            .Customize(new ContactInfoEntityCustomization());
-
-        return fixture;
-    }
-
-    private static Fixture RegisterParseDtoCustomizations(this Fixture fixture)
-    {
-        fixture
-            .Customize(new ProfileRawCustomization())
-            .Customize(new SummaryRawCustomization())
-            .Customize(new SkillRawCustomization())
-            .Customize(new SkillDetailRawCustomization())
-            .Customize(new ServiceGalleryRawCustomization())
-            .Customize(new EducationRawCustomization())
-            .Customize(new WorkExperienceRawCustomization())
-            .Customize(new TalentRawCustomization())
-            .Customize(new ServiceRawCustomization())
-            .Customize(new PortfolioRawCustomization())
-            .Customize(new TestimonialRawCustomization())
-            .Customize(new ResumeRawCustomization())
-            .Customize(new ContactInfoRawCustomization());
+            .Customize(new ContactInfoCustomization())
+            .Customize(new ContactTypeCustomization())
+            .Customize(new AcademicDegreeCustomization())
+            .Customize(new ProjectCustomization())
+            .Customize(new ProfileCustomization())
+            .Customize(new PersonNameCustomization())
+            .Customize(new ProfileImageCustomization())
+            .Customize(new BirthDateCustomization())
+            .Customize(new ProfileHeaderCustomization())
+            .Customize(new CareerHistoryCustomization())
+            .Customize(new SkillDetailCustomization())
+            .Customize(new WorkExperienceCustomization())
+            .Customize(new TalentCustomization())
+            .Customize(new SkillCustomization())
+            .Customize(new TestimonialCustomization());
 
         return fixture;
     }

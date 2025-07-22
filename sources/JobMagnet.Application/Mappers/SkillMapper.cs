@@ -1,6 +1,7 @@
 ﻿using JobMagnet.Application.Contracts.Commands.Skill;
+using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Skill;
-using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using Mapster;
 
 namespace JobMagnet.Application.Mappers;
@@ -9,36 +10,30 @@ public static class SkillMapper
 {
     static SkillMapper()
     {
-        TypeAdapterConfig<SkillEntity, SkillResponse>
+        TypeAdapterConfig<Skill, SkillBase>
             .NewConfig()
-            .Map(dest => dest.SkillData, src => src);
+            .Map(dest => dest.Id, src => src.Id.Value)
+            .Map(dest => dest.ProficiencyLevel, src => src.ProficiencyLevel)
+            .Map(dest => dest.Name, src => src.SkillType.Name);
 
-        TypeAdapterConfig<SkillCommand, SkillEntity>
+        TypeAdapterConfig<SkillSet, SkillSetBase>
             .NewConfig()
-            .Map(dest => dest, src => src.SkillData);
+            .Map(dest => dest.ProfileId, src => src.ProfileId.Value);
 
-        TypeAdapterConfig<SkillEntity, SkillCommand>
+        TypeAdapterConfig<SkillSet, SkillResponse>
             .NewConfig()
-            .Map(dest => dest.SkillData, src => src);
+            .Map(dest => dest.Id, src => src.Id.Value)
+            .Map(dest => dest.SkillSetData, src => src);
+
+        TypeAdapterConfig<SkillSet, SkillCommand>
+            .NewConfig()
+            .Map(dest => dest.SkillSetData, src => src);
     }
 
-    public static SkillEntity ToEntity(this SkillCommand command)
-    {
-        return command.Adapt<SkillEntity>();
-    }
+    public static SkillBase ToModel(this Skill skill) => skill.Adapt<SkillBase>();
+    public static SkillResponse ToModel(this SkillSet skillSet) => skillSet.Adapt<SkillResponse>();
 
-    public static SkillResponse ToModel(this SkillEntity entity)
-    {
-        return entity.Adapt<SkillResponse>();
-    }
+    public static SkillResponse ToResponse(this SkillSet set) => set.Adapt<SkillResponse>();
 
-    public static SkillCommand ToUpdateCommand(this SkillEntity entity)
-    {
-        return entity.Adapt<SkillCommand>();
-    }
-
-    public static void UpdateEntity(this SkillEntity entity, SkillCommand command)
-    {
-        command.Adapt(entity);
-    }
+    public static SkillCommand ToUpdateCommand(this SkillSet set) => set.Adapt<SkillCommand>();
 }

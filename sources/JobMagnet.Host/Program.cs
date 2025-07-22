@@ -23,15 +23,16 @@ builder.Services
     .AddHttpContextAccessor()
     .AddEndpointsApiExplorer()
     .AddApiVersion()
-    .AddSwagger(builder.Configuration)
-    .AddControllers(options =>
-    {
-        options.InputFormatters.Insert(0, JsonPatchInputFormatter.GetJsonPatchInputFormatter());
-    });
+    .AddConfiguredOpenApi(builder.Configuration)
+    .AddSwagger()
+    .AddControllers();
 
 var app = builder.Build();
 
-if (builder.Configuration.GetValue<bool>("SwaggerSettings:UseUI")) app.UseOpenApi();
+if (builder.Configuration.GetValue<bool>("OpenApiSettings:UseUI"))
+{
+    app.UseScalar().UseSwagger();
+}
 
 app
     .UseHttpsRedirection()

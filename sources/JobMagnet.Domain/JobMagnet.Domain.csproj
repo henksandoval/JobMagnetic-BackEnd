@@ -7,7 +7,37 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>JobMagnet.Application</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>JobMagnet.Infrastructure</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>JobMagnet.Unit.Tests</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>JobMagnet.Shared.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0"/>
         <PackageReference Include="CSharpFunctionalExtensions" Version="3.6.0"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Shared\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\JobMagnet.Shared\JobMagnet.Shared.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Aggregates\Profiles\Profile.*.cs">
+            <DependentUpon>Profile.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
 </Project>

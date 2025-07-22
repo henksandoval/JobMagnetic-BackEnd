@@ -1,5 +1,5 @@
-﻿using System.Linq.Expressions;
-using JobMagnet.Domain.Core.Entities;
+﻿using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Host.ViewModels.Profile;
 using JobMagnet.Shared.Utils;
 using Mapster;
@@ -13,91 +13,81 @@ public static class ProfileMapper
         ConfigMapper();
     }
 
-    public static ProfileViewModel ToViewModel(this ProfileEntity entity)
-    {
-        return entity.Adapt<ProfileViewModel>();
-    }
+    public static ProfileViewModel ToViewModel(this Profile entity) => entity.Adapt<ProfileViewModel>();
 
     private static void ConfigMapper()
     {
-        TypeAdapterConfig<ProfileEntity, ProfileViewModel>
+        TypeAdapterConfig<Profile, ProfileViewModel>
             .NewConfig()
             .Map(dest => dest.PersonalData, src => PersonalDataViewModelMap(src))
             .Map(dest => dest.About, src => src.Adapt<AboutViewModel>())
             .Map(dest => dest.Testimonials,
                 src => src.Testimonials.Select(t => t.Adapt<TestimonialsViewModel>()).ToArray(),
                 src => src.Testimonials.Any())
-            .Map(dest => dest.PortfolioGallery,
-                src => src.PortfolioGallery.Select(p => p.Adapt<PortfolioViewModel>()).ToArray(),
-                src => src.PortfolioGallery.Any())
-            .Map(dest => dest.SkillSet, src => src.Skill.Adapt<SkillSetViewModel>(),
-                src => src.Skill != null && src.Skill.SkillDetails.Count > 0)
-            .Map(dest => dest.Service, src => src.Services.Adapt<ServiceViewModel>(),
-                src => src.Services != null && src.Services.GalleryItems.Count > 0)
-            .Map(dest => dest.Summary, src => src.Summary.Adapt<SummaryViewModel>(),
-                src => src.Summary != null);
+            .Map(dest => dest.Project,
+                src => src.Portfolio.Select(p => p.Adapt<ProjectViewModel>()).ToArray(),
+                src => src.Portfolio.Any())
+            .Map(dest => dest.SkillSet, src => src.SkillSet.Adapt<SkillSetViewModel>(),
+                src => src.HaveSkillSet)
+            .Map(dest => dest.Summary, src => src.CareerHistory.Adapt<SummaryViewModel>(),
+                src => src.CareerHistory != null);
 
-        TypeAdapterConfig<PortfolioGalleryEntity, PortfolioViewModel>
+        TypeAdapterConfig<Project, ProjectViewModel>
             .NewConfig()
             .Map(dest => dest.Image, src => src.UrlImage)
             .Map(dest => dest.Link, src => src.UrlLink)
             .Map(dest => dest.Video, src => src.UrlVideo);
 
-        TypeAdapterConfig<ServiceGalleryItemEntity, ServiceDetailsViewModel>
-            .NewConfig()
-            .Map(dest => dest.BackgroundUrl, src => src.UrlImage)
-            .Map(dest => dest.Description, src => src.Description)
-            .Map(dest => dest.Name, src => src.Title);
-
-        TypeAdapterConfig<TestimonialEntity, TestimonialsViewModel>
+        TypeAdapterConfig<Testimonial, TestimonialsViewModel>
             .NewConfig()
             .Map(dest => dest.Testimonial, src => src.Feedback);
 
-        TypeAdapterConfig<ProfileEntity, AboutViewModel>
+        TypeAdapterConfig<Profile, AboutViewModel>
             .NewConfig()
             .Map(dest => dest, src => AboutViewModelMap(src));
 
-        TypeAdapterConfig<SkillEntity, SkillSetViewModel>
+        TypeAdapterConfig<Skill, SkillDetailsViewModel>
+            .NewConfig()
+            .Map(dest => dest.Name, src => src.SkillType.Name)
+            .Map(dest => dest.Rank, src => src.Position)
+            .Map(dest => dest.IconUrl, src => src.SkillType.IconUrl);
+
+        TypeAdapterConfig<SkillSet, SkillSetViewModel>
             .NewConfig()
             .Map(dest => dest.SkillDetails,
-                src => src.SkillDetails.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
+                src => src.Skills.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
 
-        TypeAdapterConfig<ServiceEntity, ServiceViewModel>
-            .NewConfig()
-            .Map(dest => dest.ServiceDetails,
-                src => src.GalleryItems.Select(item => item.Adapt<ServiceDetailsViewModel>()).ToArray());
-
-        TypeAdapterConfig<SummaryEntity, SummaryViewModel>
+        TypeAdapterConfig<CareerHistory, SummaryViewModel>
             .NewConfig()
             .Map(dest => dest.Education, src => EducationViewModelMap(src))
             .Map(dest => dest.WorkExperience, src => WorkExperienceViewModelMap(src));
     }
 
-    private static AboutViewModel AboutViewModelMap(ProfileEntity entity)
+    private static AboutViewModel AboutViewModelMap(Profile entity)
     {
-        ArgumentException.ThrowIfNullOrEmpty(nameof(ProfileEntity), "ProfileEntity cannot be null.");
+        ArgumentException.ThrowIfNullOrEmpty(nameof(Profile), "Profile cannot be null.");
 
         var viewModel = new AboutViewModel(
-            entity.ProfileImageUrl ?? string.Empty,
-            entity.Resume?.About ?? string.Empty,
-            entity.Resume?.JobTitle ?? string.Empty,
-            entity.Resume?.Overview ?? string.Empty,
-            entity.BirthDate,
+            entity.ProfileImage.Url?.AbsolutePath ?? string.Empty,
+            entity.Header?.About ?? string.Empty,
+            entity.Header?.JobTitle ?? string.Empty,
+            entity.Header?.Overview ?? string.Empty,
+            entity.BirthDate.Value,
             GetContactValue(entity, "Website"),
             GetContactValue(entity, "Phone"),
-            entity.Resume?.Address ?? string.Empty,
-            entity.BirthDate.GetAge(),
-            entity.Resume?.Title ?? string.Empty,
+            entity.Header?.Address ?? string.Empty,
+            entity.BirthDate.GetAge()?.Value,
+            entity.Header?.Title ?? string.Empty,
             GetContactValue(entity, "Email"),
-            entity.Resume?.Summary ?? string.Empty,
-            string.Empty
+            entity.Header?.Summary ?? string.Empty,
+            entity.Header?.Summary ?? string.Empty
         );
         return viewModel;
     }
 
-    private static EducationViewModel EducationViewModelMap(SummaryEntity src)
+    private static EducationViewModel EducationViewModelMap(CareerHistory src)
     {
-        var academicBackground = src.Education?.Select(e => new AcademicBackgroundViewModel(
+        var academicBackground = src.AcademicDegree?.Select(e => new AcademicBackgroundViewModel(
             e.Degree,
             e.StartDate.ToString("yyyy-MM-dd"),
             e.InstitutionName,
@@ -107,11 +97,11 @@ public static class ProfileMapper
         return new EducationViewModel(academicBackground);
     }
 
-    private static WorkExperienceViewModel WorkExperienceViewModelMap(SummaryEntity src)
+    private static WorkExperienceViewModel WorkExperienceViewModelMap(CareerHistory src)
     {
         var workExperienceList = src.WorkExperiences?.Select(work =>
             {
-                var responsibilities = work.Responsibilities?
+                var responsibilities = work.Highlights?
                     .Select(r => r.Description)
                     .ToArray() ?? [];
                 return new PositionViewModel(
@@ -125,16 +115,16 @@ public static class ProfileMapper
         return new WorkExperienceViewModel(workExperienceList);
     }
 
-    private static PersonalDataViewModel PersonalDataViewModelMap(ProfileEntity src)
+    private static PersonalDataViewModel PersonalDataViewModelMap(Profile src)
     {
-        var socialNetworks = src.Resume?.ContactInfo?.Select(c => new SocialNetworksViewModel(
+        var socialNetworks = src.Header?.ContactInfo?.Select(c => new SocialNetworksViewModel(
                 c.ContactType.Name,
                 c.Value,
                 c.ContactType.IconClass ?? string.Empty,
-                c.ContactType.IconUrl ?? string.Empty))
+                c.ContactType.IconUrl?.AbsoluteUri ?? string.Empty))
             .ToArray() ?? [];
 
-        var professions = src.Talents?.Select(t => t.Description).ToArray() ?? [];
+        var professions = src.TalentShowcase?.Select(t => t.Description).ToArray() ?? [];
 
         return new PersonalDataViewModel(
             GetFullName(src),
@@ -143,15 +133,12 @@ public static class ProfileMapper
         );
     }
 
-    private static string GetFullName(ProfileEntity entity)
-    {
-        return string.Join(" ", new[] { entity.FirstName, entity.MiddleName, entity.LastName, entity.SecondLastName }
-            .Where(x => !string.IsNullOrWhiteSpace(x)));
-    }
+    private static string GetFullName(Profile entity) =>
+        entity.Name.GetFullName();
 
-    private static string GetContactValue(ProfileEntity entity, string contactTypeName)
+    private static string GetContactValue(Profile entity, string contactTypeName)
     {
-        return entity.Resume?.ContactInfo?
+        return entity.Header?.ContactInfo?
             .FirstOrDefault(c => string.Equals(c.ContactType.Name, contactTypeName, StringComparison.OrdinalIgnoreCase))
             ?.Value ?? string.Empty;
     }

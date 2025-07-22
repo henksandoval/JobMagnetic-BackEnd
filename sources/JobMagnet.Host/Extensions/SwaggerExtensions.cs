@@ -1,87 +1,61 @@
-﻿using Asp.Versioning.ApiExplorer;
-using JobMagnet.Host.Extensions.SettingSections;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
-// ReSharper disable ClassNeverInstantiated.Global
 namespace JobMagnet.Host.Extensions;
 
 internal static class SwaggerExtensions
 {
-    internal static IServiceCollection AddSwagger(this IServiceCollection service, IConfiguration configuration)
+    internal static IServiceCollection AddSwagger(this IServiceCollection services)
     {
-        var swaggerSettings = configuration.GetSection("SwaggerSettings").Get<SwaggerSettings>();
+        services.AddEndpointsApiExplorer();
 
-        if (swaggerSettings is null ||
-            string.IsNullOrWhiteSpace(swaggerSettings.Title) ||
-            string.IsNullOrWhiteSpace(swaggerSettings.Description))
-            throw new InvalidOperationException("SwaggerSettings is not set in the configuration.");
-
-        var provider = service.BuildServiceProvider();
-        var apiProvider = provider.GetRequiredService<IApiVersionDescriptionProvider>();
-
-        service.AddSwaggerGen(options =>
+        services.AddSwaggerGen(options =>
         {
             options.SchemaFilter<EnumSchemaFilter>();
             options.DocumentFilter<LowerCaseDocumentFilter>();
             options.UseInlineDefinitionsForEnums();
 
+            var provider = services.BuildServiceProvider();
+            var apiProvider = provider.GetRequiredService<IApiVersionDescriptionProvider>();
+
             foreach (var description in apiProvider.ApiVersionDescriptions)
             {
                 var info = new OpenApiInfo
                 {
-                    Title = swaggerSettings.Title,
-                    Version = description.ApiVersion.ToString(),
-                    Description = swaggerSettings.Description
+                    Title = $"JobMagnet API {description.ApiVersion}",
+                    Version = description.ApiVersion.ToString()
                 };
 
                 options.SwaggerDoc(description.GroupName, info);
             }
         });
 
-        return service;
+        return services;
     }
 
-    internal static WebApplication UseOpenApi(this WebApplication application)
+    internal static WebApplication UseSwagger(this WebApplication app)
     {
-        var swaggerSettings = application.Configuration.GetSection("SwaggerSettings").Get<SwaggerSettings>();
+        SwaggerBuilderExtensions.UseSwagger(app);
 
-        if (swaggerSettings is null || string.IsNullOrWhiteSpace(swaggerSettings.Url))
-            throw new InvalidOperationException("SwaggerSettings:Url is not set in the configuration.");
-
-        application.UseSwagger(x =>
+        app.UseSwaggerUI(config =>
         {
-            x.PreSerializeFilters.Add((openApiDocument, _) =>
-            {
-                openApiDocument.Servers = new List<OpenApiServer>
-                {
-                    new()
-                    {
-                        Url = swaggerSettings.Url
-                    }
-                };
-            });
-        });
-        application.UseSwaggerUI(config =>
-        {
-            var groupNames = application.Services.GetRequiredService<IApiVersionDescriptionProvider>()
-                .ApiVersionDescriptions
-                .Select(x => x.GroupName);
+            var apiProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
-            foreach (var groupName in groupNames)
+            foreach (var description in apiProvider.ApiVersionDescriptions)
             {
-                config.SwaggerEndpoint($"{swaggerSettings.Url}/swagger/{groupName}/swagger.json",
-                    groupName.ToUpperInvariant());
-                config.DocExpansion(DocExpansion.None);
-                config.EnableTryItOutByDefault();
+                config.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                    description.GroupName.ToUpperInvariant());
             }
 
+            config.DocExpansion(DocExpansion.None);
+            config.EnableTryItOutByDefault();
             config.DefaultModelRendering(ModelRendering.Example);
         });
 
-        return application;
+        return app;
     }
 }
 
@@ -89,7 +63,8 @@ internal class LowerCaseDocumentFilter : IDocumentFilter
 {
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
-        var paths = swaggerDoc.Paths.ToDictionary(entry => LowercaseEverythingButParameters(entry.Key),
+        var paths = swaggerDoc.Paths.ToDictionary(
+            entry => LowercaseEverythingButParameters(entry.Key),
             entry => entry.Value);
 
         swaggerDoc.Paths = new OpenApiPaths();

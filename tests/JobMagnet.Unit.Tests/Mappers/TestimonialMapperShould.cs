@@ -3,7 +3,8 @@ using AutoFixture;
 using FluentAssertions;
 using JobMagnet.Application.Contracts.Commands.Testimonial;
 using JobMagnet.Application.Mappers;
-using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
+
 using JobMagnet.Shared.Tests.Fixtures;
 
 namespace JobMagnet.Unit.Tests.Mappers;
@@ -15,15 +16,15 @@ public class TestimonialMapperShould
     [Fact]
     public void MapTestimonialEntityToTestimonialModelCorrectly()
     {
-        // Given
-        var entity = _fixture.Create<TestimonialEntity>();
+        // --- Given ---
+        var entity = _fixture.Create<Testimonial>();
 
-        // When
+        // --- When ---
         var testimonialModel = entity.ToModel();
 
-        // Then
+        // --- Then ---
         testimonialModel.Should().NotBeNull();
-        testimonialModel.Id.Should().Be(entity.Id);
+        testimonialModel.Id.Should().Be(entity.Id.Value);
         testimonialModel.TestimonialData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
     }
@@ -31,13 +32,13 @@ public class TestimonialMapperShould
     [Fact]
     public void MapTestimonialCommandToTestimonialEntityCorrectly()
     {
-        // Given
+        // --- Given ---
         var createCommand = _fixture.Create<TestimonialCommand>();
 
-        // When
+        // --- When ---
         var entity = createCommand.ToEntity();
 
-        // Then
+        // --- Then ---
         entity.Should().NotBeNull();
         entity.Should().BeEquivalentTo(createCommand.TestimonialData);
     }
@@ -45,23 +46,23 @@ public class TestimonialMapperShould
     [Fact]
     public void MapTestimonialEntityToTestimonialUpdateCommandCorrectly()
     {
-        // Given
-        var entity = _fixture.Create<TestimonialEntity>();
+        // --- Given ---
+        var entity = _fixture.Create<Testimonial>();
 
-        // When
+        // --- When ---
         var updateCommand = entity.ToUpdateCommand();
 
-        // Then
+        // --- Then ---
         updateCommand.Should().NotBeNull();
         updateCommand.TestimonialData.Should().BeEquivalentTo(entity, options =>
             options.Excluding(GetExcludeEntityProperties()));
     }
 
-    private static Expression<Func<TestimonialEntity, object>> GetExcludeEntityProperties()
+    private static Expression<Func<Testimonial, object>> GetExcludeEntityProperties()
     {
         return e => new
         {
-            e.Id, e.IsDeleted, e.Profile, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy, e.LastModifiedAt,
+            e.Id, e.IsDeleted, e.AddedAt, e.AddedBy, e.DeletedAt, e.DeletedBy, e.LastModifiedAt,
             e.LastModifiedBy
         };
     }

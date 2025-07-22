@@ -1,0 +1,79 @@
+using System.Diagnostics.CodeAnalysis;
+using CommunityToolkit.Diagnostics;
+using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
+using JobMagnet.Domain.Aggregates.SkillTypes.ValueObjects;
+using JobMagnet.Domain.Exceptions;
+using JobMagnet.Domain.Shared.Base.Aggregates;
+using JobMagnet.Shared.Abstractions;
+
+namespace JobMagnet.Domain.Aggregates.SkillTypes;
+
+public class SkillType : SoftDeletableAggregateRoot<SkillTypeId>
+{
+    public const int MaxNameLength = 50;
+    [SuppressMessage(
+        "SonarQube",
+        "S1075:URIs should not be hardcoded",
+        Justification = "Seeder data constants")]
+    private const string DefaultIconUri = "https://jobmagnet.com/default-icon.png";
+
+    private readonly List<SkillTypeAlias> _aliases = [];
+
+    public string Name { get; private set; }
+    public Uri IconUrl { get; private set; }
+    public SkillCategoryId CategoryId { get; private set; }
+
+    public virtual IReadOnlyCollection<SkillTypeAlias> Aliases => _aliases.AsReadOnly();
+    public virtual SkillCategory Category { get; private set; }
+
+    private SkillType()
+    {
+    }
+
+    private SkillType(SkillTypeId id, IClock clock, string name, SkillCategory category, Uri? iconUrl = null) : base(id, clock)
+    {
+        Guard.IsNotNullOrWhiteSpace(name);
+        Guard.HasSizeLessThanOrEqualTo(name, MaxNameLength);
+        Guard.IsNotNull(category);
+
+        iconUrl ??= new Uri(DefaultIconUri);
+
+        Id = id;
+        Name = name;
+        Category = category;
+        CategoryId = category.Id;
+        IconUrl = iconUrl;
+    }
+
+    public static SkillType CreateInstance(IGuidGenerator guidGenerator, IClock clock, string name, SkillCategory category, Uri? iconUrl = null)
+    {
+        var id = new SkillTypeId(guidGenerator.NewGuid());
+        return new SkillType(id, clock, name, category, iconUrl);
+    }
+
+    internal static SkillType Reconstitute(SkillTypeId id, IClock clock, string name, SkillCategory category, Uri? iconUrl = null) =>
+        new(id, clock, name, category, iconUrl);
+
+    public void AddAlias(string alias)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(alias);
+
+        if (_aliases.Any(a => a.Alias.Equals(alias, StringComparison.OrdinalIgnoreCase)))
+            throw new JobMagnetDomainException($"The alias ({alias}) already exists.");
+
+        var newAlias = new SkillTypeAlias(alias);
+        _aliases.Add(newAlias);
+    }
+
+    public void UpdateIcons(Uri? newIconUrl)
+    {
+        IconUrl = newIconUrl ?? throw new ArgumentNullException(nameof(newIconUrl), "Icon URL cannot be null.");
+    }
+
+    public void SetCategory(SkillCategory category)
+    {
+        Guard.IsNotNull(category);
+
+        Category = category;
+    }
+}

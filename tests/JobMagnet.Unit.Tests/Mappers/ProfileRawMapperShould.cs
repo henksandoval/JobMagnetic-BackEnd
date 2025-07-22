@@ -1,7 +1,6 @@
 using AutoFixture;
-using FluentAssertions;
+using AwesomeAssertions;
 using JobMagnet.Application.UseCases.CvParser.DTO.ParsingDTOs;
-using JobMagnet.Application.UseCases.CvParser.DTO.RawDTOs;
 using JobMagnet.Application.UseCases.CvParser.Mappers;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
@@ -15,13 +14,13 @@ public class ProfileRawMapperShould
     [Fact(DisplayName = "Map ProfileRaw to ProfileParseDto with direct string properties")]
     public void MapDirectStringPropertiesCorrectly()
     {
-        // Given
+        // --- Given ---
         var profileRaw = new ProfileRawBuilder(_fixture).Build();
 
-        // When
+        // --- When ---
         var result = profileRaw.ToProfileParseDto();
 
-        // Then
+        // --- Then ---
         var expectedParseDto = new ProfileParseDto
         {
             FirstName = profileRaw.FirstName,
@@ -51,15 +50,15 @@ public class ProfileRawMapperShould
     [InlineData("1990", 1990, 1, 1)]
     public void ParseValidBirthDateFormatsCorrectly(string rawDateString, int year, int month, int day)
     {
-        // Given
+        // --- Given ---
         var profileRaw = new ProfileRawBuilder(_fixture)
             .WithBirthDate(rawDateString)
             .Build();
 
-        // When
+        // --- When ---
         var result = profileRaw.ToProfileParseDto();
 
-        // Then
+        // --- Then ---
         var expectedDate = new DateOnly(year, month, day);
         var expectedParseDto = new ProfileParseDto { BirthDate = expectedDate };
 
@@ -73,46 +72,46 @@ public class ProfileRawMapperShould
     [InlineData(null)]
     public void MapInvalidOrMissingBirthDateToNull(string? rawDateString)
     {
-        // Given
+        // --- Given ---
         var profileRaw = new ProfileRawBuilder(_fixture)
             .WithBirthDate(rawDateString)
             .Build();
 
-        // When
+        // --- When ---
         var result = profileRaw.ToProfileParseDto();
 
-        // Then
+        // --- Then ---
         result.BirthDate.Should().BeNull();
     }
 
     [Fact(DisplayName = "Throw a exception when BirthDate is invalid")]
     public void ThrowWhenBirthDateIsInvalid()
     {
-        // Given
+        // --- Given ---
         var profileRaw = new ProfileRawBuilder(_fixture)
             .WithBirthDate("invalid-date-string")
             .Build();
 
-        // When
+        // --- When ---
         var act = () => profileRaw.ToProfileParseDto();
 
-        // Then
+        // --- Then ---
         act.Should().Throw<FormatException>();
     }
 
     [Fact(DisplayName = "Map ResumeRaw to ResumeParseDto")]
     public void MapResumeRawCorrectly()
     {
-        // Given
+        // --- Given ---
         var profileRaw = new ProfileRawBuilder(_fixture)
             .WithResume()
             .WithContactInfo()
             .Build();
 
-        // When
+        // --- When ---
         var result = profileRaw.ToProfileParseDto();
 
-        // Then
+        // --- Then ---
         result.Resume.Should().NotBeNull();
 
         var expectedResumeDto = new ResumeParseDto
@@ -135,15 +134,15 @@ public class ProfileRawMapperShould
     [Fact(DisplayName = "Map ResumeRaw when ContactInfo list is null")]
     public void MapResumeRawCorrectlyWhenContactInfoListIsEmpty()
     {
-        // Given
+        // --- Given ---
         var profileRaw = new ProfileRawBuilder(_fixture)
             .WithResume()
             .Build();
 
-        // When
+        // --- When ---
         var result = profileRaw.ToProfileParseDto();
 
-        // Then
+        // --- Then ---
         result.Resume.Should().NotBeNull();
         result.Resume.ContactInfo.Should().NotBeNull().And.BeEmpty();
     }
@@ -151,71 +150,41 @@ public class ProfileRawMapperShould
     [Fact(DisplayName = "Map SkillRaw to SkillParseDto")]
     public void MapSkillRawCorrectly()
     {
-        // Given
+        // --- Given ---
         var profileRaw = new ProfileRawBuilder(_fixture)
-            .WithSkills()
+            .WithSkillSet()
             .Build();
 
-        // When
+        // --- When ---
         var result = profileRaw.ToProfileParseDto();
 
-        // Then
-        result.Skill.Should().NotBeNull();
-        var expectedSkillDto = new SkillParseDto
+        // --- Then ---
+        result.SkillSet.Should().NotBeNull();
+        var expectedSkillDto = new SkillSetParseDto
         {
-            Overview = profileRaw.Skill!.Overview,
-            SkillDetails = profileRaw.Skill.SkillDetails!
-                .Select(skill => new SkillDetailParseDto { Name = skill.Name, Level = Convert.ToUInt16(skill.Level) })
+            Overview = profileRaw.SkillSet!.Overview,
+            Skills = profileRaw.SkillSet.Skills!
+                .Select(skill => new SkillParseDto { Name = skill.Name, Level = Convert.ToUInt16(skill.Level) })
                 .ToList()
         };
-        result.Skill.Should().BeEquivalentTo(expectedSkillDto);
+        result.SkillSet.Should().BeEquivalentTo(expectedSkillDto);
     }
 
-    [Fact(DisplayName = "Map ServiceRaw to ServiceParseDto")]
-    public void MapServiceRawCorrectly()
-    {
-        // Given
-        var profileRaw = new ProfileRawBuilder(_fixture)
-            .WithServices()
-            .Build();
-
-        // When
-        var result = profileRaw.ToProfileParseDto();
-
-        // Then
-        result.Services.Should().NotBeNull();
-        var expectedServiceDto = new ServiceParseDto
-        {
-            Overview = profileRaw.Services!.Overview,
-            GalleryItems = profileRaw.Services.GalleryItems!
-                .Select(x => new GalleryItemParseDto
-                {
-                    Title = x.Title,
-                    Type = x.Type,
-                    Description = x.Description,
-                    UrlImage = x.UrlImage,
-                    UrlVideo = x.UrlVideo,
-                    UrlLink = x.UrlLink
-                })
-                .ToList()
-        };
-        result.Services.Should().BeEquivalentTo(expectedServiceDto);
-    }
-
-    [Fact(DisplayName = "Map SummaryRaw (Introduction, Education, WorkExperience) to SummaryParseDto", Skip = "Temp skip")]
+    [Fact(DisplayName = "Map SummaryRaw (Introduction, AcademicDegree, WorkExperience) to SummaryParseDto")]
     public void MapSummaryRawCorrectly()
     {
-        // Given
+        // --- Given ---
+        //TODO: Revisar formato de fechas Expected property result.Summary.Education[3].EndDate to be <2009-11-04>, but found <2009-04-11>.
         var profileRaw = new ProfileRawBuilder(_fixture)
             .WithSummaries()
             .WithEducation()
             .WithWorkExperience()
             .Build();
 
-        // When
+        // --- When ---
         var result = profileRaw.ToProfileParseDto();
 
-        // Then
+        // --- Then ---
         result.Summary.Should().NotBeNull();
         var expectedSummaryDto = new SummaryParseDto
         {
@@ -228,7 +197,7 @@ public class ProfileRawMapperShould
                     Degree = education.Degree,
                     Description = education.Description,
                     StartDate = DateOnly.Parse(education.StartDate!),
-                    EndDate = string.IsNullOrEmpty(education.EndDate) ? null : DateOnly.Parse(education.EndDate!),
+                    EndDate = string.IsNullOrEmpty(education.EndDate) ? null : DateOnly.Parse(education.EndDate!)
                 }).ToList(),
             WorkExperiences = profileRaw.Summary.WorkExperiences!
                 .Select(work => new WorkExperienceParseDto
@@ -239,6 +208,11 @@ public class ProfileRawMapperShould
                     Description = work.Description,
                     StartDate = DateOnly.Parse(work.StartDate!),
                     EndDate = string.IsNullOrEmpty(work.EndDate) ? null : DateOnly.Parse(work.EndDate!),
+                    Responsibilities = work.Responsibilities!
+                        .Select(responsibility => new ResponsibilityParseDto
+                        {
+                            Description = responsibility.Description
+                        }).ToList()
                 }).ToList()
         };
         result.Summary.Should().BeEquivalentTo(expectedSummaryDto);
@@ -247,35 +221,35 @@ public class ProfileRawMapperShould
     [Fact(DisplayName = "Map TalentRaw list to TalentParseDto list")]
     public void MapTalentListCorrectly()
     {
-        // Given
+        // --- Given ---
         var profileRaw = new ProfileRawBuilder(_fixture)
             .WithTalents()
             .Build();
 
-        // When
+        // --- When ---
         var result = profileRaw.ToProfileParseDto();
 
-        // Then
+        // --- Then ---
         var expectedTalents = profileRaw.Talents
             .Select(talent => new TalentParseDto { Description = talent.Description })
             .ToList();
         result.Talents.Should().BeEquivalentTo(expectedTalents);
     }
 
-    [Fact(DisplayName = "Map PortfolioGalleryRaw list to PortfolioGalleryParseDto list")]
-    public void MapPortfolioGalleryListCorrectly()
+    [Fact(DisplayName = "Map ProjectRaw list to ProjectParseDto list")]
+    public void MapProjectListCorrectly()
     {
-        // Given
+        // --- Given ---
         var profileRaw = new ProfileRawBuilder(_fixture)
-            .WithPortfolio()
+            .WithProjects()
             .Build();
 
-        // When
+        // --- When ---
         var result = profileRaw.ToProfileParseDto();
 
-        // Then
-        var expectedPortfolio = profileRaw.PortfolioGallery
-            .Select(gallery => new PortfolioGalleryParseDto
+        // --- Then ---
+        var expectedProjects = profileRaw.Project
+            .Select(gallery => new ProjectParseDto
             {
                 Title = gallery.Title,
                 Description = gallery.Description,
@@ -284,21 +258,21 @@ public class ProfileRawMapperShould
                 UrlVideo = gallery.UrlVideo,
                 Type = gallery.Type
             }).ToList();
-        result.PortfolioGallery.Should().BeEquivalentTo(expectedPortfolio);
+        result.Project.Should().BeEquivalentTo(expectedProjects);
     }
 
     [Fact(DisplayName = "Map TestimonialRaw list to TestimonialParseDto list")]
     public void MapTestimonialListCorrectly()
     {
-        // Given
+        // --- Given ---
         var profileRaw = new ProfileRawBuilder(_fixture)
             .WithTestimonials()
             .Build();
 
-        // When
+        // --- When ---
         var result = profileRaw.ToProfileParseDto();
 
-        // Then
+        // --- Then ---
         var expectedTestimonials = profileRaw.Testimonials!
             .Select(testimonial => new TestimonialParseDto
             {

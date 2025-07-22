@@ -2,7 +2,7 @@
 
 public sealed record SkillBase
 {
-    public long ProfileId { get; init; }
-    public string? Overview { get; init; }
-    public IList<SkillItemBase> SkillDetails { get; init; } = Enumerable.Empty<SkillItemBase>().ToList();
+    public Guid Id { get; init; }
+    public ushort ProficiencyLevel { get; init; }
+    public string? Name { get; init; }
 }

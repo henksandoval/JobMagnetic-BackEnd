@@ -1,11 +1,18 @@
 ﻿using AutoFixture;
-using JobMagnet.Domain.Core.Entities;
+using AwesomeAssertions;
+using JobMagnet.Application.Mappers;
+using JobMagnet.Domain.Aggregates.Contact;
+using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Domain.Aggregates.SkillTypes;
+using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Host.Mappers;
 using JobMagnet.Host.ViewModels.Profile;
+using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
+using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Fixtures;
 using JobMagnet.Shared.Tests.Fixtures.Builders;
 using JobMagnet.Shared.Utils;
-using Shouldly;
 
 namespace JobMagnet.Unit.Tests.Mappers;
 
@@ -13,17 +20,28 @@ public class ProfileMapperShould
 {
     private readonly IFixture _fixture = FixtureBuilder.Build();
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when PersonalData is defined")]
+    [Fact(DisplayName = "Map Profile to ProfileResponse when is defined")]
+    public void MapperProfileToProfileResponseWithSimpleData()
+    {
+        var profile = _fixture.Create<Profile>();
+
+        var profileResponse = profile.ToModel();
+
+        profileResponse.Should().NotBeNull();
+        profileResponse.Id.Should().Be(profile.Id.Value);
+        profileResponse.ProfileData.Should().BeEquivalentTo(profile, options => options.ExcludingMissingMembers());
+    }
+
+    [Fact(DisplayName = "Map Profile to ProfileViewModel when PersonalData is defined")]
     public void MapperProfileEntityToProfileViewModelWithPersonalData()
     {
+        var contactTypes = GetContactTypes();
         var profileBuilder = new ProfileEntityBuilder(_fixture)
             .WithTalents()
-            .WithResume()
-            .WithContactInfo();
+            .WithHeader()
+            .WithContactInfo(contactTypes);
 
         var profile = profileBuilder.Build();
-        profile.SecondLastName = string.Empty;
-        profile.MiddleName = string.Empty;
 
         var profileExpected = new ProfileViewModel();
 
@@ -31,20 +49,21 @@ public class ProfileMapperShould
 
         var result = profile.ToViewModel();
 
-        result.ShouldNotBeNull();
-        result.ShouldBeOfType<ProfileViewModel>();
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ProfileViewModel>();
 
-        result.PersonalData!.ShouldBeEquivalentTo(profileExpected.PersonalData);
+        result.PersonalData!.Should().BeEquivalentTo(profileExpected.PersonalData);
     }
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when About is defined", Skip = "Temp skip")]
+    [Fact(DisplayName = "Map Profile to ProfileViewModel when About is defined")]
     public void MapperProfileEntityToProfileViewModelWithAbout()
     {
-        var profileBuilder = new ProfileEntityBuilder(_fixture)
-            .WithResume()
-            .WithContactInfo();
+        var contactTypes = GetContactTypes();
 
-        var profile = profileBuilder.Build();
+        var profile = new ProfileEntityBuilder(_fixture)
+            .WithHeader()
+            .WithContactInfo(contactTypes)
+            .Build();
 
         var profileExpected = new ProfileViewModel();
 
@@ -52,19 +71,18 @@ public class ProfileMapperShould
 
         var result = profile.ToViewModel();
 
-        result.ShouldNotBeNull();
-        result.ShouldBeOfType<ProfileViewModel>();
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ProfileViewModel>();
 
-        result.About!.ShouldBeEquivalentTo(profileExpected.About);
+        result.About!.Should().BeEquivalentTo(profileExpected.About);
     }
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Testimonial is defined")]
+    [Fact(DisplayName = "Map Profile to ProfileViewModel when Testimonial is defined")]
     public void MapperProfileEntityToProfileViewModelWithTestimonials()
     {
-        var profileBuilder = new ProfileEntityBuilder(_fixture)
-            .WithTestimonials();
-
-        var profile = profileBuilder.Build();
+        var profile = new ProfileEntityBuilder(_fixture)
+            .WithTestimonials()
+            .Build();
 
         var profileExpected = new ProfileViewModel();
 
@@ -72,59 +90,46 @@ public class ProfileMapperShould
 
         var result = profile.ToViewModel();
 
-        result.ShouldNotBeNull();
-        result.ShouldBeOfType<ProfileViewModel>();
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ProfileViewModel>();
 
-        result.Testimonials!.ShouldBeEquivalentTo(profileExpected.Testimonials);
+        result.Testimonials!.Should().BeEquivalentTo(profileExpected.Testimonials);
     }
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Service is defined")]
-    public void MapperProfileEntityToProfileViewModelWithService()
+    [Fact(DisplayName = "Map Profile to ProfileViewModel when Project is defined")]
+    public void MapperProfileEntityToProfileViewModelWithProject()
     {
-        var profileBuilder = new ProfileEntityBuilder(_fixture)
-            .WithServices();
-
-        var profile = profileBuilder.Build();
+        var profile = new ProfileEntityBuilder(_fixture)
+            .WithProjects()
+            .Build();
 
         var profileExpected = new ProfileViewModel();
 
-        profileExpected = profileExpected with { Service = GetServiceViewModel(profile) };
+        profileExpected = profileExpected with { Project = GetProjectViewModel(profile) };
 
         var result = profile.ToViewModel();
 
-        result.ShouldNotBeNull();
-        result.ShouldBeOfType<ProfileViewModel>();
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ProfileViewModel>();
 
-        result.Service!.ShouldBeEquivalentTo(profileExpected.Service);
+        result.Project.Should().BeEquivalentTo(profileExpected.Project);
     }
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when PortfolioGallery is defined")]
-    public void MapperProfileEntityToProfileViewModelWithPortfolioGallery()
-    {
-        var profileBuilder = new ProfileEntityBuilder(_fixture)
-            .WithPortfolio();
-
-        var profile = profileBuilder.Build();
-
-        var profileExpected = new ProfileViewModel();
-
-        profileExpected = profileExpected with { PortfolioGallery = GetPortfolioViewModel(profile) };
-
-        var result = profile.ToViewModel();
-
-        result.ShouldNotBeNull();
-        result.ShouldBeOfType<ProfileViewModel>();
-
-        result.PortfolioGallery.ShouldBeEquivalentTo(profileExpected.PortfolioGallery);
-    }
-
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when Skills are defined")]
+    [Fact(DisplayName = "Map Profile to ProfileViewModel when Skills are defined")]
     public void MapperProfileEntityToProfileViewModelWithSkills()
     {
-        var profileBuilder = new ProfileEntityBuilder(_fixture)
-            .WithSkills();
-
-        var profile = profileBuilder.Build();
+        var sequentialGuidGenerator = new SequentialGuidGenerator();
+        var clock = new DeterministicClock();
+        var skillTypes = SkillSeeder.SeedData.Types.Select(s =>
+            {
+                var category = SkillCategory.CreateInstance(sequentialGuidGenerator, SkillCategory.DefaultCategoryName);
+                return SkillType.CreateInstance(sequentialGuidGenerator, clock, s.Name, category);
+            }
+        ).ToArray();
+        var profile = new ProfileEntityBuilder(_fixture)
+            .WithSkillSet()
+            .WithSkills(skillTypes)
+            .Build();
 
         var profileExpected = new ProfileViewModel();
 
@@ -132,19 +137,18 @@ public class ProfileMapperShould
 
         var result = profile.ToViewModel();
 
-        result.ShouldNotBeNull();
-        result.ShouldBeOfType<ProfileViewModel>();
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ProfileViewModel>();
 
-        result.SkillSet!.ShouldBeEquivalentTo(profileExpected.SkillSet);
+        result.SkillSet!.Should().BeEquivalentTo(profileExpected.SkillSet);
     }
 
-    [Fact(DisplayName = "Map ProfileEntity to ProfileViewModel when SummaryViewModel is defined")]
-    public void MapperProfileEntityToSummaryViewModelWithPortfolioGallery()
+    [Fact(DisplayName = "Map Profile to ProfileViewModel when SummaryViewModel is defined")]
+    public void MapperProfileEntityToSummaryViewModelWithProject()
     {
-        var profileBuilder = new ProfileEntityBuilder(_fixture)
-            .WithSummary();
-
-        var profile = profileBuilder.Build();
+        var profile = new ProfileEntityBuilder(_fixture)
+            .WithCareerHistory()
+            .Build();
 
         var profileExpected = new ProfileViewModel();
 
@@ -152,68 +156,57 @@ public class ProfileMapperShould
 
         var result = profile.ToViewModel();
 
-        result.ShouldNotBeNull();
-        result.ShouldBeOfType<ProfileViewModel>();
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ProfileViewModel>();
 
-        result.Summary.ShouldBeEquivalentTo(profileExpected.Summary);
+        result.Summary.Should().BeEquivalentTo(profileExpected.Summary);
     }
 
-    private static PersonalDataViewModel GetPersonalDataViewModel(ProfileEntity entity)
+    private static PersonalDataViewModel GetPersonalDataViewModel(Profile entity)
     {
         return new PersonalDataViewModel(
-            $"{entity.FirstName} {entity.LastName}",
-            entity.Talents.Select(x => x.Description).ToArray(),
-            entity.Resume.ContactInfo.Select(c => new SocialNetworksViewModel(
+            $"{entity.Name.GetFullName()}",
+            entity.TalentShowcase.Select(x => x.Description).ToArray(),
+            entity.Header.ContactInfo.Select(c => new SocialNetworksViewModel(
                 c.ContactType.Name,
                 c.Value,
                 c.ContactType.IconClass ?? string.Empty,
-                c.ContactType.IconUrl ?? string.Empty
+                c.ContactType.IconUrl?.AbsoluteUri ?? string.Empty
             )).ToArray()
         );
     }
 
-    private static AboutViewModel GetAboutViewModel(ProfileEntity entity)
+    private static AboutViewModel GetAboutViewModel(Profile entity)
     {
         var webSite = GetContactValue("Website");
         var email = GetContactValue("Email");
-        var mobilePhone = GetContactValue("Mobile Phone");
+        var mobilePhone = GetContactValue("Phone");
 
         return new AboutViewModel(
-            entity.ProfileImageUrl,
-            entity.Resume.About,
-            entity.Resume.JobTitle,
-            entity.Resume.Overview,
+            entity.ProfileImage.Url?.AbsolutePath ?? string.Empty,
+            entity.Header.About,
+            entity.Header.JobTitle,
+            entity.Header.Overview,
             entity.BirthDate!.Value,
             webSite,
             mobilePhone,
-            entity.Resume.Address!,
+            entity.Header.Address,
             entity.BirthDate.GetAge(),
-            entity.Resume.Title ?? string.Empty,
+            entity.Header.Title ?? string.Empty,
             email,
-            "",
-            entity.Resume.Summary
+            entity.Header.Summary ?? string.Empty,
+            entity.Header.Summary
         );
 
         string GetContactValue(string contactTypeName)
         {
-            return entity.Resume.ContactInfo
+            return entity.Header.ContactInfo
                 .FirstOrDefault(x => x.ContactType.Name == contactTypeName)
                 ?.Value ?? string.Empty;
         }
     }
 
-    private static ServiceViewModel GetServiceViewModel(ProfileEntity profile)
-    {
-        var serviceDetails = profile.Services.GalleryItems.Select(g => new ServiceDetailsViewModel(
-                g.Title,
-                g.Description,
-                g.UrlImage))
-            .ToArray();
-
-        return new ServiceViewModel(profile.Services.Overview, serviceDetails);
-    }
-
-    private static TestimonialsViewModel[]? GetTestimonialViewModel(ProfileEntity profile)
+    private static TestimonialsViewModel[]? GetTestimonialViewModel(Profile profile)
     {
         return profile.Testimonials.Select(t => new TestimonialsViewModel(
                 t.Name,
@@ -223,9 +216,9 @@ public class ProfileMapperShould
             .ToArray();
     }
 
-    private static PortfolioViewModel[]? GetPortfolioViewModel(ProfileEntity profile)
+    private static ProjectViewModel[]? GetProjectViewModel(Profile profile)
     {
-        return profile.PortfolioGallery.Select(p => new PortfolioViewModel(
+        return profile.Portfolio.Select(p => new ProjectViewModel(
                 p.Position,
                 p.Title,
                 p.Description,
@@ -236,18 +229,18 @@ public class ProfileMapperShould
             .ToArray();
     }
 
-    private static SkillSetViewModel GetSkillViewModel(ProfileEntity profile)
+    private static SkillSetViewModel GetSkillViewModel(Profile profile)
     {
-        var skills = profile.Skill.SkillDetails
-            .Select(skill => new SkillDetailsViewModel(skill.Name, skill.IconUrl, skill.Rank))
+        var skills = profile.GetSkills()
+            .Select(skill => new SkillDetailsViewModel(skill.SkillType.Name, skill.SkillType.IconUrl.AbsoluteUri, skill.Position))
             .ToArray();
 
-        return new SkillSetViewModel(profile.Skill.Overview!, skills);
+        return new SkillSetViewModel(profile.SkillSet.Overview!, skills);
     }
 
-    private static SummaryViewModel GetSummaryViewModel(ProfileEntity profile)
+    private static SummaryViewModel GetSummaryViewModel(Profile profile)
     {
-        var education = profile.Summary.Education
+        var education = profile.CareerHistory.AcademicDegree
             .Select(e => new AcademicBackgroundViewModel(
                 e.Degree,
                 e.StartDate.ToString("yyyy-MM-dd"),
@@ -255,18 +248,32 @@ public class ProfileMapperShould
                 e.Description))
             .ToArray();
 
-        var workExperiences = profile.Summary.WorkExperiences
+        var workExperiences = profile.CareerHistory.WorkExperiences
             .Select(w => new PositionViewModel(
                 w.JobTitle,
                 w.StartDate.ToString("yyyy-MM-dd"),
                 w.CompanyLocation,
                 w.Description,
-                w.Responsibilities.Select(d => d.Description).ToArray()))
+                w.Highlights.Select(d => d.Description).ToArray()))
             .ToArray();
 
         return new SummaryViewModel(
-            profile.Summary.Introduction,
+            profile.CareerHistory.Introduction,
             new EducationViewModel(education),
             new WorkExperienceViewModel(workExperiences));
+    }
+
+    private static ContactType[] GetContactTypes()
+    {
+        var sequentialGuidGenerator = new SequentialGuidGenerator();
+        var clock = new DeterministicClock();
+        var contactTypes = ContactTypeSeeder.SeedData.Types.Select(ct => ContactType.CreateInstance(
+            sequentialGuidGenerator,
+            clock,
+            ct.Name,
+            ct.IconClass,
+            ct.IconUrl)
+        ).ToArray();
+        return contactTypes;
     }
 }

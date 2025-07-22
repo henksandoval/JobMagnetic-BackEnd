@@ -1,187 +1,235 @@
-﻿using JobMagnet.Domain.Core.Entities;
-using JobMagnet.Domain.Services;
+﻿using CSharpFunctionalExtensions;
+using JobMagnet.Domain.Aggregates.Contact;
+using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Domain.Aggregates.SkillTypes;
+using JobMagnet.Infrastructure.Exceptions;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders.Collections;
-using ServiceCollection = JobMagnet.Infrastructure.Persistence.Seeders.Collections.ServiceCollection;
+using JobMagnet.Shared.Abstractions;
+using JobMagnet.Shared.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace JobMagnet.Infrastructure.Persistence.Seeders;
 
 public interface ISeeder
 {
-    Task RegisterMasterTablesAsync(CancellationToken cancellationToken);
-    Task RegisterProfileAsync(CancellationToken cancellationToken);
+    Task<Maybe<ProfileId>> RegisterProfileAsync(CancellationToken cancellationToken);
 }
 
-public class Seeder(JobMagnetDbContext context) : ISeeder
+public class Seeder(JobMagnetDbContext context, IGuidGenerator guidGenerator, IClock clock) : ISeeder
 {
-    public async Task RegisterMasterTablesAsync(CancellationToken cancellationToken)
-    {
-        if (context.ContactTypes.Any()) return;
+    private const string About = """
+                                  ¡Hello! I'm Johnson Brandon, a passionate web developer who loves creating dynamic, easy-to-use websites.
+                                  I have over 5 years of experience in the technology industry, working with a variety of clients to make their visions a reality.
+                                  """;
 
-        await context.ContactTypes.AddRangeAsync(new ContactTypesCollection().GetContactTypes(), cancellationToken);
+    private const string Summary = """
+                                    Developed and maintained web applications for various clients, focusing on front-end development and user experience.
+                                    Assisted in the development of websites and applications, learning best practices and improving coding skills.",
+                                    """;
+
+    private const string Overview = """
+                                     In my free time I enjoy hiking, reading science fiction novels, and experimenting with new technologies.
+                                     I am always eager to learn new things and take on exciting challenges.",
+                                     """;
+
+    private static readonly IList<(string Name, string JobTitle, string PhotoUrl, string Feedback)> Testimonials =
+    [
+        ("Jane Smith", "Portfolio Manager", "https://randomuser.me/api/portraits/women/28.jpg",
+            "Brandon is a talented developer who consistently delivers high-quality work. His ability to understand client needs and translate them into functional designs is impressive."),
+        ("Alice Johnson", "Software Engineer", "https://randomuser.me/api/portraits/women/82.jpg",
+            "Working with Brandon has been a pleasure. He is always willing to go the extra mile to ensure the project is a success. His technical skills and creativity are top-notch."),
+        ("John Smith", "UX Designer", "https://randomuser.me/api/portraits/men/31.jpg",
+            "The project was delivered on time and exceeded our expectations. Highly recommend!"),
+        ("Michael Brown", "CTO", "https://randomuser.me/api/portraits/men/82.jpg",
+            "The team consistently delivered beyond expectations and maintained excellent communication."),
+        ("Emily Davis", "Product Owner", "https://randomuser.me/api/portraits/women/11.jpg",
+            "Their innovative solutions and commitment to quality have been pivotal in our project’s success, making them an invaluable partner in our journey.")
+    ];
+
+    public static int TestimonialsCount => Testimonials.Count;
+
+    public async Task<Maybe<ProfileId>> RegisterProfileAsync(CancellationToken cancellationToken)
+    {
+        if (await context.Profiles.AnyAsync(p => p.Name.FirstName == "John" && p.Name.LastName == "Doe", cancellationToken))
+            return Maybe<ProfileId>.None;
+
+        var sampleProfile = await BuildSampleProfileAsync(cancellationToken);
+
+        await context.Profiles.AddAsync(sampleProfile, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
+        return sampleProfile.Id;
     }
 
-    public async Task RegisterProfileAsync(CancellationToken cancellationToken)
+    private async Task<Profile> BuildSampleProfileAsync(CancellationToken cancellationToken)
     {
-        var profile = await RegisterProfileDataAsync();
-        await context.SaveChangesAsync(cancellationToken);
-        var tasks = new List<Task>
+        var name = new PersonName("John", "Doe", string.Empty, string.Empty);
+        var profileImage = new ProfileImage("https://bootstrapmade.com/content/demo/MyResume/assets/img/profile-img.jpg");
+        var birthDate = new BirthDate(new DateOnly(1990, 04, 01));
+        var profile = Profile.CreateInstance(guidGenerator, clock, name, birthDate, profileImage);
+
+        AddPublicIdentifier(profile);
+        AddTalents(profile);
+        await AddProfileHeaderAsync(profile, cancellationToken).ConfigureAwait(false);
+        await AddSkills(profile, cancellationToken).ConfigureAwait(false);
+        AddCareerHistory(profile);
+        AddProject(profile);
+        AddTestimonials(profile);
+
+        return profile;
+    }
+
+    private void AddPublicIdentifier(Profile profile)
+    {
+        profile.AddVanityUrl(guidGenerator, "john-doe-1a2b3c");
+    }
+
+    private void AddTalents(Profile profile)
+    {
+        var talentsSeeder = new TalentsSeeder(guidGenerator, profile.Id);
+        var talentsCollection = talentsSeeder.GetTalents();
+         foreach (var talent in talentsCollection)
+                   profile.AddTalent(guidGenerator, talent.Description);
+               
+    }
+
+    private async Task AddProfileHeaderAsync(Profile profile, CancellationToken cancellationToken)
+    {
+        var contactTypeMap = await BuildContactTypesMapAsync(cancellationToken).ConfigureAwait(false);
+
+        profile.AddHeader(
+            guidGenerator,
+            "Mr.",
+            "",
+            "UI/UX Designer & Web Developer",
+            About,
+            Summary,
+            Overview,
+            "123 Main St, Springfield, USA");
+
+        foreach (var (value, contactTypeName) in ContactInfoRawData.Data)
+            if (contactTypeMap.TryGetValue(contactTypeName, out var contactType))
+                profile.Header!.AddContactInfo(guidGenerator, value, contactType);
+            else
+                throw new JobMagnetInfrastructureException(
+                    $"Seeding error: Contact type '{contactTypeName}' not found in database.");
+    }
+
+    private async Task AddSkills(Profile profile, CancellationToken cancellationToken)
+    {
+        var skillTypeMap = await BuildSkillTypesMapAsync(cancellationToken).ConfigureAwait(false);
+
+        const string overview = """
+                                I am a passionate web developer with a strong background in front-end and back-end technologies.
+                                I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
+                                I am always eager to learn new technologies and improve my skills.
+                                """;
+        var skillSet = SkillSet.CreateInstance(guidGenerator, profile.Id, overview);
+
+        foreach (var (skillName, proficiencyLevel, _) in SkillInfoCollection.Data)
+            if (skillTypeMap.TryGetValue(skillName, out var skillType))
+                skillSet.AddSkill(guidGenerator, proficiencyLevel, skillType);
+            else
+                throw new JobMagnetInfrastructureException(
+                    $"Seeding error: Skill type '{skillName}' not found in database.");
+
+        profile.AddSkillSet(skillSet);
+    }
+
+    private void AddCareerHistory(Profile profile)
+    {
+        var careerHistory = CareerHistory.CreateInstance(
+            guidGenerator,
+            profile.Id,
+            "Professional with experience in your area or profession, recognized for key skills. Committed to value or professional goal, seeking to contribute to the growth of company or industry.");
+
+        var careerHistorySeeder = new CareerHistorySeeder(guidGenerator, clock, careerHistory.Id);
+
+        foreach (var education in careerHistorySeeder.GetAcademicDegrees().ToList())
+            careerHistory.AddAcademicDegree(
+                guidGenerator,
+                education.Degree,
+                education.InstitutionName,
+                education.InstitutionLocation,
+                education.StartDate,
+                education.EndDate,
+                education.Description);
+
+        foreach (var workExperience in careerHistorySeeder.GetWorkExperience().ToList())
+            careerHistory.AddWorkExperience(
+                guidGenerator,
+                workExperience.JobTitle,
+                workExperience.CompanyName,
+                workExperience.CompanyLocation,
+                workExperience.StartDate,
+                workExperience.EndDate,
+                workExperience.Description
+            );
+
+        profile.AddCareerHistory(careerHistory);
+    }
+
+    private void AddProject(Profile profile)
+    {
+        foreach (var item in ProjectRawData.Data)
+            _ = profile.AddProject(
+                guidGenerator,
+                item.Title,
+                item.Description,
+                item.UrlLink,
+                item.UrlImage,
+                item.UrlVideo,
+                item.Type
+            );
+    }
+
+    private void AddTestimonials(Profile profile)
+    {
+        foreach (var item in Testimonials)
+            profile.AddTestimonial(
+                guidGenerator,
+                item.Name,
+                item.JobTitle,
+                item.Feedback,
+                item.PhotoUrl);
+    }
+
+    private async Task<Dictionary<string, ContactType>> BuildContactTypesMapAsync(
+        CancellationToken cancellationToken)
+    {
+        var map = new Dictionary<string, ContactType>(StringComparer.OrdinalIgnoreCase);
+
+        var allTypes = await context.ContactTypes
+            .Include(ct => ct.Aliases)
+            .ToListAsync(cancellationToken);
+
+        foreach (var type in allTypes)
         {
-            RegisterTalentsAsync(profile.Id),
-            RegisterResumeAsync(profile.Id),
-            RegisterTestimonialAsync(profile.Id),
-            RegisterServiceAsync(profile.Id),
-            RegisterSummaryAsync(profile.Id),
-            RegisterSkillAsync(profile.Id),
-            RegisterPortfolioAsync(profile.Id)
-        };
+            map[type.Name] = type;
+            foreach (var alias in type.Aliases) map[alias.Alias] = type;
+        }
 
-        await Task.WhenAll(tasks);
-        await context.SaveChangesAsync(cancellationToken);
+        return map;
     }
 
-    private async Task<ProfileEntity> RegisterProfileDataAsync()
+    private async Task<Dictionary<string, SkillType>> BuildSkillTypesMapAsync(
+        CancellationToken cancellationToken)
     {
-        if (context.Profiles.Any()) return context.Profiles.FirstOrDefault()!;
+        var map = new Dictionary<string, SkillType>(StringComparer.OrdinalIgnoreCase);
 
-        var profileEntity = new ProfileEntity
+        var allTypes = await context.SkillTypes
+            .Include(ct => ct.Aliases)
+            .AsTracking()
+            .ToListAsync(cancellationToken);
+
+        foreach (var type in allTypes)
         {
-            Id = 0,
-            FirstName = "John",
-            LastName = "Doe",
-            BirthDate = new DateOnly(1990, 04, 01),
-            ProfileImageUrl = "https://bootstrapmade.com/content/demo/MyResume/assets/img/profile-img.jpg",
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        };
+            map[type.Name] = type;
+            foreach (var alias in type.Aliases) map[alias.Alias] = type;
+        }
 
-        var publicProfile = new PublicProfileIdentifierEntity(profileEntity, "john-doe-1a2b3c");
-        profileEntity.PublicProfileIdentifiers.Add(publicProfile);
-
-        await context.Profiles.AddAsync(profileEntity);
-        return profileEntity;
-    }
-
-    private async Task RegisterTalentsAsync(long profileId)
-    {
-        if (context.Talents.Any()) return;
-        await context.Talents.AddRangeAsync(new TalentsCollection(profileId).GetTalents());
-    }
-
-    private async Task RegisterResumeAsync(long profileId)
-    {
-        if (context.Resumes.Any()) return;
-
-        var resumeEntity = new ResumeEntity
-        {
-            Id = 0,
-            ProfileId = profileId,
-            JobTitle = "UI/UX Designer & Web Developer",
-            Title = "Mr.",
-            About = """
-                    ¡Hello! I'm Johnson Brandon, a passionate web developer who loves creating dynamic, easy-to-use websites.
-                    I have over 5 years of experience in the technology industry, working with a variety of clients to make their visions a reality.
-                    """,
-            Summary = """
-                      Developed and maintained web applications for various clients, focusing on front-end development and user experience.
-                      Assisted in the development of websites and applications, learning best practices and improving coding skills.",
-                      """,
-            Overview = """
-                       In my free time I enjoy hiking, reading science fiction novels, and experimenting with new technologies.
-                       I am always eager to learn new things and take on exciting challenges.",
-                       """,
-            Address = "123 Main St, Springfield, USA",
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        };
-
-        resumeEntity.ContactInfo = new ContactInfoCollection(resumeEntity.Id).GetContactInfoCollection();
-
-        await context.Resumes.AddAsync(resumeEntity);
-    }
-
-    private async Task RegisterSkillAsync(long profileId)
-    {
-        if (context.Skills.Any()) return;
-
-        var skillEntity = new SkillEntity
-        {
-            Id = 0,
-            ProfileId = profileId,
-            Overview = """
-                       I am a passionate web developer with a strong background in front-end and back-end technologies.
-                       I have experience in creating dynamic and responsive websites using HTML, CSS, JavaScript, and various frameworks.
-                       I am always eager to learn new technologies and improve my skills.
-                       """,
-            SkillDetails = new SkillsCollection().GetSkills().ToList(),
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        };
-
-        await context.Skills.AddAsync(skillEntity);
-    }
-
-    private async Task RegisterSummaryAsync(long profileId)
-    {
-        if (context.Summaries.Any()) return;
-
-        var summaryEntity = new SummaryEntity
-        {
-            Id = 0,
-            Introduction =
-                "Professional with experience in your area or profession, recognized for key skills. Committed to value or professional goal, seeking to contribute to the growth of company or industry.",
-            ProfileId = profileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        };
-
-        FillEducation(summaryEntity);
-        await context.Summaries.AddAsync(summaryEntity);
-    }
-
-    private async Task RegisterServiceAsync(long profileId)
-    {
-        if (context.Services.Any()) return;
-
-        var serviceEntity = new ServiceEntity
-        {
-            Id = 0,
-            Overview =
-                "I offer a wide range of web development services, including front-end and back-end development, UI/UX design, and more.",
-            ProfileId = profileId,
-            AddedAt = DateTime.Now,
-            AddedBy = Guid.Empty
-        };
-
-        FillServiceGalleryItem(serviceEntity);
-
-        await context.Services.AddAsync(serviceEntity);
-    }
-
-    private async Task RegisterPortfolioAsync(long profileId)
-    {
-        if (context.PortfolioGalleries.Any()) return;
-
-        await context.PortfolioGalleries.AddRangeAsync(new PortfolioCollection(profileId).GetPortfolioGallery());
-    }
-
-    private async Task RegisterTestimonialAsync(long profileId)
-    {
-        if (context.Testimonials.Any()) return;
-
-        var testimonials = new TestimonialCollection(profileId).GetTestimonials();
-        await context.Testimonials.AddRangeAsync(testimonials);
-    }
-
-    private static void FillServiceGalleryItem(ServiceEntity serviceEntity)
-    {
-        serviceEntity.GalleryItems = new ServiceCollection(serviceEntity.Id).GetServicesGallery().ToList();
-    }
-
-    private static void FillEducation(SummaryEntity summaryEntity)
-    {
-        summaryEntity.Education = new SummaryCollection(summaryEntity.Id).GetEducation().ToList();
-        summaryEntity.WorkExperiences = new SummaryCollection(summaryEntity.Id).GetWorkExperience().ToList();
+        return map;
     }
 }

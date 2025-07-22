@@ -19,11 +19,20 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Content Update="appsettings.Development.json">
+            <DependentUpon>appsettings.json</DependentUpon>
+        </Content>
+        <Compile Update="Controllers\V1\ProfileController.*.cs">
+            <DependentUpon>ProfileController.cs</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0"/>
         <PackageReference Include="CSharpFunctionalExtensions" Version="3.6.0"/>
         <PackageReference Include="Gemini.NET" Version="3.4.5.1"/>
+        <PackageReference Include="Light.GuardClauses" Version="13.0.0" />
         <PackageReference Include="Mapster" Version="7.4.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.3"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
             <PrivateAssets>all</PrivateAssets>
@@ -34,7 +43,8 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="8.0.0"/>
+        <PackageReference Include="Scalar.AspNetCore" Version="2.5.3"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
     </ItemGroup>
 
     <ItemGroup>

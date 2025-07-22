@@ -1,0 +1,119 @@
+using CommunityToolkit.Diagnostics;
+using JobMagnet.Application.Contracts.Commands.Talent;
+using JobMagnet.Application.Contracts.Responses.TalentShowcase;
+using JobMagnet.Application.Mappers;
+using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Domain.Exceptions;
+using Microsoft.AspNetCore.Mvc;
+
+namespace JobMagnet.Host.Controllers.V1;
+
+public partial class ProfileController
+{
+    [HttpPost("{profileId:guid}/talent")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<IResult> AddTalentsToProfileAsync(Guid profileId, [FromBody] TalentCommand command, CancellationToken cancellationToken)
+    {
+        if (profileId != command.TalentData?.ProfileId)
+            throw new ArgumentException($"{nameof(command.TalentData.ProfileId)} does not match the profileId in the route.");
+
+        var profile = await GetProfileWithTalent(profileId, cancellationToken).ConfigureAwait(false);
+
+        if (profile is null)
+            return Results.NotFound();
+        
+        var talent = profile.AddTalent(
+            guidGenerator,
+            command.TalentData.Description ?? string.Empty
+        );
+
+        profileCommandRepository.Update(profile);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        
+        var result = talent.ToModel();
+        
+        return Results.CreatedAtRoute("GetTalentsByProfile", new { profileId }, result);
+    }
+
+    [HttpGet("{profileId:guid}/talents", Name = "GetTalentsByProfile")]
+    [ProducesResponseType(typeof(IEnumerable<TalentResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> GetTalentsByProfileAsync(Guid profileId, CancellationToken cancellationToken)
+    {
+        var profile = await GetProfileWithTalent(profileId, cancellationToken).ConfigureAwait(false);
+
+        if (profile is null)
+            return Results.NotFound();
+
+        var response = profile.TalentShowcase
+            .Select(talent => talent.ToModel())
+            .ToList();
+
+        return Results.Ok(response);
+    }
+    
+    [HttpPut("{profileId:guid}/talents/{talentId:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> UpdateTalentAsync(Guid profileId, Guid talentId, [FromBody] TalentCommand command, CancellationToken cancellationToken)
+    {
+        var profile = await GetProfileWithTalent(profileId, cancellationToken).ConfigureAwait(false);
+
+        if (profile is null)
+            return Results.NotFound();
+
+        var talentData = command.TalentData;
+        Guard.IsNotNull(talentData);
+
+        try
+        {
+            profile.UpdateTalent(
+                new TalentId(talentId),
+                talentData.Description ?? string.Empty
+            );
+            
+            profileCommandRepository.Update(profile);
+        }
+        catch (Exception ex)
+        {
+            return Results.NotFound(new {ex.Message});
+        }
+        
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Results.NoContent();
+    }
+    
+    private async Task<Profile?> GetProfileWithTalent(Guid profileId, CancellationToken cancellationToken)
+    {
+        return await queryRepository
+            .WhereCondition(p => p.Id == new ProfileId(profileId))
+            .WithTalents()
+            .BuildFirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+    
+    [HttpDelete("{profileId:guid}/talents/{talentId:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IResult> DeleteTalentAsync(Guid profileId, Guid talentId, CancellationToken cancellationToken)
+    {
+        var profile = await GetProfileWithTalent(profileId, cancellationToken).ConfigureAwait(false);
+
+        if (profile is null)
+            return Results.NotFound();
+
+        try
+        {
+            profile.RemoveTalent(new TalentId(talentId));
+            profileCommandRepository.Update(profile);
+        }
+        catch (NotFoundException ex)
+        {
+            return Results.NotFound(new { ex.Message });
+        }
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Results.NoContent();
+    }
+}

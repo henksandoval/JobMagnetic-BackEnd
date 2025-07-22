@@ -1,31 +1,26 @@
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
 
 namespace JobMagnet.Domain.Services;
 
 public interface IProfileSlugGenerator
 {
-    string GenerateProfileSlug(ProfileEntity profileEntity);
+    string GenerateProfileSlug(Profile profile);
 }
 
 public partial class ProfileSlugGenerator : IProfileSlugGenerator
 {
     private static readonly char[] Delimiters = [' ', '-', '_'];
 
-    [GeneratedRegex(@"[\s_]+")]
-    private static partial Regex ConsecutiveWhitespaceOrUnderscoresRegex();
-    [GeneratedRegex("[^a-z0-9-]")]
-    private static partial Regex FindInvalidUrlSlugCharactersRegex();
-    [GeneratedRegex("-+")]
-    private static partial Regex MultipleDashRegex();
-
-    public string GenerateProfileSlug(ProfileEntity profileEntity)
+    public string GenerateProfileSlug(Profile profile)
     {
-        ArgumentNullException.ThrowIfNull(profileEntity, nameof(profileEntity));
+        ArgumentNullException.ThrowIfNull(profile, nameof(profile));
 
-        var rawFirstName = GetFirstSignificantWord(profileEntity.FirstName);
-        var rawLastName = GetFirstSignificantWord(profileEntity.LastName);
+        var rawFirstName = GetFirstSignificantWord(profile.Name.FirstName);
+        var rawLastName = GetFirstSignificantWord(profile.Name.LastName);
 
         rawFirstName = CleanStringForUrl(rawFirstName);
         rawLastName = CleanStringForUrl(rawLastName);
@@ -33,12 +28,21 @@ public partial class ProfileSlugGenerator : IProfileSlugGenerator
         var initialSlug = GenerateSlug(rawFirstName, rawLastName);
 
         var uniqueSuffix = Guid.NewGuid().ToString("N")[..6];
-        var maxBaseLength = PublicProfileIdentifierEntity.MaxNameLength - (uniqueSuffix.Length + 1);
+        var maxBaseLength = VanityUrl.MaxNameLength - (uniqueSuffix.Length + 1);
 
         var selectedNamePart = TruncateAndTrim(initialSlug, maxBaseLength);
 
         return $"{selectedNamePart}-{uniqueSuffix}";
     }
+
+    [GeneratedRegex(@"[\s_]+")]
+    private static partial Regex ConsecutiveWhitespaceOrUnderscoresRegex();
+
+    [GeneratedRegex("[^a-z0-9-]")]
+    private static partial Regex FindInvalidUrlSlugCharactersRegex();
+
+    [GeneratedRegex("-+")]
+    private static partial Regex MultipleDashRegex();
 
     private static string GenerateSlug(string rawFirstName, string rawLastName)
     {
@@ -50,7 +54,7 @@ public partial class ProfileSlugGenerator : IProfileSlugGenerator
             (true, true) => $"{rawFirstName}-{rawLastName}",
             (true, false) => rawFirstName,
             (false, true) => rawLastName,
-            (false, false) => PublicProfileIdentifierEntity.DefaultSlug
+            (false, false) => VanityUrl.DefaultSlug
         };
     }
 
@@ -58,20 +62,14 @@ public partial class ProfileSlugGenerator : IProfileSlugGenerator
     {
         if (string.IsNullOrEmpty(input)) return string.Empty;
 
-        if (input.Length > maxLength)
-        {
-            input = input[..maxLength];
-        }
+        if (input.Length > maxLength) input = input[..maxLength];
 
         return input.TrimEnd('-');
     }
 
     private static string CleanStringForUrl(string input)
     {
-        if (string.IsNullOrWhiteSpace(input))
-        {
-            return string.Empty;
-        }
+        if (string.IsNullOrWhiteSpace(input)) return string.Empty;
 
         var result = input.ToLowerInvariant();
         result = ConsecutiveWhitespaceOrUnderscoresRegex().Replace(result, "-");
@@ -85,14 +83,11 @@ public partial class ProfileSlugGenerator : IProfileSlugGenerator
     private static string RemoveDiacritics(string text)
     {
         var normalizedString = text.Normalize(NormalizationForm.FormD);
-        var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
+        var stringBuilder = new StringBuilder(normalizedString.Length);
         foreach (var character in normalizedString)
         {
-            var unicodeCategory = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(character);
-            if (unicodeCategory != System.Globalization.UnicodeCategory.NonSpacingMark)
-            {
-                stringBuilder.Append(character);
-            }
+            var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(character);
+            if (unicodeCategory != UnicodeCategory.NonSpacingMark) stringBuilder.Append(character);
         }
 
         return stringBuilder.ToString().Normalize(NormalizationForm.FormC);

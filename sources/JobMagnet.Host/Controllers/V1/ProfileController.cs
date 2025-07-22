@@ -6,31 +6,46 @@ using JobMagnet.Application.Contracts.Responses.Profile;
 using JobMagnet.Application.Mappers;
 using JobMagnet.Application.UseCases.CvParser;
 using JobMagnet.Application.UseCases.CvParser.Commands;
-using JobMagnet.Domain.Core.Entities;
+using JobMagnet.Domain.Aggregates.Profiles;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
+using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Domain.Ports.Repositories;
 using JobMagnet.Domain.Ports.Repositories.Base;
+using JobMagnet.Domain.Services;
 using JobMagnet.Host.Controllers.Base;
 using JobMagnet.Host.Mappers;
 using JobMagnet.Host.ViewModels.Profile;
+using JobMagnet.Shared.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobMagnet.Host.Controllers.V1;
 
 [ApiVersion("1")]
-public class ProfileController(
+public partial class ProfileController(
+    IGuidGenerator guidGenerator,
+    IClock clock,
     ICvParserHandler cvParser,
     ILogger<ProfileController> logger,
     IProfileQueryRepository queryRepository,
-    IQueryRepository<PublicProfileIdentifierEntity, long> publicProfileRepository,
-    ICommandRepository<ProfileEntity> commandRepository) : BaseController<ProfileController>(logger)
+    IQueryRepository<SkillCategory, SkillCategoryId> skillCategoryRepository,
+    IUnitOfWork unitOfWork,
+    IQueryRepository<VanityUrl, long> publicProfileRepository,
+    ICommandRepository<Profile> profileCommandRepository,
+    ISkillTypeResolverService skillTypeResolverService) : BaseController<ProfileController>()
 {
     [HttpPost]
     [ProducesResponseType(typeof(ProfileResponse), StatusCodes.Status201Created)]
     public async Task<IResult> CreateAsync([FromBody] ProfileCommand createCommand, CancellationToken cancellationToken)
     {
-        var entity = createCommand.ToEntity();
-        await commandRepository.CreateAsync(entity, cancellationToken);
-        await commandRepository.SaveChangesAsync(cancellationToken);
+        var data = createCommand.ProfileData;
+        var name = new PersonName(data.FirstName, data.LastName, data.MiddleName, data.SecondLastName);
+        var profileImage = new ProfileImage(data.ProfileImageUrl);
+        var birthDate = new BirthDate(data.BirthDate);
+
+        var entity = Profile.CreateInstance(guidGenerator, clock, name, birthDate, profileImage);
+        await profileCommandRepository.CreateAsync(entity, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         var newRecord = entity.ToModel();
 
         return Results.CreatedAtRoute(nameof(GetProfileByIdAsync), new { id = newRecord.Id }, newRecord);
@@ -47,15 +62,15 @@ public class ProfileController(
     {
         var command = new CvParserCommand(cvFile.OpenReadStream(), cvFile.FileName, cvFile.ContentType);
         var response = await cvParser.ParseAsync(command, cancellationToken).ConfigureAwait(false);
-        return Results.Ok(response);
+        return Results.CreatedAtRoute(nameof(GetProfileByIdAsync), new { id = response.ProfileId }, response);
     }
 
-    [HttpGet("{id:long}", Name = nameof(GetProfileByIdAsync))]
+    [HttpGet("{id:guid}", Name = nameof(GetProfileByIdAsync))]
     [ProducesResponseType(typeof(ProfileResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> GetProfileByIdAsync(long id)
+    public async Task<IResult> GetProfileByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = await queryRepository.GetByIdAsync(new ProfileId(id), cancellationToken);
 
         if (entity is null)
             return Results.NotFound();
@@ -65,22 +80,25 @@ public class ProfileController(
         return Results.Ok(responseModel);
     }
 
-
-    [HttpPut("{id:long}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> PutAsync(int id, ProfileCommand command, CancellationToken cancellationToken)
+    public async Task<IResult> PutAsync(Guid id, ProfileCommand command, CancellationToken cancellationToken)
     {
-        var entity = await queryRepository.GetByIdAsync(id);
+        var entity = await queryRepository.GetByIdAsync(new ProfileId(id), cancellationToken);
 
         if (entity is null)
             return Results.NotFound();
 
-        entity.UpdateEntity(command);
+        var data = command.ProfileData;
+        var name = new PersonName(data.FirstName, data.LastName, data.MiddleName, data.SecondLastName);
+        var profileImage = new ProfileImage(data.ProfileImageUrl);
+        var birthDate = new BirthDate(data.BirthDate);
 
-        await commandRepository
-            .Update(entity)
+        entity.Update(name, birthDate, profileImage, clock);
+
+        await unitOfWork
             .SaveChangesAsync(cancellationToken)
             .ConfigureAwait(false);
 
@@ -90,12 +108,12 @@ public class ProfileController(
     [HttpGet]
     [ProducesResponseType(typeof(ProfileViewModel), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> GetProfileAsync([FromQuery] ProfileQueryParameters queryParameters)
+    public async Task<IResult> GetProfileAsync([FromQuery] ProfileQueryParameters queryParameters, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queryParameters.ProfileSlug);
 
         var publicProfile = await publicProfileRepository
-            .FirstOrDefaultAsync(x => x.ProfileSlugUrl == queryParameters.ProfileSlug)
+            .FirstOrDefaultAsync(x => x.ProfileSlugUrl == queryParameters.ProfileSlug, cancellationToken)
             .ConfigureAwait(false);
 
         if (publicProfile is null)
@@ -103,14 +121,13 @@ public class ProfileController(
 
         var entity = await queryRepository
             .WhereCondition(x => x.Id == publicProfile.ProfileId)
-            .WithResume()
+            .WithProfileHeader()
             .WithSkills()
             .WithTalents()
-            .WithPortfolioGallery()
-            .WithSummary()
-            .WithServices()
+            .WithProject()
+            .WithCareerHistory()
             .WithTestimonials()
-            .BuildFirstOrDefaultAsync();
+            .BuildFirstOrDefaultAsync(cancellationToken, true);
 
         if (entity is null)
             return Results.NotFound();
