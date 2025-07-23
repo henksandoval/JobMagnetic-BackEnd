@@ -28,8 +28,8 @@ public class AcademicDegree : SoftDeletableEntity<AcademicDegreeId>
         Guard.IsNotNullOrWhiteSpace(description);
         Guard.IsNotNull(startDate);
 
-        if (DateTime.TryParse(endDate?.ToString(), out var end))
-            Guard.IsGreaterThan(end, startDate);
+        if (endDate.HasValue)
+            Guard.IsGreaterThan(endDate.Value, startDate);
 
         Degree = degree;
         InstitutionName = institutionName;
@@ -40,11 +40,19 @@ public class AcademicDegree : SoftDeletableEntity<AcademicDegreeId>
         Description = description;
     }
 
-    public static AcademicDegree CreateInstance(IGuidGenerator guidGenerator, CareerHistoryId careerHistoryId, string degree,
-        string institutionName, string institutionLocation, DateTime startDate, DateTime? endDate, string description)
+    public static AcademicDegree CreateInstance(CreateAcademicDegreeCommand command)
     {
-        var id = new AcademicDegreeId(guidGenerator.NewGuid());
-        return new AcademicDegree(id, careerHistoryId, degree, institutionName, institutionLocation, startDate, endDate, description);
+        var id = new AcademicDegreeId(command.GuidGenerator.NewGuid());
+        return new AcademicDegree(
+            id,
+            command.CareerHistoryId,
+            command.Academic.Degree,
+            command.Academic.InstitutionName,
+            command.Academic.InstitutionLocation,
+            command.StartDate,
+            command.EndDate,
+            command.Academic.Description
+        );
     }
 
     public void Update(string degree, string institutionName, string institutionLocation,
