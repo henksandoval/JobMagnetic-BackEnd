@@ -11,24 +11,43 @@ public record CreateAcademicDegreeCommand
     public DateTime StartDate { get; init; }
     public DateTime? EndDate { get; init; }
 
-    public record AcademicInfo(string Degree, string InstitutionName, string InstitutionLocation, string Description, bool ApplyValidations = true)
+    public record AcademicInfo
     {
-        public string Degree { get; init; } = ApplyValidations ? ValidateAcademicInfo(Degree, InstitutionName, InstitutionLocation, Description) : Degree?.Trim() ?? string.Empty;
-        
-        private static string ValidateAcademicInfo(string degree, string institutionName, string institutionLocation, string description)
-        {
-            if (string.IsNullOrWhiteSpace(degree))
-                throw new ArgumentException("Degree cannot be null or empty.", nameof(degree));
-            if (string.IsNullOrWhiteSpace(institutionName))
-                throw new ArgumentException("Institution name cannot be null or empty.", nameof(institutionName));
-            if (string.IsNullOrWhiteSpace(institutionLocation))
-                throw new ArgumentException("Institution location cannot be null or empty.", nameof(institutionLocation));
-            if (string.IsNullOrWhiteSpace(description))
-                throw new ArgumentException("Description cannot be null or empty.", nameof(description));
+        public string Degree { get; init; }
+        public string InstitutionName { get; init; }
+        public string InstitutionLocation { get; init; }
+        public string Description { get; init; }
 
-            return degree.Trim();
+        public AcademicInfo(
+            string degree,
+            string institutionName,
+            string institutionLocation,
+            string description,
+            bool applyValidations = true)
+        {
+            if (applyValidations)
+            {
+                ValidateField(degree, nameof(degree));
+                ValidateField(institutionName, nameof(institutionName));
+                ValidateField(institutionLocation, nameof(institutionLocation));
+                ValidateField(description, nameof(description));
+            }
+
+            Degree = degree?.Trim() ?? string.Empty;
+            InstitutionName = institutionName?.Trim() ?? string.Empty;
+            InstitutionLocation = institutionLocation?.Trim() ?? string.Empty;
+            Description = description?.Trim() ?? string.Empty;
+        }
+
+        private static void ValidateField(string value, string fieldName)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException($"{fieldName} cannot be null, empty, or whitespace.", fieldName);
+            }
         }
     }
+
     public CreateAcademicDegreeCommand(
         IGuidGenerator guidGenerator,
         CareerHistoryId careerHistoryId,
