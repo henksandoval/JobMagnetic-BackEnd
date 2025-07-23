@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using AutoFixture;
 using AwesomeAssertions;
+using AwesomeAssertions.Execution;
 using JobMagnet.Application.Contracts.Commands.Skill;
 using JobMagnet.Application.Contracts.Responses.Base;
 using JobMagnet.Application.Contracts.Responses.Skill;
@@ -23,10 +24,15 @@ public partial class ProfileControllerShould
     public async Task AddSkillSet_WhenProfileExistsAndPayloadIsValid()
     {
         // --- Given ---
-        _loadSkillSet = false;
+        _loadSkillSet = true;
         _skillsCount = 0;
         var profile = await SetupProfileAsync();
-        var skillSetData = GetSkillSetData(profile.Id.Value, 5);
+        var skillSetData = new SkillSetBase
+        {
+            ProfileId = profile.Id.Value,
+            Overview = FixtureBuilder.Faker.Lorem.Sentence(),
+            Skills = new List<SkillBase>()
+        };
         var skillNotRegistered = new SkillBase
         {
             Name = "Cunnilingus",
@@ -42,41 +48,47 @@ public partial class ProfileControllerShould
         var response = await _httpClient.PostAsync($"{RequestUriController}/{profile.Id.Value}/skills", httpContent);
 
         // --- Then ---
-        response.IsSuccessStatusCode.Should().BeTrue();
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        using (new AssertionScope())
+        {
+            response.IsSuccessStatusCode.Should().BeTrue();
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<SkillResponse>(response);
-        responseData.Should().NotBeNull();
+            var responseData = await TestUtilities.DeserializeResponseAsync<SkillResponse>(response);
+            responseData.Should().NotBeNull();
 
-        var locationHeader = response.Headers.Location!.ToString();
-        locationHeader.Should().NotBeNull();
-        var expectedHeader = $"{RequestUriController}/{profile.Id.Value}/skills";
-        locationHeader.Should().Match(currentHeader =>
-            currentHeader.Contains(expectedHeader, StringComparison.OrdinalIgnoreCase)
-        );
+            var locationHeader = response.Headers.Location!.ToString();
+            locationHeader.Should().NotBeNull();
+            var expectedHeader = $"{RequestUriController}/{profile.Id.Value}/skills";
+            locationHeader.Should().Match(currentHeader =>
+                currentHeader.Contains(expectedHeader, StringComparison.OrdinalIgnoreCase)
+            );
 
-        var entityCreated = await FindSkillSetByIdAsync(profile.Id);
+            var entityCreated = await FindSkillSetByIdAsync(profile.Id);
 
-        entityCreated.Should().NotBeNull();
-        entityCreated.ProfileId.Should().Be(profile.Id);
-        entityCreated.Skills.Should().HaveSameCount(createRequest.SkillSetData.Skills);
+            entityCreated.Should().NotBeNull();
+            entityCreated.ProfileId.Should().Be(profile.Id);
+            entityCreated.Skills.Should().HaveSameCount(createRequest.SkillSetData.Skills);
+        }
     }
 
     [Fact(DisplayName = "Should return 200 OK with a list of SkillSets when the profile exists and has SkillSets")]
     public async Task GetSkillSets_WhenProfileExistsAndHasSkillSets()
     {
         // --- Given ---
-        var profileWithSkillSets = await SetupProfileAsync();
-        var expectedSkillSets = profileWithSkillSets.SkillSet!.ToModel();
+        _loadSkillSet = true;
+        _skillsCount = 5;
+        var profileWithSkillSet = await SetupProfileAsync();
+        var expectedSkillSet = profileWithSkillSet.SkillSet!.ToModel();
 
         // --- When ---
-        var response = await _httpClient.GetAsync($"{RequestUriController}/{profileWithSkillSets.Id.Value}/skills");
+        var response = await _httpClient.GetAsync($"{RequestUriController}/{profileWithSkillSet.Id.Value}/skills");
 
         // --- Then ---
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<List<SkillResponse>>(response);
+        var responseData = await TestUtilities.DeserializeResponseAsync<SkillResponse>(response);
         responseData.Should().NotBeNull();
+        responseData.Should().BeEquivalentTo(expectedSkillSet);
     }
 
     [Fact(DisplayName = "Should return 404 Not Found when the profile ID does not exist")]
@@ -106,14 +118,16 @@ public partial class ProfileControllerShould
         // --- Then ---
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var responseData = await TestUtilities.DeserializeResponseAsync<List<SkillResponse>>(response);
-        responseData.Should().NotBeNull().And.BeEmpty();
+        var responseData = await TestUtilities.DeserializeResponseAsync<SkillResponse>(response);
+        responseData.Should().NotBeNull();
+        responseData.SkillSetData.Skills.Should().BeEmpty();
     }
 
     [Fact(DisplayName = "Should return 204 No Content when updating an existing SkillSet")]
     public async Task UpdateSkillSet_WhenProfileAndSkillSetExistAndPayloadIsValid()
     {
         // --- Given ---
+        _loadSkillSet = true;
         _skillsCount = 8;
         var profile = await SetupProfileAsync();
         var skillSetToUpdate = profile.GetSkills().First();
@@ -131,21 +145,24 @@ public partial class ProfileControllerShould
             .With(c => c.SkillSetData, skillSetData)
             .Create();
 
-        var requestUri = $"{RequestUriController}/{profile.Id.Value}/skills/{skillSetToUpdate.Id.Value}";
+        var requestUri = $"{RequestUriController}/{profile.Id.Value}/skills/{profile.SkillSet!.Id.Value}";
 
         // --- When ---
         var response = await _httpClient.PutAsJsonAsync(requestUri, command);
 
         // --- Then ---
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        var entityUpdated = await FindSkillSetByIdAsync(profile.Id);
+        using (new AssertionScope())
+        {
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+            var entityUpdated = await FindSkillSetByIdAsync(profile.Id);
 
-        entityUpdated.Should().NotBeNull();
-        entityUpdated.ProfileId.Should().Be(profile.Id);
-        var commandBase = command.SkillSetData;
-        entityUpdated.Skills.Should().HaveSameCount(profile.GetSkills());
-        var skillUpdated = entityUpdated.Skills.First(x => x.Id == skillSetToUpdate.Id);
-        skillUpdated.ProficiencyLevel.Should().Be(newProficiencyLevel);
+            entityUpdated.Should().NotBeNull();
+            entityUpdated.ProfileId.Should().Be(profile.Id);
+
+            entityUpdated.Skills.Should().HaveSameCount(profile.GetSkills());
+            var skillUpdated = entityUpdated.Skills.First(x => x.Id == skillSetToUpdate.Id);
+            skillUpdated.ProficiencyLevel.Should().Be(newProficiencyLevel);
+        }
     }
 
     [Fact(DisplayName = "Should return 404 Not Found when the profile ID does not exist for an update")]

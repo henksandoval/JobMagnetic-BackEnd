@@ -19,14 +19,12 @@ public partial class ProfileControllerShould
     public async Task CreateCareerHistory_WhenProfileExistsAndPayloadIsValid()
     {
         // --- Given ---
-        _loadCareerHistory = false;
         _educationCount = 0;
         _workExperienceCount = 0;
         var profile = await SetupProfileAsync();
 
-        var workExperienceBases = _fixture.CreateMany<WorkExperienceBase>(5)
-            .ToList();
-        var educationBases = _fixture.CreateMany<AcademicDegreeBase>(5).ToList();
+        var workExperienceBases = GenerateUniqueWorkExperiences(5);
+        var educationBases = GenerateUniqueAcademicDegrees(5);
         var careerHistoryBase = _fixture.Build<CareerHistoryBase>()
             .With(x => x.ProfileId, profile.Id.Value)
             .With(x => x.WorkExperiences, workExperienceBases)
@@ -484,5 +482,35 @@ public partial class ProfileControllerShould
             .BuildFirstOrDefaultAsync(CancellationToken.None, true);
 
         return entityCreated?.CareerHistory;
+    }
+
+    private List<AcademicDegreeBase> GenerateUniqueAcademicDegrees(int count)
+    {
+        var set = new HashSet<(string Degree, string Institution)>();
+        var list = new List<AcademicDegreeBase>();
+
+        while (list.Count < count)
+        {
+            var next = _fixture.Create<AcademicDegreeBase>();
+            if (!set.Add((next.Degree, next.InstitutionName)!)) continue;
+            list.Add(next);
+        }
+
+        return list;
+    }
+
+    private List<WorkExperienceBase> GenerateUniqueWorkExperiences(int count)
+    {
+        var set = new HashSet<(string JobTitle, string CompanyName, DateTime StartDate)>();
+        var list = new List<WorkExperienceBase>();
+
+        while (list.Count < count)
+        {
+            var next = _fixture.Create<WorkExperienceBase>();
+            if (!set.Add((next.JobTitle, next.CompanyName, next.StartDate)!)) continue;
+            list.Add(next);
+        }
+
+        return list;
     }
 }

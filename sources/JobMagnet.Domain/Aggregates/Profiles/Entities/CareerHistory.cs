@@ -41,7 +41,7 @@ public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
         Introduction = introduction;
     }
 
-    public AcademicDegree AddEducation(IGuidGenerator guidGenerator, string degree, string institutionName,
+    public AcademicDegree AddAcademicDegree(IGuidGenerator guidGenerator, string degree, string institutionName,
         string institutionLocation, DateTime startDate, DateTime? endDate, string description)
     {
         Guard.IsNotNull(guidGenerator);
@@ -49,7 +49,7 @@ public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
         if (_academicDegree.Count >= 10)
             throw new BusinessRuleValidationException("Cannot add more than 10 AcademicDegrees.");
 
-        if (_academicDegree.Any(q => q.Degree == degree && q.InstitutionName == institutionName))
+        if (AcademicDegreeExists(degree, institutionName))
             throw new BusinessRuleValidationException("A AcademicDegree with this degree and institution already exists.");
 
         var academicDegree = Entities.AcademicDegree.CreateInstance(
@@ -62,6 +62,9 @@ public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
         _academicDegree.Add(academicDegree);
         return academicDegree;
     }
+
+    public bool AcademicDegreeExists(string degree, string institutionName) =>
+        _academicDegree.Any(q => q.Degree == degree && q.InstitutionName == institutionName);
 
     public void UpdateAcademicDegree(AcademicDegreeId academicDegreeId, string degree, string institutionName,
         string institutionLocation, DateTime startDate, DateTime? endDate, string description)
@@ -93,8 +96,7 @@ public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
         if (_workExperiences.Count >= 15)
             throw new BusinessRuleValidationException("Cannot add more than 15 work experiences.");
 
-        if (_workExperiences.Any(w => w.JobTitle == jobTitle && w.CompanyName == companyName &&
-                                      w.StartDate == startDate))
+        if (WorkExperienceExists(jobTitle, companyName, startDate))
             throw new BusinessRuleValidationException("A work experience with this job title, company and start date already exists.");
 
         var workExperience = WorkExperience.CreateInstance(
@@ -110,6 +112,9 @@ public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
         _workExperiences.Add(workExperience);
         return workExperience;
     }
+
+    public bool WorkExperienceExists(string jobTitle, string companyName, DateTime startDate) =>
+        _workExperiences.Any(w => w.JobTitle == jobTitle && w.CompanyName == companyName && w.StartDate == startDate);
 
     public void UpdateWorkExperience(WorkExperienceId workExperienceId, string jobTitle, string companyName,
         string companyLocation, DateTime startDate, DateTime? endDate, string description)

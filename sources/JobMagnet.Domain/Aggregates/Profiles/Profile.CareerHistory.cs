@@ -8,6 +8,9 @@ namespace JobMagnet.Domain.Aggregates.Profiles;
 
 public partial class Profile
 {
+    public IReadOnlyCollection<AcademicDegree> AcademicDegreesInCareerHistory => CareerHistory?.AcademicDegree ?? [];
+    public IReadOnlyCollection<WorkExperience> WorkExperiencesInCareerHistory => CareerHistory?.WorkExperiences ?? [];
+
     public void AddCareerHistory(CareerHistory careerHistory)
     {
         Guard.IsNotNull(careerHistory);
@@ -40,13 +43,16 @@ public partial class Profile
         CareerHistory = null;
     }
 
+    public bool AcademicDegreeExistsInCareerHistory(string degree, string institutionName) =>
+        CareerHistory!.AcademicDegreeExists(degree, institutionName);
+
     public AcademicDegree AddAcademicDegreeToCareerHistory(IGuidGenerator guidGenerator, string degree,
         string institutionName, string institutionLocation, DateTime startDate, DateTime? endDate, string description)
     {
         if (CareerHistory is null)
             throw NotFoundException.For<CareerHistory, ProfileId>(Id);
 
-        return CareerHistory.AddEducation(guidGenerator, degree, institutionName, institutionLocation,
+        return CareerHistory.AddAcademicDegree(guidGenerator, degree, institutionName, institutionLocation,
             startDate, endDate, description);
     }
 
@@ -67,6 +73,9 @@ public partial class Profile
 
         CareerHistory.RemoveAcademicDegree(academicDegreeId);
     }
+
+    public bool WorkExperienceExists(string jobTitle, string companyName, DateTime startDate) =>
+        CareerHistory!.WorkExperienceExists(jobTitle, companyName, startDate);
 
     public WorkExperience AddWorkExperienceToCareerHistory(IGuidGenerator guidGenerator, string jobTitle,
         string companyName, string companyLocation, DateTime startDate, DateTime? endDate, string description)

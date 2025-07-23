@@ -27,6 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".miscellaneous", ".miscella
 		.azure\GitVersion.yml = .azure\GitVersion.yml
 		README.es.md = README.es.md
 		JobMagnet.sln.DotSettings = JobMagnet.sln.DotSettings
+		.gitattributes = .gitattributes
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobMagnet.Integration.Tests", "tests\JobMagnet.Integration.Tests\JobMagnet.Integration.Tests.csproj", "{4E357F41-1734-49B7-90E8-E1087FC6201F}"

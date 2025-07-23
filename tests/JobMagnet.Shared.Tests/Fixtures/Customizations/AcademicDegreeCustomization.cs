@@ -10,7 +10,7 @@ using JobMagnet.Shared.Utils;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Customizations;
 
-public class EducationCustomization : ICustomization
+public class AcademicDegreeCustomization : ICustomization
 {
     private static readonly Faker Faker = FixtureBuilder.Faker;
     private readonly IGuidGenerator _guidGenerator = new SequentialGuidGenerator();
@@ -18,14 +18,14 @@ public class EducationCustomization : ICustomization
     public void Customize(IFixture fixture)
     {
         fixture.Customize<AcademicDegree>(composer => composer
-            .FromFactory(EducationFactory)
+            .FromFactory(AcademicDegreeFactory)
             .OmitAutoProperties());
 
-        fixture.Register(EducationRawFactory);
-        fixture.Register(EducationBaseFactory);
+        fixture.Register(AcademicDegreeRawFactory);
+        fixture.Register(AcademicDegreeBaseFactory);
     }
 
-    private AcademicDegree EducationFactory()
+    private AcademicDegree AcademicDegreeFactory()
     {
         var startDate = Faker.Date.Past(20, DateTime.Now.AddYears(-5));
         var endDate = Faker.Date.Between(startDate, startDate.AddYears(5))
@@ -50,13 +50,13 @@ public class EducationCustomization : ICustomization
         return education;
     }
 
-    private static EducationRaw EducationRawFactory()
+    private static AcademicDegreeRaw AcademicDegreeRawFactory()
     {
         var startDate = Faker.Date.Past(20, DateTime.Now.AddYears(-5));
         var endDate = Faker.Date.Between(startDate, startDate.AddYears(5))
             .OrNull(Faker, 0.25f);
 
-        var education = new EducationRaw(
+        var education = new AcademicDegreeRaw(
             Faker.PickRandom(StaticCustomizations.Degrees),
             Faker.PickRandom(StaticCustomizations.Universities),
             Faker.Address.FullAddress(),
@@ -68,7 +68,7 @@ public class EducationCustomization : ICustomization
         return education;
     }
 
-    private static AcademicDegreeBase EducationBaseFactory()
+    private static AcademicDegreeBase AcademicDegreeBaseFactory()
     {
         var startDate = Faker.Date.Past(20, DateTime.Now.AddYears(-5));
         var endDate = Faker.Date.Between(startDate, startDate.AddYears(5))

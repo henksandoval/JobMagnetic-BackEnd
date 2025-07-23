@@ -94,7 +94,7 @@ public class ProfileRawBuilder
 
     public ProfileRawBuilder WithEducation(int count = 5)
     {
-        var educationList = _fixture.CreateMany<EducationRaw>(count).ToList();
+        var educationList = _fixture.CreateMany<AcademicDegreeRaw>(count).ToList();
         var summaryBase = _instance.Summary ?? new SummaryRaw(null, [], []);
         _instance = _instance with { Summary = summaryBase with { Education = educationList } };
         return this;

@@ -40,7 +40,7 @@ public static class CvParserMapper
             .Map(dest => dest.Education, src => MapEducation(src.Education))
             .Map(dest => dest.WorkExperiences, src => MapWorkExperience(src.WorkExperiences));
 
-        TypeAdapterConfig<EducationRaw, EducationParseDto>
+        TypeAdapterConfig<AcademicDegreeRaw, EducationParseDto>
             .NewConfig()
             .Map(dest => dest.StartDate, src => src.StartDate.ParseToDateOnly())
             .Map(dest => dest.EndDate, src => src.EndDate.ParseToDateOnly());
@@ -54,7 +54,7 @@ public static class CvParserMapper
     private static List<WorkExperienceParseDto> MapWorkExperience(IEnumerable<WorkExperienceRaw>? srcWorkExperiences) =>
         srcWorkExperiences == null ? [] : srcWorkExperiences.Adapt<List<WorkExperienceParseDto>>();
 
-    private static List<EducationParseDto> MapEducation(IEnumerable<EducationRaw>? srcEducation) =>
+    private static List<EducationParseDto> MapEducation(IEnumerable<AcademicDegreeRaw>? srcEducation) =>
         srcEducation == null ? [] : srcEducation.Adapt<List<EducationParseDto>>();
 
     private static List<SkillParseDto> MapSkills(IEnumerable<SkillRaw>? srcSkills) =>

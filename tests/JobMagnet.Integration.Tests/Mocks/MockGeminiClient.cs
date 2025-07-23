@@ -1,30 +1,33 @@
-using System.Reflection;
 using CSharpFunctionalExtensions;
 using GeminiDotNET.ApiModels.ApiRequest;
 using GeminiDotNET.ApiModels.Enums;
 using GeminiDotNET.ClientModels;
 using JobMagnet.Infrastructure.ExternalServices.Gemini;
+using Microsoft.AspNetCore.Http;
 
 namespace JobMagnet.Integration.Tests.Mocks;
 
-public class MockGeminiClient : IGeminiClient
+public class MockGeminiClient(IHttpContextAccessor httpContextAccessor) : IGeminiClient
 {
     public Task<Maybe<ModelResponse>> GenerateContentAsync(ApiRequest request, ModelVersion modelVersion)
     {
-        var responseContent = LoadGeminiResponse();
-        var response = new ModelResponse { Content = responseContent };
-        return Task.FromResult(Maybe.From(response));
+        var httpContext = httpContextAccessor.HttpContext;
+        var resourceName = httpContext?.Request.Headers["X-Test-Resource"][0] ??
+                           throw new InvalidOperationException("X-Test-Resource header is missing in the request.");
+
+        var content = LoadGeminiResponse(resourceName);
+        return Task.FromResult(Maybe.From(new ModelResponse { Content = content }));
     }
 
-    private static string LoadGeminiResponse()
+    private static string LoadGeminiResponse(string resourceName)
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        const string resourceName = "JobMagnet.Integration.Tests.Mocks.CvParsedResponse.md";
+        var fullPath = Path.Combine(AppContext.BaseDirectory, resourceName);
 
-        using var stream = assembly.GetManifestResourceStream(resourceName);
-        if (stream == null) throw new FileNotFoundException($"Embedded resource '{resourceName}' not found.");
+        if (!File.Exists(fullPath))
+        {
+            throw new FileNotFoundException($"File not found at path: '{fullPath}'");
+        }
 
-        using var reader = new StreamReader(stream);
-        return reader.ReadToEnd();
+        return File.ReadAllText(fullPath);
     }
 }

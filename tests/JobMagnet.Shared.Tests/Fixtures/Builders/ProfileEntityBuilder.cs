@@ -5,38 +5,44 @@ using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Aggregates.SkillTypes;
-using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Shared.Abstractions;
 using JobMagnet.Shared.Tests.Abstractions;
 using JobMagnet.Shared.Tests.Fixtures.Customizations;
-// ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+using JobMagnet.Shared.Utils;
 
 namespace JobMagnet.Shared.Tests.Fixtures.Builders;
 
 public class ProfileEntityBuilder
 {
     private static readonly Faker Faker = FixtureBuilder.Faker;
-    private readonly List<(string value, ContactType contactType)> _contactInfo = [];
     private readonly IFixture _fixture;
     private readonly IGuidGenerator _guidGenerator;
-    private CareerHistory _careerHistory = null!;
-    private SkillSet _skillSet = null!;
-    private ProfileHeader _profileHeader = null!;
-    private List<Project> _projects = [];
-    private List<Talent> _talents = [];
-    private List<Testimonial> _testimonials = [];
-    private PersonName _personName;
+    private readonly Profile _profile;
+    private bool _keepNameSet = false;
 
-    public ProfileEntityBuilder(IFixture fixture, JobMagnetDbContext context = null!)
+    public ProfileEntityBuilder(IFixture fixture)
     {
         _fixture = fixture;
         _guidGenerator = new SequentialGuidGenerator();
+        _profile = Profile.CreateEmptyInstance(_guidGenerator, new DeterministicClock());
     }
 
     public ProfileEntityBuilder WithHeader(bool loadProfileHeader = true)
     {
-        if (loadProfileHeader)
-            _profileHeader = _fixture.Create<ProfileHeader>();
+        if (loadProfileHeader.IsFalse())
+            return this;
+
+        var header = _fixture.Create<ProfileHeader>();
+        _profile.AddHeader(
+            _guidGenerator,
+            header.Title,
+            header.Suffix,
+            header.JobTitle,
+            header.About,
+            header.Summary,
+            header.Overview,
+            header.Address
+        );
 
         return this;
     }
@@ -50,16 +56,17 @@ public class ProfileEntityBuilder
             throw new ArgumentOutOfRangeException(nameof(count),
                 $"Count exceeds the number of available contact types. ({availableContactTypes.Length})");
 
-        if (_profileHeader == null)
+        if (_profile.HaveHeader.IsFalse())
             throw new InvalidOperationException("Cannot add contact info without a profileHeader. Call WithProfileHeader() first.");
 
-        while (_contactInfo.Count < count)
+        var selectedTypes = new HashSet<ContactType>();
+        while (selectedTypes.Count < count)
         {
             var contactType = Faker.PickRandom(availableContactTypes);
-            if (_contactInfo.Any(ci => ci.contactType == contactType)) continue;
+            if (!selectedTypes.Add(contactType)) continue;
 
             var value = GenerateContactDetails(contactType.Name);
-            _contactInfo.Add((value, contactType));
+            _profile.AddContactInfo(_guidGenerator, value, contactType);
         }
 
         return this;
@@ -67,8 +74,11 @@ public class ProfileEntityBuilder
 
     public ProfileEntityBuilder WithSkillSet(bool loadSkill = true)
     {
-        if (loadSkill)
-            _skillSet = _fixture.Create<SkillSet>();
+        if (loadSkill.IsFalse())
+            return this;
+
+        var skillSet = _fixture.Create<SkillSet>();
+        _profile.AddSkillSet(skillSet);
 
         return this;
     }
@@ -82,15 +92,16 @@ public class ProfileEntityBuilder
             throw new ArgumentOutOfRangeException(nameof(count),
                 $"Count exceeds the number of available skill types. ({availableSkillTypes.Length})");
 
-        if (_skillSet == null) throw new InvalidOperationException("Cannot add skills without a skill set. Call WithSkillSet() first.");
+        if (_profile.HaveSkillSet.IsFalse())
+            throw new InvalidOperationException("Cannot add skills without a skill set. Call WithSkillSet() first.");
 
-        while (_skillSet.Skills.Count < count)
+        while (_profile.SkillSet!.Skills.Count < count)
         {
-            var skillsToAdd = Faker.PickRandom(availableSkillTypes);
-            if (_skillSet.SkillExists(skillsToAdd)) continue;
+            var skillType = Faker.PickRandom(availableSkillTypes);
+            if (_profile.SkillExists(skillType)) continue;
 
-            var proficiencyLevel = (ushort)Faker.Random.Int(1, 10);
-            _skillSet.AddSkill(_guidGenerator, proficiencyLevel, skillsToAdd);
+            var proficiency = (ushort)Faker.Random.Int(1, 10);
+            _profile.AddSkill(_guidGenerator, proficiency, skillType);
         }
 
         return this;
@@ -101,62 +112,79 @@ public class ProfileEntityBuilder
         if (count >= StaticCustomizations.Talents.Length)
             throw new ArgumentOutOfRangeException(nameof(count), "Count exceeds the number of available talents.");
 
-        var talents = new List<Talent>();
-
-        while (talents.Count < count)
+        while (_profile.TalentShowcase.Count < count)
         {
             var talent = _fixture.Create<Talent>();
-
-            if (talents.Any(t => t.Description == talent.Description))
-                continue;
-
-            talents.Add(talent);
+            if (_profile.TalentExist(talent.Description)) continue;
+            _profile.AddTalent(_guidGenerator, talent.Description);
         }
-
-        _talents = talents;
 
         return this;
     }
 
     public ProfileEntityBuilder WithProjects(int count = 5)
     {
-        _projects = _fixture.CreateMany<Project>(count).ToList();
+        foreach (var project in _fixture.CreateMany<Project>(count))
+        {
+            _profile.AddProject(
+                _guidGenerator,
+                project.Title,
+                project.Description,
+                project.UrlLink,
+                project.UrlImage,
+                project.UrlVideo,
+                project.Type);
+        }
+
         return this;
     }
 
     public ProfileEntityBuilder WithCareerHistory(bool loadCareerHistory = true)
     {
-        if (loadCareerHistory)
-            _careerHistory = _fixture.Create<CareerHistory>();
+        if (loadCareerHistory.IsFalse())
+            return this;
+
+        var careerHistory = _fixture.Create<CareerHistory>();
+        _profile.AddCareerHistory(careerHistory);
 
         return this;
     }
 
     public ProfileEntityBuilder WithEducation(int count = 5)
     {
-        if (_careerHistory == null && count > 0)
+        if (_profile.HaveCareerHistory.IsFalse() && count > 0)
             throw new InvalidOperationException("Cannot add education without a careerHistory. Call WithCareerHistory() first.");
 
-        foreach (var education in _fixture.CreateMany<AcademicDegree>(count).ToList())
-            _careerHistory!.AddEducation(
+        while (_profile.AcademicDegreesInCareerHistory.Count < count)
+        {
+            var degree = _fixture.Create<AcademicDegree>();
+            if (_profile.AcademicDegreeExistsInCareerHistory(degree.Degree, degree.InstitutionName)) continue;
+
+            _profile.AddAcademicDegreeToCareerHistory(
                 _guidGenerator,
-                education.Degree,
-                education.InstitutionName,
-                education.InstitutionLocation,
-                education.StartDate,
-                education.EndDate,
-                education.Description);
+                degree.Degree,
+                degree.InstitutionName,
+                degree.InstitutionLocation,
+                degree.StartDate,
+                degree.EndDate,
+                degree.Description);
+        }
 
         return this;
     }
 
     public ProfileEntityBuilder WithWorkExperience(int count = 5)
     {
-        if (_careerHistory == null && count > 0)
+        if (_profile.HaveCareerHistory.IsFalse() && count > 0)
             throw new InvalidOperationException("Cannot add work experience without a careerHistory. Call WithCareerHistory() first.");
 
-        foreach (var workExperience in _fixture.CreateMany<WorkExperience>(count).ToList())
-            _careerHistory!.AddWorkExperience(
+        while (_profile.WorkExperiencesInCareerHistory.Count < count)
+        {
+            var workExperience = _fixture.Create<WorkExperience>();
+            if (_profile.WorkExperienceExists(workExperience.JobTitle, workExperience.CompanyName, workExperience.StartDate))
+                continue;
+
+            _profile.AddWorkExperienceToCareerHistory(
                 _guidGenerator,
                 workExperience.JobTitle,
                 workExperience.CompanyName,
@@ -164,131 +192,49 @@ public class ProfileEntityBuilder
                 workExperience.StartDate,
                 workExperience.EndDate,
                 workExperience.Description);
+        }
 
         return this;
     }
 
     public ProfileEntityBuilder WithTestimonials(int count = 5)
     {
-        _testimonials = _fixture.CreateMany<Testimonial>(count).ToList();
+        foreach (var testimonial in _fixture.CreateMany<Testimonial>(count))
+        {
+            _profile.AddTestimonial(
+                _guidGenerator,
+                testimonial.Name,
+                testimonial.JobTitle,
+                testimonial.Feedback,
+                testimonial.PhotoUrl);
+        }
+
         return this;
     }
 
     public ProfileEntityBuilder WithName(string? firstName, string? lastName)
     {
-        _personName = new PersonName(firstName, lastName, applyValidations: false);
-
+        var name = new PersonName(firstName, lastName, applyValidations: false);
+        _profile.ChangeName(name, new DeterministicClock());
+        _keepNameSet = true;
         return this;
     }
 
     public Profile Build()
     {
-        var profile = BuildBasicProfile();
+        var tempProfile = _fixture.Create<Profile>();
 
-        LoadHeader(profile);
-        LoadContactInfo(profile);
-        LoadTestimonials(profile);
-        LoadProjects(profile);
-        LoadCareerHistory(profile);
-        LoadSkillSet(profile);
-        LoadTalents(profile);
+        if (_keepNameSet.IsFalse())
+            _profile.ChangeName(tempProfile.Name, new DeterministicClock());
 
-        return profile;
+        _profile.ChangeBirthDate(tempProfile.BirthDate, new DeterministicClock());
+        _profile.ChangeProfileImage(tempProfile.ProfileImage, new DeterministicClock());
+
+        return _profile;
     }
 
-    private Profile BuildBasicProfile()
-    {
-        var profile = _fixture.Create<Profile>();
-
-        if (_personName is not null)
-            profile.ChangeName(_personName, new DeterministicClock());
-
-        return profile;
-    }
-
-    private void LoadHeader(Profile profile)
-    {
-        if (_profileHeader is null)
-            return;
-
-        profile.AddHeader(
-            _guidGenerator,
-            _profileHeader.Title,
-            _profileHeader.Suffix,
-            _profileHeader.JobTitle,
-            _profileHeader.About,
-            _profileHeader.Summary,
-            _profileHeader.Overview,
-            _profileHeader.Address
-        );
-    }
-
-    private void LoadContactInfo(Profile profile)
-    {
-        if (_contactInfo.Count <= 0) return;
-
-        foreach (var contactInfo in _contactInfo)
-            profile.AddContactInfo(_guidGenerator, contactInfo.value, contactInfo.contactType);
-    }
-
-    private void LoadSkillSet(Profile profile)
-    {
-        if (_skillSet is null)
-            return;
-
-        profile.AddSkillSet(_skillSet);
-    }
-
-    private void LoadCareerHistory(Profile profile)
-    {
-        if (_careerHistory is null)
-            return;
-
-        profile.AddCareerHistory(_careerHistory);
-    }
-
-    private void LoadTestimonials(Profile profile)
-    {
-        if (_testimonials.Count <= 0) return;
-
-        foreach (var item in _testimonials)
-            profile.AddTestimonial(
-                _guidGenerator,
-                item.Name,
-                item.JobTitle,
-                item.Feedback,
-                item.PhotoUrl);
-    }
-
-    private void LoadProjects(Profile profile)
-    {
-        if (_projects.Count <= 0) return;
-
-        foreach (var gallery in _projects)
-            _ = profile.AddProject(
-                _guidGenerator,
-                gallery.Title,
-                gallery.Description,
-                gallery.UrlLink,
-                gallery.UrlImage,
-                gallery.UrlVideo,
-                gallery.Type);
-    }
-
-    private void LoadTalents(Profile profile)
-    {
-        if (_talents.Count <= 0) return;
-
-        foreach (var talent in _talents)
-            profile.AddTalent(
-                _guidGenerator,
-                talent.Description
-                );
-    }
-
-    private static string GenerateContactDetails(string contactType)
-    {
-        return contactType switch
+    private static string GenerateContactDetails(string contactType) =>
+        contactType switch
         {
             "Email" => Faker.Person.Email,
             "Phone" => Faker.Phone.PhoneNumber(),
@@ -297,5 +243,4 @@ public class ProfileEntityBuilder
             "Website" => Faker.Internet.Url(),
             _ => Faker.Internet.DomainName()
         };
-    }
 }
