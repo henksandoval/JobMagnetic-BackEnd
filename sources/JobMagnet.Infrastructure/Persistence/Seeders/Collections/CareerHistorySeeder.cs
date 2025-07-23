@@ -81,14 +81,18 @@ public record CareerHistorySeeder(IGuidGenerator GuidGenerator, IClock Clock, Ca
     {
         return AcademicDegreeList
             .Select(x => AcademicDegree.CreateInstance(
-                GuidGenerator,
-                CareerHistoryId,
-                x.Degree,
-                x.InstitutionName,
-                x.InstitutionLocation,
-                x.StartDate,
-                x.EndDate,
-                x.Description
+                new CreateAcademicDegreeCommand(
+                    GuidGenerator,
+                    CareerHistoryId,
+                    new CreateAcademicDegreeCommand.AcademicInfo(
+                        x.Degree,
+                        x.InstitutionName,
+                        x.InstitutionLocation,
+                        x.Description
+                    ),
+                    x.StartDate,
+                    x.EndDate
+                )
             )).ToArray();
     }
 
