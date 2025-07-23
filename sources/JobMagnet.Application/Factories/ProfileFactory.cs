@@ -166,17 +166,20 @@ public class ProfileFactory(
     {
         if (educationDtos is null) return [];
         return educationDtos.Select(dto => AcademicDegree.CreateInstance(
+        new CreateAcademicDegreeCommand(
             guidGenerator,
             new CareerHistoryId(),
-            dto.Degree ?? string.Empty,
-            dto.InstitutionName ?? string.Empty,
-            dto.InstitutionLocation ?? string.Empty,
+            new CreateAcademicDegreeCommand.AcademicInfo(
+                dto.Degree ?? string.Empty,
+                dto.InstitutionName ?? string.Empty,
+                dto.InstitutionLocation ?? string.Empty,
+                dto.Description ?? string.Empty
+            ),
             ToDateTimeOrDefault(dto.StartDate),
-            ToNullableDateTime(dto.EndDate),
-            dto.Description ?? string.Empty
-        )).ToList();
+            ToNullableDateTime(dto.EndDate)
+        ))).ToList();
     }
-
+    
     private List<WorkExperience> BuildWorkExperience(List<WorkExperienceParseDto>? experienceDtos)
     {
         if (experienceDtos is null) return [];

@@ -55,7 +55,9 @@ public static class ProfileMapper
         TypeAdapterConfig<SkillSet, SkillSetViewModel>
             .NewConfig()
             .Map(dest => dest.SkillDetails,
-                src => src.Skills.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
+                src => src.Skills.Select(d => d.Adapt<SkillDetailsViewModel>())
+                    .OrderBy(s => s.Rank)
+                    .ToArray());
 
         TypeAdapterConfig<CareerHistory, SummaryViewModel>
             .NewConfig()
