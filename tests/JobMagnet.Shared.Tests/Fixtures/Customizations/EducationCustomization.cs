@@ -32,14 +32,19 @@ public class EducationCustomization : ICustomization
             .OrNull(Faker, 0.25f);
 
         var education = AcademicDegree.CreateInstance(
-            _guidGenerator,
-            new CareerHistoryId(),
-            Faker.PickRandom(StaticCustomizations.Degrees),
-            Faker.PickRandom(StaticCustomizations.Universities),
-            Faker.Address.FullAddress(),
-            startDate,
-            endDate,
-            Faker.Lorem.Sentences()
+            new CreateAcademicDegreeCommand(
+                _guidGenerator,
+                new CareerHistoryId(_guidGenerator.NewGuid()),
+                new CreateAcademicDegreeCommand.AcademicInfo(
+                    Faker.PickRandom(StaticCustomizations.Degrees),
+                    Faker.PickRandom(StaticCustomizations.Universities),
+                    Faker.Address.FullAddress(),
+                    Faker.Lorem.Sentences(),
+                    false
+                ),
+                startDate,
+                endDate
+            )
         );
 
         return education;
