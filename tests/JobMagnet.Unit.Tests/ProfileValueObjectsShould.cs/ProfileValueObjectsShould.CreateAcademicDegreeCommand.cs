@@ -48,7 +48,7 @@ public class ProfileValueObjectsShould
             .WithParameterName(expectedParamName);
     }
     
-    [Fact (DisplayName = "CreateAcademicDegreeCommand should create AcademicInfo with valid data")]
+    [Fact (DisplayName = "Return CreateAcademicDegreeCommand should create AcademicInfo with valid data")]
     public void Command_WithValidData_ShouldCreateSuccessfully()
     {
         // Arrange
@@ -66,7 +66,7 @@ public class ProfileValueObjectsShould
         academicInfo.Description.Should().Be("A comprehensive study of computer science.");
     }
     
-    [Fact(DisplayName = "CreateAcademicDegreeCommand should create with valid data and null format provider")]
+    [Fact(DisplayName = "Return CreateAcademicDegreeCommand should create with valid data and null format provider")]
     public void Command_WithValidDataAndNullFormatProvider_ShouldCreateSuccessfully()
     {
         // Arrange
@@ -97,7 +97,7 @@ public class ProfileValueObjectsShould
         command.EndDate.Should().Be(new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc));
     }
     
-    [Fact(DisplayName = "AcademicInfo should not throw when validations are disabled")]
+    [Fact(DisplayName = "Return AcademicInfo should not throw when validations are disabled")]
     public void AcademicInfo_WithInvalidDataAndValidationsDisabled_ShouldCreateEmptyStrings()
     {
         // Act
@@ -113,7 +113,7 @@ public class ProfileValueObjectsShould
         academic.Description.Should().Be(string.Empty);
     }
     
-    [Theory(DisplayName = "FromStrings should handle null or whitespace EndDate")]
+    [Theory(DisplayName = "Return FromStrings should handle null or whitespace EndDate")]
     [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
@@ -137,7 +137,7 @@ public class ProfileValueObjectsShould
         command.EndDate.Should().BeNull();
     }
     
-    [Fact(DisplayName = "FromStrings should use provided format provider")]
+    [Fact(DisplayName = "Return FromStrings should use provided format provider")]
     public void FromStrings_WithSpecificFormatProvider_ShouldParseCorrectly()
     {
         // Arrange
@@ -160,7 +160,7 @@ public class ProfileValueObjectsShould
         command.EndDate.Should().Be(new DateTime(2024, 6, 30, 0, 0, 0, DateTimeKind.Utc));
     }
     
-    [Theory(DisplayName = "FromStrings should throw FormatException for invalid date strings")]
+    [Theory(DisplayName = "Return FromStrings should throw FormatException for invalid date strings")]
     [InlineData("not-a-date", "2024-01-01")]
     [InlineData("2020-01-01", "not-a-date-either")]
     public void FromStrings_WithInvalidDateString_ShouldThrowFormatException(string startDate, string endDate)
@@ -181,5 +181,43 @@ public class ProfileValueObjectsShould
 
         // Assert
         act.Should().Throw<FormatException>();
+    }
+    
+    [Fact(DisplayName = "Return Constructor should initialize properties correctly")]
+    public void Constructor_ShouldInitializePropertiesCorrectly()
+    {
+        // Arrange
+        var guidGenerator = _fixture.Create<IGuidGenerator>();
+        var careerHistoryId = new CareerHistoryId(_fixture.Create<Guid>());
+        var academicInfo = _fixture.Create<CreateAcademicDegreeCommand.AcademicInfo>();
+        var startDate = _fixture.Create<DateTime>();
+        var endDate = _fixture.Create<DateTime?>();
+
+        // Act
+        var command = new CreateAcademicDegreeCommand(
+            guidGenerator,
+            careerHistoryId,
+            academicInfo,
+            startDate,
+            endDate);
+
+        // Assert
+        command.GuidGenerator.Should().Be(guidGenerator);
+        command.CareerHistoryId.Should().Be(careerHistoryId);
+        command.Academic.Should().Be(academicInfo);
+        command.StartDate.Should().Be(startDate);
+        command.EndDate.Should().Be(endDate);
+    }
+    
+    [Fact(DisplayName = "Return ToString should return a non-empty string representing the object")]
+    public void ToString_ShouldReturnStringRepresentation()
+    {
+        // Arrange
+        var academicInfo = _fixture.Create<CreateAcademicDegreeCommand.AcademicInfo>();
+        var command = _fixture.Create<CreateAcademicDegreeCommand>();
+
+        // Act & Assert
+        academicInfo.ToString().Should().Contain(academicInfo.Degree);
+        command.ToString().Should().Contain(command.Academic.ToString());
     }
 }
