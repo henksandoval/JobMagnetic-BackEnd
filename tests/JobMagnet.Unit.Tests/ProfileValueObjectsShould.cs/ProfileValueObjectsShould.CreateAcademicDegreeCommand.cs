@@ -97,8 +97,8 @@ public class ProfileValueObjectsShould
         command.EndDate.Should().Be(new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc));
     }
     
-    [Fact(DisplayName = "Return AcademicInfo should not throw when validations are disabled")]
-    public void AcademicInfo_WithInvalidDataAndValidationsDisabled_ShouldCreateEmptyStrings()
+    [Fact(DisplayName = "Return AcademicInfo should return empty strings when data is null")]
+    public void AcademicInfo_WithNullData_EmptyStringsMustBeReturned()
     {
         // Act
         var academicInfo = () => new CreateAcademicDegreeCommand.AcademicInfo(null, null, null, null, applyValidations: false);
@@ -113,11 +113,11 @@ public class ProfileValueObjectsShould
         academic.Description.Should().Be(string.Empty);
     }
     
-    [Theory(DisplayName = "Return FromStrings should handle null or whitespace EndDate")]
+    [Theory(DisplayName = "Return strings should parse the date when the date is empty with a space and should return null.")]
     [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void FromStrings_WithNullOrWhitespaceEndDate_ShouldResultInNullEndDate(string endDateString)
+    public void FromStrings_WhenTheEndDateDateIsEmptyAndHasSpaceIt_ShouldReturnNull(string endDateString)
     {
         // Arrange
         var guidGenerator = _fixture.Create<IGuidGenerator>();
@@ -131,7 +131,7 @@ public class ProfileValueObjectsShould
             academic,
             "2020-01-01",
             endDateString,
-            null);
+            CultureInfo.InvariantCulture);
     
         // Assert:
         command.EndDate.Should().BeNull();
@@ -177,7 +177,7 @@ public class ProfileValueObjectsShould
             academic,
             startDate,
             endDate,
-            null);
+            CultureInfo.InvariantCulture);
 
         // Assert
         act.Should().Throw<FormatException>();
