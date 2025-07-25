@@ -53,15 +53,12 @@ public class CareerHistory : SoftDeletableEntity<CareerHistoryId>
             throw new BusinessRuleValidationException("A AcademicDegree with this degree and institution already exists.");
 
         var academicDegree = Entities.AcademicDegree.CreateInstance(
-            guidGenerator,
-            Id,
-            degree,
-            institutionName,
-            institutionLocation,
-            startDate,
-            endDate,
-            description);
-
+            new CreateAcademicDegreeCommand(
+                guidGenerator,
+                Id,
+                new CreateAcademicDegreeCommand.AcademicInfo(degree, institutionName, institutionLocation, description),
+                startDate,
+                endDate));
         _academicDegree.Add(academicDegree);
         return academicDegree;
     }

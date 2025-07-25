@@ -6,32 +6,34 @@ namespace JobMagnet.Infrastructure.Persistence.Seeders.Collections;
 
 public record CareerHistorySeeder(IGuidGenerator GuidGenerator, IClock Clock, CareerHistoryId CareerHistoryId)
 {
+    private static DateTime UtcDate(int year, int month, int day) => new(year, month, day, 0, 0, 0, DateTimeKind.Utc);
+    
     private static readonly IList<WorkExperienceProperties> WorkExperienceList =
     [
-        new("UI/UX Designer",
-            "Google",
-            "Mountain View, CA",
-            new List<string>
-            {
+        
+        new("UI/UX Designer", "Google", "Mountain View, CA",
+            new List<string> {  
                 "Designed user interfaces for Google products.",
                 "Conducted user research and usability testing.",
                 "Collaborated with cross-functional teams to improve user experience."
+                
             },
-            new DateTime(2014, 1, 1),
-            new DateTime(2016, 1, 1),
-            "Worked as a UI/UX designer at Google, focusing on user-centered design principles."),
+            UtcDate(2014, 1, 1),
+            UtcDate(2016, 1, 1),
+            "Worked as a UI/UX designer..."),
+        
         new("Graphic Designer",
             "Apple",
             "Cupertino, CA",
-            new List<string>
-            {
+            new List<string> {  
                 "Created visual designs for Apple products.",
                 "Worked on branding and marketing materials.",
                 "Collaborated with product teams to ensure design consistency."
             },
-            new DateTime(2016, 1, 1),
-            new DateTime(2018, 1, 1),
+            UtcDate(2016, 1, 1),
+            UtcDate(2018, 1, 1),
             "Worked as a graphic designer at Apple, focusing on visual communication and branding."),
+        
         new("Senior UI/UX Designer",
             "Facebook",
             "Menlo Park, CA",
@@ -41,7 +43,7 @@ public record CareerHistorySeeder(IGuidGenerator GuidGenerator, IClock Clock, Ca
                 "Mentored junior designers and provided design feedback.",
                 "Conducted user research and usability testing."
             },
-            new DateTime(2018, 1, 1),
+            UtcDate(2018, 1, 1),
             null,
             "Worked as a senior UI/UX designer at Facebook, focusing on user experience research and design.")
     ];
@@ -51,25 +53,25 @@ public record CareerHistorySeeder(IGuidGenerator GuidGenerator, IClock Clock, Ca
         new("Bachelor in UI/UX Design",
             "University of California, Berkeley",
             "Berkeley, CA",
-            new DateTime(2010, 1, 1),
-            new DateTime(2014, 1, 1),
+            UtcDate(2010, 1, 1),
+            UtcDate(2014, 1, 1),
             "Bachelor's degree in UI/UX Design with a focus on user-centered design principles."),
         new("Master in Graphic Design",
             "California Institute of the Arts",
             "Valencia, CA",
-            new DateTime(2014, 1, 1),
-            new DateTime(2016, 1, 1),
+            UtcDate(2014, 1, 1),
+            UtcDate(2016, 1, 1),
             "Master's degree in Graphic Design with a focus on visual communication and branding."),
         new("PhD in Human-Computer Interaction",
             "Stanford University",
             "Stanford, CA",
-            new DateTime(2016, 1, 1),
-            new DateTime(2020, 1, 1),
+            UtcDate(2016, 1, 1),
+            UtcDate(2020, 1, 1),
             "PhD in Human-Computer Interaction with a focus on user experience research and design."),
         new("Certificate in Web Development",
             "Codecademy",
             "Online",
-            new DateTime(2020, 1, 1),
+            UtcDate(2020, 1, 1),
             null,
             "Certificate in Web Development with a focus on front-end development and responsive design.")
     ];
@@ -81,14 +83,18 @@ public record CareerHistorySeeder(IGuidGenerator GuidGenerator, IClock Clock, Ca
     {
         return AcademicDegreeList
             .Select(x => AcademicDegree.CreateInstance(
-                GuidGenerator,
-                CareerHistoryId,
-                x.Degree,
-                x.InstitutionName,
-                x.InstitutionLocation,
-                x.StartDate,
-                x.EndDate,
-                x.Description
+                new CreateAcademicDegreeCommand(
+                    GuidGenerator,
+                    CareerHistoryId,
+                    new CreateAcademicDegreeCommand.AcademicInfo(
+                        x.Degree,
+                        x.InstitutionName,
+                        x.InstitutionLocation,
+                        x.Description
+                    ),
+                    x.StartDate,
+                    x.EndDate
+                )
             )).ToArray();
     }
 
