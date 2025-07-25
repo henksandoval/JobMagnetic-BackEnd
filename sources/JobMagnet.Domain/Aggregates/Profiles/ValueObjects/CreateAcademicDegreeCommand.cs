@@ -68,7 +68,7 @@ public record CreateAcademicDegreeCommand
         AcademicInfo academic,
         string startDateString,
         string? endDateString,
-        IFormatProvider formatProvider = null)
+        IFormatProvider formatProvider = null!)
     {
         formatProvider ??= CultureInfo.InvariantCulture;
     

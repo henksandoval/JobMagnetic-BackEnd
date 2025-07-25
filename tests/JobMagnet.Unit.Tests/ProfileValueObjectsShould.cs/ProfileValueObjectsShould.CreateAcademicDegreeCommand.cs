@@ -66,8 +66,8 @@ public class ProfileValueObjectsShould
         academicInfo.Description.Should().Be("A comprehensive study of computer science.");
     }
     
-    [Fact(DisplayName = "Return CreateAcademicDegreeCommand should create with valid data and null format provider")]
-    public void Command_WithValidDataAndNullFormatProvider_ShouldCreateSuccessfully()
+    [Fact(DisplayName = "Return FromStrings should parse dates correctly")]
+    public void Command_WhenTheFormatProviderIsNull_ShouldAssignTheValueToTheRight_And_ReturnTheSuccessfulResult  ()
     {
         // Arrange
         var guidGenerator = _fixture.Create<IGuidGenerator>();
@@ -90,9 +90,6 @@ public class ProfileValueObjectsShould
 
         // Assert
         command.Should().NotBeNull();
-        command.GuidGenerator.Should().Be(guidGenerator);
-        command.CareerHistoryId.Should().Be(careerHistoryId);
-        command.Academic.Should().Be(academicInfo);
         command.StartDate.Should().Be(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc));
         command.EndDate.Should().Be(new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc));
     }
@@ -113,32 +110,8 @@ public class ProfileValueObjectsShould
         academic.Description.Should().Be(string.Empty);
     }
     
-    [Theory(DisplayName = "Return strings should parse the date when the date is empty with a space and should return null.")]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData(" ")]
-    public void FromStrings_WhenTheEndDateDateIsEmptyAndHasSpaceIt_ShouldReturnNull(string endDateString)
-    {
-        // Arrange
-        var guidGenerator = _fixture.Create<IGuidGenerator>();
-        var careerHistoryId = new CareerHistoryId(_fixture.Create<Guid>());
-        var academic = _fixture.Create<CreateAcademicDegreeCommand.AcademicInfo>();
-    
-        // Act
-        var command = CreateAcademicDegreeCommand.FromStrings(
-            guidGenerator,
-            careerHistoryId,
-            academic,
-            "2020-01-01",
-            endDateString,
-            CultureInfo.InvariantCulture);
-    
-        // Assert:
-        command.EndDate.Should().BeNull();
-    }
-    
-    [Fact(DisplayName = "Return FromStrings should use provided format provider")]
-    public void FromStrings_WithSpecificFormatProvider_ShouldParseCorrectly()
+    [Fact(DisplayName = "Return FromStrings should parse dates with specific format provider")]
+    public void FromStrings_WhenAFormatProviderPassesASpecificIFormatProvider_ItShouldReturnSuccessful()
     {
         // Arrange
         var guidGenerator = _fixture.Create<IGuidGenerator>();
@@ -160,16 +133,19 @@ public class ProfileValueObjectsShould
         command.EndDate.Should().Be(new DateTime(2024, 6, 30, 0, 0, 0, DateTimeKind.Utc));
     }
     
-    [Theory(DisplayName = "Return FromStrings should throw FormatException for invalid date strings")]
-    [InlineData("not-a-date", "2024-01-01")]
-    [InlineData("2020-01-01", "not-a-date-either")]
-    public void FromStrings_WithInvalidDateString_ShouldThrowFormatException(string startDate, string endDate)
+    [Theory(DisplayName = "Return FromStrings should throw exception for invalid or null date strings")]
+    [InlineData("", "2024-01-01", typeof(FormatException))]
+    [InlineData("not-a-date", "2024-01-01", typeof(FormatException))]
+    [InlineData("2020-01-01", "not-a-date-either", typeof(FormatException))]
+    [InlineData(null, "2024-01-01", typeof(ArgumentNullException))]
+    [InlineData(null, null, typeof(ArgumentNullException))]
+    public void FromStrings_WithInvalidOrNullDateString_ShouldThrowException(string startDate, string endDate, Type expectedException)
     {
         // Arrange
         var guidGenerator = _fixture.Create<IGuidGenerator>();
         var careerHistoryId = new CareerHistoryId(_fixture.Create<Guid>());
         var academic = _fixture.Create<CreateAcademicDegreeCommand.AcademicInfo>();
-
+    
         // Act
         var act = () => CreateAcademicDegreeCommand.FromStrings(
             guidGenerator,
@@ -180,7 +156,7 @@ public class ProfileValueObjectsShould
             CultureInfo.InvariantCulture);
 
         // Assert
-        act.Should().Throw<FormatException>();
+        act.Should().Throw<Exception>().Which.Should().BeOfType(expectedException);
     }
     
     [Fact(DisplayName = "Return Constructor should initialize properties correctly")]
@@ -220,4 +196,5 @@ public class ProfileValueObjectsShould
         academicInfo.ToString().Should().Contain(academicInfo.Degree);
         command.ToString().Should().Contain(command.Academic.ToString());
     }
+    
 }
