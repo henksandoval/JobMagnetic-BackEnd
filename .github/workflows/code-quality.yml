@@ -57,7 +57,7 @@ jobs:
           dotnet sonarscanner begin \
             /k:"${{ vars.PROJECT_KEY }}" \
             /o:"${{ vars.ORGANIZATION }}" \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cs.opencover.reportsPaths="TestResults/**/coverage.opencover.xml" \
             /d:sonar.exclusions="**/Migrations/**" \
