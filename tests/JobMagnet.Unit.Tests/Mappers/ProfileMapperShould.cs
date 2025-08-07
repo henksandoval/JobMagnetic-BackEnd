@@ -244,6 +244,7 @@ public class ProfileMapperShould
             .Select(e => new AcademicBackgroundViewModel(
                 e.Degree,
                 e.StartDate.ToString("yyyy-MM-dd"),
+                e.EndDate?.ToString("yyyy-MM-dd") ?? string.Empty,
                 e.InstitutionName,
                 e.Description))
             .ToArray();
@@ -252,6 +253,7 @@ public class ProfileMapperShould
             .Select(w => new PositionViewModel(
                 w.JobTitle,
                 w.StartDate.ToString("yyyy-MM-dd"),
+                w.EndDate?.ToString("yyyy-MM-dd") ?? string.Empty,
                 w.CompanyLocation,
                 w.Description,
                 w.Highlights.Select(d => d.Description).ToArray()))

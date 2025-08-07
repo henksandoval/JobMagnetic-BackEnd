@@ -55,7 +55,9 @@ public static class ProfileMapper
         TypeAdapterConfig<SkillSet, SkillSetViewModel>
             .NewConfig()
             .Map(dest => dest.SkillDetails,
-                src => src.Skills.Select(d => d.Adapt<SkillDetailsViewModel>()).ToArray());
+                src => src.Skills.Select(d => d.Adapt<SkillDetailsViewModel>())
+                    .OrderBy(s => s.Rank)
+                    .ToArray());
 
         TypeAdapterConfig<CareerHistory, SummaryViewModel>
             .NewConfig()
@@ -90,6 +92,7 @@ public static class ProfileMapper
         var academicBackground = src.AcademicDegree?.Select(e => new AcademicBackgroundViewModel(
             e.Degree,
             e.StartDate.ToString("yyyy-MM-dd"),
+            e.EndDate?.ToString("yyyy-MM-dd") ?? string.Empty,
             e.InstitutionName,
             e.Description
         )).ToArray() ?? [];
@@ -107,6 +110,7 @@ public static class ProfileMapper
                 return new PositionViewModel(
                     work.JobTitle,
                     work.StartDate.ToString("yyyy-MM-dd"),
+                    work.EndDate?.ToString("yyyy-MM-dd") ?? string.Empty,
                     work.CompanyLocation,
                     work.Description,
                     responsibilities);

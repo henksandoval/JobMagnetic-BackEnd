@@ -51,14 +51,23 @@ jobs:
           dotnet test JobMagnet.sln --no-build /p:CollectCoverage=true /p:CoverletOutput=../coverage.opencover.xml /p:CoverletOutputFormat=opencover
 
       - name: SonarQube Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           dotnet sonarscanner begin \
             /k:"${{ vars.PROJECT_KEY }}" \
             /o:"${{ vars.ORGANIZATION }}" \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cs.opencover.reportsPaths="tests/coverage.opencover.xml" \
             /d:sonar.exclusions="**/Migrations/**" \
-            /d:sonar.language=cs \
-            /d:sonar.sourceEncoding=UTF-8
-          dotnet build --no-incremental
-          dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+            /d:sonar.verbose=true
+
+      - name: Build Project for SonarQube
+        run: dotnet build --no-incremental
+
+      - name: End SonarQube Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"

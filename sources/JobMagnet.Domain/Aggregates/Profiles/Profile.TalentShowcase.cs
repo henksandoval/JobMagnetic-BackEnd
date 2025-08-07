@@ -12,7 +12,7 @@ public partial class Profile
 
     private Talent AddTalentToTalentShowcase(IGuidGenerator guidGenerator, string description)
     {
-        if (TalentShowcase.Count >= 10) throw new JobMagnetDomainException("Cannot add more than 10 talents.");
+        if (TalentShowcase.Count >= 30) throw new JobMagnetDomainException("Cannot add more than 10 talents.");
         if (TalentExist(description))
             throw new JobMagnetDomainException("This talent already exists.");
 
