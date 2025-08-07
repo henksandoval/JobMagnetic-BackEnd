@@ -59,7 +59,7 @@ jobs:
             /o:"${{ vars.ORGANIZATION }}" \
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.opencover.reportsPaths="TestResults/**/coverage.opencover.xml" \
+            /d:sonar.cs.opencover.reportsPaths="tests/coverage.opencover.xml" \
             /d:sonar.exclusions="**/Migrations/**" \
             /d:sonar.verbose=true
 
