@@ -2,7 +2,8 @@
 
 public record AcademicBackgroundViewModel(
     string Experience,
-    string Startdate,
+    string StartDate,
+    string EndDate,
     string Academy,
     string Description
 );

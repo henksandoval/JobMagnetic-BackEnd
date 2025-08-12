@@ -90,6 +90,7 @@ public static class ProfileMapper
         var academicBackground = src.AcademicDegree?.Select(e => new AcademicBackgroundViewModel(
             e.Degree,
             e.StartDate.ToString("yyyy-MM-dd"),
+            e.EndDate?.ToString("yyyy-MM-dd") ?? string.Empty,
             e.InstitutionName,
             e.Description
         )).ToArray() ?? [];
@@ -107,6 +108,7 @@ public static class ProfileMapper
                 return new PositionViewModel(
                     work.JobTitle,
                     work.StartDate.ToString("yyyy-MM-dd"),
+                    work.EndDate?.ToString("yyyy-MM-dd") ?? string.Empty,
                     work.CompanyLocation,
                     work.Description,
                     responsibilities);
