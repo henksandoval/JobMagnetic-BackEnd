@@ -183,7 +183,7 @@ public class ProfileMapperShould
         var mobilePhone = GetContactValue("Phone");
 
         return new AboutViewModel(
-            entity.ProfileImage.Url?.AbsolutePath ?? string.Empty,
+            entity.ProfileImage.Url?.AbsoluteUri ?? string.Empty,
             entity.Header.About,
             entity.Header.JobTitle,
             entity.Header.Overview,
