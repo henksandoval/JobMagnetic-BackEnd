@@ -56,7 +56,7 @@ public class UserManagerAdapter(UserManager<IdentityUser> userManager, IConfigur
         return new UserToken()
         {
             Token = new JwtSecurityTokenHandler().WriteToken(securityToken),
-            Expiracion = expiration
+            Expiration = expiration
         };
     }
 }
