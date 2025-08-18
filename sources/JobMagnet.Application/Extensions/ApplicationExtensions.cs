@@ -1,4 +1,6 @@
 using JobMagnet.Application.Factories;
+using JobMagnet.Application.UseCases.Auth;
+using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Application.UseCases.CvParser;
 using JobMagnet.Domain.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +17,7 @@ public static class ApplicationExtensions
             .AddLogging()
             .AddDomainDependencies()
             .AddTransient<IProfileFactory, ProfileFactory>()
-            .AddTransient<ICvParserHandler, CvParserHandler>();
+            .AddTransient<ICvParserHandler, CvParserHandler>()
+            .AddTransient<IAuthUserHandler, AuthUserHandler>();
     }
 }
