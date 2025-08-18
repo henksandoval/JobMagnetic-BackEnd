@@ -1,4 +1,6 @@
+using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Application.UseCases.CvParser.Ports;
+using JobMagnet.Infrastructure.Services.Auth;
 using JobMagnet.Infrastructure.Services.CvParsers;
 using JobMagnet.Shared.Extensions;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +15,7 @@ public static class InfrastructureExtensions
         services
             .AddSharedDependencies()
             .AddTransient<IRawCvParser, GeminiCvParser>()
+            .AddTransient<IUserManagerAdapter, UserManagerAdapter>()
             .AddPersistence()
             .AddGemini(configuration);
 }
