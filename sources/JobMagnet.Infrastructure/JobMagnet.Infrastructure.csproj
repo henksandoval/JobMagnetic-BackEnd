@@ -13,10 +13,13 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoFixture.Xunit" Version="4.19.0" />
         <PackageReference Include="Gemini.NET" Version="3.4.5.1"/>
         <PackageReference Include="JsonSchema.Net" Version="7.3.4"/>
         <PackageReference Include="JsonSchema.Net.Generation" Version="5.0.4"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.5"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.5"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.3"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.3">
@@ -27,10 +30,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Services\"/>
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.14.0" />
     </ItemGroup>
 
     <ItemGroup>
