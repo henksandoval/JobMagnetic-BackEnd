@@ -7,13 +7,13 @@ using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Aggregates.SkillTypes;
 using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Domain.Aggregates.SkillTypes.ValueObjects;
-using JobMagnet.Infrastructure.Persistence.Context.EntityTypeConfigurations;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobMagnet.Infrastructure.Persistence.Context;
 
 public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService currentUserService)
-    : DbContext(options)
+    : IdentityDbContext(options)
 {
     public DbSet<SkillSet> SkillSets { get; set; }
     public DbSet<Skill> Skills { get; set; }
