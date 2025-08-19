@@ -55,6 +55,7 @@ if (builder.Configuration.GetValue<bool>("OpenApiSettings:UseUI"))
 
 app
     .UseHttpsRedirection()
+    .UseAuthentication()
     .UseAuthorization()
     .UseCors("DefaultCorsPolicy");
 app.MapControllers();
