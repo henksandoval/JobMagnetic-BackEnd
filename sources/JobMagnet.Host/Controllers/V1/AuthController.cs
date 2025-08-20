@@ -10,7 +10,7 @@ namespace JobMagnet.Host.Controllers.V1;
 public class AuthController(IAuthUserHandler handler)
 {
     [HttpPost("login", Name = "loginUser")]
-    public async Task<IResult> Login([FromBody] LoginDto loginRequest)
+    public async Task<IResult> LoginAsync([FromBody] LoginDto loginRequest)
     {
         var token = await handler.LoginAsync(loginRequest);
         return Results.Ok(token);
