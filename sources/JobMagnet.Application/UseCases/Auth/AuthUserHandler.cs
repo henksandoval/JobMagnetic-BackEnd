@@ -5,6 +5,11 @@ namespace JobMagnet.Application.UseCases.Auth;
 
 public class AuthUserHandler(IUserManagerAdapter userManagerAdapter) : IAuthUserHandler
 {
-    public Task<UserToken> LoginAsync(LoginDto loginDto)
-        => throw new NotImplementedException();
+    public async Task<UserToken> LoginAsync(LoginDto loginDto)
+    {
+        if (string.IsNullOrWhiteSpace(loginDto.Email) || string.IsNullOrWhiteSpace(loginDto.Password))
+            throw new ArgumentException("Email and password are required.");
+
+        return await userManagerAdapter.LoginAsync(loginDto);
+    }
 }
