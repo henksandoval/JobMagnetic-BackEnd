@@ -3,23 +3,24 @@ using System.Security.Claims;
 using System.Text;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Interface;
+using JobMagnet.Domain.Aggregates;
+using JobMagnet.Domain.Aggregates.Profiles.Entities;
+using JobMagnet.Infrastructure.Services.Auth.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace JobMagnet.Infrastructure.Services.Auth;
 
-public class UserManagerAdapter(UserManager<IdentityUser> userManager, IConfiguration configuration) : IUserManagerAdapter
+public class UserManagerAdapter(UserManager<ApplicationIdentityUser> userManager, IConfiguration configuration) : IUserManagerAdapter
 {
-    private readonly UserManager<IdentityUser> _userManager = userManager;
+    private readonly UserManager<ApplicationIdentityUser> _userManager = userManager;
     private readonly IConfiguration _configuration = configuration;
 
     public async Task<UserToken> LoginAsync(LoginDto loginDto)
     {
-        var user = new IdentityUser{UserName = loginDto.Email, Email = loginDto.Email};
-        var result =  await _userManager.CreateAsync(user, loginDto.Password);
-
-        if (result.Succeeded)
+        var user = await _userManager.FindByEmailAsync(loginDto.Email);
+        if (user != null && await _userManager.CheckPasswordAsync(user, loginDto.Password))
         {
             return await BuildToken(loginDto);
         }
@@ -36,7 +37,7 @@ public class UserManagerAdapter(UserManager<IdentityUser> userManager, IConfigur
         var userIdentity = await _userManager.FindByNameAsync(loginDto.Email);
 
         if (userIdentity?.Id != null) 
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, userIdentity.Id));
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, userIdentity.Id.ToString()));
         
         var clamsDB = await _userManager.GetClaimsAsync(userIdentity);
         claims.AddRange(clamsDB);

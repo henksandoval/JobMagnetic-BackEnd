@@ -13,13 +13,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddAllowOrigins(builder.Configuration)
-    .AddSqlServer<JobMagnetDbContext>(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        options =>
-        {
-            options.EnableRetryOnFailure(10, TimeSpan.FromSeconds(30),
-                null);
-        })
     .AddScoped<ICurrentUserService, HttpContextCurrentUserService>()
     .AddApplicationDependencies()
     .AddInfrastructureDependencies(builder.Configuration)
@@ -30,10 +23,6 @@ builder.Services
     .AddConfiguredOpenApi(builder.Configuration)
     .AddSwagger()
     .AddControllers();
-
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<JobMagnetDbContext>()
-    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
