@@ -34,7 +34,7 @@ public class AuthControllerShould
         _handlerMock.Setup(h => h.LoginAsync(loginDTo)).ReturnsAsync(expectedToken);
         
         // --- When ---
-        var result = await _controller.Login(loginDTo);
+        var result = await _controller.LoginAsync(loginDTo);
         
         // --- Then ---
         var currentToken = result.Should()
