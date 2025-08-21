@@ -14,8 +14,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JobMagnet.Infrastructure.Persistence.Context;
 
-public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService currentUserService) :
-    IdentityDbContext<ApplicationIdentityUser, IdentityRole<Guid>, Guid>
+public class JobMagnetDbContext(DbContextOptions options) :
+    IdentityDbContext<ApplicationIdentityUser, IdentityRole<Guid>, Guid>(options)
 {
     public DbSet<SkillSet> SkillSets { get; set; }
     public DbSet<Skill> Skills { get; set; }
@@ -38,6 +38,8 @@ public class JobMagnetDbContext(DbContextOptions options, ICurrentUserService cu
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder
             .ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly())
             .UseCollation("SQL_Latin1_General_CP1_CI_AS");

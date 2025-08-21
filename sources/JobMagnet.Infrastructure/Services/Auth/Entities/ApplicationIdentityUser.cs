@@ -5,5 +5,5 @@ namespace JobMagnet.Infrastructure.Services.Auth.Entities;
 
 public class ApplicationIdentityUser : IdentityUser<Guid>
 {
-    public User UserExtended { get; set; }
+    public required User User { get; set; }
 }

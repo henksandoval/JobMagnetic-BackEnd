@@ -8,10 +8,8 @@ public interface IJobMagnetDbContextFactory
     JobMagnetDbContext CreateDbContext();
 }
 
-public class JobMagnetJobMagnetDbContextFactory(
-    DbContextOptions<JobMagnetDbContext> options,
-    ICurrentUserService currentUserService)
+public class JobMagnetDbContextFactory(DbContextOptions<JobMagnetDbContext> options)
     : IJobMagnetDbContextFactory
 {
-    public JobMagnetDbContext CreateDbContext() => new(options, currentUserService);
+    public JobMagnetDbContext CreateDbContext() => new(options);
 }

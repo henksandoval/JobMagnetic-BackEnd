@@ -19,7 +19,7 @@ internal static class PersistenceExtensions
 {
     internal static IServiceCollection AddPersistence(this IServiceCollection services) =>
         services
-            .AddTransient<IJobMagnetDbContextFactory, JobMagnetJobMagnetDbContextFactory>()
+            .AddTransient<IJobMagnetDbContextFactory, JobMagnetDbContextFactory>()
             .AddTransient<ISeeder, Seeder>()
             .AddScoped<IUnitOfWork, UnitOfWork>()
             .AddQueryRepositories()

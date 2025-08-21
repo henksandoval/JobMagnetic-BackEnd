@@ -36,6 +36,7 @@
     <ItemGroup>
         <Compile Remove="Persistence\Context\EntityTypeConfigurations\ContactTypeAliasEntityTypeConfiguration.cs"/>
         <Compile Remove="Persistence\Context\EntityTypeConfigurations\SkillTypeAliasEntityTypeConfiguration.cs"/>
+        <Compile Remove="Migrations\20250821081707_InitialCreate.Designer.cs" />
     </ItemGroup>
 
 </Project>
