@@ -1,6 +1,5 @@
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
-using JobMagnet.Infrastructure.Persistence.Context.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,11 +11,13 @@ public class AcademicDegreeEntityTypeConfiguration : IEntityTypeConfiguration<Ac
     {
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Id)
-            .HasConversion(new StronglyTypedIdValueConverter<AcademicDegreeId, Guid>());
+        builder.Property(u => u.Id)
+            .HasConversion(id => id.Value, value => new AcademicDegreeId(value))
+            .ValueGeneratedNever();
 
-        builder.Property(x => x.CareerHistoryId)
-            .HasConversion(new StronglyTypedIdValueConverter<CareerHistoryId, Guid>());
+        builder.Property(u => u.CareerHistoryId)
+            .HasConversion(id => id.Value, value => new CareerHistoryId(value))
+            .ValueGeneratedNever();
 
         builder.UsePropertyAccessMode(PropertyAccessMode.Field);
     }

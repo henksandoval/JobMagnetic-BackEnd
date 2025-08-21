@@ -1,5 +1,4 @@
 using JobMagnet.Domain.Aggregates;
-using JobMagnet.Infrastructure.Persistence.Context.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,8 +10,12 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
     {
         builder.HasKey(s => s.Id);
 
-        builder.Property(x => x.Id)
-            .HasConversion(new StronglyTypedIdValueConverter<UserId, Guid>());
+        builder.Property(u => u.Id)
+            .HasConversion(id => id.Value, value => new UserId(value))
+            .ValueGeneratedNever();
+
+        builder.Property(u => u.Email).IsRequired().HasMaxLength(256);
+        builder.Property(u => u.PhotoUrl);
 
         builder.UsePropertyAccessMode(PropertyAccessMode.Field);
     }

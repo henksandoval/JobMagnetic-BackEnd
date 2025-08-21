@@ -1,6 +1,5 @@
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
-using JobMagnet.Infrastructure.Persistence.Context.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,8 +11,9 @@ public class TestimonialEntityTypeConfiguration : IEntityTypeConfiguration<Testi
     {
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Id)
-            .HasConversion(new StronglyTypedIdValueConverter<TestimonialId, Guid>());
+        builder.Property(u => u.Id)
+            .HasConversion(id => id.Value, value => new TestimonialId(value))
+            .ValueGeneratedNever();
 
         builder.UsePropertyAccessMode(PropertyAccessMode.Field);
     }
