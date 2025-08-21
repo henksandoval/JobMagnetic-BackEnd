@@ -9,7 +9,10 @@ public class AuthUserHandler(IUserManagerAdapter userManagerAdapter) : IAuthUser
     {
         if (string.IsNullOrWhiteSpace(loginDto.Email) || string.IsNullOrWhiteSpace(loginDto.Password))
             throw new ArgumentException("Email and password are required.");
-
-        return await userManagerAdapter.LoginAsync(loginDto);
+        
+        var token = await userManagerAdapter.LoginAsync(loginDto);
+        if (token == null)
+            return null;
+        return token;
     }
 }

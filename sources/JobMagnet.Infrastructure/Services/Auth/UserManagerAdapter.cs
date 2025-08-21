@@ -22,7 +22,7 @@ public class UserManagerAdapter(UserManager<ApplicationIdentityUser> userManager
         {
             return await BuildToken(loginDto);
         }
-        throw new Exception("Login failed");
+        return null!;
     }
 
     private async Task<UserToken> BuildToken(LoginDto loginDto)

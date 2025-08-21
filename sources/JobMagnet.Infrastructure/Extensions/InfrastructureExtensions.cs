@@ -6,6 +6,7 @@ using JobMagnet.Infrastructure.Services.Auth;
 using JobMagnet.Infrastructure.Services.CvParsers;
 using JobMagnet.Shared.Extensions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,22 +17,25 @@ public static class InfrastructureExtensions
     public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services
-            .AddSqlServer<JobMagnetDbContext>(
+        services.AddDbContext<JobMagnetDbContext>(options =>
+        {
+            options.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection"),
-                options =>
+                sqlServerOptions =>
                 {
-                    options.EnableRetryOnFailure(10, TimeSpan.FromSeconds(30),
-                        null);
-                })                
+                    sqlServerOptions.EnableRetryOnFailure(10, TimeSpan.FromSeconds(30), null);
+                });
+        });
+
+        services.AddIdentity<ApplicationIdentityUser, IdentityRole<Guid>>()
+            .AddEntityFrameworkStores<JobMagnetDbContext>()
+            .AddDefaultTokenProviders();
+        services
             .AddSharedDependencies()
             .AddTransient<IRawCvParser, GeminiCvParser>()
             .AddTransient<IUserManagerAdapter, UserManagerAdapter>()
             .AddPersistence()
-            .AddGemini(configuration)
-            .AddIdentity<ApplicationIdentityUser,  IdentityRole<Guid>>()
-            .AddEntityFrameworkStores<JobMagnetDbContext>()
-            .AddDefaultTokenProviders();
+            .AddGemini(configuration);
         
         return services;
     }
