@@ -28,26 +28,21 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0"/>
-        <PackageReference Include="CSharpFunctionalExtensions" Version="3.6.0"/>
+        <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+        <PackageReference Include="CSharpFunctionalExtensions" Version="3.6.0" />
         <PackageReference Include="Light.GuardClauses" Version="13.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+          <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.3"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.3">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Scalar.AspNetCore" Version="2.5.3"/>
+        <PackageReference Include="Scalar.AspNetCore" Version="2.5.3" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\JobMagnet.Infrastructure\JobMagnet.Infrastructure.csproj"/>
-        <ProjectReference Include="..\JobMagnet.Application\JobMagnet.Application.csproj"/>
+        <ProjectReference Include="..\JobMagnet.Infrastructure\JobMagnet.Infrastructure.csproj" />
+        <ProjectReference Include="..\JobMagnet.Application\JobMagnet.Application.csproj" />
     </ItemGroup>
 
 </Project>
