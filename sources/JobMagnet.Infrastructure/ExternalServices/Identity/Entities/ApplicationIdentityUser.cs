@@ -1,9 +1,9 @@
 using JobMagnet.Domain.Aggregates;
 using Microsoft.AspNetCore.Identity;
 
-namespace JobMagnet.Infrastructure.Services.Auth.Entities;
+namespace JobMagnet.Infrastructure.ExternalServices.Identity.Entities;
 
 public class ApplicationIdentityUser : IdentityUser<Guid>
 {
-    public required User User { get; set; }
+    public virtual User User { get; set; }
 }

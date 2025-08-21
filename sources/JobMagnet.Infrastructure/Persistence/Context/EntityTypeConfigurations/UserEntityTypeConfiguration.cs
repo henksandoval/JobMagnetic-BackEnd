@@ -1,4 +1,5 @@
 using JobMagnet.Domain.Aggregates;
+using JobMagnet.Infrastructure.ExternalServices.Identity.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,6 +14,14 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.Id)
             .HasConversion(id => id.Value, value => new UserId(value))
             .ValueGeneratedNever();
+
+        builder.Property(u => u.ApplicationIdentityUserId)
+            .IsRequired();
+
+        builder.HasOne<ApplicationIdentityUser>()
+            .WithOne(i => i.User)
+            .HasForeignKey<User>(u => u.ApplicationIdentityUserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(u => u.Email).IsRequired().HasMaxLength(256);
         builder.Property(u => u.PhotoUrl);

@@ -1,8 +1,8 @@
 using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Application.UseCases.CvParser.Ports;
+using JobMagnet.Infrastructure.ExternalServices.Identity.Entities;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Services.Auth;
-using JobMagnet.Infrastructure.Services.Auth.Entities;
 using JobMagnet.Infrastructure.Services.CvParsers;
 using JobMagnet.Shared.Extensions;
 using Microsoft.AspNetCore.Identity;

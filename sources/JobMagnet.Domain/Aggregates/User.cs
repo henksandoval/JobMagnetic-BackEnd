@@ -6,4 +6,6 @@ public class User: SoftDeletableEntity<UserId>
 {
     public string Email { get; set; }
     public string PhotoUrl { get; set; }
+
+    public Guid ApplicationIdentityUserId { get; set; }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using JobMagnet.Application.Services;
 using JobMagnet.Domain.Aggregates.Contact;
 using JobMagnet.Domain.Aggregates.Profiles;
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
@@ -7,7 +6,7 @@ using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
 using JobMagnet.Domain.Aggregates.SkillTypes;
 using JobMagnet.Domain.Aggregates.SkillTypes.Entities;
 using JobMagnet.Domain.Aggregates.SkillTypes.ValueObjects;
-using JobMagnet.Infrastructure.Services.Auth.Entities;
+using JobMagnet.Infrastructure.ExternalServices.Identity.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
