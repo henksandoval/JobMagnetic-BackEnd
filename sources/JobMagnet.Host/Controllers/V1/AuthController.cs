@@ -21,7 +21,7 @@ public class AuthController(IAuthUserHandler handler)
         return Results.Ok(resultToken);
     }
     
-    [HttpPost("UserAdministrator", Name ="createAdminUser")]
+    [HttpPost("user-administrator", Name ="createAdminUser")]
     public async Task<IResult> CreateAdminUser(CancellationToken cancellationToken)
     {
         var result = await handler.CreateAdminUserAsync(cancellationToken);
