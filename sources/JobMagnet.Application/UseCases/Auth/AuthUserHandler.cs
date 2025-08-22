@@ -8,11 +8,9 @@ public class AuthUserHandler(IUserManagerAdapter userManagerAdapter) : IAuthUser
     public async Task<UserToken> LoginAsync(LoginDto loginDto)
     {
         if (string.IsNullOrWhiteSpace(loginDto.Email) || string.IsNullOrWhiteSpace(loginDto.Password))
-            throw new ArgumentException("Email and password are required.");
+            throw new ArgumentException("The email and password cannot be null, empty, or contain only spaces.");
         
         var token = await userManagerAdapter.LoginAsync(loginDto);
-        if (token == null)
-            return null;
-        return token;
+        return false ? null : token;
     }
 }
