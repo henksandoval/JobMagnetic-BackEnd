@@ -2,7 +2,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using JobMagnet.Application.UseCases.Auth.DTO;
-using JobMagnet.Application.UseCases.Auth.Interface;
+using JobMagnet.Application.UseCases.Auth.Ports;
+using JobMagnet.Domain.Aggregates;
 using JobMagnet.Infrastructure.ExternalServices.Identity.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -10,9 +11,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace JobMagnet.Infrastructure.Services.Auth;
 
-public class UserManagerAdapter(UserManager<ApplicationIdentityUser> userManager, IConfiguration configuration) : IUserManagerAdapter
+public class UserManagerAdapter(UserManager<ExternalServices.Identity.Entities.ApplicationIdentityUser> userManager, IConfiguration configuration) : IUserManagerAdapter
 {
-    private readonly UserManager<ApplicationIdentityUser> _userManager = userManager;
+    private readonly UserManager<ExternalServices.Identity.Entities.ApplicationIdentityUser> _userManager = userManager;
     private readonly IConfiguration _configuration = configuration;
 
     public async Task<UserToken> LoginAsync(LoginDto loginDto)
@@ -23,6 +24,22 @@ public class UserManagerAdapter(UserManager<ApplicationIdentityUser> userManager
             return await BuildToken(loginDto);
         }
         return null!;
+    }
+
+    public async Task<UserToken> CreateAdminUserAsync (AdminUser adminUser, CancellationToken cancellationToken)
+    {
+        var applicationIdentityUser = new ApplicationIdentityUser
+        {
+            UserName = adminUser.Email,
+            Email = adminUser.Email,
+        };
+        
+        var result = await _userManager.CreateAsync(applicationIdentityUser, adminUser.Password);
+        if (!result.Succeeded)
+            throw new Exception("The administrator user could not be created: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+        
+        var loginDto = new LoginDto { Email = applicationIdentityUser.Email, Password = adminUser.Password };
+        return await BuildToken(loginDto);
     }
 
     private async Task<UserToken> BuildToken(LoginDto loginDto)
