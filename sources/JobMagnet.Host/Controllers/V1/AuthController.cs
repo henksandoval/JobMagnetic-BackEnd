@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Interface;
+using JobMagnet.Domain.Aggregates;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -18,5 +19,12 @@ public class AuthController(IAuthUserHandler handler)
             return Results.Unauthorized();
         }
         return Results.Ok(resultToken);
+    }
+    
+    [HttpPost("UserAdministrator", Name ="createAdminUser")]
+    public async Task<IResult> CreateAdminUser(CancellationToken cancellationToken)
+    {
+        var result = await handler.CreateAdminUserAsync(cancellationToken);
+        return Results.Ok(result);
     }
 }
