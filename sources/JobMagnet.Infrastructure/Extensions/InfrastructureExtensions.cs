@@ -1,4 +1,5 @@
 using JobMagnet.Application.UseCases.Auth.Interface;
+using JobMagnet.Application.UseCases.Auth.Ports;
 using JobMagnet.Application.UseCases.CvParser.Ports;
 using JobMagnet.Infrastructure.ExternalServices.Identity.Entities;
 using JobMagnet.Infrastructure.Persistence.Context;
