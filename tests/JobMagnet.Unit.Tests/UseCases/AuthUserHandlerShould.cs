@@ -2,6 +2,7 @@ using AwesomeAssertions;
 using JobMagnet.Application.UseCases.Auth;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Interface;
+using JobMagnet.Application.UseCases.Auth.Ports;
 using Moq;
 
 namespace JobMagnet.Unit.Tests.UseCases;
