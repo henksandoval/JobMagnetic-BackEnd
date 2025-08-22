@@ -1,13 +1,9 @@
-using System.Text.Json;
 using AutoFixture;
 using AwesomeAssertions;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Host.Controllers.V1;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
 namespace JobMagnet.Unit.Tests.AuthControllerShould.cs;
