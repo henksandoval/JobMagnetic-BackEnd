@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using JobMagnet.Application.Exceptions;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Domain.Aggregates;
@@ -22,9 +23,18 @@ public class AuthController(IAuthUserHandler handler)
     }
     
     [HttpPost("user-administrator", Name ="createAdminUser")]
+    [ProducesResponseType(typeof(UserToken), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status409Conflict)]
     public async Task<IResult> CreateAdminUser(CancellationToken cancellationToken)
     {
-        var result = await handler.CreateAdminUserAsync(cancellationToken);
-        return Results.Ok(result);
+        try
+        {
+            var result = await handler.CreateAdminUserAsync(cancellationToken);
+            return Results.Created(string.Empty, result);
+        }
+        catch (AdminUserAlreadyExistsException ex)
+        {
+            return Results.Conflict(new { message = ex.Message });
+        }
     }
 }
