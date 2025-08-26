@@ -13,7 +13,7 @@ namespace JobMagnet.Host.Controllers.V0;
 
 [ApiVersion("0.1")]
 public class AdminController( ILogger<AdminController> logger, JobMagnetDbContext dbContext,
-    ISeeder seeder, IAuthUserHandler _handler) : BaseController<AdminController>()
+    ISeeder seeder, IAuthUserHandler handler) : BaseController<AdminController>()
 {
     private readonly ILogger<AdminController> _logger = logger.MustNotBeNull();
     private const string PongMessage = "Pong";
@@ -58,7 +58,7 @@ public class AdminController( ILogger<AdminController> logger, JobMagnetDbContex
     {
         try
         {
-            var result = await _handler.CreateAdminUserAsync(cancellationToken);
+            var result = await handler.CreateAdminUserAsync(cancellationToken);
             return Results.Created(string.Empty, result);
         }
         catch (AdminUserAlreadyExistsException ex)
