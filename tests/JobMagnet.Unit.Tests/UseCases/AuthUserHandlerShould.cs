@@ -4,6 +4,7 @@ using JobMagnet.Application.UseCases.Auth;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Ports;
 using JobMagnet.Domain.Aggregates;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace JobMagnet.Unit.Tests.UseCases;
@@ -13,12 +14,14 @@ public class AuthUserHandlerShould
     private readonly IFixture _fixture;
     private readonly Mock<IUserManagerAdapter> _userManagerAdapterMock;
     private readonly AuthUserHandler _authUserHandler;
+    private readonly Mock<IOptions<AdminUserOptions>> _optionsMock;
 
     public AuthUserHandlerShould()
     {
         _fixture = new Fixture();
+        _optionsMock = new Mock<IOptions<AdminUserOptions>>();
         _userManagerAdapterMock = new Mock<IUserManagerAdapter>();
-        _authUserHandler =  new AuthUserHandler(_userManagerAdapterMock.Object);
+        _authUserHandler =  new AuthUserHandler(_userManagerAdapterMock.Object, _optionsMock.Object);
     }
     
     [Fact]
@@ -34,11 +37,9 @@ public class AuthUserHandlerShould
 
         _userManagerAdapterMock.Setup(x => x.LoginAsync(loginDto))
             .ReturnsAsync(expectedToken);
-    
-        var handler = new AuthUserHandler(_userManagerAdapterMock.Object);
-
+        
         // --- When  ---
-        var result = await handler.LoginAsync(loginDto);
+        var result = await _authUserHandler.LoginAsync(loginDto);
 
         // --- Then  ---
         result.Should().NotBeNull();
@@ -50,11 +51,10 @@ public class AuthUserHandlerShould
     {
         // --- Given ---
         var loginDto = _fixture.Create<LoginDto>();
-        var handler = new AuthUserHandler(_userManagerAdapterMock.Object);
         _userManagerAdapterMock.Setup(x => x.LoginAsync(It.IsAny<LoginDto>())).ReturnsAsync((UserToken)null);
 
         // --- When ---
-        var result = await handler.LoginAsync(loginDto);
+        var result = await _authUserHandler.LoginAsync(loginDto);
 
         // --- Then ---
         result.Should().BeNull();
@@ -71,11 +71,10 @@ public class AuthUserHandlerShould
     public async Task LoginAsync_WhenEmailOrPasswordIsEmpty_ThrowsArgumentException(string email, string password)
     {
         // --- Given ---
-        var handler = new AuthUserHandler(_userManagerAdapterMock.Object);
         var loginDto = new LoginDto { Email = email, Password = password };
         
         // --- When ---
-        Func<Task> action = () => handler.LoginAsync(loginDto);
+        Func<Task> action = () => _authUserHandler.LoginAsync(loginDto);
         
         // --- Then ---
         await action.Should().ThrowAsync<ArgumentException>()
@@ -91,7 +90,7 @@ public class AuthUserHandlerShould
             Token = "token_admin",
             Expiration = DateTime.UtcNow.AddHours(1)
         };
-        _userManagerAdapterMock.Setup(x => x.CreateAdminUserAsync(It.IsAny<AdminUser>(), It.IsAny<CancellationToken>()))
+        _userManagerAdapterMock.Setup(x => x.CreateAdminUserAsync(It.IsAny<AdminUserOptions>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedToken);
         
         // --- When ---
