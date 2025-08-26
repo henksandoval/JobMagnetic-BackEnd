@@ -4,6 +4,7 @@ using System.Text;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Ports;
 using JobMagnet.Domain.Aggregates;
+using JobMagnet.Infrastructure.Exceptions;
 using JobMagnet.Infrastructure.ExternalServices.Identity.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -35,8 +36,10 @@ public class UserManagerAdapter(UserManager<ExternalServices.Identity.Entities.A
         };
         
         var result = await _userManager.CreateAsync(applicationIdentityUser, adminUserOptions.Password);
-        if (!result.Succeeded)
-            throw new Exception("The administrator user could not be created: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+        if (result.Errors.Any(e => e.Code is "DuplicateUserName" or "DuplicateEmail"))
+        {
+            throw new EmailAlreadyTakenAdapterException($"The email'{adminUserOptions.Email}' already in use.");
+        }
         
         var loginDto = new LoginDto { Email = applicationIdentityUser.Email, Password = adminUserOptions.Password };
         return await BuildToken(loginDto);
