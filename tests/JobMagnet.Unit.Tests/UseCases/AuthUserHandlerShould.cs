@@ -1,5 +1,6 @@
 using AutoFixture;
 using AwesomeAssertions;
+using JobMagnet.Application.Exceptions;
 using JobMagnet.Application.UseCases.Auth;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Ports;
@@ -100,5 +101,31 @@ public class AuthUserHandlerShould
         result.Should().NotBeNull();
         result.Token.Should().BeEquivalentTo(expectedToken.Token);
         result.Expiration.Should().BeCloseTo(expectedToken.Expiration, TimeSpan.FromSeconds(1));
+    }
+    
+    
+    [Fact]
+    public async Task CreateAdminUserAsync_WhenEmailAlreadyTaken_ThrowsAdminUserAlreadyExistsException()
+    {
+        // --- Given ---
+        var adminUserOptions = new AdminUserOptions
+        {
+            UserName = "admin",
+            Email = "admin@demo.com",
+            Password = "Admin123!"
+        };
+        _optionsMock.Setup(o => o.Value).Returns(adminUserOptions);
+    
+        var innerException = new Exception("Email is already taken");
+        _userManagerAdapterMock
+            .Setup(x => x.CreateAdminUserAsync(adminUserOptions, It.IsAny<CancellationToken>()))
+            .ThrowsAsync(innerException);
+    
+        // --- When ---
+        Func<Task> action = () => _authUserHandler.CreateAdminUserAsync(CancellationToken.None);
+    
+        // --- Then ---
+        await action.Should().ThrowAsync<AdminUserAlreadyExistsException>()
+            .WithMessage($"The administrator user with the email '{adminUserOptions.Email}' already exists.");
     }
 }
