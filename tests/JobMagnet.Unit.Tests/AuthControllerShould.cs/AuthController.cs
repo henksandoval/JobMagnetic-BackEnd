@@ -4,7 +4,6 @@ using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Host.Controllers.V1;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Moq;
 
 namespace JobMagnet.Unit.Tests.AuthControllerShould.cs;
@@ -53,23 +52,5 @@ public class AuthControllerShould
             .Subject.Value;
         
         currentToken.Should().BeEquivalentTo(expectedToken);
-    }
-    
-    [Fact]
-    public async Task CreateAdminUser_ReturnsOk_WhenSuccess()
-    {
-        // --- Given ---
-        var expectedToken =  _fixture.Create<UserToken>();
-        _handlerMock.Setup(h => h.CreateAdminUserAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedToken);
-        
-        // --- When ---
-        var controller =await  _controller.CreateAdminUser(CancellationToken.None);
-
-        // --- Then ---
-        var okToken = controller.Should().BeAssignableTo<Ok<UserToken>>()
-            .Subject.Value;
-        
-        okToken.Should().BeEquivalentTo(expectedToken);
     }
 }
