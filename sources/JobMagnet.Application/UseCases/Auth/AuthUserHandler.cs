@@ -1,3 +1,4 @@
+using JobMagnet.Application.Exceptions;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Application.UseCases.Auth.Ports;
@@ -21,7 +22,17 @@ public class AuthUserHandler(IUserManagerAdapter userManagerAdapter, IOptions<Ad
     public async Task<UserToken> CreateAdminUserAsync(CancellationToken cancellationToken)
     {
         var adminUserOptions = options.Value;
-        var result = await userManagerAdapter.CreateAdminUserAsync(adminUserOptions, cancellationToken);
-        return result;
+        try
+        {
+            var result = await userManagerAdapter.CreateAdminUserAsync(adminUserOptions, cancellationToken);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            throw new AdminUserAlreadyExistsException(
+                $"The administrator user with the email '{adminUserOptions.Email}' already exists.",
+                ex
+            );
+        }
     }
 }
