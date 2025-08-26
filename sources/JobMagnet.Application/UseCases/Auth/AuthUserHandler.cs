@@ -2,10 +2,12 @@ using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Application.UseCases.Auth.Ports;
 using JobMagnet.Domain.Aggregates;
+using Microsoft.Extensions.Options;
 
 namespace JobMagnet.Application.UseCases.Auth;
 
-public class AuthUserHandler(IUserManagerAdapter userManagerAdapter) : IAuthUserHandler
+public class AuthUserHandler(IUserManagerAdapter userManagerAdapter, IOptions<AdminUserOptions> options)
+    : IAuthUserHandler
 {
     public async Task<UserToken> LoginAsync(LoginDto loginDto)
     {
@@ -18,13 +20,8 @@ public class AuthUserHandler(IUserManagerAdapter userManagerAdapter) : IAuthUser
     
     public async Task<UserToken> CreateAdminUserAsync(CancellationToken cancellationToken)
     {
-        var adminUser = new AdminUser
-        {
-            UserName = "admin",
-            Email = "admin@demo.com",
-            Password = "Admin123!"
-        };
-        var result = await userManagerAdapter.CreateAdminUserAsync(adminUser, cancellationToken);
+        var adminUserOptions = options.Value;
+        var result = await userManagerAdapter.CreateAdminUserAsync(adminUserOptions, cancellationToken);
         return result;
     }
 }
