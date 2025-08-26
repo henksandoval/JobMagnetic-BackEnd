@@ -1,6 +1,7 @@
 using System.Text;
 using JobMagnet.Application.Extensions;
 using JobMagnet.Application.Services;
+using JobMagnet.Domain.Aggregates;
 using JobMagnet.Host.Extensions;
 using JobMagnet.Host.Services;
 using JobMagnet.Infrastructure.Extensions;
@@ -23,6 +24,8 @@ builder.Services
     .AddConfiguredOpenApi(builder.Configuration)
     .AddSwagger()
     .AddControllers();
+
+builder.Services.Configure<AdminUserOptions>(builder.Configuration.GetSection("AdminUser"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
