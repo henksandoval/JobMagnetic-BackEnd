@@ -6,5 +6,5 @@ namespace JobMagnet.Application.UseCases.Auth.Ports;
 public interface IUserManagerAdapter
 {
     Task<UserToken> LoginAsync(LoginDto loginDto);
-    Task<UserToken> CreateAdminUserAsync(AdminUser adminUser,  CancellationToken cancellationToken);
+    Task<UserToken> CreateAdminUserAsync(AdminUserOptions adminUserOptions,  CancellationToken cancellationToken);
 }
