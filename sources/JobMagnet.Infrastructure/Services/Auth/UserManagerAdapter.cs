@@ -26,19 +26,19 @@ public class UserManagerAdapter(UserManager<ExternalServices.Identity.Entities.A
         return null!;
     }
 
-    public async Task<UserToken> CreateAdminUserAsync (AdminUser adminUser, CancellationToken cancellationToken)
+    public async Task<UserToken> CreateAdminUserAsync (AdminUserOptions adminUserOptions, CancellationToken cancellationToken)
     {
         var applicationIdentityUser = new ApplicationIdentityUser
         {
-            UserName = adminUser.Email,
-            Email = adminUser.Email,
+            UserName = adminUserOptions.Email,
+            Email = adminUserOptions.Email,
         };
         
-        var result = await _userManager.CreateAsync(applicationIdentityUser, adminUser.Password);
+        var result = await _userManager.CreateAsync(applicationIdentityUser, adminUserOptions.Password);
         if (!result.Succeeded)
             throw new Exception("The administrator user could not be created: " + string.Join(", ", result.Errors.Select(e => e.Description)));
         
-        var loginDto = new LoginDto { Email = applicationIdentityUser.Email, Password = adminUser.Password };
+        var loginDto = new LoginDto { Email = applicationIdentityUser.Email, Password = adminUserOptions.Password };
         return await BuildToken(loginDto);
     }
 
