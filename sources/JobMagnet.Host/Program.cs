@@ -1,6 +1,7 @@
 using System.Text;
 using JobMagnet.Application.Extensions;
 using JobMagnet.Application.Services;
+using JobMagnet.Application.UseCases.Auth.Ports.EmailDTO;
 using JobMagnet.Domain.Aggregates;
 using JobMagnet.Host.Extensions;
 using JobMagnet.Host.Services;
@@ -25,6 +26,7 @@ builder.Services
     .AddSwagger()
     .AddControllers();
 
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.Configure<AdminUserOptions>(builder.Configuration.GetSection("AdminUser"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
