@@ -21,4 +21,23 @@ public class AuthController(IAuthUserHandler handler)
         }
         return Results.Ok(resultToken);
     }
+    
+    [HttpPost("register", Name = "registerUser")]
+    public async Task<IResult> RegisterAsync([FromBody] RegisterDto registerDto)
+    {
+        // try
+        // {
+        //     var resultToken = await handler.RegisterAsync(registerRequest);
+        //     if (resultToken == null)
+        //     {
+        //         return Results.BadRequest("The user could not be registered.");
+        //     }
+        //     return Results.Ok(resultToken);
+        // }
+        // catch (Exception ex)
+        // {
+        //     return Results.BadRequest(ex.Message);
+        // }
+        throw  new NotImplementedException();
+    }
 }
