@@ -10,12 +10,26 @@ namespace JobMagnet.Application.UseCases.Auth;
 public class AuthUserHandler(IUserManagerAdapter userManagerAdapter, IOptions<AdminUserOptions> options)
     : IAuthUserHandler
 {
-    public async Task<UserToken> LoginAsync(LoginDto loginDto)
+    public async Task<UserToken> RegisterAsync(UserModelCredentials userModelCredentials)
     {
-        if (string.IsNullOrWhiteSpace(loginDto.Email) || string.IsNullOrWhiteSpace(loginDto.Password))
+        if (userModelCredentials == null)
+            throw new ArgumentNullException(nameof(userModelCredentials));
+
+        if (string.IsNullOrWhiteSpace(userModelCredentials.Email) ||
+            string.IsNullOrWhiteSpace(userModelCredentials.Password))
+            throw new ArgumentException("Password and email are required.");
+        
+        var token = await userManagerAdapter.RegisterAsync(userModelCredentials);
+        
+        return token;
+    }
+    
+    public async Task<UserToken> LoginAsync(UserModelCredentials userModelCredentials)
+    {
+        if (string.IsNullOrWhiteSpace(userModelCredentials.Email) || string.IsNullOrWhiteSpace(userModelCredentials.Password))
             throw new ArgumentException("The email and password cannot be null, empty, or contain only spaces.");
         
-        var token = await userManagerAdapter.LoginAsync(loginDto);
+        var token = await userManagerAdapter.LoginAsync(userModelCredentials);
         return false ? null : token;
     }
     
@@ -35,4 +49,5 @@ public class AuthUserHandler(IUserManagerAdapter userManagerAdapter, IOptions<Ad
             );
         }
     }
+
 }
