@@ -29,7 +29,7 @@ public class AuthUserHandlerShould
     public async Task LoginAsync_WhenCredentialsAreValid_ReturnsUserToken()
     {
         // --- Given ---
-        var loginDto = _fixture.Create<LoginDto>();
+        var loginDto = _fixture.Create<UserModelCredentials>();
         var expectedToken = new UserToken
         {
             Token = "un_jwt_token_valido",
@@ -45,14 +45,18 @@ public class AuthUserHandlerShould
         // --- Then  ---
         result.Should().NotBeNull();
         result.Token.Should().BeEquivalentTo(expectedToken.Token);
+        
+        _userManagerAdapterMock.Verify(
+            adapter => adapter.LoginAsync(loginDto), 
+            Times.Once);
     }
     
     [Fact]
     public async Task LoginAsync_WhenAdapterReturnsNull_ReturnsNull()
     {
         // --- Given ---
-        var loginDto = _fixture.Create<LoginDto>();
-        _userManagerAdapterMock.Setup(x => x.LoginAsync(It.IsAny<LoginDto>())).ReturnsAsync((UserToken)null);
+        var loginDto = _fixture.Create<UserModelCredentials>();
+        _userManagerAdapterMock.Setup(x => x.LoginAsync(It.IsAny<UserModelCredentials>())).ReturnsAsync((UserToken)null);
 
         // --- When ---
         var result = await _authUserHandler.LoginAsync(loginDto);
@@ -72,7 +76,7 @@ public class AuthUserHandlerShould
     public async Task LoginAsync_WhenEmailOrPasswordIsEmpty_ThrowsArgumentException(string email, string password)
     {
         // --- Given ---
-        var loginDto = new LoginDto { Email = email, Password = password };
+        var loginDto = new UserModelCredentials { Email = email, Password = password };
         
         // --- When ---
         Func<Task> action = () => _authUserHandler.LoginAsync(loginDto);
@@ -127,5 +131,68 @@ public class AuthUserHandlerShould
         // --- Then ---
         await action.Should().ThrowAsync<AdminUserAlreadyExistsException>()
             .WithMessage($"The administrator user with the email '{adminUserOptions.Email}' already exists.");
+    }
+    
+    // Test Register
+    
+    [Fact]
+    public async Task RegisterAsync_ShouldThrowArgumentNullException_WhenCredentialsAreNull()
+    {
+        // --- When ---
+        Func<Task> act = async () => await _authUserHandler.RegisterAsync(null);
+        
+        // --- Then ---
+        await act.Should().ThrowAsync<ArgumentNullException>();
+    }
+    
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public async Task RegisterAsync_ShouldThrowArgumentException_WhenEmailIsInvalid(string invalidEmail)
+    {
+        // --- Given ---
+        var credentials = new UserModelCredentials 
+        { 
+            Email = invalidEmail, 
+            Password = "SomeValidPassword123" 
+        };
+        // --- When ---
+        Func<Task> act = async () => await _authUserHandler.RegisterAsync(credentials);
+        
+        // --- Then ---
+        await act.Should().ThrowAsync<ArgumentException>();
+    }
+    
+    [Fact]
+    public async Task RegisterAsync_ShouldCallAdapterAndReturnToken_WhenCredentialsAreValid()
+    {
+        // --- Given ---
+        var validCredentials = new UserModelCredentials
+        {
+            Email = "test@example.com",
+            Password = "ValidPassword123!"
+        };
+        var expectedToken = new UserToken 
+        { 
+            Token = "fake-jwt-token", 
+            Expiration = DateTime.UtcNow.AddHours(1) 
+        };
+        
+        _userManagerAdapterMock
+            .Setup(adapter => adapter.RegisterAsync(validCredentials))
+            .ReturnsAsync(expectedToken);
+        
+        // --- When ---
+        var result = await _authUserHandler.RegisterAsync(validCredentials);
+
+        // --- Then ---
+        result.Should().NotBeNull();
+        result.Should().Be(expectedToken);
+        result.Token.Should().Be("fake-jwt-token");
+        
+        _userManagerAdapterMock.Verify(
+            adapter => adapter.RegisterAsync(validCredentials), 
+            Times.Once);
     }
 }
