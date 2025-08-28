@@ -41,19 +41,26 @@ public class UserManagerAdapter(UserManager<ExternalServices.Identity.Entities.A
         if (result.Succeeded)
         {
             
+            var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var encodedToken = System.Net.WebUtility.UrlEncode(confirmationToken);
+            
+            var confirmationUrlBase = _configuration["ClientApp:ConfirmationUrl"];
+            var confirmationLink = $"{confirmationUrlBase}?email={user.Email}&token={encodedToken}";
+            
             var mailCommand = new MailCommand
             {
                 ToEmail = userModelCredentials.Email,
-                Subject = "¡Bienvenido a Nuestra Plataforma JobMagnet!",
-                Body = $"""
-                                    <h1>Hola {userModelCredentials.Email},</h1>
-                                    <p>Gracias por registrarte. Tu cuenta ha sido creada exitosamente.</p>
-                                    <p>Saludos,<br>El equipo de Tu Aplicación</p>
-                        """
+                Subject = "Confirma tu cuenta en JobMagnet",
+                Body =$"""
+                           <h1>¡Bienvenido a JobMagnet!</h1>
+                           <p>Gracias por registrarte. Por favor, confirma tu cuenta haciendo clic en el siguiente enlace:</p>
+                           <p><a href="{confirmationLink}">Confirmar mi cuenta</a></p>
+                           <p>Saludos,<br>El equipo de JobMagnet</p>
+                       """
             };
             
             await _emailService.SendEmailAsync(mailCommand);
-            return await BuildToken(userModelCredentials);
+            return await BuildToken(user);
         }
         else
         {
@@ -65,11 +72,13 @@ public class UserManagerAdapter(UserManager<ExternalServices.Identity.Entities.A
     public async Task<UserToken> LoginAsync(UserModelCredentials userModelCredentials)
     {
         var user = await _userManager.FindByEmailAsync(userModelCredentials.Email);
+
         if (user != null && await _userManager.CheckPasswordAsync(user, userModelCredentials.Password))
         {
-            return await BuildToken(userModelCredentials);
+            return await BuildToken(user);
         }
-        return null!;
+        
+        throw new InvalidCredentialsAdapterException("Incorrect email or password.");
     }
 
     public async Task<UserToken> CreateAdminUserAsync (AdminUserOptions adminUserOptions, CancellationToken cancellationToken)
@@ -87,27 +96,28 @@ public class UserManagerAdapter(UserManager<ExternalServices.Identity.Entities.A
         }
         
         var loginDto = new UserModelCredentials { Email = applicationIdentityUser.Email, Password = adminUserOptions.Password };
-        return await BuildToken(loginDto);
+        return await BuildToken(applicationIdentityUser);
     }
 
-    private async Task<UserToken> BuildToken(UserModelCredentials userModelCredentials)
+    private async Task<UserToken> BuildToken(ApplicationIdentityUser user)
     {
+        var userRoles = await _userManager.GetRolesAsync(user);
+        
+        var userClaims = await _userManager.GetClaimsAsync(user);
+        
         var claims = new List<Claim>
         { 
-            new Claim(ClaimTypes.Name, userModelCredentials.Email),
-            new Claim(ClaimTypes.Email, userModelCredentials.Email)
+            new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim(ClaimTypes.Name, user.Email)
         };
-        var userIdentity = await _userManager.FindByNameAsync(userModelCredentials.Email);
+        claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        if (userIdentity?.Id != null) 
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, userIdentity.Id.ToString()));
+        claims.AddRange(userClaims);
         
-        var clamsDB = await _userManager.GetClaimsAsync(userIdentity);
-        claims.AddRange(clamsDB);
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"] ?? string.Empty));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         
-        var expiration = DateTime.UtcNow.AddYears(1);
+        var expiration = DateTime.UtcNow.AddHours(1);
         
         var securityToken = new JwtSecurityToken(
             issuer: null,
