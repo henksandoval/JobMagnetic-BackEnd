@@ -12,7 +12,7 @@ namespace JobMagnet.Host.Controllers.V1;
 public class AuthController(IAuthUserHandler handler)
 {
     [HttpPost("login", Name = "loginUser")]
-    public async Task<IResult> LoginAsync([FromBody] LoginDto loginRequest)
+    public async Task<IResult> LoginAsync([FromBody] UserModelCredentials loginRequest)
     {
         var resultToken = await handler.LoginAsync(loginRequest);
         if (resultToken == null)
@@ -23,21 +23,20 @@ public class AuthController(IAuthUserHandler handler)
     }
     
     [HttpPost("register", Name = "registerUser")]
-    public async Task<IResult> RegisterAsync([FromBody] RegisterDto registerDto)
+    public async Task<IResult> RegisterAsync([FromBody] UserModelCredentials  registerRequest)
     {
-        // try
-        // {
-        //     var resultToken = await handler.RegisterAsync(registerRequest);
-        //     if (resultToken == null)
-        //     {
-        //         return Results.BadRequest("The user could not be registered.");
-        //     }
-        //     return Results.Ok(resultToken);
-        // }
-        // catch (Exception ex)
-        // {
-        //     return Results.BadRequest(ex.Message);
-        // }
-        throw  new NotImplementedException();
+        try
+        {
+            var resultToken = await handler.RegisterAsync(registerRequest);
+            if (resultToken == null)
+            {
+                return Results.BadRequest("The user could not be registered.");
+            }
+            return Results.Ok(resultToken);
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest(ex.Message);
+        }
     }
 }
