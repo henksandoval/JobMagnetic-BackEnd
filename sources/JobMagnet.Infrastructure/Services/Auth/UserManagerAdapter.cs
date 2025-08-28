@@ -3,26 +3,71 @@ using System.Security.Claims;
 using System.Text;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Ports;
+using JobMagnet.Application.UseCases.Auth.Ports.EmailDTO;
 using JobMagnet.Domain.Aggregates;
 using JobMagnet.Infrastructure.Exceptions;
 using JobMagnet.Infrastructure.ExternalServices.Identity.Entities;
+using JobMagnet.Infrastructure.Services.EmailService.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace JobMagnet.Infrastructure.Services.Auth;
 
-public class UserManagerAdapter(UserManager<ExternalServices.Identity.Entities.ApplicationIdentityUser> userManager, IConfiguration configuration) : IUserManagerAdapter
+public class UserManagerAdapter(UserManager<ExternalServices.Identity.Entities.ApplicationIdentityUser> userManager, IConfiguration configuration, IEmailService emailService) : IUserManagerAdapter
 {
     private readonly UserManager<ExternalServices.Identity.Entities.ApplicationIdentityUser> _userManager = userManager;
     private readonly IConfiguration _configuration = configuration;
-
-    public async Task<UserToken> LoginAsync(LoginDto loginDto)
+    private readonly IEmailService _emailService = emailService;
+    
+    public async Task<UserToken> RegisterAsync(UserModelCredentials  userModelCredentials)
     {
-        var user = await _userManager.FindByEmailAsync(loginDto.Email);
-        if (user != null && await _userManager.CheckPasswordAsync(user, loginDto.Password))
+        
+        var userExists = await _userManager.FindByEmailAsync(userModelCredentials.Email);
+        if (userExists != null)
         {
-            return await BuildToken(loginDto);
+            throw new EmailAlreadyTakenAdapterException($"The email'{userModelCredentials.Email}' already in use.");
+        }
+        
+        var user = new ApplicationIdentityUser
+        {
+            UserName = userModelCredentials.Email, 
+            Email = userModelCredentials.Email,
+            SecurityStamp = Guid.NewGuid().ToString()
+        };
+        
+        var result = await _userManager.CreateAsync(user, userModelCredentials.Password);
+        
+        if (result.Succeeded)
+        {
+            
+            var mailCommand = new MailCommand
+            {
+                ToEmail = userModelCredentials.Email,
+                Subject = "¡Bienvenido a Nuestra Plataforma JobMagnet!",
+                Body = $"""
+                                    <h1>Hola {userModelCredentials.Email},</h1>
+                                    <p>Gracias por registrarte. Tu cuenta ha sido creada exitosamente.</p>
+                                    <p>Saludos,<br>El equipo de Tu Aplicación</p>
+                        """
+            };
+            
+            await _emailService.SendEmailAsync(mailCommand);
+            return await BuildToken(userModelCredentials);
+        }
+        else
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"No se pudo crear el usuario: {errors}");
+        }
+    }
+
+    public async Task<UserToken> LoginAsync(UserModelCredentials userModelCredentials)
+    {
+        var user = await _userManager.FindByEmailAsync(userModelCredentials.Email);
+        if (user != null && await _userManager.CheckPasswordAsync(user, userModelCredentials.Password))
+        {
+            return await BuildToken(userModelCredentials);
         }
         return null!;
     }
@@ -41,18 +86,18 @@ public class UserManagerAdapter(UserManager<ExternalServices.Identity.Entities.A
             throw new EmailAlreadyTakenAdapterException($"The email'{adminUserOptions.Email}' already in use.");
         }
         
-        var loginDto = new LoginDto { Email = applicationIdentityUser.Email, Password = adminUserOptions.Password };
+        var loginDto = new UserModelCredentials { Email = applicationIdentityUser.Email, Password = adminUserOptions.Password };
         return await BuildToken(loginDto);
     }
 
-    private async Task<UserToken> BuildToken(LoginDto loginDto)
+    private async Task<UserToken> BuildToken(UserModelCredentials userModelCredentials)
     {
         var claims = new List<Claim>
         { 
-            new Claim(ClaimTypes.Name, loginDto.Email),
-            new Claim(ClaimTypes.Email, loginDto.Email)
+            new Claim(ClaimTypes.Name, userModelCredentials.Email),
+            new Claim(ClaimTypes.Email, userModelCredentials.Email)
         };
-        var userIdentity = await _userManager.FindByNameAsync(loginDto.Email);
+        var userIdentity = await _userManager.FindByNameAsync(userModelCredentials.Email);
 
         if (userIdentity?.Id != null) 
             claims.Add(new Claim(ClaimTypes.NameIdentifier, userIdentity.Id.ToString()));
