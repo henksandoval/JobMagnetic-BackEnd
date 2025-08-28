@@ -5,6 +5,8 @@ using JobMagnet.Infrastructure.ExternalServices.Identity.Entities;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Services.Auth;
 using JobMagnet.Infrastructure.Services.CvParsers;
+using JobMagnet.Infrastructure.Services.EmailService;
+using JobMagnet.Infrastructure.Services.EmailService.Interfaces;
 using JobMagnet.Shared.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +37,7 @@ public static class InfrastructureExtensions
             .AddSharedDependencies()
             .AddTransient<IRawCvParser, GeminiCvParser>()
             .AddTransient<IUserManagerAdapter, UserManagerAdapter>()
+            .AddTransient<IEmailService, EmailService>()
             .AddPersistence()
             .AddGemini(configuration);
         
