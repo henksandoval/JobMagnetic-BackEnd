@@ -25,7 +25,7 @@ public class AuthControllerShould
     public async Task ReturnUnauthorized_WhenCredentialsAreInvalid()
     {
         // --- Given ---
-        var loginDto = _fixture.Create<LoginDto>();
+        var loginDto = _fixture.Create<UserModelCredentials>();
         _handlerMock.Setup(h => h.LoginAsync(loginDto)).ReturnsAsync((UserToken)null);
 
         // --- When ---
@@ -39,7 +39,7 @@ public class AuthControllerShould
     public async Task ReturnToken_WhenCredentialsAreValid()
     {
         // --- Given ---
-        var loginDTo = _fixture.Create<LoginDto>();
+        var loginDTo = _fixture.Create<UserModelCredentials>();
         var expectedToken = _fixture.Create<UserToken>();
         _handlerMock.Setup(h => h.LoginAsync(loginDTo)).ReturnsAsync(expectedToken);
         
