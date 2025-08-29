@@ -1,28 +1,29 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-    </PropertyGroup>
+      <UserSecretsId>3a13b6e2-d38a-4a2a-bbe1-a012b0616898</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\JobMagnet.Shared\JobMagnet.Shared.csproj"/>
-        <ProjectReference Include="..\JobMagnet.Application\JobMagnet.Application.csproj"/>
-        <ProjectReference Include="..\JobMagnet.Domain\JobMagnet.Domain.csproj"/>
+        <ProjectReference Include="..\JobMagnet.Shared\JobMagnet.Shared.csproj" />
+        <ProjectReference Include="..\JobMagnet.Application\JobMagnet.Application.csproj" />
+        <ProjectReference Include="..\JobMagnet.Domain\JobMagnet.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="AutoFixture.Xunit" Version="4.19.0" />
-        <PackageReference Include="Gemini.NET" Version="3.4.5.1"/>
-        <PackageReference Include="JsonSchema.Net" Version="7.3.4"/>
-        <PackageReference Include="JsonSchema.Net.Generation" Version="5.0.4"/>
+        <PackageReference Include="Gemini.NET" Version="3.4.5.1" />
+        <PackageReference Include="JsonSchema.Net" Version="7.3.4" />
+        <PackageReference Include="JsonSchema.Net.Generation" Version="5.0.4" />
         <PackageReference Include="MailKit" Version="4.13.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
-        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.5"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.3"/>
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.3">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
