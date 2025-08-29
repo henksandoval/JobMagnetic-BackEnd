@@ -59,7 +59,7 @@ public class UserManagerAdapter(UserManager<ExternalServices.Identity.Entities.A
                        """
             };
             
-            await _emailService.SendEmailAsync(mailCommand);
+            await  _emailService.SendEmailAsync(mailCommand);
             return await BuildToken(user);
         }
         else
