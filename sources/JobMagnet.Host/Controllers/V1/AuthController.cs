@@ -1,8 +1,6 @@
 using Asp.Versioning;
-using JobMagnet.Application.Exceptions;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Interface;
-using JobMagnet.Domain.Aggregates;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -15,24 +13,16 @@ public class AuthController(IAuthUserHandler handler)
     public async Task<IResult> LoginAsync([FromBody] UserModelCredentials loginRequest)
     {
         var resultToken = await handler.LoginAsync(loginRequest);
-        if (resultToken == null)
-        {
-            return Results.Unauthorized();
-        }
-        return Results.Ok(resultToken);
+        return resultToken != null ? Results.Ok(resultToken) :  Results.Unauthorized();
     }
     
-    [HttpPost("register", Name = "registerUser")]
+    [HttpPost("register")]
     public async Task<IResult> RegisterAsync([FromBody] UserModelCredentials  registerRequest)
     {
         try
         {
-            var resultToken = await handler.RegisterAsync(registerRequest);
-            if (resultToken == null)
-            {
-                return Results.BadRequest("The user could not be registered.");
-            }
-            return Results.Ok(resultToken);
+            await handler.RegisterAsync(registerRequest);
+            return Results.Ok("Registration successful. Please check your email to confirm your account.");
         }
         catch (Exception ex)
         {
