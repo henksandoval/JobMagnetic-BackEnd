@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Interface;
+using JobMagnet.Domain.Aggregates.Auth.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -9,12 +10,6 @@ namespace JobMagnet.Host.Controllers.V1;
 [ApiVersion("1")]
 public class AuthController(IAuthUserHandler handler)
 {
-    [HttpPost("login", Name = "loginUser")]
-    public async Task<IResult> LoginAsync([FromBody] UserModelCredentials loginRequest)
-    {
-        var resultToken = await handler.LoginAsync(loginRequest);
-        return resultToken != null ? Results.Ok(resultToken) :  Results.Unauthorized();
-    }
     
     [HttpPost("register")]
     public async Task<IResult> RegisterAsync([FromBody] UserModelCredentials  registerRequest)
@@ -28,5 +23,23 @@ public class AuthController(IAuthUserHandler handler)
         {
             return Results.BadRequest(ex.Message);
         }
+    }
+    
+    [HttpPost("login", Name = "loginUser")]
+    public async Task<IResult> LoginAsync([FromBody] UserModelCredentials loginRequest)
+    {
+        var responseToken = await handler.LoginAsync(loginRequest);
+        return responseToken != null ? Results.Ok(responseToken) :  Results.Unauthorized();
+    }
+    
+    [HttpPost("refreshToken")]
+    public async Task<IResult> RefreshTokenAsync([FromBody] RefreshToken request)
+    {
+        if (request == null || string.IsNullOrWhiteSpace(request.Token))
+            return  Results.BadRequest("Refresh token is required.");
+        
+        var userToken = await handler.RefreshTokenAsync(request);
+        
+        return userToken == null ? Results.Unauthorized() : Results.Ok(userToken);
     }
 }
