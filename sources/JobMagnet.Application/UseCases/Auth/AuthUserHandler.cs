@@ -3,6 +3,7 @@ using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Application.UseCases.Auth.Ports;
 using JobMagnet.Domain.Aggregates;
+using JobMagnet.Domain.Aggregates.Auth.Entities;
 using Microsoft.Extensions.Options;
 
 namespace JobMagnet.Application.UseCases.Auth;
@@ -32,7 +33,16 @@ public class AuthUserHandler(IUserManagerAdapter userManagerAdapter, IOptions<Ad
         var token = await userManagerAdapter.LoginAsync(userModelCredentials);
         return false ? null : token;
     }
-    
+
+    public async Task<UserToken> RefreshTokenAsync(RefreshToken request)
+    {
+        if (string.IsNullOrWhiteSpace(request.ToString()))
+        {
+            return null;
+        }
+        return await userManagerAdapter.RefreshTokenAsync(request);
+    }
+
     public async Task<UserToken> CreateAdminUserAsync(CancellationToken cancellationToken)
     {
         var adminUserOptions = options.Value;
