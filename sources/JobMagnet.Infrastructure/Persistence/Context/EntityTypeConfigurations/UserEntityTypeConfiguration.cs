@@ -11,14 +11,21 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
+        builder.ToTable("User");
         builder.HasKey(s => s.Id);
-
+        
         builder.Property(u => u.Id)
             .HasConversion(id => id.Value, value => new UserId(value))
             .ValueGeneratedNever();
-
-        var navigation = builder.Metadata.FindNavigation(nameof(User.RefreshTokens));
-        navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+        
+        builder.HasOne<ApplicationIdentityUser>()
+            .WithOne(i => i.User)
+            .HasForeignKey<User>(u => u.ApplicationIdentityUserId);
+        
+        builder.HasMany(u => u.RefreshTokens)
+            .WithOne()
+            .HasForeignKey(rt => rt.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(u => u.Email).IsRequired().HasMaxLength(256);
         builder.Property(u => u.PhotoUrl);
