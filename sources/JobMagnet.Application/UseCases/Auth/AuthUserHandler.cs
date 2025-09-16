@@ -8,10 +8,10 @@ using Microsoft.Extensions.Options;
 
 namespace JobMagnet.Application.UseCases.Auth;
 
-public class AuthUserHandler(IUserManagerAdapter userManagerAdapter, IOptions<AdminUserOptions> options)
+public class AuthUserHandler(IUserManage userManager, IOptions<AdminUserOptions> options)
     : IAuthUserHandler
 {
-    public async Task<UserToken> RegisterAsync(UserModelCredentials userModelCredentials)
+    public async Task<UserToken> RegisterAsync(UserModelCredentials userModelCredentials, CancellationToken cancellationToken)
     {
         if (userModelCredentials == null)
             throw new ArgumentNullException(nameof(userModelCredentials));
@@ -19,18 +19,24 @@ public class AuthUserHandler(IUserManagerAdapter userManagerAdapter, IOptions<Ad
         if (string.IsNullOrWhiteSpace(userModelCredentials.Email) ||
             string.IsNullOrWhiteSpace(userModelCredentials.Password))
             throw new ArgumentException("Password and email are required.");
+
+        if (await userManager.EmailExistAsync(userModelCredentials.Email))
+            throw new JobMagnetApplicationException("Email already exists.");
         
-        var token = await userManagerAdapter.RegisterAsync(userModelCredentials);
+        var token = await userManager.RegisterAsync(userModelCredentials, cancellationToken);
         
         return token;
     }
     
-    public async Task<UserToken> LoginAsync(UserModelCredentials userModelCredentials)
+    public async Task<UserToken> LoginAsync(UserModelCredentials userModelCredentials, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(userModelCredentials.Email) || string.IsNullOrWhiteSpace(userModelCredentials.Password))
             throw new ArgumentException("The email and password cannot be null, empty, or contain only spaces.");
         
-        var token = await userManagerAdapter.LoginAsync(userModelCredentials);
+        // if (await userManager.EmailExistAsync(userModelCredentials.Email))
+        //     throw new JobMagnetApplicationException("Email already exists.");
+        
+        var token = await userManager.LoginAsync(userModelCredentials, cancellationToken);
         return false ? null : token;
     }
 
@@ -40,7 +46,7 @@ public class AuthUserHandler(IUserManagerAdapter userManagerAdapter, IOptions<Ad
         {
             return null;
         }
-        return await userManagerAdapter.RefreshTokenAsync(request);
+        return await userManager.RefreshTokenAsync(request);
     }
 
     public async Task<UserToken> CreateAdminUserAsync(CancellationToken cancellationToken)
@@ -48,7 +54,7 @@ public class AuthUserHandler(IUserManagerAdapter userManagerAdapter, IOptions<Ad
         var adminUserOptions = options.Value;
         try
         {
-            var result = await userManagerAdapter.CreateAdminUserAsync(adminUserOptions, cancellationToken);
+            var result = await userManager.CreateAdminUserAsync(adminUserOptions, cancellationToken);
             return result;
         }
         catch (Exception ex)
