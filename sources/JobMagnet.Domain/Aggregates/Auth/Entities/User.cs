@@ -10,25 +10,27 @@ public class User : SoftDeletableEntity<UserId>
 {
     private readonly HashSet<RefreshToken> _refreshTokens = [];
     public string Email { get; private  set; }
-    public string PhotoUrl { get; private set; }
+    public string? PhotoUrl { get; private set; }
+    public Guid ApplicationIdentityUserId { get;  set; }
     public virtual IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens;
 
     private User() { }
     
-    private  static User CreateInstance(UserId id, string email, string photoUrl)
+    public static  User AddUser(UserId id, string email, string? photoUrl, Guid applicationIdentityUserId)
     {
         Guard.IsNotNullOrWhiteSpace(email);
-        Guard.IsNotNullOrWhiteSpace(photoUrl);
-
+        Guard.IsNotDefault(id.Value, nameof(id));
+        Guard.IsNotDefault(applicationIdentityUserId, nameof(applicationIdentityUserId));
         return new User
         {
             Id = id,
             Email = email,
-            PhotoUrl = photoUrl
+            PhotoUrl = photoUrl,
+            ApplicationIdentityUserId = applicationIdentityUserId,
         };
     }
-
-    public  RefreshToken AddRefreshToken(IGuidGenerator guidGenerator, string token, TimeSpan validity, int maxActiveTokens)
+    
+    public  RefreshToken AddRefreshToken(IGuidGenerator guidGenerator, string token, TimeSpan validity, int maxActiveTokens = 1)
     {
         if (_refreshTokens.Count(rt => rt.IsActive) >= maxActiveTokens)
             throw new JobMagnetDomainException($"Cannot have more than {maxActiveTokens} active sessions.");
@@ -39,4 +41,11 @@ public class User : SoftDeletableEntity<UserId>
         return newRefreshToken;
     }
     
+    // public void RevokeRefreshToken(string token)
+    // {
+    //     var tokenToRevoke = _refreshTokens.FirstOrDefault(rt => rt.Token == token);
+    //     if (tokenToRevoke is null || !tokenToRevoke.IsActive)
+    //         return;
+    //     tokenToRevoke.Revoke();
+    // }
 }
