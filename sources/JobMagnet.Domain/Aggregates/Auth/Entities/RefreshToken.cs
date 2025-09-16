@@ -17,7 +17,7 @@ public class RefreshToken : TrackableEntity<RefreshTokenId>
     
     private RefreshToken() { }
     
-    internal static RefreshToken CreateInstance(IGuidGenerator guidGenerator, UserId userId, string token, TimeSpan validity)
+    internal   static RefreshToken CreateInstance(IGuidGenerator guidGenerator, UserId userId, string token, TimeSpan validity)
     {
         return new RefreshToken
         {
@@ -27,5 +27,13 @@ public class RefreshToken : TrackableEntity<RefreshTokenId>
             Created = DateTime.UtcNow,
             Expires = DateTime.UtcNow.Add(validity)
         };
+    }
+     
+    internal void Revoke()
+    {
+        if (IsActive)
+        {
+            Revoked = DateTime.UtcNow;
+        }
     }
 }
