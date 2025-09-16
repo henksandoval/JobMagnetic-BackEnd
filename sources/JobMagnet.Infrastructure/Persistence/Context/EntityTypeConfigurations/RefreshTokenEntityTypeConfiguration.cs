@@ -14,11 +14,13 @@ public class RefreshTokenEntityTypeConfiguration : IEntityTypeConfiguration<Refr
         builder.HasKey(rt => rt.Id);
 
         builder.Property(rt => rt.Id)
-            .HasConversion(id => id.Value, value => new RefreshTokenId(value));
-            
-        builder.Property(rt => rt.UserId)
-            .HasConversion(id => id.Value, value => new UserId(value));
-            
+            .HasConversion(id => id.Value, value => new RefreshTokenId(value))
+            .ValueGeneratedNever();
+        
+        builder.HasOne<User>()
+            .WithOne()
+            .HasForeignKey<RefreshToken>(u => u.UserId);
+        
         builder.HasIndex(rt => rt.Token).IsUnique();
     }
 }
