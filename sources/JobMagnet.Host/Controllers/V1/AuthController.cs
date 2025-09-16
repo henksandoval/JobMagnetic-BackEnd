@@ -12,12 +12,13 @@ public class AuthController(IAuthUserHandler handler)
 {
     
     [HttpPost("register")]
-    public async Task<IResult> RegisterAsync([FromBody] UserModelCredentials  registerRequest)
+    public async Task<IResult> RegisterAsync([FromBody] UserModelCredentials  registerRequest, CancellationToken cancellationToken)
     {
         try
         {
-            await handler.RegisterAsync(registerRequest);
+            await handler.RegisterAsync(registerRequest, cancellationToken);
             return Results.Ok("Registration successful. Please check your email to confirm your account.");
+            
         }
         catch (Exception ex)
         {
@@ -26,9 +27,9 @@ public class AuthController(IAuthUserHandler handler)
     }
     
     [HttpPost("login", Name = "loginUser")]
-    public async Task<IResult> LoginAsync([FromBody] UserModelCredentials loginRequest)
+    public async Task<IResult> LoginAsync([FromBody] UserModelCredentials loginRequest, CancellationToken cancellationToken)
     {
-        var responseToken = await handler.LoginAsync(loginRequest);
+        var responseToken = await handler.LoginAsync(loginRequest, cancellationToken);
         return responseToken != null ? Results.Ok(responseToken) :  Results.Unauthorized();
     }
     
