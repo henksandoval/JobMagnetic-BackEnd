@@ -33,9 +33,6 @@ public class AuthUserHandler(IUserManage userManager, IOptions<AdminUserOptions>
         if (string.IsNullOrWhiteSpace(userModelCredentials.Email) || string.IsNullOrWhiteSpace(userModelCredentials.Password))
             throw new ArgumentException("The email and password cannot be null, empty, or contain only spaces.");
         
-        // if (await userManager.EmailExistAsync(userModelCredentials.Email))
-        //     throw new JobMagnetApplicationException("Email already exists.");
-        
         var token = await userManager.LoginAsync(userModelCredentials, cancellationToken);
         return false ? null : token;
     }
