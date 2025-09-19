@@ -15,6 +15,7 @@ using JobMagnet.Infrastructure.ExternalServices.Identity.Entities;
 using JobMagnet.Infrastructure.Services.EmailService.Interfaces;
 using JobMagnet.Shared.Abstractions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -30,6 +31,7 @@ public class UserManagerAdapter(
 {
     private readonly IGuidGenerator _guidGenerator = guidGenerator;
 
+    
     public async Task<UserToken> RegisterAsync(UserModelCredentials  userModelCredentials, CancellationToken cancellationToken)
     {
         var appUser = new ApplicationIdentityUser
@@ -51,7 +53,7 @@ public class UserManagerAdapter(
                 
             var domainUserId  = _guidGenerator.NewGuid();
             var domainUser = User.AddUser(new UserId(domainUserId ), appUser.Email, null, appUser.Id);
-            await repository.CreateAsync(domainUser, cancellationToken);
+            appUser.User = domainUser;
             await unitOfWork.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             
             var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(appUser);
@@ -74,7 +76,7 @@ public class UserManagerAdapter(
             
             await  emailService.SendEmailAsync(mailCommand);
             
-            return await GenerateAndSetTokensAsync(appUser);
+            return await GenerateTokensAsync(appUser, cancellationToken);
 
         }
         catch (Exception)
@@ -86,14 +88,18 @@ public class UserManagerAdapter(
 
     public async Task<UserToken> LoginAsync(UserModelCredentials userModelCredentials, CancellationToken cancellationToken)
     {
-        var identityUser = await userManager.FindByEmailAsync(userModelCredentials.Email);
+        
+        var identityUser = await userManager.Users
+            .Include(u => u.User) 
+            .SingleOrDefaultAsync(u => u.Email == userModelCredentials.Email, cancellationToken);
+        
         if (identityUser == null || !await userManager.CheckPasswordAsync(identityUser, userModelCredentials.Password))
             throw new InvalidCredentialsAdapterException("Incorrect email or password.");
 
-        // if (!await userManager.IsEmailConfirmedAsync(user))
-        //     throw new InvalidOperationException("Email not confirmed.");
+        if (!await userManager.IsEmailConfirmedAsync(identityUser))
+            throw new InvalidOperationException("Email not confirmed.");
 
-        return await GenerateAndSetTokensAsync(identityUser);
+        return await GenerateTokensAsync(identityUser, cancellationToken);
     }
 
     public async Task<bool> EmailExistAsync(string email)
@@ -122,10 +128,10 @@ public class UserManagerAdapter(
         }
         
         var loginDto = new UserModelCredentials { Email = applicationIdentityUser.Email, Password = adminUserOptions.Password };
-        return await GenerateAndSetTokensAsync(applicationIdentityUser);
+        return await GenerateTokensAsync(applicationIdentityUser, cancellationToken);
     }
 
-    private async Task<UserToken> GenerateAndSetTokensAsync(ApplicationIdentityUser user)
+    private async Task<UserToken> GenerateTokensAsync(ApplicationIdentityUser user,  CancellationToken cancellationToken)
     {
         var userRoles = await userManager.GetRolesAsync(user);
         
@@ -134,7 +140,7 @@ public class UserManagerAdapter(
         var claims = new List<Claim>
         { 
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.Email),
+            new Claim(ClaimTypes.Name, user.Email)
         };
         claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
@@ -163,8 +169,16 @@ public class UserManagerAdapter(
             refreshTokenResponse, 
             refreshTokenValidity
         );
+        
+        var result = await userManager.UpdateAsync(user);
 
-       repository.Update(user.User);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"Failed to update user with new refresh token: {errors}");
+        }
+        
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         
         return new UserToken()
         {
