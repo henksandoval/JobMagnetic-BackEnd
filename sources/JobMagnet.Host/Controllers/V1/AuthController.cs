@@ -12,7 +12,7 @@ public class AuthController(IAuthUserHandler handler)
 {
     
     [HttpPost("register")]
-    public async Task<IResult> RegisterAsync([FromBody] UserModelCredentials  registerRequest, CancellationToken cancellationToken)
+    public async Task<IResult> RegisterAsync([FromBody] UserModelCredentialsDto  registerRequest, CancellationToken cancellationToken)
     {
         try
         {
@@ -27,20 +27,16 @@ public class AuthController(IAuthUserHandler handler)
     }
     
     [HttpPost("login", Name = "loginUser")]
-    public async Task<IResult> LoginAsync([FromBody] UserModelCredentials loginRequest, CancellationToken cancellationToken)
+    public async Task<IResult> LoginAsync([FromBody] UserModelCredentialsDto loginRequest, CancellationToken cancellationToken)
     {
         var responseToken = await handler.LoginAsync(loginRequest, cancellationToken);
         return responseToken != null ? Results.Ok(responseToken) :  Results.Unauthorized();
     }
     
     [HttpPost("refreshToken")]
-    public async Task<IResult> RefreshTokenAsync([FromBody] RefreshToken request)
+    public async Task<IResult> RefreshTokenAsync([FromBody] RefreshTokenDto refreshTokenDto,  CancellationToken cancellationToken)
     {
-        if (request == null || string.IsNullOrWhiteSpace(request.Token))
-            return  Results.BadRequest("Refresh token is required.");
-        
-        var userToken = await handler.RefreshTokenAsync(request);
-        
-        return userToken == null ? Results.Unauthorized() : Results.Ok(userToken);
+        var resultToken = await handler.RefreshTokenAsync(refreshTokenDto, cancellationToken);
+        return resultToken != null ? Results.Ok(resultToken) :Results.BadRequest("Invalid client request or refresh token.");
     }
 }

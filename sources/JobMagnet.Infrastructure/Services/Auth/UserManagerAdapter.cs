@@ -32,15 +32,15 @@ public class UserManagerAdapter(
     private readonly IGuidGenerator _guidGenerator = guidGenerator;
 
     
-    public async Task<UserToken> RegisterAsync(UserModelCredentials  userModelCredentials, CancellationToken cancellationToken)
+    public async Task<UserTokenDto> RegisterAsync(UserModelCredentialsDto  userModelCredentialsDto, CancellationToken cancellationToken)
     {
         var appUser = new ApplicationIdentityUser
         {
-            UserName = userModelCredentials.Email, 
-            Email = userModelCredentials.Email
+            UserName = userModelCredentialsDto.Email, 
+            Email = userModelCredentialsDto.Email
         };
         
-        var identityResult  = await userManager.CreateAsync(appUser, userModelCredentials.Password);
+        var identityResult  = await userManager.CreateAsync(appUser, userModelCredentialsDto.Password);
         
         if (!identityResult.Succeeded)
         {
@@ -64,7 +64,7 @@ public class UserManagerAdapter(
             
             var mailCommand = new MailCommand
             {
-                ToEmail = userModelCredentials.Email,
+                ToEmail = userModelCredentialsDto.Email,
                 Subject = "Confirma tu cuenta en JobMagnet",
                 Body =$"""
                            <h1>¡Bienvenido a JobMagnet!</h1>
@@ -86,18 +86,17 @@ public class UserManagerAdapter(
         }
     }
 
-    public async Task<UserToken> LoginAsync(UserModelCredentials userModelCredentials, CancellationToken cancellationToken)
+    public async Task<UserTokenDto> LoginAsync(UserModelCredentialsDto userModelCredentialsDto, CancellationToken cancellationToken)
     {
-        
         var identityUser = await userManager.Users
             .Include(u => u.User) 
-            .SingleOrDefaultAsync(u => u.Email == userModelCredentials.Email, cancellationToken);
+            .SingleOrDefaultAsync(u => u.Email == userModelCredentialsDto.Email, cancellationToken);
         
-        if (identityUser == null || !await userManager.CheckPasswordAsync(identityUser, userModelCredentials.Password))
+        if (identityUser == null || !await userManager.CheckPasswordAsync(identityUser, userModelCredentialsDto.Password))
             throw new InvalidCredentialsAdapterException("Incorrect email or password.");
 
-        if (!await userManager.IsEmailConfirmedAsync(identityUser))
-            throw new InvalidOperationException("Email not confirmed.");
+        // if (!await userManager.IsEmailConfirmedAsync(identityUser))
+        //     throw new InvalidOperationException("Email not confirmed.");
 
         return await GenerateTokensAsync(identityUser, cancellationToken);
     }
@@ -108,12 +107,29 @@ public class UserManagerAdapter(
         return user != null;
     }
 
-    public  Task<UserToken> RefreshTokenAsync(RefreshToken request)
+    public async  Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto refreshTokenDto,  CancellationToken cancellationToken)
     {
-            throw new NotImplementedException();
+        var user = await userManager.Users
+            .Include(u => u.User)
+            .ThenInclude(domainUser => domainUser.RefreshTokens)
+            .SingleOrDefaultAsync(u => u.User.RefreshTokens.Any(rt => rt.Token == refreshTokenDto.RefreshToken), cancellationToken);
+
+        if (user == null)
+            return null;
+        
+        var tokenToValidate = user.User.RefreshTokens.Single(rt => rt.Token == refreshTokenDto.RefreshToken);
+        
+        if (!tokenToValidate.IsActive)
+            return null;
+        
+        user.User.RevokeRefreshToken(refreshTokenDto.RefreshToken);
+        
+        var newTokens = await GenerateTokensAsync(user, cancellationToken);
+
+        return newTokens;
     }
 
-    public async Task<UserToken> CreateAdminUserAsync (AdminUserOptions adminUserOptions, CancellationToken cancellationToken)
+    public async Task<UserTokenDto> CreateAdminUserAsync (AdminUserOptions adminUserOptions, CancellationToken cancellationToken)
     {
         var applicationIdentityUser = new ApplicationIdentityUser
         {
@@ -127,11 +143,11 @@ public class UserManagerAdapter(
             throw new EmailAlreadyTakenAdapterException($"The email'{adminUserOptions.Email}' already in use.");
         }
         
-        var loginDto = new UserModelCredentials { Email = applicationIdentityUser.Email, Password = adminUserOptions.Password };
+        var loginDto = new UserModelCredentialsDto { Email = applicationIdentityUser.Email, Password = adminUserOptions.Password };
         return await GenerateTokensAsync(applicationIdentityUser, cancellationToken);
     }
 
-    private async Task<UserToken> GenerateTokensAsync(ApplicationIdentityUser user,  CancellationToken cancellationToken)
+    private async Task<UserTokenDto> GenerateTokensAsync(ApplicationIdentityUser user,  CancellationToken cancellationToken)
     {
         var userRoles = await userManager.GetRolesAsync(user);
         
@@ -180,7 +196,7 @@ public class UserManagerAdapter(
         
         await unitOfWork.SaveChangesAsync(cancellationToken);
         
-        return new UserToken()
+        return new UserTokenDto()
         {
             Token = accessToken ,
             Expiration = expiration,
