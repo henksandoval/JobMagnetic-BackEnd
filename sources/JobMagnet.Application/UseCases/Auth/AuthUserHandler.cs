@@ -11,42 +11,42 @@ namespace JobMagnet.Application.UseCases.Auth;
 public class AuthUserHandler(IUserManage userManager, IOptions<AdminUserOptions> options)
     : IAuthUserHandler
 {
-    public async Task<UserToken> RegisterAsync(UserModelCredentials userModelCredentials, CancellationToken cancellationToken)
+    public async Task<UserTokenDto> RegisterAsync(UserModelCredentialsDto userModelCredentialsDto, CancellationToken cancellationToken)
     {
-        if (userModelCredentials == null)
-            throw new ArgumentNullException(nameof(userModelCredentials));
+        if (userModelCredentialsDto == null)
+            throw new ArgumentNullException(nameof(userModelCredentialsDto));
 
-        if (string.IsNullOrWhiteSpace(userModelCredentials.Email) ||
-            string.IsNullOrWhiteSpace(userModelCredentials.Password))
+        if (string.IsNullOrWhiteSpace(userModelCredentialsDto.Email) ||
+            string.IsNullOrWhiteSpace(userModelCredentialsDto.Password))
             throw new ArgumentException("Password and email are required.");
 
-        if (await userManager.EmailExistAsync(userModelCredentials.Email))
+        if (await userManager.EmailExistAsync(userModelCredentialsDto.Email))
             throw new JobMagnetApplicationException("Email already exists.");
         
-        var token = await userManager.RegisterAsync(userModelCredentials, cancellationToken);
+        var token = await userManager.RegisterAsync(userModelCredentialsDto, cancellationToken);
         
         return token;
     }
     
-    public async Task<UserToken> LoginAsync(UserModelCredentials userModelCredentials, CancellationToken cancellationToken)
+    public async Task<UserTokenDto> LoginAsync(UserModelCredentialsDto userModelCredentialsDto, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(userModelCredentials.Email) || string.IsNullOrWhiteSpace(userModelCredentials.Password))
+        if (string.IsNullOrWhiteSpace(userModelCredentialsDto.Email) || string.IsNullOrWhiteSpace(userModelCredentialsDto.Password))
             throw new ArgumentException("The email and password cannot be null, empty, or contain only spaces.");
         
-        var token = await userManager.LoginAsync(userModelCredentials, cancellationToken);
+        var token = await userManager.LoginAsync(userModelCredentialsDto, cancellationToken);
         return false ? null : token;
     }
 
-    public async Task<UserToken> RefreshTokenAsync(RefreshToken request)
+    public async Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto refreshTokenDto,  CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.ToString()))
+        if (refreshTokenDto == null || string.IsNullOrWhiteSpace(refreshTokenDto.RefreshToken))
         {
             return null;
         }
-        return await userManager.RefreshTokenAsync(request);
+        return await userManager.RefreshTokenAsync(refreshTokenDto, cancellationToken);
     }
 
-    public async Task<UserToken> CreateAdminUserAsync(CancellationToken cancellationToken)
+    public async Task<UserTokenDto> CreateAdminUserAsync(CancellationToken cancellationToken)
     {
         var adminUserOptions = options.Value;
         try
