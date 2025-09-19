@@ -52,7 +52,7 @@ public class AdminController( ILogger<AdminController> logger, JobMagnetDbContex
     }
     
     [HttpPost("user-administrator", Name ="createAdminUser")]
-    [ProducesResponseType(typeof(UserToken), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(UserTokenDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(object), StatusCodes.Status409Conflict)]
     public async Task<IResult> CreateAdminUser(CancellationToken cancellationToken)
     {
