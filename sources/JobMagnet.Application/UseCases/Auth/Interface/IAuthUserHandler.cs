@@ -5,8 +5,8 @@ namespace JobMagnet.Application.UseCases.Auth.Interface;
 
 public interface IAuthUserHandler
 {
-    Task<UserToken> RegisterAsync(UserModelCredentials userModelCredentials, CancellationToken cancellationToken);
-    Task<UserToken> LoginAsync(UserModelCredentials userModelCredentials, CancellationToken cancellationToken);
-    Task<UserToken> RefreshTokenAsync(RefreshToken  request);
-    Task<UserToken> CreateAdminUserAsync(CancellationToken cancellationToken);
+    Task<UserTokenDto> RegisterAsync(UserModelCredentialsDto userModelCredentialsDto, CancellationToken cancellationToken);
+    Task<UserTokenDto> LoginAsync(UserModelCredentialsDto userModelCredentialsDto, CancellationToken cancellationToken);
+    Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto  refreshTokenDto,  CancellationToken cancellationToken);
+    Task<UserTokenDto> CreateAdminUserAsync(CancellationToken cancellationToken);
 }

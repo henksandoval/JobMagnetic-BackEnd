@@ -7,9 +7,9 @@ namespace JobMagnet.Application.UseCases.Auth.Ports;
 
 public interface IUserManage
 {
-    Task<UserToken> RegisterAsync(UserModelCredentials userModelCredentials, CancellationToken cancellationToken);
-    Task<UserToken> LoginAsync(UserModelCredentials userModelCredentials, CancellationToken cancellationToken);
+    Task<UserTokenDto> RegisterAsync(UserModelCredentialsDto userModelCredentialsDto, CancellationToken cancellationToken);
+    Task<UserTokenDto> LoginAsync(UserModelCredentialsDto userModelCredentialsDto, CancellationToken cancellationToken);
     Task<bool> EmailExistAsync(string email);    
-    Task<UserToken> RefreshTokenAsync(RefreshToken  request);
-    Task<UserToken> CreateAdminUserAsync(AdminUserOptions adminUserOptions,  CancellationToken cancellationToken);
+    Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto refreshTokenDto,  CancellationToken cancellationToken);
+    Task<UserTokenDto> CreateAdminUserAsync(AdminUserOptions adminUserOptions,  CancellationToken cancellationToken);
 }
