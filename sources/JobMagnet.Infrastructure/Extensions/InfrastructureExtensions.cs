@@ -36,7 +36,7 @@ public static class InfrastructureExtensions
         services
             .AddSharedDependencies()
             .AddTransient<IRawCvParser, GeminiCvParser>()
-            .AddTransient<IUserManagerAdapter, UserManagerAdapter>()
+            .AddTransient<IUserManage, UserManagerAdapter>()
             .AddTransient<IEmailService, EmailService>()
             .AddPersistence()
             .AddGemini(configuration);
