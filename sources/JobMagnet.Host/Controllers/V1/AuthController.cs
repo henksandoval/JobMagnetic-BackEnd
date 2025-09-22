@@ -12,6 +12,8 @@ public class AuthController(IAuthUserHandler handler)
 {
     
     [HttpPost("register")]
+    [ProducesResponseType(typeof(UserTokenDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IResult> RegisterAsync([FromBody] UserModelCredentialsDto  registerRequest, CancellationToken cancellationToken)
     {
         try
@@ -26,7 +28,9 @@ public class AuthController(IAuthUserHandler handler)
         }
     }
     
-    [HttpPost("login", Name = "loginUser")]
+    [HttpPost("login")]
+    [ProducesResponseType(typeof(UserTokenDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IResult> LoginAsync([FromBody] UserModelCredentialsDto loginRequest, CancellationToken cancellationToken)
     {
         var responseToken = await handler.LoginAsync(loginRequest, cancellationToken);
@@ -34,6 +38,8 @@ public class AuthController(IAuthUserHandler handler)
     }
     
     [HttpPost("refreshToken")]
+    [ProducesResponseType(typeof(UserTokenDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IResult> RefreshTokenAsync([FromBody] RefreshTokenDto refreshTokenDto,  CancellationToken cancellationToken)
     {
         var resultToken = await handler.RefreshTokenAsync(refreshTokenDto, cancellationToken);
