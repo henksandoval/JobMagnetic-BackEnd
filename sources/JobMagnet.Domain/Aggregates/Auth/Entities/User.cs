@@ -19,8 +19,7 @@ public class User : SoftDeletableEntity<UserId>
     public static  User AddUser(UserId id, string email, string? photoUrl, Guid applicationIdentityUserId)
     {
         Guard.IsNotNullOrWhiteSpace(email);
-        Guard.IsNotDefault(id.Value, nameof(id));
-        Guard.IsNotDefault(applicationIdentityUserId, nameof(applicationIdentityUserId));
+        Guard.IsNotDefault(applicationIdentityUserId);
         return new User
         {
             Id = id,
@@ -41,11 +40,11 @@ public class User : SoftDeletableEntity<UserId>
         return newRefreshToken;
     }
     
-    // public void RevokeRefreshToken(string token)
-    // {
-    //     var tokenToRevoke = _refreshTokens.FirstOrDefault(rt => rt.Token == token);
-    //     if (tokenToRevoke is null || !tokenToRevoke.IsActive)
-    //         return;
-    //     tokenToRevoke.Revoke();
-    // }
+    public void RevokeRefreshToken(string token)
+    {
+        var tokenToRevoke = _refreshTokens.FirstOrDefault(rt => rt.Token == token);
+        if (tokenToRevoke is null || !tokenToRevoke.IsActive)
+            return;
+        tokenToRevoke.Revoke();
+    }
 }
