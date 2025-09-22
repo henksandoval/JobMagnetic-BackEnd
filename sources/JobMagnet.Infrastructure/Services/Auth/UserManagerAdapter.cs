@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -95,8 +94,8 @@ public class UserManagerAdapter(
         if (identityUser == null || !await userManager.CheckPasswordAsync(identityUser, userModelCredentialsDto.Password))
             throw new InvalidCredentialsAdapterException("Incorrect email or password.");
 
-        // if (!await userManager.IsEmailConfirmedAsync(identityUser))
-        //     throw new InvalidOperationException("Email not confirmed.");
+        if (!await userManager.IsEmailConfirmedAsync(identityUser))
+            throw new InvalidOperationException("Email not confirmed.");
 
         return await GenerateTokensAsync(identityUser, cancellationToken);
     }
