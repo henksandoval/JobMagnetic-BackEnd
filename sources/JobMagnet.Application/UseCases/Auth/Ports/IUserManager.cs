@@ -12,4 +12,5 @@ public interface IUserManage
     Task<bool> EmailExistAsync(string email);    
     Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto refreshTokenDto,  CancellationToken cancellationToken);
     Task<UserTokenDto> CreateAdminUserAsync(AdminUserOptions adminUserOptions,  CancellationToken cancellationToken);
+    Task<bool> LogoutAsync(LogoutCommand command, CancellationToken cancellationToken);
 }

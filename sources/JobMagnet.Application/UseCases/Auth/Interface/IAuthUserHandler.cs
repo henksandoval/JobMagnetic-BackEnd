@@ -9,4 +9,5 @@ public interface IAuthUserHandler
     Task<UserTokenDto> LoginAsync(UserModelCredentialsDto userModelCredentialsDto, CancellationToken cancellationToken);
     Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto  refreshTokenDto,  CancellationToken cancellationToken);
     Task<UserTokenDto> CreateAdminUserAsync(CancellationToken cancellationToken);
+    Task<bool> LogoutAsync(LogoutCommand command, CancellationToken cancellationToken);
 }
