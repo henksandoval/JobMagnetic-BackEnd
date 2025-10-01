@@ -62,5 +62,8 @@ public class AuthUserHandler(IUserManage userManager, IOptions<AdminUserOptions>
             );
         }
     }
-
+    public async Task<bool> LogoutAsync(LogoutCommand command, CancellationToken cancellationToken)
+    {
+       return await userManager.LogoutAsync(command, cancellationToken);
+    }
 }
