@@ -1,14 +1,17 @@
+using System.Security.Claims;
 using Asp.Versioning;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Interface;
-using JobMagnet.Domain.Aggregates.Auth.Entities;
+using JobMagnet.Infrastructure.Exceptions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace JobMagnet.Host.Controllers.V1;
 
 [ApiVersion("1")]
-public class AuthController(IAuthUserHandler handler)
+public class AuthController(IAuthUserHandler handler) : ControllerBase 
 {
     
     [HttpPost("register")]
@@ -33,8 +36,15 @@ public class AuthController(IAuthUserHandler handler)
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IResult> LoginAsync([FromBody] UserModelCredentialsDto loginRequest, CancellationToken cancellationToken)
     {
-        var responseToken = await handler.LoginAsync(loginRequest, cancellationToken);
-        return responseToken != null ? Results.Ok(responseToken) :  Results.Unauthorized();
+        try
+        {
+            var responseToken = await handler.LoginAsync(loginRequest, cancellationToken);
+            return responseToken != null ? Results.Ok(responseToken) : Results.Unauthorized();
+        }
+        catch (InvalidCredentialsAdapterException)
+        {
+            return Results.Unauthorized();
+        }
     }
     
     [HttpPost("refreshToken")]
@@ -44,5 +54,36 @@ public class AuthController(IAuthUserHandler handler)
     {
         var resultToken = await handler.RefreshTokenAsync(refreshTokenDto, cancellationToken);
         return resultToken != null ? Results.Ok(resultToken) :Results.BadRequest("Invalid client request or refresh token.");
+    }
+    
+    [HttpPost("logout")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IResult> LogoutAsync([FromBody] LogoutTokenDto  tokenDto, CancellationToken cancellationToken)
+    {
+        if (!TryGetUserId(out var userIdGuid))
+            return Results.Unauthorized();
+ 
+        var command = new LogoutCommand(tokenDto.Token, userIdGuid);
+        var result = await handler.LogoutAsync(command,  cancellationToken);
+            
+        return result ? Results.NoContent() : Results.BadRequest("No active session found.");
+    }
+    
+    private bool TryGetUserId(out Guid userId)
+    {
+        // Intentar varias claves donde el id podría venir
+        var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                      ?? User.FindFirstValue("id");
+
+        if (!string.IsNullOrEmpty(idClaim) && Guid.TryParse(idClaim, out var guid))
+        {
+            userId = guid;
+            return true;
+        }
+        userId = default;
+        return false;
     }
 }
