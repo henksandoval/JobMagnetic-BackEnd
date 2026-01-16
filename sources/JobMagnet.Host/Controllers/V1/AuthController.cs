@@ -32,6 +32,7 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
     }
     
     [HttpPost("login")]
+    // [Authorize(AuthenticationSchemes = "Bearer")]
     [ProducesResponseType(typeof(UserTokenDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IResult> LoginAsync([FromBody] UserModelCredentialsDto loginRequest, CancellationToken cancellationToken)
@@ -65,6 +66,9 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
     {
         if (!TryGetUserId(out var userIdGuid))
             return Results.Unauthorized();
+        
+        if (string.IsNullOrWhiteSpace(tokenDto?.Token))
+            return Results.BadRequest("Refresh token required.");
  
         var command = new LogoutCommand(tokenDto.Token, userIdGuid);
         var result = await handler.LogoutAsync(command,  cancellationToken);
@@ -74,9 +78,10 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
     
     private bool TryGetUserId(out Guid userId)
     {
-        // Intentar varias claves donde el id podría venir
         var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                      ?? User.FindFirstValue("id");
+                      ?? User.FindFirstValue("sub")
+                      ?? User.FindFirstValue("id")
+                      ?? User.FindFirstValue("nameid");
 
         if (!string.IsNullOrEmpty(idClaim) && Guid.TryParse(idClaim, out var guid))
         {
