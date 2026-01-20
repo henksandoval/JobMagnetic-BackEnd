@@ -62,15 +62,15 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IResult> LogoutAsync([FromBody] LogoutTokenDto  tokenDto, CancellationToken cancellationToken)
+    public async Task<IResult> LogoutAsync([FromBody] LogoutTokenDto  logoutTokenDto, CancellationToken cancellationToken)
     {
         if (!TryGetUserId(out var userIdGuid))
             return Results.Unauthorized();
         
-        if (string.IsNullOrWhiteSpace(tokenDto?.Token))
+        if (string.IsNullOrWhiteSpace(logoutTokenDto?.Token))
             return Results.BadRequest("Refresh token required.");
  
-        var command = new LogoutCommand(tokenDto.Token, userIdGuid);
+        var command = new LogoutCommand(logoutTokenDto.Token, userIdGuid);
         var result = await handler.LogoutAsync(command,  cancellationToken);
             
         return result ? Results.NoContent() : Results.BadRequest("No active session found.");
@@ -91,4 +91,10 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
         userId = default;
         return false;
     }
+    public async Task<IResult> ForgotPasswordAsync([FromBody] ForgotPasswordCommand  command, CancellationToken cancellationToken)
+    {
+        await handler.ForgotPasswordAsync(command, cancellationToken);
+        return Results.Ok("If an account with this email exists, a password reset link has been sent.");
+    }
+    
 }
