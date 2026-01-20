@@ -24,12 +24,10 @@ public class UserManagerAdapter(
     UserManager<ApplicationIdentityUser> userManager,
     IConfiguration configuration,
     IEmailService emailService,
-    ICommandRepository<User> repository,
     IUnitOfWork unitOfWork,
     IGuidGenerator guidGenerator) : IUserManage
 {
     private readonly IGuidGenerator _guidGenerator = guidGenerator;
-
     
     public async Task<UserTokenDto> RegisterAsync(UserModelCredentialsDto  userModelCredentialsDto, CancellationToken cancellationToken)
     {
@@ -76,7 +74,6 @@ public class UserManagerAdapter(
             await  emailService.SendEmailAsync(mailCommand);
             
             return await GenerateTokensAsync(appUser, cancellationToken);
-
         }
         catch (Exception)
         {
@@ -127,6 +124,23 @@ public class UserManagerAdapter(
 
         return newTokens;
     }
+    
+    public async Task<bool> LogoutAsync(LogoutCommand command, CancellationToken cancellationToken)
+    {
+        var user = await userManager.Users
+            .Include(u => u.User)
+            .ThenInclude(domainUser => domainUser.RefreshTokens)
+            .SingleOrDefaultAsync(u => u.Id == command.UserId, cancellationToken);
+    
+        var tokenToRevoke = user?.User.RefreshTokens.FirstOrDefault(rt => rt.Token == command.RefreshToken);
+    
+        if (tokenToRevoke is not { IsActive: true }) return false;
+        
+        user.User.RevokeRefreshToken(command.RefreshToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        
+        return true;
+    }
 
     public async Task<UserTokenDto> CreateAdminUserAsync (AdminUserOptions adminUserOptions, CancellationToken cancellationToken)
     {
@@ -150,13 +164,15 @@ public class UserManagerAdapter(
     {
         var userRoles = await userManager.GetRolesAsync(user);
         
-        var userClaims = await userManager.GetClaimsAsync(user);
-        
         var claims = new List<Claim>
         { 
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), 
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(ClaimTypes.Name, user.Email)
         };
+        
+        var applicationIdentityUser = await userManager.FindByEmailAsync(user.Email);
+        var userClaims = await userManager.GetClaimsAsync(applicationIdentityUser);
         claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         claims.AddRange(userClaims);
