@@ -7,6 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>JobMagnet.Integration.Tests</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>JobMagnet.Unit.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    
+    <ItemGroup>
         <ProjectReference Include="..\JobMagnet.Shared\JobMagnet.Shared.csproj"/>
         <ProjectReference Include="..\JobMagnet.Domain\JobMagnet.Domain.csproj"/>
     </ItemGroup>
