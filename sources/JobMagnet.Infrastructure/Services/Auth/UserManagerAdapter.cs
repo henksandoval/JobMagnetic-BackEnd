@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using JobMagnet.Application.UseCases.Auth.DTO;
+using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.Ports;
 using JobMagnet.Application.UseCases.Auth.Ports.EmailDTO;
 using JobMagnet.Domain.Aggregates;
@@ -142,6 +143,7 @@ public class UserManagerAdapter(
         return true;
     }
 
+
     public async Task<UserTokenDto> CreateAdminUserAsync (AdminUserOptions adminUserOptions, CancellationToken cancellationToken)
     {
         var applicationIdentityUser = new ApplicationIdentityUser
@@ -224,5 +226,35 @@ public class UserManagerAdapter(
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomNumber);
         return Convert.ToBase64String(randomNumber);
+    }
+
+    public async Task GeneratePasswordResetTokenAsync(string email, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByEmailAsync(email);
+        
+        if (user == null)
+        {
+            return; 
+        }
+        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+
+        var encodedToken = System.Net.WebUtility.UrlEncode(token);
+        var resetUrlBase = configuration["ClientApp:ResetPasswordUrl"];
+        var resetLink = $"{resetUrlBase}?email={email}&token={encodedToken}";
+        
+        var mailCommand = new MailCommand
+        {
+            ToEmail = email,
+            Subject = "Recuperación de contraseña - JobMagnet",
+            Body = $"""
+                        <h1>Recuperación de Contraseña</h1>
+                        <p>Hemos recibido una solicitud para restablecer tu contraseña en JobMagnet.</p>
+                        <p>Haz clic en el siguiente enlace para crear una nueva contraseña:</p>
+                        <p><a href="{resetLink}">Restablecer mi contraseña</a></p>
+                        <p>Si no solicitaste esto, puedes ignorar este correo.</p>
+                        <p>Saludos,<br>El equipo de JobMagnet</p>
+                    """
+        };
+        await emailService.SendEmailAsync(mailCommand);
     }
 }
