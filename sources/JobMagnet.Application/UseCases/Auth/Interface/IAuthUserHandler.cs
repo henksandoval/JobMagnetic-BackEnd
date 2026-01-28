@@ -1,4 +1,5 @@
 using JobMagnet.Application.UseCases.Auth.DTO;
+using JobMagnet.Application.UseCases.Auth.DTO.ForgotPassword;
 using JobMagnet.Domain.Aggregates.Auth.Entities;
 
 namespace JobMagnet.Application.UseCases.Auth.Interface;
@@ -10,4 +11,5 @@ public interface IAuthUserHandler
     Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto  refreshTokenDto,  CancellationToken cancellationToken);
     Task<UserTokenDto> CreateAdminUserAsync(CancellationToken cancellationToken);
     Task<bool> LogoutAsync(LogoutCommand command, CancellationToken cancellationToken);
+    Task ForgotPasswordAsync(ForgotPasswordCommand command, CancellationToken cancellationToken);
 }
