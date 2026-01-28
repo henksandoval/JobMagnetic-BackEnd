@@ -1,9 +1,9 @@
 using JobMagnet.Application.Exceptions;
 using JobMagnet.Application.UseCases.Auth.DTO;
+using JobMagnet.Application.UseCases.Auth.DTO.ForgotPassword;
 using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Application.UseCases.Auth.Ports;
 using JobMagnet.Domain.Aggregates;
-using JobMagnet.Domain.Aggregates.Auth.Entities;
 using Microsoft.Extensions.Options;
 
 namespace JobMagnet.Application.UseCases.Auth;
@@ -65,5 +65,11 @@ public class AuthUserHandler(IUserManage userManager, IOptions<AdminUserOptions>
     public async Task<bool> LogoutAsync(LogoutCommand command, CancellationToken cancellationToken)
     {
        return await userManager.LogoutAsync(command, cancellationToken);
+    }
+    
+    public async Task ForgotPasswordAsync(ForgotPasswordCommand command, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+        await userManager.GeneratePasswordResetTokenAsync(command.Email, cancellationToken);
     }
 }
