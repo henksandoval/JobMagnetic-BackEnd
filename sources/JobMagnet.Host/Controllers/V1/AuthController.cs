@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using Asp.Versioning;
 using JobMagnet.Application.UseCases.Auth.DTO;
+using JobMagnet.Application.UseCases.Auth.DTO.ForgotPassword;
+using JobMagnet.Application.UseCases.Auth.DTO.Logout;
 using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -91,10 +93,12 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
         userId = default;
         return false;
     }
+    
+    [HttpPost("ForgotPassword")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IResult> ForgotPasswordAsync([FromBody] ForgotPasswordCommand  command, CancellationToken cancellationToken)
     {
         await handler.ForgotPasswordAsync(command, cancellationToken);
         return Results.Ok("If an account with this email exists, a password reset link has been sent.");
     }
-    
 }

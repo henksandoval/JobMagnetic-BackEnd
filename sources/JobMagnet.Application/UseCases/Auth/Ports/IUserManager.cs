@@ -1,5 +1,6 @@
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.DTO.ForgotPassword;
+using JobMagnet.Application.UseCases.Auth.DTO.Logout;
 using JobMagnet.Domain.Aggregates;
 
 namespace JobMagnet.Application.UseCases.Auth.Ports;

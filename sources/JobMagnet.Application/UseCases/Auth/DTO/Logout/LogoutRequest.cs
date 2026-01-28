@@ -1,4 +1,4 @@
-namespace JobMagnet.Application.UseCases.Auth.DTO;
+namespace JobMagnet.Application.UseCases.Auth.DTO.Logout;
 
 public class LogoutTokenDto
 {
