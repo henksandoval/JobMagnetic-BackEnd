@@ -3,6 +3,7 @@ using Asp.Versioning;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.DTO.ForgotPassword;
 using JobMagnet.Application.UseCases.Auth.DTO.Logout;
+using JobMagnet.Application.UseCases.Auth.DTO.UserProfile;
 using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,7 +16,6 @@ namespace JobMagnet.Host.Controllers.V1;
 [ApiVersion("1")]
 public class AuthController(IAuthUserHandler handler) : ControllerBase 
 {
-    
     [HttpPost("register")]
     [ProducesResponseType(typeof(UserTokenDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -33,8 +33,7 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
         }
     }
     
-    [HttpPost("login")]
-    // [Authorize(AuthenticationSchemes = "Bearer")]
+    [HttpPost("auth/login")]
     [ProducesResponseType(typeof(UserTokenDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IResult> LoginAsync([FromBody] UserModelCredentialsDto loginRequest, CancellationToken cancellationToken)
@@ -49,8 +48,31 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
             return Results.Unauthorized();
         }
     }
+
+    [HttpGet("/auth/me")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public Task<IResult> MeAsync()
+    {
+        if (!TryGetUserId(out var userIdGuid))
+            return Task.FromResult(Results.Unauthorized());
+
+        var email = User.FindFirstValue(ClaimTypes.Email) ?? User.FindFirstValue("email") ?? string.Empty;
+        var displayName = User.FindFirstValue(ClaimTypes.Name) ?? User.FindFirstValue("name") ?? email;
+
+        var profile = new UserProfileDto
+        {
+            Id = userIdGuid.ToString(),
+            Email = email,
+            DisplayName = displayName,
+            Roles = [], 
+            Permissions = [],
+            avatarUrl = User.FindFirstValue("avatar")
+        };
+        return Task.FromResult(Results.Ok(profile));
+    }
     
-    [HttpPost("refreshToken")]
+    [HttpPost("/auth/refreshToken")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ProducesResponseType(typeof(UserTokenDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IResult> RefreshTokenAsync([FromBody] RefreshTokenDto refreshTokenDto,  CancellationToken cancellationToken)
@@ -59,7 +81,7 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
         return resultToken != null ? Results.Ok(resultToken) :Results.BadRequest("Invalid client request or refresh token.");
     }
     
-    [HttpPost("logout")]
+    [HttpPost("/auth/logout")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
