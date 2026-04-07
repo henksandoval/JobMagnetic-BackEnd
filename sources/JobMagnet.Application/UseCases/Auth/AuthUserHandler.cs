@@ -38,12 +38,11 @@ public class AuthUserHandler(IUserManage userManager, IOptions<AdminUserOptions>
         return false ? null : token;
     }
 
-    public async Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto refreshTokenDto,  CancellationToken cancellationToken)
+    public async Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto? refreshTokenDto,  CancellationToken cancellationToken)
     {
         if (refreshTokenDto == null || string.IsNullOrWhiteSpace(refreshTokenDto.RefreshToken))
-        {
-            return null;
-        }
+            return null!;
+        
         return await userManager.RefreshTokenAsync(refreshTokenDto, cancellationToken);
     }
 

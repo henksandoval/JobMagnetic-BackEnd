@@ -40,8 +40,8 @@ public class AuthUserHandlerShould
         };
         var expectedToken = new UserTokenDto 
         { 
-            Token = "fake-jwt-token", 
-            Expiration = DateTime.UtcNow.AddHours(1) 
+            AccessToken = "fake-jwt-token", 
+            ExpiresInSeconds = DateTime.UtcNow.AddHours(1) 
         };
         
         _userManagerMock
@@ -117,8 +117,8 @@ public class AuthUserHandlerShould
         var loginDto = _fixture.Create<UserModelCredentialsDto>();
         var expectedToken = new UserTokenDto
         {
-            Token = "un_jwt_token_valido",
-            Expiration = DateTime.UtcNow.AddHours(1)
+            AccessToken = "un_jwt_token_valido",
+            ExpiresInSeconds = DateTime.UtcNow.AddHours(1)
         };
     
         _userManagerMock.Setup(x => x.LoginAsync(loginDto, It.IsAny<CancellationToken>()))
@@ -130,7 +130,7 @@ public class AuthUserHandlerShould
         // --- Then  ---
         result.Should().NotBeNull();
         result.Should().Be(expectedToken);
-        result.Token.Should().Be(expectedToken.Token);
+        result.AccessToken.Should().Be(expectedToken.AccessToken);
         
         _userManagerMock.Verify(
             adapter => adapter.LoginAsync(loginDto, It.IsAny<CancellationToken>()), 
@@ -170,8 +170,8 @@ public class AuthUserHandlerShould
         // --- Given ---
         var expectedToken = new UserTokenDto
         {
-            Token = "token_admin",
-            Expiration = DateTime.UtcNow.AddHours(1)
+            AccessToken = "token_admin",
+            ExpiresInSeconds = DateTime.UtcNow.AddHours(1)
         };
         _userManagerMock.Setup(x => x.CreateAdminUserAsync(It.IsAny<AdminUserOptions>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedToken);
@@ -181,8 +181,8 @@ public class AuthUserHandlerShould
     
         // --- Then ---
         result.Should().NotBeNull();
-        result.Token.Should().BeEquivalentTo(expectedToken.Token);
-        result.Expiration.Should().BeCloseTo(expectedToken.Expiration, TimeSpan.FromSeconds(1));
+        result.AccessToken.Should().BeEquivalentTo(expectedToken.AccessToken);
+        result.ExpiresInSeconds.Should().BeCloseTo(expectedToken.ExpiresInSeconds, TimeSpan.FromSeconds(1));
     }
     
     
