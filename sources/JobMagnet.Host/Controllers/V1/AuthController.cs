@@ -5,6 +5,7 @@ using JobMagnet.Application.UseCases.Auth.DTO.ForgotPassword;
 using JobMagnet.Application.UseCases.Auth.DTO.Logout;
 using JobMagnet.Application.UseCases.Auth.DTO.UserProfile;
 using JobMagnet.Application.UseCases.Auth.Interface;
+using JobMagnet.Host.Extensions;
 using JobMagnet.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -40,8 +41,10 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
     {
         try
         {
-            var responseToken = await handler.LoginAsync(loginRequest, cancellationToken);
-            return responseToken != null ? Results.Ok(responseToken) : Results.Unauthorized();
+            var resultToken  = await handler.LoginAsync(loginRequest, cancellationToken);
+            if (resultToken.RefreshToken != null)
+                HttpContext.Response.AppendRefreshTokenCookie(resultToken.RefreshToken);
+            return Results.Ok(resultToken );
         }
         catch (InvalidCredentialsAdapterException)
         {
@@ -71,14 +74,25 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
         return Task.FromResult(Results.Ok(profile));
     }
     
-    [HttpPost("/auth/refreshToken")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPost("/auth/refresh")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(UserTokenDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IResult> RefreshTokenAsync([FromBody] RefreshTokenDto refreshTokenDto,  CancellationToken cancellationToken)
+    public async Task<IResult> RefreshTokenAsync(CancellationToken cancellationToken)
     {
-        var resultToken = await handler.RefreshTokenAsync(refreshTokenDto, cancellationToken);
-        return resultToken != null ? Results.Ok(resultToken) :Results.BadRequest("Invalid client request or refresh token.");
+        var refreshToken = HttpContext.Request.Cookies["refreshToken"];
+        
+        if (string.IsNullOrEmpty(refreshToken))
+            return Results.BadRequest("No refresh token found.");
+        var resultToken =
+            await handler.RefreshTokenAsync(new RefreshTokenDto { RefreshToken = refreshToken }, cancellationToken);
+        
+        if (string.IsNullOrEmpty(resultToken.AccessToken))
+            return Results.BadRequest("Invalid or expired refresh token.");
+        
+        if (resultToken.RefreshToken != null) HttpContext.Response.AppendRefreshTokenCookie(resultToken.RefreshToken);
+        
+        return Results.Ok(resultToken);
     }
     
     [HttpPost("/auth/logout")]
@@ -91,7 +105,7 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
         if (!TryGetUserId(out var userIdGuid))
             return Results.Unauthorized();
         
-        if (string.IsNullOrWhiteSpace(logoutTokenDto?.Token))
+        if (string.IsNullOrWhiteSpace(logoutTokenDto.Token))
             return Results.BadRequest("Refresh token required.");
  
         var command = new LogoutCommand(logoutTokenDto.Token, userIdGuid);
@@ -105,14 +119,14 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
         var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
                       ?? User.FindFirstValue("sub")
                       ?? User.FindFirstValue("id")
-                      ?? User.FindFirstValue("nameid");
+                      ?? User.FindFirstValue("nameIdentifier");
 
         if (!string.IsNullOrEmpty(idClaim) && Guid.TryParse(idClaim, out var guid))
         {
             userId = guid;
             return true;
         }
-        userId = default;
+        userId = Guid.Empty;
         return false;
     }
     

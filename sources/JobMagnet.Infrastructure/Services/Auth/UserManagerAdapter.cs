@@ -92,17 +92,12 @@ public class UserManagerAdapter(
         if (identityUser == null || !await userManager.CheckPasswordAsync(identityUser, userModelCredentialsDto.Password))
             throw new InvalidCredentialsAdapterException("Incorrect email or password.");
 
-        if (!await userManager.IsEmailConfirmedAsync(identityUser))
-            throw new InvalidOperationException("Email not confirmed.");
+        // if (!await userManager.IsEmailConfirmedAsync(identityUser))
+        //     throw new InvalidOperationException("Email not confirmed.");
 
         return await GenerateTokensAsync(identityUser, cancellationToken);
     }
 
-    public async Task<bool> EmailExistAsync(string email)
-    {
-        var user = await userManager.FindByEmailAsync(email);
-        return user != null;
-    }
 
     public async  Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto refreshTokenDto,  CancellationToken cancellationToken)
     {
@@ -112,14 +107,17 @@ public class UserManagerAdapter(
             .SingleOrDefaultAsync(u => u.User.RefreshTokens.Any(rt => rt.Token == refreshTokenDto.RefreshToken), cancellationToken);
 
         if (user == null)
-            return null;
+            return null!;
         
-        var tokenToValidate = user.User.RefreshTokens.Single(rt => rt.Token == refreshTokenDto.RefreshToken);
+        var tokenToValidate = user.User.RefreshTokens.FirstOrDefault(rt => rt.Token == refreshTokenDto.RefreshToken);
         
-        if (!tokenToValidate.IsActive)
-            return null;
+        if (tokenToValidate == null || !tokenToValidate.IsActive)
+            return null!;
         
-        user.User.RevokeRefreshToken(refreshTokenDto.RefreshToken);
+        foreach (var activeToken in user.User.RefreshTokens.Where(rt => rt.IsActive).ToList())
+        {
+            user.User.RevokeRefreshToken(activeToken.Token);
+        }
         
         var newTokens = await GenerateTokensAsync(user, cancellationToken);
 
@@ -142,8 +140,7 @@ public class UserManagerAdapter(
         
         return true;
     }
-
-
+    
     public async Task<UserTokenDto> CreateAdminUserAsync (AdminUserOptions adminUserOptions, CancellationToken cancellationToken)
     {
         var applicationIdentityUser = new ApplicationIdentityUser
@@ -179,16 +176,18 @@ public class UserManagerAdapter(
 
         claims.AddRange(userClaims);
         
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var expiration = DateTime.UtcNow.AddMinutes(Convert.ToDouble(configuration["JWT:TokenValidityInMinutes"] ?? "15"));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"] ?? string.Empty));
+        var creeds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var expiration = Convert.ToDouble(configuration["JWT:TokenValidityInMinutes"] ?? "15");
+        var jwtExpiration = DateTime.UtcNow.AddMinutes(expiration);
+        var dtoExpiration = DateTime.Now.AddMinutes(expiration); 
         
         var securityToken = new JwtSecurityToken(
             issuer: null,
             audience: null,
             claims: claims,
-            expires: expiration,
-            signingCredentials: creds
+            expires: jwtExpiration,
+            signingCredentials: creeds
         );
         
         var accessToken = new JwtSecurityTokenHandler().WriteToken(securityToken);
@@ -215,17 +214,10 @@ public class UserManagerAdapter(
         
         return new UserTokenDto()
         {
-            Token = accessToken ,
-            Expiration = expiration,
+            AccessToken = accessToken ,
+            ExpiresInSeconds = dtoExpiration,
             RefreshToken = refreshTokenResponse
         };
-    }
-    private static string GenerateRefreshTokenString()
-    {
-        var randomNumber = new byte[64];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        return Convert.ToBase64String(randomNumber);
     }
 
     public async Task GeneratePasswordResetTokenAsync(string email, CancellationToken cancellationToken)
@@ -256,5 +248,18 @@ public class UserManagerAdapter(
                     """
         };
         await emailService.SendEmailAsync(mailCommand);
+    }
+    
+    private static string GenerateRefreshTokenString()
+    {
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
+    }
+    public async Task<bool> EmailExistAsync(string email)
+    {
+        var user = await userManager.FindByEmailAsync(email);
+        return user != null;
     }
 }
