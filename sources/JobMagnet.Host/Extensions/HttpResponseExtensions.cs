@@ -12,4 +12,16 @@ public static class HttpResponseExtensions
             Expires = DateTimeOffset.UtcNow.AddDays(expirationDays)
         });
     }
+    
+    public static void DeleteRefreshTokenCookie(this HttpResponse response)
+    {
+        response.Cookies.Delete("refreshToken", new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None
+        });
+    }
 }
+
+
