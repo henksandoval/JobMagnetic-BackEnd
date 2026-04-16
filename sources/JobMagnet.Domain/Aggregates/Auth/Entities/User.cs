@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using CommunityToolkit.Diagnostics;
 using JobMagnet.Domain.Aggregates.Auth.ValueObjects;
 using JobMagnet.Domain.Exceptions;
@@ -10,13 +11,15 @@ public class User : SoftDeletableEntity<UserId>
 {
     private readonly HashSet<RefreshToken> _refreshTokens = [];
     public string Email { get; private  set; }
+    [NotMapped]
+    public string DisplayName { get; set; }
     public string? PhotoUrl { get; private set; }
     public Guid ApplicationIdentityUserId { get;  set; }
     public virtual IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens;
 
     private User() { }
     
-    public static  User AddUser(UserId id, string email, string? photoUrl, Guid applicationIdentityUserId)
+    public static  User AddUser(UserId id, string email, string displayName,  string? photoUrl, Guid applicationIdentityUserId)
     {
         Guard.IsNotNullOrWhiteSpace(email);
         Guard.IsNotDefault(applicationIdentityUserId);
@@ -24,6 +27,7 @@ public class User : SoftDeletableEntity<UserId>
         {
             Id = id,
             Email = email,
+            DisplayName = displayName,
             PhotoUrl = photoUrl,
             ApplicationIdentityUserId = applicationIdentityUserId,
         };
