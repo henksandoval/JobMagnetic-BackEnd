@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Asp.Versioning;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.DTO.ForgotPassword;
+using JobMagnet.Application.UseCases.Auth.DTO.GoogleLogin;
 using JobMagnet.Application.UseCases.Auth.DTO.Logout;
 using JobMagnet.Application.UseCases.Auth.DTO.UserProfile;
 using JobMagnet.Application.UseCases.Auth.Interface;
@@ -17,7 +18,7 @@ namespace JobMagnet.Host.Controllers.V1;
 [ApiVersion("1")]
 public class AuthController(IAuthUserHandler handler) : ControllerBase 
 {
-    [HttpPost("register")]
+    [HttpPost("/auth/register")]
     [ProducesResponseType(typeof(UserTokenDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IResult> RegisterAsync([FromBody] UserModelCredentialsDto  registerRequest, CancellationToken cancellationToken)
@@ -50,6 +51,17 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
         {
             return Results.Unauthorized();
         }
+    }
+    
+    [HttpPost("login-google")]
+    public async Task<IResult> LoginGoogle([FromBody] GoogleLoginCommand loginCommand, CancellationToken cancellationToken)
+    {
+        var token = await handler.LoginGoogle(loginCommand, cancellationToken);
+
+        if (token == null)
+            return Results.Unauthorized();
+        
+        return Results.Ok(token);
     }
 
     [HttpGet("/auth/me")]
@@ -100,18 +112,25 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IResult> LogoutAsync([FromBody] LogoutTokenDto  logoutTokenDto, CancellationToken cancellationToken)
+    public async Task<IResult> LogoutAsync(CancellationToken cancellationToken)
     {
         if (!TryGetUserId(out var userIdGuid))
             return Results.Unauthorized();
         
-        if (string.IsNullOrWhiteSpace(logoutTokenDto.Token))
+        var refreshToken = Request.Cookies["refreshToken"];
+        
+        if (string.IsNullOrWhiteSpace(refreshToken))
             return Results.BadRequest("Refresh token required.");
- 
-        var command = new LogoutCommand(logoutTokenDto.Token, userIdGuid);
-        var result = await handler.LogoutAsync(command,  cancellationToken);
-            
-        return result ? Results.NoContent() : Results.BadRequest("No active session found.");
+
+        var command = new LogoutCommand(refreshToken, userIdGuid);
+        var result = await handler.LogoutAsync(command, cancellationToken);
+
+        if (!result)
+            return Results.BadRequest("No active session found.");
+        
+        HttpContext.Response.DeleteRefreshTokenCookie();
+
+        return Results.NoContent();
     }
     
     private bool TryGetUserId(out Guid userId)
