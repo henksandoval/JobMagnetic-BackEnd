@@ -1,6 +1,7 @@
 using JobMagnet.Application.Exceptions;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.DTO.ForgotPassword;
+using JobMagnet.Application.UseCases.Auth.DTO.GoogleLogin;
 using JobMagnet.Application.UseCases.Auth.DTO.Logout;
 using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Application.UseCases.Auth.Ports;
@@ -37,6 +38,8 @@ public class AuthUserHandler(IUserManage userManager, IOptions<AdminUserOptions>
         var token = await userManager.LoginAsync(userModelCredentialsDto, cancellationToken);
         return false ? null : token;
     }
+
+    public Task<UserTokenDto> LoginGoogle(GoogleLoginCommand loginCommand, CancellationToken cancellationToken) => throw new NotImplementedException();
 
     public async Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto? refreshTokenDto,  CancellationToken cancellationToken)
     {
