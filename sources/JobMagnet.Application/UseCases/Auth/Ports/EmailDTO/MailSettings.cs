@@ -3,6 +3,8 @@ public class MailSettings
 {
     public string Host { get; init; }
     public int Port { get; init; }
+    
+    public bool EnableSsl { get; set; }
     public string SenderName { get; init; }
     public string SenderEmail { get; init; }
     public string UserName { get; init; }
