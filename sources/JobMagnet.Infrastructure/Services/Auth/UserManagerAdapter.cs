@@ -50,7 +50,7 @@ public class UserManagerAdapter(
         {
                 
             var domainUserId  = _guidGenerator.NewGuid();
-            var domainUser = User.AddUser(new UserId(domainUserId ), appUser.Email, null, appUser.Id);
+            var domainUser = User.AddUser(new UserId(domainUserId ), appUser.Email, userModelCredentialsDto.DisplayName, null, appUser.Id);
             appUser.User = domainUser;
             await unitOfWork.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             
@@ -76,7 +76,7 @@ public class UserManagerAdapter(
             
             return await GenerateTokensAsync(appUser, cancellationToken);
         }
-        catch (Exception)
+        catch (Exception exception)
         {
             await userManager.DeleteAsync(appUser);
             throw;
@@ -92,8 +92,8 @@ public class UserManagerAdapter(
         if (identityUser == null || !await userManager.CheckPasswordAsync(identityUser, userModelCredentialsDto.Password))
             throw new InvalidCredentialsAdapterException("Incorrect email or password.");
 
-        // if (!await userManager.IsEmailConfirmedAsync(identityUser))
-        //     throw new InvalidOperationException("Email not confirmed.");
+        if (!await userManager.IsEmailConfirmedAsync(identityUser))
+            throw new InvalidOperationException("Email not confirmed.");
 
         return await GenerateTokensAsync(identityUser, cancellationToken);
     }
@@ -111,7 +111,7 @@ public class UserManagerAdapter(
         
         var tokenToValidate = user.User.RefreshTokens.FirstOrDefault(rt => rt.Token == refreshTokenDto.RefreshToken);
         
-        if (tokenToValidate == null || !tokenToValidate.IsActive)
+        if (tokenToValidate is not { IsActive: true })
             return null!;
         
         foreach (var activeToken in user.User.RefreshTokens.Where(rt => rt.IsActive).ToList())
@@ -135,7 +135,7 @@ public class UserManagerAdapter(
     
         if (tokenToRevoke is not { IsActive: true }) return false;
         
-        user.User.RevokeRefreshToken(command.RefreshToken);
+        user?.User.RevokeRefreshToken(command.RefreshToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         
         return true;
@@ -154,8 +154,7 @@ public class UserManagerAdapter(
         {
             throw new EmailAlreadyTakenAdapterException($"The email'{adminUserOptions.Email}' already in use.");
         }
-        
-        var loginDto = new UserModelCredentialsDto { Email = applicationIdentityUser.Email, Password = adminUserOptions.Password };
+
         return await GenerateTokensAsync(applicationIdentityUser, cancellationToken);
     }
 
@@ -171,11 +170,14 @@ public class UserManagerAdapter(
         };
         
         var applicationIdentityUser = await userManager.FindByEmailAsync(user.Email);
-        var userClaims = await userManager.GetClaimsAsync(applicationIdentityUser);
-        claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+        if (applicationIdentityUser != null)
+        {
+            var userClaims = await userManager.GetClaimsAsync(applicationIdentityUser);
+            claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        claims.AddRange(userClaims);
-        
+            claims.AddRange(userClaims);
+        }
+
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"] ?? string.Empty));
         var creeds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var expiration = Convert.ToDouble(configuration["JWT:TokenValidityInMinutes"] ?? "15");
