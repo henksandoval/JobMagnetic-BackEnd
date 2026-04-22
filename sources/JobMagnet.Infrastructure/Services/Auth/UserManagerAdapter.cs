@@ -2,7 +2,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Google.Apis.Auth;
 using JobMagnet.Application.UseCases.Auth.DTO;
+using JobMagnet.Application.UseCases.Auth.DTO.GoogleLogin;
 using JobMagnet.Application.UseCases.Auth.DTO.Logout;
 using JobMagnet.Application.UseCases.Auth.Ports;
 using JobMagnet.Application.UseCases.Auth.Ports.EmailDTO;
@@ -76,7 +78,7 @@ public class UserManagerAdapter(
             
             return await GenerateTokensAsync(appUser, cancellationToken);
         }
-        catch (Exception exception)
+        catch (Exception)
         {
             await userManager.DeleteAsync(appUser);
             throw;
@@ -98,7 +100,59 @@ public class UserManagerAdapter(
         return await GenerateTokensAsync(identityUser, cancellationToken);
     }
 
-
+    public async Task<GoogleTokenInfoDto> LoginGoogleAsync(GoogleLoginCommand loginCommand,
+        CancellationToken cancellationToken)
+    {
+        var clientId = configuration["Google:ClientId"];
+        var settings = new GoogleJsonWebSignature.ValidationSettings()
+        {
+            Audience = new List<string> { clientId }
+        };
+        GoogleJsonWebSignature.Payload payload;
+        try
+        {
+            // 2. Validar el token con los servidores de Google
+            payload = await GoogleJsonWebSignature.ValidateAsync(loginCommand.IdToken, settings);
+        }
+        catch (InvalidJwtException)
+        {
+            // Si el token es falso o expiró, retornamos null. 
+            // Tu Handler ya está preparado para lanzar la UnauthorizedException si esto es null.
+            return null; 
+        }
+        var user = await userManager.FindByEmailAsync(payload.Email);
+            
+        if (user == null)
+        {
+            user = new ApplicationIdentityUser
+            {
+                UserName = payload.Email, // Identity requiere un UserName, solemos usar el email
+                Email = payload.Email,
+            };
+                    
+            // Creamos el usuario en la base de datos
+            var createResult = await userManager.CreateAsync(user);
+            
+            if (!createResult.Succeeded)
+                throw new Exception("Error al registrar el usuario de Google en la base de datos.");
+            
+            // Opcional pero recomendado: Vincular la cuenta de Google a este usuario en Identity
+            var loginInfo = new UserLoginInfo("Google", payload.Subject, "Google");
+            await userManager.AddLoginAsync(user, loginInfo);
+        }
+        var tokenResult  = await GenerateTokensAsync(user, cancellationToken);
+        var jwtToken = tokenResult.AccessToken;
+            
+        return new GoogleTokenInfoDto
+        {
+            AccessToken = jwtToken,
+            ExpiresInSeconds = tokenResult.ExpiresInSeconds,
+            Email = user.User.Email,
+            DisplayName = user.User.DisplayName,
+            UserId = user.User.Id.ToString()
+        };
+    }
+    
     public async  Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto refreshTokenDto,  CancellationToken cancellationToken)
     {
         var user = await userManager.Users
@@ -166,7 +220,8 @@ public class UserManagerAdapter(
         { 
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), 
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.Email)
+            new Claim(ClaimTypes.Name, user.Email),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
         
         var applicationIdentityUser = await userManager.FindByEmailAsync(user.Email);
