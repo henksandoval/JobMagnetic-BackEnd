@@ -11,7 +11,6 @@ public class User : SoftDeletableEntity<UserId>
 {
     private readonly HashSet<RefreshToken> _refreshTokens = [];
     public string Email { get; private  set; }
-    [NotMapped]
     public string DisplayName { get; set; }
     public string? PhotoUrl { get; private set; }
     public Guid ApplicationIdentityUserId { get;  set; }
