@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Asp.Versioning;
+using JobMagnet.Application.Exceptions;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.DTO.ForgotPassword;
 using JobMagnet.Application.UseCases.Auth.DTO.GoogleLogin;
@@ -53,15 +54,23 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
         }
     }
     
-    [HttpPost("login-google")]
-    public async Task<IResult> LoginGoogle([FromBody] GoogleLoginCommand loginCommand, CancellationToken cancellationToken)
+    [HttpPost("/auth/google-login")]
+    public async Task<IResult> LoginGoogleAsync([FromBody] GoogleLoginCommand loginCommand, CancellationToken cancellationToken)
     {
-        var token = await handler.LoginGoogle(loginCommand, cancellationToken);
-
-        if (token == null)
-            return Results.Unauthorized();
-        
-        return Results.Ok(token);
+        try
+        {
+            var command = new GoogleLoginCommand { IdToken = loginCommand.IdToken };
+            var token = await handler.LoginGoogleAsync(command, cancellationToken);
+            return Results.Ok(token);
+        }
+        catch (UnauthorizedException)
+        {
+            return Results.Unauthorized(); 
+        }
+        catch (ArgumentException ex)
+        {
+            return Results.BadRequest(new { error = ex.Message });
+        }
     }
 
     [HttpGet("/auth/me")]
