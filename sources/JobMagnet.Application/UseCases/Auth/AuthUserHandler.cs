@@ -7,6 +7,7 @@ using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Application.UseCases.Auth.Ports;
 using JobMagnet.Domain.Aggregates;
 using Microsoft.Extensions.Options;
+using UnauthorizedAccessException = System.UnauthorizedAccessException;
 
 namespace JobMagnet.Application.UseCases.Auth;
 
@@ -39,7 +40,22 @@ public class AuthUserHandler(IUserManage userManager, IOptions<AdminUserOptions>
         return false ? null : token;
     }
 
-    public Task<UserTokenDto> LoginGoogle(GoogleLoginCommand loginCommand, CancellationToken cancellationToken) => throw new NotImplementedException();
+    public async Task<GoogleTokenInfoDto> LoginGoogleAsync(GoogleLoginCommand loginCommand,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(loginCommand.IdToken))
+            throw new ArgumentException("The Google IdToken cannot be null, empty, or contain only spaces.");
+        
+        var googleUser = await userManager.LoginGoogleAsync(loginCommand, cancellationToken);
+        
+        if (googleUser == null)
+            throw new UnauthorizedAccessException("The Google token is invalid or has expired.");
+        
+        if (string.IsNullOrWhiteSpace(googleUser.Email) || string.IsNullOrWhiteSpace(googleUser.DisplayName))
+            throw new ArgumentException("The email and name returned by Google cannot be null or empty.");
+        
+        return googleUser;
+    }
 
     public async Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto? refreshTokenDto,  CancellationToken cancellationToken)
     {
