@@ -1,39 +1,46 @@
 using System.Net;
 using System.Text.Json;
-using JobMagnet.Infrastructure.Exceptions;
+using JobMagnet.Domain.Exceptions;
 
 namespace JobMagnet.Host.Middlewares;
 
 public class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
 {
-    public async Task InvokeAsync(HttpContext httpContext)
+    public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await next(httpContext);
+            await next(context);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An unhandled exception has occurred.");
-            await HandleExceptionAsync(httpContext, ex);
+            logger.LogError(ex, "Unhandled exception: {Message}", ex.Message);
+            await HandleExceptionAsync(context, ex);
         }
     }
 
-    private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
-        string message = "An internal server error has occurred.";
-        
-        if (exception is InvalidCredentialsAdapterException)
+        var (statusCode, message) = exception switch
         {
-            statusCode = HttpStatusCode.Unauthorized;
-            message = "Incorrect email or password.";
-        }
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)statusCode;
+            ArgumentException ex => (StatusCodes.Status400BadRequest, ex.Message),
+            UnauthorizedException ex => (StatusCodes.Status401Unauthorized, ex.Message),
+            InvalidGoogleTokenException ex => (StatusCodes.Status401Unauthorized, ex.Message),
+            // ✅ Agrega esta
+            InvalidCredentialsException ex => (StatusCodes.Status401Unauthorized, ex.Message),
+            InvalidOperationException ex => (StatusCodes.Status400BadRequest, ex.Message),
+            _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred.")
+        };
 
-        var result = JsonSerializer.Serialize(new { error = message });
-        
-        return context.Response.WriteAsync(result);
+        context.Response.StatusCode = statusCode;
+        context.Response.ContentType = "application/json";
+
+        var response = new
+        {
+            status = statusCode,
+            error = message
+        };
+
+        await context.Response.WriteAsJsonAsync(response);
     }
 }
