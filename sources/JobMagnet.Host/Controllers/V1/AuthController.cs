@@ -4,6 +4,7 @@ using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.DTO.ForgotPassword;
 using JobMagnet.Application.UseCases.Auth.DTO.GoogleLogin;
 using JobMagnet.Application.UseCases.Auth.DTO.Logout;
+using JobMagnet.Application.UseCases.Auth.DTO.PasswordResetConfirm;
 using JobMagnet.Application.UseCases.Auth.DTO.UserProfile;
 using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Host.Extensions;
@@ -141,12 +142,22 @@ public class AuthController(IAuthUserHandler handler) : ControllerBase
         return false;
     }
 
-    [HttpPost("ForgotPassword")]
+    [HttpPost("/auth/password-reset/request")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IResult> ForgotPasswordAsync([FromBody] ForgotPasswordCommand command,
         CancellationToken cancellationToken)
     {
         await handler.ForgotPasswordAsync(command, cancellationToken);
         return Results.Ok("If an account with this email exists, a password reset link has been sent.");
+    }
+
+    [HttpPost("/auth/password-reset/confirm")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IResult> ConfirmPasswordResetAsync(
+        [FromBody] PasswordResetConfirmDto request,
+        CancellationToken cancellationToken)
+    {
+        await handler.ConfirmPasswordResetAsync(request, cancellationToken);
+        return Results.Ok();
     }
 }
