@@ -1,6 +1,5 @@
 using JobMagnet.Domain.Aggregates.Profiles.Entities;
 using JobMagnet.Domain.Aggregates.Profiles.ValueObjects;
-using JobMagnet.Infrastructure.Persistence.Context.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,8 +11,9 @@ public class SkillSetEntityTypeConfiguration : IEntityTypeConfiguration<SkillSet
     {
         builder.HasKey(s => s.Id);
 
-        builder.Property(x => x.Id)
-            .HasConversion(new StronglyTypedIdValueConverter<SkillSetId, Guid>());
+        builder.Property(u => u.Id)
+            .HasConversion(id => id.Value, value => new SkillSetId(value))
+            .ValueGeneratedNever();
 
         builder.UsePropertyAccessMode(PropertyAccessMode.Field);
 

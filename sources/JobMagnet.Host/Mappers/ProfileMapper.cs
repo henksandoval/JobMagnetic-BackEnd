@@ -70,7 +70,7 @@ public static class ProfileMapper
         ArgumentException.ThrowIfNullOrEmpty(nameof(Profile), "Profile cannot be null.");
 
         var viewModel = new AboutViewModel(
-            entity.ProfileImage.Url?.AbsolutePath ?? string.Empty,
+            entity.ProfileImage.Url?.AbsoluteUri ?? string.Empty,
             entity.Header?.About ?? string.Empty,
             entity.Header?.JobTitle ?? string.Empty,
             entity.Header?.Overview ?? string.Empty,

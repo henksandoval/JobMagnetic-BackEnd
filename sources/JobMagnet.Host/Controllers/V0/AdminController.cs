@@ -1,5 +1,8 @@
 ﻿using System.Net.Mime;
 using Asp.Versioning;
+using JobMagnet.Application.Exceptions;
+using JobMagnet.Application.UseCases.Auth.DTO;
+using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Host.Controllers.Base;
 using JobMagnet.Infrastructure.Persistence.Context;
 using JobMagnet.Infrastructure.Persistence.Seeders;
@@ -9,10 +12,8 @@ using Light.GuardClauses;
 namespace JobMagnet.Host.Controllers.V0;
 
 [ApiVersion("0.1")]
-public class AdminController(
-    ILogger<AdminController> logger,
-    JobMagnetDbContext dbContext,
-    ISeeder seeder) : BaseController<AdminController>()
+public class AdminController( ILogger<AdminController> logger, JobMagnetDbContext dbContext,
+    ISeeder seeder, IAuthUserHandler handler) : BaseController<AdminController>()
 {
     private readonly ILogger<AdminController> _logger = logger.MustNotBeNull();
     private const string PongMessage = "Pong";
@@ -48,5 +49,21 @@ public class AdminController(
         var profileId = await seeder.RegisterProfileAsync(cancellationToken);
 
         return profileId.HasValue ? Results.Ok(profileId.Value.Value) : Results.Problem();
+    }
+    
+    [HttpPost("user-administrator", Name ="createAdminUser")]
+    [ProducesResponseType(typeof(UserTokenDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status409Conflict)]
+    public async Task<IResult> CreateAdminUser(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await handler.CreateAdminUserAsync(cancellationToken);
+            return Results.Created(string.Empty, result);
+        }
+        catch (AdminUserAlreadyExistsException ex)
+        {
+            return Results.Conflict(new { message = ex.Message });
+        }
     }
 }
