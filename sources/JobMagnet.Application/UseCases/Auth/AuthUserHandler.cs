@@ -3,6 +3,7 @@ using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.DTO.ForgotPassword;
 using JobMagnet.Application.UseCases.Auth.DTO.GoogleLogin;
 using JobMagnet.Application.UseCases.Auth.DTO.Logout;
+using JobMagnet.Application.UseCases.Auth.DTO.PasswordResetConfirm;
 using JobMagnet.Application.UseCases.Auth.Interface;
 using JobMagnet.Application.UseCases.Auth.Ports;
 using JobMagnet.Domain.Aggregates;
@@ -94,5 +95,15 @@ public class AuthUserHandler(IUserManage userManager, IOptions<AdminUserOptions>
     {
         ArgumentNullException.ThrowIfNull(command);
         await userManager.GeneratePasswordResetTokenAsync(command.Email, cancellationToken);
+    }
+
+    public async Task ConfirmPasswordResetAsync(PasswordResetConfirmDto dto, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(dto.Email) ||
+            string.IsNullOrWhiteSpace(dto.Token) ||
+            string.IsNullOrWhiteSpace(dto.Password))
+            throw new ArgumentException("All fields are required.");
+
+        await userManager.ConfirmPasswordResetAsync(dto, cancellationToken);
     }
 }
