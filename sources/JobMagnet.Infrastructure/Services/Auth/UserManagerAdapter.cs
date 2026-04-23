@@ -11,6 +11,7 @@ using JobMagnet.Application.UseCases.Auth.Ports.EmailDTO;
 using JobMagnet.Domain.Aggregates;
 using JobMagnet.Domain.Aggregates.Auth.Entities;
 using JobMagnet.Domain.Aggregates.Auth.ValueObjects;
+using JobMagnet.Domain.Exceptions;
 using JobMagnet.Domain.Ports.Repositories.Base;
 using JobMagnet.Infrastructure.Exceptions;
 using JobMagnet.Infrastructure.ExternalServices.Identity.Entities;
@@ -95,7 +96,7 @@ public class UserManagerAdapter(
 
         if (identityUser == null ||
             !await userManager.CheckPasswordAsync(identityUser, userModelCredentialsDto.Password))
-            throw new InvalidCredentialsAdapterException("Incorrect email or password.");
+            throw new InvalidCredentialsException("Incorrect email or password.");
 
         if (!await userManager.IsEmailConfirmedAsync(identityUser))
             throw new InvalidOperationException("Email not confirmed.");
@@ -312,9 +313,9 @@ public class UserManagerAdapter(
             };
             return await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
         }
-        catch (InvalidJwtException)
+        catch (InvalidJwtException ex)
         {
-            return null;
+            throw new InvalidGoogleTokenException($"Google token validation failed: {ex.Message}");
         }
     }
 
