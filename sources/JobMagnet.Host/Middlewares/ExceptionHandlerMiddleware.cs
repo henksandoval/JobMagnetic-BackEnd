@@ -26,14 +26,13 @@ public class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionH
             ArgumentException ex => (StatusCodes.Status400BadRequest, ex.Message),
             UnauthorizedException ex => (StatusCodes.Status401Unauthorized, ex.Message),
             InvalidGoogleTokenException ex => (StatusCodes.Status401Unauthorized, ex.Message),
-            // ✅ Agrega esta
             InvalidCredentialsException ex => (StatusCodes.Status401Unauthorized, ex.Message),
             InvalidOperationException ex => (StatusCodes.Status400BadRequest, ex.Message),
             _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred.")
         };
 
-        context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/json";
+        context.Response.StatusCode = statusCode;
 
         var response = new
         {
