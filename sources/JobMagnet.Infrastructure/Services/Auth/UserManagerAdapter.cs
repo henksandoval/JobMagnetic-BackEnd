@@ -6,6 +6,7 @@ using Google.Apis.Auth;
 using JobMagnet.Application.UseCases.Auth.DTO;
 using JobMagnet.Application.UseCases.Auth.DTO.GoogleLogin;
 using JobMagnet.Application.UseCases.Auth.DTO.Logout;
+using JobMagnet.Application.UseCases.Auth.DTO.PasswordResetConfirm;
 using JobMagnet.Application.UseCases.Auth.Ports;
 using JobMagnet.Application.UseCases.Auth.Ports.EmailDTO;
 using JobMagnet.Domain.Aggregates;
@@ -270,7 +271,7 @@ public class UserManagerAdapter(
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
         var encodedToken = System.Net.WebUtility.UrlEncode(token);
-        var resetUrlBase = configuration["ClientApp:ResetPasswordUrl"];
+        var resetUrlBase = configuration["ClientAppReset:ResetPasswordUrl"];
         var resetLink = $"{resetUrlBase}?email={email}&token={encodedToken}";
 
         var mailCommand = new MailCommand
@@ -287,6 +288,19 @@ public class UserManagerAdapter(
                     """
         };
         await emailService.SendEmailAsync(mailCommand);
+    }
+
+    public async Task ConfirmPasswordResetAsync(PasswordResetConfirmDto dto, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByEmailAsync(dto.Email);
+
+        if (user == null) return;
+
+        var result = await userManager.ResetPasswordAsync(user, dto.Token, dto.Password);
+
+        if (!result.Succeeded)
+            throw new InvalidOperationException(
+                string.Join(", ", result.Errors.Select(e => e.Description)));
     }
 
     private static string GenerateRefreshTokenString()
