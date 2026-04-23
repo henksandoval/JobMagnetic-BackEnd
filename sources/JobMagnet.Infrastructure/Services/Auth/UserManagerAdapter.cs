@@ -31,51 +31,52 @@ public class UserManagerAdapter(
     IGuidGenerator guidGenerator) : IUserManage
 {
     private readonly IGuidGenerator _guidGenerator = guidGenerator;
-    
-    public async Task<UserTokenDto> RegisterAsync(UserModelCredentialsDto  userModelCredentialsDto, CancellationToken cancellationToken)
+
+    public async Task<UserTokenDto> RegisterAsync(UserModelCredentialsDto userModelCredentialsDto,
+        CancellationToken cancellationToken)
     {
         var appUser = new ApplicationIdentityUser
         {
-            UserName = userModelCredentialsDto.Email, 
+            UserName = userModelCredentialsDto.Email,
             Email = userModelCredentialsDto.Email
         };
-        
-        var identityResult  = await userManager.CreateAsync(appUser, userModelCredentialsDto.Password);
-        
+
+        var identityResult = await userManager.CreateAsync(appUser, userModelCredentialsDto.Password);
+
         if (!identityResult.Succeeded)
         {
             var errors = string.Join(", ", identityResult.Errors.Select(e => e.Description));
             throw new InvalidOperationException($"Error de Identity: {errors}");
         }
-        
+
         try
         {
-                
-            var domainUserId  = _guidGenerator.NewGuid();
-            var domainUser = User.AddUser(new UserId(domainUserId ), appUser.Email, userModelCredentialsDto.DisplayName, null, appUser.Id);
+            var domainUserId = _guidGenerator.NewGuid();
+            var domainUser = User.AddUser(new UserId(domainUserId), appUser.Email, userModelCredentialsDto.DisplayName,
+                null, appUser.Id);
             appUser.User = domainUser;
             await unitOfWork.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            
+
             var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(appUser);
             var encodedToken = System.Net.WebUtility.UrlEncode(confirmationToken);
-            
+
             var confirmationUrlBase = configuration["ClientApp:ConfirmationUrl"];
             var confirmationLink = $"{confirmationUrlBase}?email={appUser.Email}&token={encodedToken}";
-            
+
             var mailCommand = new MailCommand
             {
                 ToEmail = userModelCredentialsDto.Email,
                 Subject = "Confirma tu cuenta en JobMagnet",
-                Body =$"""
-                           <h1>¡Bienvenido a JobMagnet!</h1>
-                           <p>Gracias por registrarte. Por favor, confirma tu cuenta haciendo clic en el siguiente enlace:</p>
-                           <p><a href="{confirmationLink}">Confirmar mi cuenta</a></p>
-                           <p>Saludos,<br>El equipo de JobMagnet</p>
-                       """
+                Body = $"""
+                            <h1>¡Bienvenido a JobMagnet!</h1>
+                            <p>Gracias por registrarte. Por favor, confirma tu cuenta haciendo clic en el siguiente enlace:</p>
+                            <p><a href="{confirmationLink}">Confirmar mi cuenta</a></p>
+                            <p>Saludos,<br>El equipo de JobMagnet</p>
+                        """
             };
-            
-            await  emailService.SendEmailAsync(mailCommand);
-            
+
+            await emailService.SendEmailAsync(mailCommand);
+
             return await GenerateTokensAsync(appUser, cancellationToken);
         }
         catch (Exception)
@@ -85,13 +86,15 @@ public class UserManagerAdapter(
         }
     }
 
-    public async Task<UserTokenDto> LoginAsync(UserModelCredentialsDto userModelCredentialsDto, CancellationToken cancellationToken)
+    public async Task<UserTokenDto> LoginAsync(UserModelCredentialsDto userModelCredentialsDto,
+        CancellationToken cancellationToken)
     {
         var identityUser = await userManager.Users
-            .Include(u => u.User) 
+            .Include(u => u.User)
             .SingleOrDefaultAsync(u => u.Email == userModelCredentialsDto.Email, cancellationToken);
-        
-        if (identityUser == null || !await userManager.CheckPasswordAsync(identityUser, userModelCredentialsDto.Password))
+
+        if (identityUser == null ||
+            !await userManager.CheckPasswordAsync(identityUser, userModelCredentialsDto.Password))
             throw new InvalidCredentialsAdapterException("Incorrect email or password.");
 
         if (!await userManager.IsEmailConfirmedAsync(identityUser))
@@ -103,106 +106,82 @@ public class UserManagerAdapter(
     public async Task<GoogleTokenInfoDto> LoginGoogleAsync(GoogleLoginCommand loginCommand,
         CancellationToken cancellationToken)
     {
-        var clientId = configuration["Google:ClientId"];
-        var settings = new GoogleJsonWebSignature.ValidationSettings()
-        {
-            Audience = new List<string> { clientId }
-        };
-        GoogleJsonWebSignature.Payload payload;
-        try
-        {
-            // 2. Validar el token con los servidores de Google
-            payload = await GoogleJsonWebSignature.ValidateAsync(loginCommand.IdToken, settings);
-        }
-        catch (InvalidJwtException)
-        {
-            // Si el token es falso o expiró, retornamos null. 
-            // Tu Handler ya está preparado para lanzar la UnauthorizedException si esto es null.
-            return null; 
-        }
-        var user = await userManager.FindByEmailAsync(payload.Email);
-            
+        var payload = await ValidateGoogleTokenAsync(loginCommand.IdToken);
+        if (payload == null) return null;
+
+        var user = await FindUserByEmailAsync(payload.Email, cancellationToken);
+
         if (user == null)
-        {
-            user = new ApplicationIdentityUser
-            {
-                UserName = payload.Email, // Identity requiere un UserName, solemos usar el email
-                Email = payload.Email,
-            };
-                    
-            // Creamos el usuario en la base de datos
-            var createResult = await userManager.CreateAsync(user);
-            
-            if (!createResult.Succeeded)
-                throw new Exception("Error al registrar el usuario de Google en la base de datos.");
-            
-            // Opcional pero recomendado: Vincular la cuenta de Google a este usuario en Identity
-            var loginInfo = new UserLoginInfo("Google", payload.Subject, "Google");
-            await userManager.AddLoginAsync(user, loginInfo);
-        }
-        var tokenResult  = await GenerateTokensAsync(user, cancellationToken);
-        var jwtToken = tokenResult.AccessToken;
-            
+            user = await CreateGoogleUserAsync(payload, cancellationToken);
+
+        if (user?.User == null)
+            throw new Exception("No se pudo cargar la información del usuario.");
+
+        var tokenResult = await GenerateTokensAsync(user, cancellationToken);
+
         return new GoogleTokenInfoDto
         {
-            AccessToken = jwtToken,
+            AccessToken = tokenResult.AccessToken,
             ExpiresInSeconds = tokenResult.ExpiresInSeconds,
             Email = user.User.Email,
             DisplayName = user.User.DisplayName,
             UserId = user.User.Id.ToString()
         };
     }
-    
-    public async  Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto refreshTokenDto,  CancellationToken cancellationToken)
+
+    public async Task<UserTokenDto> RefreshTokenAsync(RefreshTokenDto refreshTokenDto,
+        CancellationToken cancellationToken)
     {
         var user = await userManager.Users
             .Include(u => u.User)
             .ThenInclude(domainUser => domainUser.RefreshTokens)
-            .SingleOrDefaultAsync(u => u.User.RefreshTokens.Any(rt => rt.Token == refreshTokenDto.RefreshToken), cancellationToken);
+            .SingleOrDefaultAsync(u => u.User.RefreshTokens.Any(rt => rt.Token == refreshTokenDto.RefreshToken),
+                cancellationToken);
 
         if (user == null)
             return null!;
-        
+
         var tokenToValidate = user.User.RefreshTokens.FirstOrDefault(rt => rt.Token == refreshTokenDto.RefreshToken);
-        
+
         if (tokenToValidate is not { IsActive: true })
             return null!;
-        
+
         foreach (var activeToken in user.User.RefreshTokens.Where(rt => rt.IsActive).ToList())
         {
             user.User.RevokeRefreshToken(activeToken.Token);
         }
-        
+
         var newTokens = await GenerateTokensAsync(user, cancellationToken);
 
         return newTokens;
     }
-    
+
     public async Task<bool> LogoutAsync(LogoutCommand command, CancellationToken cancellationToken)
     {
         var user = await userManager.Users
             .Include(u => u.User)
             .ThenInclude(domainUser => domainUser.RefreshTokens)
             .SingleOrDefaultAsync(u => u.Id == command.UserId, cancellationToken);
-    
+
         var tokenToRevoke = user?.User.RefreshTokens.FirstOrDefault(rt => rt.Token == command.RefreshToken);
-    
+
         if (tokenToRevoke is not { IsActive: true }) return false;
-        
+
         user?.User.RevokeRefreshToken(command.RefreshToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
-        
+
         return true;
     }
-    
-    public async Task<UserTokenDto> CreateAdminUserAsync (AdminUserOptions adminUserOptions, CancellationToken cancellationToken)
+
+    public async Task<UserTokenDto> CreateAdminUserAsync(AdminUserOptions adminUserOptions,
+        CancellationToken cancellationToken)
     {
         var applicationIdentityUser = new ApplicationIdentityUser
         {
             UserName = adminUserOptions.Email,
             Email = adminUserOptions.Email,
         };
-        
+
         var result = await userManager.CreateAsync(applicationIdentityUser, adminUserOptions.Password);
         if (result.Errors.Any(e => e.Code is "DuplicateUserName" or "DuplicateEmail"))
         {
@@ -212,18 +191,19 @@ public class UserManagerAdapter(
         return await GenerateTokensAsync(applicationIdentityUser, cancellationToken);
     }
 
-    private async Task<UserTokenDto> GenerateTokensAsync(ApplicationIdentityUser user,  CancellationToken cancellationToken)
+    private async Task<UserTokenDto> GenerateTokensAsync(ApplicationIdentityUser user,
+        CancellationToken cancellationToken)
     {
         var userRoles = await userManager.GetRolesAsync(user);
-        
+
         var claims = new List<Claim>
-        { 
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), 
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(ClaimTypes.Name, user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
-        
+
         var applicationIdentityUser = await userManager.FindByEmailAsync(user.Email);
         if (applicationIdentityUser != null)
         {
@@ -237,8 +217,8 @@ public class UserManagerAdapter(
         var creeds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var expiration = Convert.ToDouble(configuration["JWT:TokenValidityInMinutes"] ?? "15");
         var jwtExpiration = DateTime.UtcNow.AddMinutes(expiration);
-        var dtoExpiration = DateTime.Now.AddMinutes(expiration); 
-        
+        var dtoExpiration = DateTime.Now.AddMinutes(expiration);
+
         var securityToken = new JwtSecurityToken(
             issuer: null,
             audience: null,
@@ -246,19 +226,19 @@ public class UserManagerAdapter(
             expires: jwtExpiration,
             signingCredentials: creeds
         );
-        
+
         var accessToken = new JwtSecurityTokenHandler().WriteToken(securityToken);
-        
+
         var refreshTokenResponse = GenerateRefreshTokenString();
         var refreshTokenValidityInDays = Convert.ToInt32(configuration["JWT:RefreshTokenValidityInDays"] ?? "7");
         var refreshTokenValidity = TimeSpan.FromDays(refreshTokenValidityInDays);
 
         user.User.AddRefreshToken(
-            _guidGenerator, 
-            refreshTokenResponse, 
+            _guidGenerator,
+            refreshTokenResponse,
             refreshTokenValidity
         );
-        
+
         var result = await userManager.UpdateAsync(user);
 
         if (!result.Succeeded)
@@ -266,12 +246,12 @@ public class UserManagerAdapter(
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
             throw new InvalidOperationException($"Failed to update user with new refresh token: {errors}");
         }
-        
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
-        
+
         return new UserTokenDto()
         {
-            AccessToken = accessToken ,
+            AccessToken = accessToken,
             ExpiresInSeconds = dtoExpiration,
             RefreshToken = refreshTokenResponse
         };
@@ -280,17 +260,18 @@ public class UserManagerAdapter(
     public async Task GeneratePasswordResetTokenAsync(string email, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByEmailAsync(email);
-        
+
         if (user == null)
         {
-            return; 
+            return;
         }
+
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
         var encodedToken = System.Net.WebUtility.UrlEncode(token);
         var resetUrlBase = configuration["ClientApp:ResetPasswordUrl"];
         var resetLink = $"{resetUrlBase}?email={email}&token={encodedToken}";
-        
+
         var mailCommand = new MailCommand
         {
             ToEmail = email,
@@ -306,7 +287,7 @@ public class UserManagerAdapter(
         };
         await emailService.SendEmailAsync(mailCommand);
     }
-    
+
     private static string GenerateRefreshTokenString()
     {
         var randomNumber = new byte[64];
@@ -314,9 +295,63 @@ public class UserManagerAdapter(
         rng.GetBytes(randomNumber);
         return Convert.ToBase64String(randomNumber);
     }
+
     public async Task<bool> EmailExistAsync(string email)
     {
         var user = await userManager.FindByEmailAsync(email);
         return user != null;
+    }
+
+    private async Task<GoogleJsonWebSignature.Payload?> ValidateGoogleTokenAsync(string idToken)
+    {
+        try
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings
+            {
+                Audience = new List<string?> { configuration["Google:ClientId"] }
+            };
+            return await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
+        }
+        catch (InvalidJwtException)
+        {
+            return null;
+        }
+    }
+
+    private Task<ApplicationIdentityUser?> FindUserByEmailAsync(string email, CancellationToken cancellationToken)
+        => userManager.Users
+            .Include(u => u.User)
+            .SingleOrDefaultAsync(u => u.Email == email, cancellationToken);
+
+    private async Task<ApplicationIdentityUser> CreateGoogleUserAsync(
+        GoogleJsonWebSignature.Payload payload,
+        CancellationToken cancellationToken)
+    {
+        var newUser = new ApplicationIdentityUser
+        {
+            UserName = payload.Email,
+            Email = payload.Email,
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(newUser);
+
+        if (!result.Succeeded)
+            throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+        await userManager.AddLoginAsync(newUser, new UserLoginInfo("Google", payload.Subject, "Google"));
+
+        var domainUser = User.AddUser(
+            new UserId(_guidGenerator.NewGuid()),
+            newUser.Email,
+            payload.Name,
+            null,
+            newUser.Id);
+
+        newUser.User = domainUser;
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return await FindUserByEmailAsync(payload.Email, cancellationToken)
+               ?? throw new Exception("No se pudo cargar la información del usuario.");
     }
 }
